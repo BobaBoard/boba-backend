@@ -1,0 +1,1 @@
+select * from threads left join boards on boards.id = threads.parentboard left join users on threads.author = users.id
