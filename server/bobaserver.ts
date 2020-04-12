@@ -1,11 +1,23 @@
 import express from "express";
 import dotenv from "dotenv";
+import { Pool } from "pg";
 
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
-app.get("/", (req, res) => res.send("Hello World!"));
+const databaseConfig = { connectionString: process.env.DATABASE_URL };
+const pool = new Pool(databaseConfig);
+
+app.get("/", async (req, res) => {
+  const {
+    rows,
+  } = await pool.query(
+    "SELECT * FROM Threads LEFT JOIN Boards ON Threads.parentBoard = Boards.id WHERE Boards.stringId=$1",
+    ["gore"]
+  );
+  res.send(JSON.stringify(rows));
+});
 
 app.listen(port, () =>
   console.log(`Example app listening at http://localhost:${port}`)
