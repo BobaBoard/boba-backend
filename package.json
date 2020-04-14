@@ -8,7 +8,7 @@
     "build": "tsc",
     "prestart": "npm run build",
     "start": "node .",
-    "test": "./node_modules/mocha/bin/mocha -r ts-node/register test/**/*.test.ts"
+    "test": "./node_modules/mocha/bin/mocha --timeout 3000 -r ts-node/register test/**/*.test.ts"
   },
   "repository": {
     "type": "git",
