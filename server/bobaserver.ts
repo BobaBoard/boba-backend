@@ -16,9 +16,11 @@ app.get("/", async (req, res) => {
     "SELECT * FROM Threads LEFT JOIN Boards ON Threads.parentBoard = Boards.id WHERE Boards.stringId=$1",
     ["gore"]
   );
-  res.send(JSON.stringify(rows));
+  res.send(rows);
 });
-
+/*
 app.listen(port, () =>
   console.log(`Example app listening at http://localhost:${port}`)
-);
+);*/
+
+export default app;
