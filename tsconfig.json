@@ -12,5 +12,5 @@
       "*": ["node_modules/*"]
     }
   },
-  "include": ["server/**/*"]
+  "include": ["server/**/*", "test"]
 }
