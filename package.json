@@ -2,7 +2,7 @@
   "name": "bobaserver",
   "version": "1.0.0",
   "description": "Server for BobaBoard",
-  "main": "dist/bobaserver.js",
+  "main": "dist/server/bobaserver.js",
   "scripts": {
     "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
     "build": "tsc",
