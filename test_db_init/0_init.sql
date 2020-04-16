@@ -4,8 +4,27 @@ CREATE TABLE IF NOT EXISTS Users
     id TEXT PRIMARY KEY NOT NULL,
     /* Username and avatar can be null. Defaults will be used. User must only add these when adding friends. */
     username TEXT,
-    avatarUrl TEXT
+    avatarUrl TEXT,
+    invitedBy TEXT REFERENCES Users(id) NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS Friends
+(
+    user TEXT REFERENCES Users(id) ON DELETE CASCADE NOT NULL,
+    friend TEXT REFERENCES Users(id) ON DELETE CASCADE NOT NULL,
+);
+
+CREATE TABLE IF NOT EXISTS Invites (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    nonce BIGINT NOT NULL,
+    inviter TEXT REFERENCES Users(id) ON DELETE CASCADE NOT NULL,
+    invitee TEXT REFERENCES Users(id) ON DELETE CASCADE NOT NULL,
+    created timestamptz NOT NULL DEFAULT now(),
+    duration INTERVAL NOT NULL
+);
+CREATE INDEX inviter on Invites(inviter);
+CREATE INDEX invitee on Invites(invitee);
+CREATE INDEX nonce on Invites(nonce);
 
 CREATE TABLE IF NOT EXISTS Tags
 (
@@ -25,12 +44,23 @@ CREATE TABLE IF NOT EXISTS Boards
     avatarUrl TEXT,
     settings JSONB NOT NULL
 );
+CREATE INDEX stringId on BoardsWatchers(stringId);
 
 CREATE TABLE IF NOT EXISTS BoardsTags
 (
     boardId BIGINT REFERENCES Boards(id) ON DELETE CASCADE NOT NULL,
     tagId BIGINT REFERENCES Tags(id) ON DELETE CASCADE NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS BoardsWatchers (
+    boardId BIGINT REFERENCES Boards(id) ON DELETE CASCADE NOT NULL,
+    userId TEXT REFERENCES Users(id) ON DELETE CASCADE NOT NULL,
+    lastAccess timestamptz NOT NULL DEFAULT now(),
+    shouldNotify BOOLEAN NOT NULL DEFAULT FALSE
+);
+CREATE INDEX board on BoardsWatchers(boardId);
+CREATE INDEX invitee on BoardsWatchers(invitee);
+CREATE INDEX nonce on BoardsWatchers(nonce);
 
 CREATE TABLE IF NOT EXISTS Threads
 (
@@ -45,20 +75,25 @@ CREATE INDEX parentBoard on Threads(parentBoard);
 
 CREATE TABLE IF NOT EXISTS ThreadsWatchers (
     threadId BIGINT REFERENCES Threads(id) ON DELETE CASCADE NOT NULL,
-    userId TEXT REFERENCES Users(id) ON DELETE CASCADE NOT NULL
+    userId TEXT REFERENCES Users(id) ON DELETE CASCADE NOT NULL,
+    lastAccess timestamptz NOT NULL DEFAULT now(),
+    shouldNotify BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS Posts (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    stringId TEXT NOT NULL,
     parentThread BIGINT REFERENCES Threads(id) ON DELETE CASCADE NOT NULL,
     author TEXT REFERENCES Users(id) ON DELETE CASCADE NOT NULL,
     created timestamptz NOT NULL DEFAULT now(),
     content TEXT NOT NULL,
-    /*whispertags ARRAY TODO*/
+    typeId TEXT NOT NULL,
+    whispertags TEXT[],
     /* Mark deleted rather than actually delete for moderation purposes. */
     isDeleted BOOLEAN DEFAULT false,
     isForcedAnonymous BOOLEAN DEFAULT false
 );
+CREATE INDEX stringId on Posts(stringId);
 CREATE INDEX parentThread on Posts(parentThread);
 CREATE INDEX author on Posts(author);
 
@@ -79,5 +114,5 @@ CREATE TABLE IF NOT EXISTS Comments (
     isDeleted BOOLEAN DEFAULT false,
     isForcedAnonymous BOOLEAN DEFAULT false
 );
-CREATE INDEX parentThread on Posts(parentThread);
-CREATE INDEX author on Posts(author);
+CREATE INDEX parentThread on Comments(parentThread);
+CREATE INDEX author on Comments(author);
