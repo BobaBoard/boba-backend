@@ -105,7 +105,7 @@ CREATE TABLE IF NOT EXISTS Posts (
     author TEXT REFERENCES Users(id) ON DELETE CASCADE NOT NULL,
     /* UTC timezone. */
     created timestamptz NOT NULL DEFAULT now(),
-    content JSONB NOT NULL,
+    content TEXT NOT NULL,
     type PostType NOT NULL,
     whispertags TEXT[],
     /* Mark deleted rather than actually delete for moderation purposes. */
@@ -127,8 +127,10 @@ CREATE TABLE IF NOT EXISTS Comments (
     parentPost BIGINT REFERENCES Posts(id) ON DELETE CASCADE NOT NULL,
     parentComment BIGINT REFERENCES Comments(id) ON DELETE CASCADE,
     author TEXT REFERENCES Users(id) ON DELETE CASCADE,
+    /* UTC timezone. */
     created timestamptz NOT NULL DEFAULT now(),
     content TEXT NOT NULL,
+    imageUrl TEXT NOT NULL,
     /* Mark deleted rather than actually delete for moderation purposes. */
     isDeleted BOOLEAN DEFAULT false,
     isForcedAnonymous BOOLEAN DEFAULT false
