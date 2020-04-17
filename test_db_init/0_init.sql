@@ -10,9 +10,10 @@ CREATE TABLE IF NOT EXISTS Users
 
 CREATE TABLE IF NOT EXISTS Friends
 (
-    user TEXT REFERENCES Users(id) ON DELETE CASCADE NOT NULL,
-    friend TEXT REFERENCES Users(id) ON DELETE CASCADE NOT NULL,
+    friender TEXT REFERENCES Users(id) ON DELETE CASCADE NOT NULL,
+    friendee TEXT REFERENCES Users(id) ON DELETE CASCADE NOT NULL
 );
+CREATE INDEX Friends_Friender on Friends(friender);
 
 CREATE TABLE IF NOT EXISTS Invites (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
@@ -22,16 +23,16 @@ CREATE TABLE IF NOT EXISTS Invites (
     created timestamptz NOT NULL DEFAULT now(),
     duration INTERVAL NOT NULL
 );
-CREATE INDEX inviter on Invites(inviter);
-CREATE INDEX invitee on Invites(invitee);
-CREATE INDEX nonce on Invites(nonce);
+CREATE INDEX Invites_inviter on Invites(inviter);
+CREATE INDEX Invites_invitee on Invites(invitee);
+CREATE INDEX Invites_nonce on Invites(nonce);
 
 CREATE TABLE IF NOT EXISTS Tags
 (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     tag TEXT NOT NULL
 );
-CREATE INDEX tag on Tags(tag);
+CREATE INDEX Tags_tag on Tags(tag);
 
 CREATE TABLE IF NOT EXISTS Boards
 (
@@ -44,7 +45,7 @@ CREATE TABLE IF NOT EXISTS Boards
     avatarUrl TEXT,
     settings JSONB NOT NULL
 );
-CREATE INDEX stringId on BoardsWatchers(stringId);
+CREATE INDEX Boards_stringId on Boards(stringId);
 
 CREATE TABLE IF NOT EXISTS BoardsTags
 (
@@ -58,9 +59,16 @@ CREATE TABLE IF NOT EXISTS BoardsWatchers (
     lastAccess timestamptz NOT NULL DEFAULT now(),
     shouldNotify BOOLEAN NOT NULL DEFAULT FALSE
 );
-CREATE INDEX board on BoardsWatchers(boardId);
-CREATE INDEX invitee on BoardsWatchers(invitee);
-CREATE INDEX nonce on BoardsWatchers(nonce);
+CREATE INDEX BoardsWatchers_board on BoardsWatchers(boardId);
+CREATE INDEX BoardsWatchers_userId on BoardsWatchers(userId);
+
+CREATE TABLE IF NOT EXISTS SecretIdentities 
+(
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    displayText TEXT NOT NULL,
+    /* This can be null if generated on the fly*/
+    avatarUrl TEXT
+)
 
 CREATE TABLE IF NOT EXISTS Threads
 (
@@ -68,10 +76,15 @@ CREATE TABLE IF NOT EXISTS Threads
     parentBoard BIGINT REFERENCES Boards(id) ON DELETE CASCADE NOT NULL,
     title TEXT NOT NULL
     /* TODO: decide what to do with threads with deleted posts */
-    /*firstPost BIGINT REFERENCES Posts(id) TODO: FIGURE OUT HOW TO ADD THIS WHEN THE POSTS TABLE IS DEFINED ONLY LATER*/
-    /*identities ARRAY TODO*/
 );
-CREATE INDEX parentBoard on Threads(parentBoard);
+
+CREATE TABLE IF NOT EXISTS ThreadsIdentities
+(
+    threadId BIGINT REFERENCES Threads(id),
+    userId BIGINT REFERENCES User(id) ON DELETE CASCADE NOT NULL,
+    identityId BIGINT REFERENCES SecretIdentities(id) ON DELETE CASCADE NOT NULL,
+) 
+CREATE INDEX ThreadsIdentities_threadId on ThreadsIdentities(threadId);
 
 CREATE TABLE IF NOT EXISTS ThreadsWatchers (
     threadId BIGINT REFERENCES Threads(id) ON DELETE CASCADE NOT NULL,
@@ -79,6 +92,10 @@ CREATE TABLE IF NOT EXISTS ThreadsWatchers (
     lastAccess timestamptz NOT NULL DEFAULT now(),
     shouldNotify BOOLEAN NOT NULL DEFAULT FALSE
 );
+CREATE INDEX ThreadsWatchers_threadId on ThreadsWatchers(threadId);
+CREATE INDEX ThreadsWatchers_userId on ThreadsWatchers(userId);
+
+CREATE TYPE AnonimityType AS ENUM ('everyone', 'strangers');
 
 CREATE TABLE IF NOT EXISTS Posts (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
@@ -91,11 +108,11 @@ CREATE TABLE IF NOT EXISTS Posts (
     whispertags TEXT[],
     /* Mark deleted rather than actually delete for moderation purposes. */
     isDeleted BOOLEAN DEFAULT false,
-    isForcedAnonymous BOOLEAN DEFAULT false
+    anonimityType AnonimityType DEFAULT false
 );
-CREATE INDEX stringId on Posts(stringId);
-CREATE INDEX parentThread on Posts(parentThread);
-CREATE INDEX author on Posts(author);
+CREATE INDEX Posts_stringId on Posts(stringId);
+CREATE INDEX Posts_parentThread on Posts(parentThread);
+CREATE INDEX Posts_author on Posts(author);
 
 CREATE TABLE IF NOT EXISTS PostsTags (
     postId BIGINT REFERENCES Posts(id) ON DELETE CASCADE NOT NULL,
@@ -114,5 +131,5 @@ CREATE TABLE IF NOT EXISTS Comments (
     isDeleted BOOLEAN DEFAULT false,
     isForcedAnonymous BOOLEAN DEFAULT false
 );
-CREATE INDEX parentThread on Comments(parentThread);
-CREATE INDEX author on Comments(author);
+CREATE INDEX Comments_parentThread on Comments(parentThread);
+CREATE INDEX Comments_author on Comments(author);
