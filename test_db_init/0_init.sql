@@ -68,7 +68,7 @@ CREATE TABLE IF NOT EXISTS SecretIdentities
     displayText TEXT NOT NULL,
     /* This can be null if generated on the fly*/
     avatarUrl TEXT
-)
+);
 
 CREATE TABLE IF NOT EXISTS Threads
 (
@@ -80,10 +80,10 @@ CREATE TABLE IF NOT EXISTS Threads
 
 CREATE TABLE IF NOT EXISTS ThreadsIdentities
 (
-    threadId BIGINT REFERENCES Threads(id),
-    userId BIGINT REFERENCES User(id) ON DELETE CASCADE NOT NULL,
-    identityId BIGINT REFERENCES SecretIdentities(id) ON DELETE CASCADE NOT NULL,
-) 
+    threadId BIGINT REFERENCES Threads(id) NOT NULL,
+    userId TEXT REFERENCES Users(id) ON DELETE CASCADE NOT NULL,
+    identityId BIGINT REFERENCES SecretIdentities(id) ON DELETE CASCADE NOT NULL
+);
 CREATE INDEX ThreadsIdentities_threadId on ThreadsIdentities(threadId);
 
 CREATE TABLE IF NOT EXISTS ThreadsWatchers (
@@ -96,19 +96,21 @@ CREATE INDEX ThreadsWatchers_threadId on ThreadsWatchers(threadId);
 CREATE INDEX ThreadsWatchers_userId on ThreadsWatchers(userId);
 
 CREATE TYPE AnonimityType AS ENUM ('everyone', 'strangers');
+CREATE TYPE PostType AS ENUM ('text');
 
 CREATE TABLE IF NOT EXISTS Posts (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     stringId TEXT NOT NULL,
     parentThread BIGINT REFERENCES Threads(id) ON DELETE CASCADE NOT NULL,
     author TEXT REFERENCES Users(id) ON DELETE CASCADE NOT NULL,
+    /* UTC timezone. */
     created timestamptz NOT NULL DEFAULT now(),
-    content TEXT NOT NULL,
-    typeId TEXT NOT NULL,
+    content JSONB NOT NULL,
+    type PostType NOT NULL,
     whispertags TEXT[],
     /* Mark deleted rather than actually delete for moderation purposes. */
     isDeleted BOOLEAN DEFAULT false,
-    anonimityType AnonimityType DEFAULT false
+    anonimityType AnonimityType NOT NULL
 );
 CREATE INDEX Posts_stringId on Posts(stringId);
 CREATE INDEX Posts_parentThread on Posts(parentThread);
