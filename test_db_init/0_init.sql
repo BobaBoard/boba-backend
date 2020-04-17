@@ -15,13 +15,15 @@ CREATE TABLE IF NOT EXISTS Friends
 );
 CREATE INDEX Friends_Friender on Friends(friender);
 
+CREATE TYPE InviteType AS ENUM ('website', 'identityShare');
 CREATE TABLE IF NOT EXISTS Invites (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     nonce BIGINT NOT NULL,
     inviter TEXT REFERENCES Users(id) ON DELETE CASCADE NOT NULL,
     invitee TEXT REFERENCES Users(id) ON DELETE CASCADE NOT NULL,
     created timestamptz NOT NULL DEFAULT now(),
-    duration INTERVAL NOT NULL
+    duration INTERVAL NOT NULL,
+    inviteType InviteType[] NOT NULL
 );
 CREATE INDEX Invites_inviter on Invites(inviter);
 CREATE INDEX Invites_invitee on Invites(invitee);
