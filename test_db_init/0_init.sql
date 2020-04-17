@@ -55,6 +55,15 @@ CREATE TABLE IF NOT EXISTS BoardsTags
     tagId BIGINT REFERENCES Tags(id) ON DELETE CASCADE NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS TagsBlacklist
+(
+    userId TEXT REFERENCES Users(id) ON DELETE CASCADE NOT NULL,
+    tagId BIGINT REFERENCES Tags(id) ON DELETE CASCADE NOT NULL,
+    /* If not null the tag is blacklisted only on the given board*/
+    boardId BIGINT REFERENCES Boards(id) ON DELETE CASCADE
+);
+CREATE INDEX TagsBlacklist_userId on TagsBlacklist(userId);
+
 CREATE TABLE IF NOT EXISTS BoardsWatchers (
     boardId BIGINT REFERENCES Boards(id) ON DELETE CASCADE NOT NULL,
     userId TEXT REFERENCES Users(id) ON DELETE CASCADE NOT NULL,
