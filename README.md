@@ -4,11 +4,11 @@
 
 Bobaserver is a TypeScript project using npm as package manager.
 
-- Download dependencies
+- #### Download dependencies
   ```
   npm install
   ```
-- Set up environment variables
+- #### Set up environment variables
   1. Create file named `.env` in top level directory
   2. Add the following variables within the file (sample values):
      ```
@@ -19,14 +19,10 @@ Bobaserver is a TypeScript project using npm as package manager.
      DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${PORT}/${POSTGRES_DB}
      ```
 
-* Run server
+* #### Run server
 
-```
+  ```
 
-npm run start
+  npm run start
 
-```
-
-```
-
-```
+  ```
