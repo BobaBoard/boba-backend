@@ -3,7 +3,7 @@ services:
   database:
     image: "postgres"
     env_file:
-      - database.env
+      - .env
     ports:
       - "35432:5432"
     volumes:
