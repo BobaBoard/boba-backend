@@ -19,6 +19,12 @@ Bobaserver is a TypeScript project using npm as package manager.
      DATABASE_URL=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@localhost:${PORT}/${POSTGRES_DB}
      ```
 
+* #### Run DB
+
+  ```
+  npm run start-db
+  ```
+
 * #### Run server
 
   ```
