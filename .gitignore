@@ -2,3 +2,4 @@ database.env
 node_modules/
 .env
 dist/
+.dblogs
