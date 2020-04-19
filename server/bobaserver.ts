@@ -1,8 +1,9 @@
 import express from "express";
 import dotenv from "dotenv";
+import dotenvExpand from "dotenv-expand";
 import { Pool } from "pg";
 
-dotenv.config();
+dotenvExpand(dotenv.config());
 const app = express();
 const port = process.env.PORT || 3000;
 
