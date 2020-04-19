@@ -10,7 +10,7 @@ jobs:
       - setup_remote_docker
       - node/with-cache:
           steps:
-            - run: echo "POSTGRES_USER=${POSTGRES_USER}\POSTGRES_PASSWORD=${POSTGRES_PASSWORD}\nPOSTGRES_DB=${POSTGRES_DB}" .env
+            - run: echo "POSTGRES_USER=${POSTGRES_USER}\POSTGRES_PASSWORD=${POSTGRES_PASSWORD}\nPOSTGRES_DB=${POSTGRES_DB}" > .env
             - run: npm install
             - run: npm test
 workflows:
