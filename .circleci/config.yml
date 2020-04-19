@@ -7,6 +7,7 @@ jobs:
       name: node/default
     steps:
       - checkout
+      - setup_remote_docker
       - node/with-cache:
           steps:
             - run: touch .env
