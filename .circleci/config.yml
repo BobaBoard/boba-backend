@@ -9,9 +9,10 @@ jobs:
       - checkout
       - node/with-cache:
           steps:
+            - run: touch .env
             - run: npm install
             - run: npm test
 workflows:
-    build-and-test:
-      jobs:
-        - build-and-test
+  build-and-test:
+    jobs:
+      - build-and-test
