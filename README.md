@@ -15,7 +15,7 @@ Bobaserver is a TypeScript project using npm as package manager.
      POSTGRES_USER=the_amazing_bobaboard
      POSTGRES_PASSWORD=how_secure_can_this_db_be
      POSTGRES_DB=bobaboard_test
-     PORT=35432
+     POSTGRES_PORT=35432
      ```
 
 * #### Run DB

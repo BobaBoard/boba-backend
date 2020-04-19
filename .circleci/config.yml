@@ -3,14 +3,14 @@ orbs:
   node: circleci/node@1.1.6
 jobs:
   build-and-test:
-    machine: true
     executor:
       name: node/default
     steps:
       - checkout
+      - setup_remote_docker
       - node/with-cache:
           steps:
-            - run: touch .env
+            - run: echo "POSTGRES_USER=${POSTGRES_USER}\POSTGRES_PASSWORD=${POSTGRES_PASSWORD}\nPOSTGRES_DB=${POSTGRES_DB}" .env
             - run: npm install
             - run: npm test
 workflows:
