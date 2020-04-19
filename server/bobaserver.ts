@@ -1,17 +1,26 @@
-import express from "express";
+import debug from "debug";
 import dotenv from "dotenv";
 import dotenvExpand from "dotenv-expand";
+import express from "express";
 import { Pool } from "pg";
 
+const log = debug("bobaserver:main");
+
 dotenvExpand(dotenv.config());
+const DATABASE_URL = `postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@localhost:${process.env.POSTGRES_PORT}/${process.env.POSTGRES_DB}`;
+
+log(`DB url: ${DATABASE_URL}`);
+
 const app = express();
 const port = process.env.PORT || 3000;
 
-const databaseConfig = { connectionString: process.env.DATABASE_URL };
+const databaseConfig = { connectionString: DATABASE_URL };
 const pool = new Pool(databaseConfig);
 
 app.get("/boards", async (req, res) => {
   const boardId = req.query.boardId;
+
+  log(`Fetching data for board with id ${boardId}`);
 
   const { rows } = await pool.query(
     `SELECT
