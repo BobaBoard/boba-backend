@@ -17,6 +17,8 @@ services:
         # There is still a race condition here for the init step of the db
         "/usr/src/git/wait-for-it/wait-for-it.sh",
         "localhost:35432",
+        "-t",
+        "120"
         "--",
         "npm",
         "run",
