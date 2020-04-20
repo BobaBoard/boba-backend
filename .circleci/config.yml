@@ -9,9 +9,8 @@ jobs:
       - node/with-cache:
           steps:
             - run: env > .env
-            - run: cat .env
             - run: npm install
-            - run: npm test
+            - run: npm run test-docker
 workflows:
   build-and-test:
     jobs:
