@@ -11,8 +11,11 @@ jobs:
           name: see files
           command: ls -la
       - run:
+          name: stop everything
+          command: docker-compose -f docker-compose.test.yml down
+      - run:
           name: run test
-          command: docker-compose -f docker-compose.test.yml up
+          command: docker-compose -f docker-compose.test.yml run --rm test
 workflows:
   build-and-test:
     jobs:
