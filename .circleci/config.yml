@@ -6,7 +6,7 @@ jobs:
     executor: docker/docker
     steps:
       - checkout
-      - setup_remote_docker
+      - install-docker-tools
       - run:
           name: create env file
           command: env > .env
