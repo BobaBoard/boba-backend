@@ -7,7 +7,6 @@ jobs:
       image: ubuntu-1604:201903-01
     steps:
       - checkout
-      - setup_remote_docker
       - node/with-cache:
           steps:
             - run: env > .env
