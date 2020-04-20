@@ -18,7 +18,7 @@ services:
         "/usr/src/git/wait-for-it/wait-for-it.sh",
         "localhost:35432",
         "-t",
-        "120"
+        "120",
         "--",
         "npm",
         "run",
