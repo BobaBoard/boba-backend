@@ -31,4 +31,5 @@ RUN npm install && \
 FROM dependencies AS development
 # Bundle app source
 COPY . .
+RUN npm run build
 EXPOSE 3000
