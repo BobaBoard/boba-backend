@@ -5,9 +5,9 @@ jobs:
   build-and-test:
     steps:
       - checkout
-      - setup_remote_docker
       - node/with-cache:
           steps:
+            - setup_remote_docker
             - run: env > .env
             - run: npm install
             - run: npm run test-docker
