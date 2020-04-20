@@ -1,20 +1,15 @@
 version: 2.1
+orbs:
+  docker: circleci/docker@1.0.1
 jobs:
   build-and-test:
-    executor:
-      machine:
-        image: ubuntu-1604:201903-01
+    executor: docker/docker
     steps:
       - checkout
       - setup_remote_docker
       - run:
-        name: Create required .env file
-        command: |
-          env > .env
-    - run:
-      name: Run npm
-      command: |
-        npm install && npm run test-docker
+          name: run test
+          command: docker-compose -f docker-compose.test.yml run --rm test
 workflows:
   build-and-test:
     jobs:
