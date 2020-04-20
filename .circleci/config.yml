@@ -7,10 +7,14 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - run: env > .env
-      - run: sudo apt-get install postgresql-client
-      - run: npm install
-      - run: npm run test-docker
+      - run:
+        name: Create required .env file
+        command: |
+          env > .env
+    - run:
+      name: Run npm
+      command: |
+        npm install && npm run test-docker
 workflows:
   build-and-test:
     jobs:
