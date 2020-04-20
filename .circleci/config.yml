@@ -1,12 +1,9 @@
 version: 2.1
-orbs:
-  docker: circleci/docker@1.0.1
 jobs:
   build-and-test:
-    executor: docker/docker
+    machine: true
     steps:
       - checkout
-      - setup_remote_docker
       - run:
           name: create env file
           command: env > .env
