@@ -1,7 +1,7 @@
 version: "3"
 services:
   database:
-    image: "postgres"
+    image: postgres:9.5.12-alpine
     env_file:
       - .env
     ports:
