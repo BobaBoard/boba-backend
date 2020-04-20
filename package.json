@@ -10,7 +10,7 @@
     "start": "node .",
     "start-db": "docker-compose down && docker-compose up",
     "test": "DEBUG=bobaserver:* ./node_modules/mocha/bin/mocha --timeout 3000 -r ts-node/register test/**/*.test.ts",
-    "test-docker": "docker-compose -f docker-compose.test.yml up"
+    "test-docker": "docker-compose -f docker-compose.test.yml run --rm test"
   },
   "repository": {
     "type": "git",
