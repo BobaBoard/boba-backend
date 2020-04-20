@@ -4,7 +4,7 @@ orbs:
 jobs:
   build-and-test:
     machine:
-      image: ubuntu-1604:201903-01
+      image: circleci/postgres:9.6-alpine
     steps:
       - checkout
       - node/with-cache:
