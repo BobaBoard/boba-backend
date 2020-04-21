@@ -1,0 +1,22 @@
+version: 2.1
+jobs:
+  build-and-test:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: create env file
+          command: env > .env
+      - run:
+          name: see files
+          command: ls -la
+      - run:
+          name: stop everything
+          command: docker-compose -f docker-compose.test.yml down
+      - run:
+          name: run test
+          command: docker-compose -f docker-compose.test.yml run --rm test
+workflows:
+  build-and-test:
+    jobs:
+      - build-and-test
