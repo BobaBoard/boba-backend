@@ -171,7 +171,6 @@ CREATE TABLE IF NOT EXISTS post_audits (
 
 CREATE TABLE IF NOT EXISTS comments (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
-    parent_thread BIGINT REFERENCES threads(id) ON DELETE RESTRICT NOT NULL,
     parent_post BIGINT REFERENCES posts(id) ON DELETE RESTRICT NOT NULL,
     parent_comment BIGINT REFERENCES comments(id) ON DELETE RESTRICT,
     author BIGINT REFERENCES users(id) ON DELETE RESTRICT,
@@ -184,7 +183,7 @@ CREATE TABLE IF NOT EXISTS comments (
     is_deleted BOOLEAN DEFAULT false,
     anonymity_type anonymity_type NOT NULL
 );
-CREATE INDEX comments_parent_thread on comments(parent_thread);
+CREATE INDEX comments_parent_post on comments(parent_post);
 CREATE INDEX comments_author on comments(author);
 
 
