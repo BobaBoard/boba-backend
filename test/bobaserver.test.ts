@@ -11,13 +11,15 @@ describe("Tests boards REST API", () => {
     });
 
     expect(res.status).to.equal(200);
+    expect(res.body.length).to.equal(1);
     expect(res.body[0]).to.eql({
       boardtitle: "Gore Central",
       boarddescription: "Everything the light touches is dead doves.",
       boardavatar: null,
       boardid: "gore",
-      threadcontent: "Hi this is  a second thread",
-      threadauthor: "oncest5evah",
+      threadtitle: "Favorite character to maim?",
+      threadcontent: '[{"insert":"Revolver Ocelot"}]',
+      threadauthor: "bobatan",
     });
   });
 });
