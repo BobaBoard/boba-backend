@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users
     username TEXT,
     /* Reference to the id of the image on external storage provider. */
     avatar_reference_id TEXT,
-    invited_by BIGINT REFERENCES users(id) NOT NULL
+    invited_by BIGINT REFERENCES users(id)
 );
 CREATE INDEX users_firebase_id on users(firebase_id);
 
@@ -96,7 +96,7 @@ CREATE INDEX board_watchers_user_id on board_watchers(user_id);
 CREATE TABLE IF NOT EXISTS secret_identities 
 (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
-    display_text TEXT NOT NULL,
+    display_name TEXT NOT NULL,
     /* Reference to the id of the image on external storage provider. */
     /* This can be null if generated on the fly*/
     avatar_reference_id TEXT
@@ -146,16 +146,16 @@ CREATE TABLE IF NOT EXISTS posts (
     type post_type NOT NULL,
     /** 
      * Whisper Tags are textual tags that do not get indicized but act as an extra
-     * space for comments
+     * space for comments.
      */
     whisper_tags TEXT[],
     /* Mark deleted rather than actually delete for moderation purposes. */
     is_deleted BOOLEAN DEFAULT false,
     anonymity_type anonymity_type NOT NULL
 );
-CREATE INDEX post_string_id on posts(string_id);
-CREATE INDEX post_parent_thread on posts(parent_thread);
-CREATE INDEX post_author on posts(author);
+CREATE INDEX posts_string_id on posts(string_id);
+CREATE INDEX posts_parent_thread on posts(parent_thread);
+CREATE INDEX posts_author on posts(author);
 
 CREATE TABLE IF NOT EXISTS post_tags (
     post_id BIGINT REFERENCES posts(id) ON DELETE RESTRICT NOT NULL,
