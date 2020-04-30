@@ -4,6 +4,29 @@ import pool from "../pool";
 const log = debug("bobaserver:board:queries-log");
 const error = debug("bobaserver:board:queries-error");
 
+export const getBoards = async (): Promise<any> => {
+  const query = `
+    SELECT 
+        boards.slug,
+        boards.title,
+        boards.description,
+        boards.avatar_reference_id,
+        boards.settings,
+        COUNT(threads.id) as threads_count
+    FROM boards
+    LEFT JOIN threads ON boards.id = threads.parent_board
+    GROUP BY boards.id`;
+
+  try {
+    const { rows } = await pool.query(query);
+    return rows;
+  } catch (e) {
+    error(`Error while fetching boards.`);
+    error(e);
+    return null;
+  }
+};
+
 export const getBoardBySlug = async (slug: string): Promise<any> => {
   const query = `
     SELECT 
