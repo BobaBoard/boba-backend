@@ -8,6 +8,7 @@
     "start": "ts-node server/bobaserver.ts",
     "start-db": "docker-compose down && docker-compose up",
     "test": "DEBUG=bobaserver:* ./node_modules/mocha/bin/mocha --timeout 3000 -r ts-node/register test/**/*.test.ts",
+    "test:watch": "DEBUG=bobaserver:* ./node_modules/mocha/bin/mocha --watch --watch-extensions ts --watch-files server --timeout 3000 -r ts-node/register test/**/*.test.ts",
     "test-docker": "docker-compose -f docker-compose.test.yml run --rm test"
   },
   "repository": {
