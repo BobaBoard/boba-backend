@@ -1,31 +1,22 @@
 import debug from "debug";
 import pool from "../pool";
 
-const log = debug("bobaserver:board:queries");
+const log = debug("bobaserver:board:queries-log");
+const error = debug("bobaserver:board:queries-error");
 
 export const getBoardBySlug = async (slug: string): Promise<any> => {
   const query = `
-    WITH board_threads AS
-        (SELECT
-        Threads.id as threads_id,
-        Boards.title as boards_title,
-        Threads.title as threads_title,
-        *
-        FROM Threads
-        LEFT JOIN Boards ON Threads.parent_board = Boards.id
-        WHERE Boards.slug=$1)
-    SELECT DISTINCT ON (Posts.parent_thread)
-    bt.boards_title as boardTitle,
-    bt.description as boardDescription,
-    bt.avatar_reference_id as boardAvatar,
-    bt.slug as boardId,
-    bt.threads_title as threadTitle,
-    Posts.content as threadContent,
-    Users.username as threadAuthor
-    FROM board_threads AS bt
-    LEFT JOIN Posts ON Posts.parent_thread = bt.threads_id
-    LEFT JOIN Users ON Posts.author = Users.id
-    ORDER BY Posts.parent_thread, Posts.created ASC`;
+    SELECT 
+        boards.slug,
+        boards.title,
+        boards.description,
+        boards.avatar_reference_id,
+        boards.settings,
+        COUNT(threads.id) as threads_count
+    FROM boards
+    LEFT JOIN threads ON boards.id = threads.parent_board
+    WHERE boards.slug=$1
+    GROUP BY boards.id`;
 
   try {
     const { rows } = await pool.query(query, [slug]);
@@ -36,22 +27,24 @@ export const getBoardBySlug = async (slug: string): Promise<any> => {
     }
     if (rows.length > 1) {
       // TODO: decide whether to throw
-      log(
+      error(
         `Error: found ${rows.length} boards while fetching board by slug (${slug}).`
       );
     }
 
     const result = rows[0];
-    log(`Found board result ${result}`);
+    log(`Got getBoardBySlug query result %O`, result);
     return {
-      title: result.boardtitle,
-      description: result.boarddescription,
-      avatar: result.boardavatar,
+      title: result.title,
+      description: result.description,
+      avatar: result.avatar_reference_id,
+      settings: result.settings,
       slug: result.slug,
+      threadsCount: result.threads_count,
     };
   } catch (e) {
-    log(`Error while fetching board by slug (${slug}).`);
-    log(e);
+    error(`Error while fetching board by slug (${slug}).`);
+    error(e);
     return null;
   }
 };

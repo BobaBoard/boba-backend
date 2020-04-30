@@ -6,20 +6,16 @@ import app from "../server/bobaserver";
 
 describe("Tests boards REST API", () => {
   it("should return board data", async () => {
-    const res = await request(app).get("/boards").query({
-      boardId: "gore",
-    });
+    const res = await request(app).get("/boards/gore");
 
     expect(res.status).to.equal(200);
-    expect(res.body.length).to.equal(1);
-    expect(res.body[0]).to.eql({
-      boardtitle: "Gore Central",
-      boarddescription: "Everything the light touches is dead doves.",
-      boardavatar: null,
-      boardid: "gore",
-      threadtitle: "Favorite character to maim?",
-      threadcontent: '[{"insert":"Revolver Ocelot"}]',
-      threadauthor: "bobatan",
+    expect(res.body).to.eql({
+      title: "Gore Central",
+      description: "Everything the light touches is dead doves.",
+      avatar: null,
+      slug: "gore",
+      threadsCount: "2",
+      settings: {},
     });
   });
 });

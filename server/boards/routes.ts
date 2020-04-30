@@ -11,7 +11,7 @@ router.get("/:slug", async (req, res) => {
   log(`Fetching data for board with slug ${slug}`);
 
   const board = await getBoardBySlug(slug);
-  log(`Found board ${board}`);
+  log(`Found board %O`, board);
 
   if (!board) {
     res.sendStatus(404);
