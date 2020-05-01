@@ -1,10 +1,15 @@
 import "mocha";
 import { expect } from "chai";
-import request from "supertest";
 
-import { getBoardBySlug } from "../queries";
+import { getBoards, getBoardBySlug } from "../queries";
 
 describe("Tests boards queries", () => {
+  it("fetches all boards", async () => {
+    const boards = await getBoards();
+
+    expect(boards.length).to.equal(3);
+  });
+
   it("fetches board by slug when slug present", async () => {
     const board = await getBoardBySlug("gore");
 
@@ -16,5 +21,11 @@ describe("Tests boards queries", () => {
       threadsCount: "2",
       settings: {},
     });
+  });
+
+  it("returns empty board when slugs not found", async () => {
+    const board = await getBoardBySlug("this_will_not_be_in_the_db");
+
+    expect(board).to.be.null;
   });
 });
