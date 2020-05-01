@@ -17,12 +17,24 @@ export const getThreadByStringId = async (threadId: string): Promise<any> => {
     FROM threads
     LEFT JOIN thread_posts
         ON threads.id = thread_posts.parent_thread
-    WHERE thread.string_id = $1
+    WHERE threads.string_id = $1
     GROUP BY threads.id`;
 
   try {
     const { rows } = await pool.query(query, [threadId]);
-    return rows;
+
+    if (rows.length === 0) {
+      log(`Thread not found: ${threadId}`);
+      return null;
+    }
+    if (rows.length > 1) {
+      // TODO: decide whether to throw
+      error(
+        `Error: found ${rows.length} thread while fetching thread by id (${threadId}).`
+      );
+    }
+
+    return rows[0];
   } catch (e) {
     error(`Error while fetching boards.`);
     error(e);
@@ -33,13 +45,14 @@ export const getThreadByStringId = async (threadId: string): Promise<any> => {
 export const getThreadIdentitiesByStringId = async (
   threadId: string
 ): Promise<any> => {
+  // TODO: hide non-friend identities directly from the queries to avoid accidental leaks.
   const query = `
         SELECT
             user_id as id,
             username,
             users.avatar_reference_id as user_avatar_reference_id,
             display_name,
-            secret_identity.avatar_reference_id as secret_identity_avatar_reference_id
+            secret_identities.avatar_reference_id as secret_identity_avatar_reference_id
         FROM user_thread_identities AS uti 
             LEFT JOIN users ON uti.user_id = users.id 
             LEFT JOIN secret_identities ON secret_identities.id = uti.identity_id 
@@ -48,6 +61,14 @@ export const getThreadIdentitiesByStringId = async (
 
   try {
     const { rows } = await pool.query(query, [threadId]);
+
+    log(rows);
+
+    if (rows.length === 0) {
+      log(`Thread not found: ${threadId}`);
+      return null;
+    }
+
     return rows;
   } catch (e) {
     error(`Error while fetching boards.`);
