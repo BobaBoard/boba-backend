@@ -24,6 +24,7 @@ router.get("/:id", async (req, res) => {
     res.sendStatus(404);
     return;
   }
+  // TODO: add identity management logic to thread
   res.status(200).json(thread);
 });
 
