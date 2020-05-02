@@ -105,10 +105,12 @@ CREATE TABLE IF NOT EXISTS secret_identities
 CREATE TABLE IF NOT EXISTS threads
 (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    string_id TEXT NOT NULL,
     parent_board BIGINT REFERENCES boards(id) ON DELETE RESTRICT NOT NULL,
     title TEXT NOT NULL
     /* TODO: decide what to do with threads with deleted posts */
 );
+CREATE INDEX threads_string_id on threads(string_id);
 
 /*
  * A mapping of which identity has been assigned to a user in each thread.
@@ -171,6 +173,7 @@ CREATE TABLE IF NOT EXISTS post_audits (
 
 CREATE TABLE IF NOT EXISTS comments (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    string_id TEXT NOT NULL,
     parent_post BIGINT REFERENCES posts(id) ON DELETE RESTRICT NOT NULL,
     parent_comment BIGINT REFERENCES comments(id) ON DELETE RESTRICT,
     author BIGINT REFERENCES users(id) ON DELETE RESTRICT,
@@ -183,6 +186,7 @@ CREATE TABLE IF NOT EXISTS comments (
     is_deleted BOOLEAN DEFAULT false,
     anonymity_type anonymity_type NOT NULL
 );
+CREATE INDEX comments_string_id on comments(string_id);
 CREATE INDEX comments_parent_post on comments(parent_post);
 CREATE INDEX comments_author on comments(author);
 
