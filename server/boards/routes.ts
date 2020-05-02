@@ -20,4 +20,19 @@ router.get("/:slug", async (req, res) => {
   res.status(200).json(board);
 });
 
+router.get("/:slug/activity/latest", async (req, res) => {
+  // TODO: implement. Gets latest activity from board named slug.
+  res.status(501);
+});
+
+router.get("/", async (req, res) => {
+  // TODO: implement. Gets all boards.
+  res.status(501);
+});
+
+router.get("/activity/latest", async (req, res) => {
+  // TODO: implement. Gets latest active boards.
+  res.status(501);
+});
+
 export default router;
