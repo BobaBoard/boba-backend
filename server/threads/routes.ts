@@ -28,4 +28,9 @@ router.get("/:id", async (req, res) => {
   res.status(200).json(thread);
 });
 
+router.get("/activity/latest", async (req, res) => {
+  // TODO: implement. Gets latest active threads.
+  res.status(501);
+});
+
 export default router;
