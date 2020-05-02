@@ -3,7 +3,7 @@ import { expect } from "chai";
 
 import { getThreadByStringId, getThreadIdentitiesByStringId } from "../queries";
 
-describe("Tests boards queries", () => {
+describe("Tests threads queries", () => {
   it("fetches threads by string id (with comments)", async () => {
     const thread = await getThreadByStringId(
       "29d1b2da-3289-454a-9089-2ed47db4967b"
@@ -18,7 +18,7 @@ describe("Tests boards queries", () => {
           author: 1,
           comments: null,
           content: '[{"insert":"Revolver Ocelot"}]',
-          created: "2020-04-30T05:42:47.218295",
+          created: "2020-04-30T05:42:00",
           id: 1,
           is_deleted: false,
           parent_thread: 1,
@@ -28,7 +28,7 @@ describe("Tests boards queries", () => {
         },
         {
           content: '[{"insert":"Kermit the Frog"}]',
-          created: "2020-04-30T05:47:47.218295",
+          created: "2020-04-30T05:47:00",
           id: 2,
           is_deleted: false,
           parent_thread: 1,
@@ -46,7 +46,7 @@ describe("Tests boards queries", () => {
               anonymity_type: "strangers",
               author: 1,
               content: '[{"insert":"OMG ME TOO"}]',
-              created: "2020-04-30T05:52:47.218295",
+              created: "2020-04-30T05:52:00",
               id: 1,
               image_reference_id: null,
               is_deleted: false,
@@ -58,7 +58,7 @@ describe("Tests boards queries", () => {
               anonymity_type: "strangers",
               author: 1,
               content: '[{"insert":"friends!!!!!"}]',
-              created: "2020-04-30T05:52:47.218295",
+              created: "2020-04-30T05:52:00",
               id: 2,
               image_reference_id: null,
               is_deleted: false,
@@ -89,11 +89,11 @@ describe("Tests boards queries", () => {
           author: 3,
           comments: null,
           content: '[{"insert":"Everything in The Evil Within tbh"}]',
-          created: "2020-04-30T05:42:47.25842",
+          created: "2020-04-30T05:42:00",
           id: 3,
           is_deleted: false,
           parent_thread: 2,
-          string_id: "1f1ad4fa-f02a-48c0-a78a-51221a7db170",
+          string_id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
           type: "text",
           whisper_tags: ["joseph oda is love", "joseph oda is life"],
         },
@@ -103,11 +103,11 @@ describe("Tests boards queries", () => {
           comments: null,
           content:
             '[{"insert":"(chants) Leon Kennedy! Leon Kennedy! Leon Kennedy!)"}]',
-          created: "2020-04-30T05:47:47.25842",
+          created: "2020-04-30T05:47:00",
           id: 4,
           is_deleted: false,
           parent_thread: 2,
-          string_id: "0c547d5e-9d37-49db-9092-17063ffff4fa",
+          string_id: "1f1ad4fa-f02a-48c0-a78a-51221a7db170",
           type: "text",
           whisper_tags: [
             "nothing beats a himbo getting gangbanged by a herd of hungry hungry zombies",
