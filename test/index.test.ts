@@ -2,7 +2,7 @@ import "mocha";
 import { expect } from "chai";
 import request from "supertest";
 
-import app from "../server/bobaserver";
+import app from "../server";
 
 describe("Tests boards REST API", () => {
   it("should return board data", async () => {
