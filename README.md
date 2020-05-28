@@ -1,6 +1,6 @@
 # BobaServer
 
-Welcome to BobaBoard's server project. This
+Welcome to BobaBoard's server project!
 
 ## Development Setup
 
