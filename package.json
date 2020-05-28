@@ -2,10 +2,10 @@
   "name": "bobaserver",
   "version": "1.0.0",
   "description": "Server for BobaBoard",
-  "main": "dist/server/bobaserver.js",
+  "main": "dist/server/index.js",
   "scripts": {
     "dev": "DEBUG=bobaserver:* nodemon .",
-    "start": "ts-node server/bobaserver.ts",
+    "start": "ts-node server/index.ts",
     "start-db": "docker-compose down && docker-compose up",
     "test": "DEBUG=bobaserver:* ./node_modules/mocha/bin/mocha --exclude './node_modules/**' --timeout 3000 -r ts-node/register './**/*.test.ts'",
     "test:watch": "npm run test  -- --watch --watch-extensions ts --watch-files . ",
