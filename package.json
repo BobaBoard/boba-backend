@@ -22,9 +22,12 @@
   },
   "homepage": "https://github.com/essential-randomness/bobaserver#readme",
   "dependencies": {
+    "@types/cors": "^2.8.6",
     "@types/debug": "^4.1.5",
     "@types/pg": "^7.14.3",
     "@types/supertest": "^2.0.8",
+    "cors": "^2.8.5",
+    "cors-express": "^0.2.2",
     "debug": "^4.1.1",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
