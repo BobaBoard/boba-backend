@@ -53,9 +53,12 @@ Bobaserver is a TypeScript project using npm as package manager.
   npm run test:watch
   ```
 - #### Use Docker for Tests (useful for CircleCI errors)
+
   ```
   npm run test:docker
   ```
+
+  Note: if you get a "module not found" Typescript error try running `docker-compose -f docker-compose.test.yml up --build` to fix it.
 
 ## How to Add a New Set of API Routes
 
@@ -63,3 +66,21 @@ Bobaserver is a TypeScript project using npm as package manager.
 - Add a queries.ts file for the queries, a routes.ts for the routes and tests
   - For reference see e.g. /server/boards/
 - Add the new route to /server/all-routest.ts
+
+# Unofficial "until we find a better way" REST API documentation
+
+### Board Methods
+
+- #### /board/[id](GET)
+  - Response
+    ```
+      {
+        slug: string;
+        avatarUrl: string;
+        tagline: string;
+        settings: {
+          accentColor?: string;
+        }
+      }
+    ```
+-

@@ -1,10 +1,19 @@
 import debug from "debug";
 import express from "express";
-import { getBoardBySlug } from "./queries";
+import { getBoardBySlug, getBoardActivityBySlug } from "./queries";
 
 const log = debug("bobaserver:board:routes");
 
 const router = express.Router();
+
+const turnReferencesIntoUrls = (response: any) => {
+  if (response.avatar) {
+    response.avatarUrl = `/${response.avatar}`;
+  }
+  delete response.avatar;
+
+  return response;
+};
 
 router.get("/:slug", async (req, res) => {
   const { slug } = req.params;
@@ -17,12 +26,21 @@ router.get("/:slug", async (req, res) => {
     res.sendStatus(404);
     return;
   }
-  res.status(200).json(board);
+  res.status(200).json(turnReferencesIntoUrls(board));
 });
 
 router.get("/:slug/activity/latest", async (req, res) => {
-  // TODO: implement. Gets latest activity from board named slug.
-  res.status(501);
+  const { slug } = req.params;
+  log(`Fetching activity data for board with slug ${slug}`);
+
+  const activity = await getBoardActivityBySlug(slug);
+  log(`Found activity for board %0: %1`, slug, activity);
+
+  if (!activity) {
+    res.sendStatus(404);
+    return;
+  }
+  res.status(200).json(activity);
 });
 
 router.get("/", async (req, res) => {
