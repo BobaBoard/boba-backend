@@ -8,8 +8,7 @@ export const getBoards = async (): Promise<any> => {
   const query = `
     SELECT 
         boards.slug,
-        boards.title,
-        boards.description,
+        boards.tagline,
         boards.avatar_reference_id,
         boards.settings,
         COUNT(threads.id) as threads_count
@@ -31,8 +30,7 @@ export const getBoardBySlug = async (slug: string): Promise<any> => {
   const query = `
     SELECT 
         boards.slug,
-        boards.title,
-        boards.description,
+        boards.tagline,
         boards.avatar_reference_id,
         boards.settings,
         COUNT(threads.id) as threads_count
@@ -58,13 +56,88 @@ export const getBoardBySlug = async (slug: string): Promise<any> => {
     const result = rows[0];
     log(`Got getBoardBySlug query result %O`, result);
     return {
-      title: result.title,
-      description: result.description,
+      tagline: result.tagline,
       avatar: result.avatar_reference_id,
       settings: result.settings,
       slug: result.slug,
       threadsCount: result.threads_count,
     };
+  } catch (e) {
+    error(`Error while fetching board by slug (${slug}).`);
+    error(e);
+    return null;
+  }
+};
+
+export const getBoardActivityBySlug = async (slug: string): Promise<any> => {
+  const query = `
+    WITH 
+        thread_identities AS
+            (SELECT
+              uti.thread_id as thread_id,
+              uti.user_id as user_id,
+              users.username as username,
+              secret_identities.display_name as secret_identity
+             FROM user_thread_identities AS uti 
+             INNER JOIN users 
+                  ON uti.user_id = users.id 
+             INNER JOIN secret_identities 
+                  ON secret_identities.id = uti.identity_id)
+    SELECT
+      outer_posts.string_id as post_id,
+      threads_id,
+      username,
+      secret_identity,
+      TO_CHAR(created, 'YYYY-MM-DD"T"HH:MI:SS') as created,
+      content,
+      posts_amount,
+      threads_amount.count as threads_amount,
+      comments_amount.count as comments_amount,
+      TO_CHAR(GREATEST(first_post, last_post), 'YYYY-MM-DD"T"HH:MI:SS') as last_activity
+    FROM
+      (SELECT
+           threads.id as threads_id,
+           MIN(posts.created) as first_post,
+           MAX(posts.created) as last_post,
+           MAX(comments.created) as last_comments,
+           COUNT(DISTINCT posts.id) as posts_amount
+       FROM boards 
+       INNER JOIN threads
+           ON boards.id = threads.parent_board
+       INNER JOIN posts
+          ON posts.parent_thread = threads.id
+       LEFT JOIN comments
+           ON comments.parent_thread = threads.id
+       WHERE boards.slug = $1
+       GROUP BY
+         threads.id, boards.id) as thread_updates
+    LEFT JOIN posts as outer_posts
+      ON thread_updates.threads_id = outer_posts.parent_thread AND outer_posts.created = thread_updates.first_post
+    LEFT JOIN thread_identities
+      ON thread_identities.user_id = outer_posts.author AND thread_identities.thread_id = outer_posts.parent_thread
+    LEFT JOIN LATERAL (SELECT COUNT(*) as count FROM posts WHERE posts.parent_post = outer_posts.id) as threads_amount
+      ON true
+    LEFT JOIN LATERAL (SELECT COUNT(*) as count FROM comments WHERE comments.parent_post = outer_posts.id) as comments_amount
+        ON true
+    ORDER BY last_activity`;
+
+  try {
+    const { rows } = await pool.query(query, [slug]);
+
+    if (rows.length === 0) {
+      log(`Board not found: ${slug}`);
+      return null;
+    }
+    if (rows.length > 1) {
+      // TODO: decide whether to throw
+      error(
+        `Error: found ${rows.length} boards while fetching board by slug (${slug}).`
+      );
+    }
+
+    const result = rows;
+    log(`Got getBoardActivityBySlug query result %O`, result);
+    return result;
   } catch (e) {
     error(`Error while fetching board by slug (${slug}).`);
     error(e);

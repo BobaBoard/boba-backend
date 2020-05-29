@@ -51,8 +51,7 @@ CREATE TABLE IF NOT EXISTS boards
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     /* Textual id of the board, e.g. "main", "anime", "memes". Used as part of the url. */
     slug TEXT NOT NULL,
-    title TEXT NOT NULL,
-    description TEXT NOT NULL,
+    tagline TEXT NOT NULL,
     /* Reference to the id of the image on external storage provider. */
     avatar_reference_id TEXT,
     settings JSONB NOT NULL
@@ -106,8 +105,7 @@ CREATE TABLE IF NOT EXISTS threads
 (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     string_id TEXT NOT NULL,
-    parent_board BIGINT REFERENCES boards(id) ON DELETE RESTRICT NOT NULL,
-    title TEXT NOT NULL
+    parent_board BIGINT REFERENCES boards(id) ON DELETE RESTRICT NOT NULL
     /* TODO: decide what to do with threads with deleted posts */
 );
 CREATE INDEX threads_string_id on threads(string_id);
@@ -141,6 +139,7 @@ CREATE TABLE IF NOT EXISTS posts (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     string_id TEXT NOT NULL,
     parent_thread BIGINT REFERENCES threads(id) ON DELETE RESTRICT NOT NULL,
+    parent_post BIGINT REFERENCES posts(id) ON DELETE RESTRICT,
     author BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
     /* UTC timestamp. */
     created timestamp NOT NULL DEFAULT now(),
@@ -174,6 +173,7 @@ CREATE TABLE IF NOT EXISTS post_audits (
 CREATE TABLE IF NOT EXISTS comments (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     string_id TEXT NOT NULL,
+    parent_thread BIGINT REFERENCES threads(id) ON DELETE RESTRICT NOT NULL,
     parent_post BIGINT REFERENCES posts(id) ON DELETE RESTRICT NOT NULL,
     parent_comment BIGINT REFERENCES comments(id) ON DELETE RESTRICT,
     author BIGINT REFERENCES users(id) ON DELETE RESTRICT,
@@ -187,6 +187,7 @@ CREATE TABLE IF NOT EXISTS comments (
     anonymity_type anonymity_type NOT NULL
 );
 CREATE INDEX comments_string_id on comments(string_id);
+CREATE INDEX comments_parent_thread on comments(parent_thread);
 CREATE INDEX comments_parent_post on comments(parent_post);
 CREATE INDEX comments_author on comments(author);
 
