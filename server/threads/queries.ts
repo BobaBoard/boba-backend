@@ -1,8 +1,8 @@
 import debug from "debug";
 import pool from "../pool";
 
-const log = debug("bobaserver:board:queries-log");
-const error = debug("bobaserver:board:queries-error");
+const log = debug("bobaserver:threads:queries-log");
+const error = debug("bobaserver:threads:queries-error");
 
 export const getThreadByStringId = async (threadId: string): Promise<any> => {
   const query = `
@@ -36,7 +36,7 @@ export const getThreadByStringId = async (threadId: string): Promise<any> => {
 
     return rows[0];
   } catch (e) {
-    error(`Error while fetching boards.`);
+    error(`Error while fetching threads.`);
     error(e);
     return null;
   }

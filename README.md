@@ -31,7 +31,6 @@ Bobaserver is a TypeScript project using npm as package manager.
 
   ```
   npm run start
-
   ```
 
 - #### Connect to Postgres (for testing queries)
@@ -71,7 +70,7 @@ Bobaserver is a TypeScript project using npm as package manager.
 
 ### Board Methods
 
-- #### /board/[id](GET)
+- #### /board/[id] \(GET)
   - Response
     ```
       {
@@ -83,4 +82,27 @@ Bobaserver is a TypeScript project using npm as package manager.
         }
       }
     ```
--
+- #### /posts/[id]/contribute (POST)
+  - Request
+    ```
+      {
+        content: string,
+        forceAnonymous: bool,
+      }
+    ```
+  - Response
+    ```
+      {
+        id: number,
+        string_id: string,
+        parent_thread: number,
+        parent_post: number,
+        author: number,
+        created: timestamp,
+        content: string,
+        type: 'text',
+        whisper_tags?: string[],
+        is_deleted: bool,
+        anonymity_type: string
+      }
+    ```

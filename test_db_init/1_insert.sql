@@ -137,3 +137,28 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
      ((SELECT id FROM new_thread_id),
       (SELECT id FROM Users WHERE username = 'bobatan'),
       (SELECT id FROM secret_identities WHERE display_name = 'Evil Moth'));
+
+WITH
+  new_thread_id AS
+    (INSERT INTO threads(string_id, parent_board)
+      VALUES (
+        'b27710a8-0a9f-4c09-b3a5-54668bab7051',
+        (SELECT id FROM boards WHERE slug = 'anime'))
+     RETURNING id),
+  posts_insert AS 
+    (INSERT INTO posts(string_id, parent_post, parent_thread, author, content, type, whisper_tags, anonymity_type, created)
+      VALUES
+        ('987f795b-d60d-4016-af82-8684411f7785',
+         NULL,
+         (SELECT id FROM new_thread_id),
+         (SELECT id FROM Users WHERE username = 'bobatan'),
+         '[{"insert":"Stuff will be inserted here!"}]', 
+         'text', 
+         ARRAY['this is a test post'], 
+         'strangers',
+         to_timestamp('2020-04-24 05:42:00', 'YYYY-MM-DD HH:MI:SS')))
+INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
+    VALUES
+     ((SELECT id FROM new_thread_id),
+      (SELECT id FROM Users WHERE username = 'bobatan'),
+      (SELECT id FROM secret_identities WHERE display_name = 'Evil Moth'));
