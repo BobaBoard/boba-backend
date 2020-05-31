@@ -1,9 +1,5 @@
 import debug from "debug";
-import dotenv from "dotenv";
-import dotenvExpand from "dotenv-expand";
 import { Pool } from "pg";
-
-dotenvExpand(dotenv.config());
 
 const log = debug("bobaserver:pool");
 

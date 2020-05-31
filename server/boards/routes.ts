@@ -1,6 +1,7 @@
 import debug from "debug";
 import express from "express";
 import { getBoardBySlug, getBoardActivityBySlug } from "./queries";
+import { isLoggedIn } from "../auth-handler";
 
 const log = debug("bobaserver:board:routes");
 
@@ -29,7 +30,7 @@ router.get("/:slug", async (req, res) => {
   res.status(200).json(turnReferencesIntoUrls(board));
 });
 
-router.get("/:slug/activity/latest", async (req, res) => {
+router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
   log(`Fetching activity data for board with slug ${slug}`);
 

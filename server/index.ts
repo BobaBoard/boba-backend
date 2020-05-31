@@ -2,6 +2,18 @@ import debug from "debug";
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
+import firebaseAuth from "firebase-admin";
+import dotenv from "dotenv";
+import dotenvExpand from "dotenv-expand";
+
+dotenvExpand(dotenv.config());
+
+const serviceAccount = require(process.env.GOOGLE_APPLICATION_CREDENTIALS_PATH);
+
+const firebaseApp = firebaseAuth.initializeApp({
+  credential: firebaseAuth.credential.cert(serviceAccount),
+});
+
 import { applyRoutes } from "./all-routes";
 
 const log = debug("bobaserver:main");
