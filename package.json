@@ -8,7 +8,7 @@
     "start": "ts-node server/index.ts",
     "start:watch": "nodemon --exec 'ts-node' server/index.ts",
     "start-db": "docker-compose down && docker-compose up",
-    "test": "DEBUG=bobaserver:* ./node_modules/mocha/bin/mocha --exclude './node_modules/**' --timeout 3000 -r ts-node/register './**/*.test.ts'",
+    "test": "DEBUG=bobaserver:* ./node_modules/mocha/bin/mocha --exclude './node_modules/**' --timeout 3000 -r ts-node/register -r dotenv/config './**/*.test.ts'",
     "test:watch": "npm run test  -- --watch --watch-extensions ts --watch-files . ",
     "test:docker": "docker-compose -f docker-compose.test.yml run --rm test"
   },
