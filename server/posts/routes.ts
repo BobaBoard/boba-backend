@@ -1,16 +1,26 @@
 import debug from "debug";
 import express from "express";
 import { postNewContribution } from "./queries";
+import { isLoggedIn } from "../auth-handler";
 
 const info = debug("bobaserver:posts:routes:info");
 const log = debug("bobaserver:posts:routes");
 
 const router = express.Router();
 
-router.post("/:postId/contribute", async (req, res) => {
+router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
   const { postId } = req.params;
   log(`body: `, req.body);
+  // @ts-ignore
+  log(`user`, req.currentUser);
   const { content, forceAnonymous } = req.body;
+
+  // @ts-ignore
+  if (!req.currentUser) {
+    res.sendStatus(403);
+    return;
+  }
+
   log(`Making countribution to post with id ${postId}`);
   log(`Content: `, content);
   log(`Anonymous: `, forceAnonymous);
