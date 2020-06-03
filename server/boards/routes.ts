@@ -1,6 +1,6 @@
 import debug from "debug";
 import express from "express";
-import { getBoardBySlug, getBoardActivityBySlug } from "./queries";
+import { getBoardBySlug, getBoardActivityBySlug, getBoards } from "./queries";
 import { isLoggedIn } from "../auth-handler";
 
 const log = debug("bobaserver:board:routes");
@@ -45,8 +45,8 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
 });
 
 router.get("/", async (req, res) => {
-  // TODO: implement. Gets all boards.
-  res.status(501);
+  const boards = await getBoards();
+  res.status(200).json(boards);
 });
 
 router.get("/activity/latest", async (req, res) => {
