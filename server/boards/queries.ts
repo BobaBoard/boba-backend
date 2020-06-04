@@ -100,7 +100,7 @@ export const getBoardActivityBySlug = async ({
                   ON secret_identities.id = uti.identity_id)
     SELECT
       outer_posts.string_id as post_id,
-      threads_id,
+      threads_string_id as thread_id,
       user_id,
       username,
       user_avatar,
@@ -115,6 +115,7 @@ export const getBoardActivityBySlug = async ({
       is_friend.friend
     FROM
       (SELECT
+           threads.string_id as threads_string_id,
            threads.id as threads_id,
            MIN(posts.created) as first_post,
            MAX(posts.created) as last_post,
