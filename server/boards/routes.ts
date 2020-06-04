@@ -19,12 +19,12 @@ const turnReferencesIntoUrls = (response: any) => {
 const mergeIdentities = (activity: any[]) => {
   return activity.map((post: any) => {
     if (post.friend) {
-      post.userIdentity = {
+      post.user_identity = {
         name: post.username,
         avatar: post.user_avatar,
       };
     }
-    post.secretIdentity = {
+    post.secret_identity = {
       name: post.secret_identity,
       avatar: post.secret_avatar,
     };
@@ -32,7 +32,6 @@ const mergeIdentities = (activity: any[]) => {
     delete post.username;
     delete post.user_avatar;
     delete post.user_id;
-    delete post.secret_identity;
     delete post.secret_avatar;
 
     return post;
