@@ -69,7 +69,20 @@ export const getBoardBySlug = async (slug: string): Promise<any> => {
   }
 };
 
-export const getBoardActivityBySlug = async (slug: string): Promise<any> => {
+export const getBoardActivityBySlug = async ({
+  slug,
+  firebaseId,
+}: {
+  slug: string;
+  firebaseId: string;
+}): Promise<any> => {
+  let userId;
+  if (firebaseId) {
+    const userQuery = "SELECT id FROM users WHERE firebase_id = $1 LIMIT 1";
+    const userRes = await pool.query(userQuery, [firebaseId]);
+    userId = userId = userRes?.rows?.[0].id;
+  }
+
   const query = `
     WITH 
         thread_identities AS
@@ -77,7 +90,9 @@ export const getBoardActivityBySlug = async (slug: string): Promise<any> => {
               uti.thread_id as thread_id,
               uti.user_id as user_id,
               users.username as username,
-              secret_identities.display_name as secret_identity
+              users.avatar_reference_id as user_avatar,
+              secret_identities.display_name as secret_identity,
+              secret_identities.avatar_reference_id as secret_avatar
              FROM user_thread_identities AS uti 
              INNER JOIN users 
                   ON uti.user_id = users.id 
@@ -86,14 +101,18 @@ export const getBoardActivityBySlug = async (slug: string): Promise<any> => {
     SELECT
       outer_posts.string_id as post_id,
       threads_id,
+      user_id,
       username,
+      user_avatar,
       secret_identity,
+      secret_avatar,
       TO_CHAR(created, 'YYYY-MM-DD"T"HH:MI:SS') as created,
       content,
       posts_amount,
       threads_amount.count as threads_amount,
       comments_amount.count as comments_amount,
-      TO_CHAR(GREATEST(first_post, last_post), 'YYYY-MM-DD"T"HH:MI:SS') as last_activity
+      TO_CHAR(GREATEST(first_post, last_post), 'YYYY-MM-DD"T"HH:MI:SS') as last_activity,
+      is_friend.friend
     FROM
       (SELECT
            threads.id as threads_id,
@@ -119,10 +138,12 @@ export const getBoardActivityBySlug = async (slug: string): Promise<any> => {
       ON true
     LEFT JOIN LATERAL (SELECT COUNT(*) as count FROM comments WHERE comments.parent_post = outer_posts.id) as comments_amount
         ON true
-    ORDER BY last_activity`;
+    LEFT JOIN LATERAL (SELECT true as friend FROM friends WHERE friends.user_id = $2 AND friends.friend_id = user_id limit 1) as is_friend 
+        ON true
+    ORDER BY last_activity DESC`;
 
   try {
-    const { rows } = await pool.query(query, [slug]);
+    const { rows } = await pool.query(query, [slug, userId]);
 
     if (rows.length === 0) {
       log(`Board not found: ${slug}`);

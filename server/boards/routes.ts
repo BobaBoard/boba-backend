@@ -16,6 +16,29 @@ const turnReferencesIntoUrls = (response: any) => {
   return response;
 };
 
+const mergeIdentities = (activity: any[]) => {
+  return activity.map((post: any) => {
+    if (post.friend) {
+      post.userIdentity = {
+        name: post.username,
+        avatar: post.user_avatar,
+      };
+    }
+    post.secretIdentity = {
+      name: post.secret_identity,
+      avatar: post.secret_avatar,
+    };
+
+    delete post.username;
+    delete post.user_avatar;
+    delete post.user_id;
+    delete post.secret_identity;
+    delete post.secret_avatar;
+
+    return post;
+  });
+};
+
 router.get("/:slug", async (req, res) => {
   const { slug } = req.params;
   log(`Fetching data for board with slug ${slug}`);
@@ -34,14 +57,18 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
   log(`Fetching activity data for board with slug ${slug}`);
 
-  const activity = await getBoardActivityBySlug(slug);
+  const activity = await getBoardActivityBySlug({
+    slug,
+    // @ts-ignore
+    firebaseId: req.currentUser?.uid,
+  });
   log(`Found activity for board %0: %1`, slug, activity);
 
   if (!activity) {
     res.sendStatus(404);
     return;
   }
-  res.status(200).json(activity);
+  res.status(200).json(mergeIdentities(activity));
 });
 
 router.get("/", async (req, res) => {
