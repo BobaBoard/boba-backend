@@ -15,15 +15,43 @@ export const getThreadByStringId = async ({
   const query = `
     WITH
         thread_comments AS
-            (SELECT parent_post, json_agg(row_to_json(comments)) as comments FROM comments GROUP BY parent_post),
+            (SELECT 
+              comments.parent_post, 
+              json_agg(json_build_object(
+                'id', comments.string_id,
+                'parent_post', parent.string_id,
+                'author', comments.author,
+                'content', comments.content,
+                'created', comments.created,
+                'anonymity_type', comments.anonymity_type
+              )) as comments 
+              FROM comments 
+              LEFT JOIN posts as parent
+               ON comments.parent_post = parent.id
+              GROUP BY comments.parent_post),
         thread_posts AS
-            (SELECT posts.*, thread_comments.comments FROM posts LEFT JOIN thread_comments ON posts.id = thread_comments.parent_post)
+            (SELECT 
+              posts.string_id as id,
+              posts.parent_thread as parent_thread_id,
+              parent.string_id as parent_post_id,
+              posts.author,
+              posts.created,
+              posts.content,
+              posts.type,
+              posts.whisper_tags,
+              posts.anonymity_type,
+              thread_comments.comments 
+             FROM posts
+             LEFT JOIN posts as parent
+              ON posts.parent_post = parent.id
+             LEFT JOIN thread_comments 
+              ON posts.id = thread_comments.parent_post)
     SELECT 
-        threads.*, 
+        threads.string_id, 
         json_agg(row_to_json(thread_posts)) as posts
     FROM threads
     LEFT JOIN thread_posts
-        ON threads.id = thread_posts.parent_thread
+        ON threads.id = thread_posts.parent_thread_id
     WHERE threads.string_id = $1
     GROUP BY threads.id`;
 
@@ -49,30 +77,40 @@ export const getThreadByStringId = async ({
   }
 };
 
-export const getThreadIdentitiesByStringId = async (
-  threadId: string
-): Promise<any> => {
-  // TODO: hide non-friend identities directly from the queries to avoid accidental leaks.
+export const getThreadIdentitiesByStringId = async ({
+  id,
+  user,
+}: {
+  id: string;
+  user?: string;
+}): Promise<any> => {
+  let userRes;
+  if (user) {
+    const userQuery = "SELECT id FROM users WHERE firebase_id = $1 LIMIT 1";
+    userRes = await pool.query(userQuery, [user]);
+  }
   const query = `
         SELECT
             user_id as id,
             username,
             users.avatar_reference_id as user_avatar_reference_id,
             display_name,
-            secret_identities.avatar_reference_id as secret_identity_avatar_reference_id
+            secret_identities.avatar_reference_id as secret_identity_avatar_reference_id,
+            is_friend.friend
         FROM user_thread_identities AS uti 
             LEFT JOIN users ON uti.user_id = users.id 
             LEFT JOIN secret_identities ON secret_identities.id = uti.identity_id 
             LEFT JOIN threads ON threads.id = uti.thread_id
-        WHERE threads.string_id = $1`;
+            LEFT JOIN LATERAL (SELECT true as friend FROM friends WHERE friends.user_id = $1 AND friends.user_id = users.id limit 1) as is_friend ON 1=1 
+        WHERE threads.string_id = $2`;
 
   try {
-    const { rows } = await pool.query(query, [threadId]);
+    const { rows } = await pool.query(query, [userRes?.rows?.[0].id, id]);
 
     log(rows);
 
     if (rows.length === 0) {
-      log(`Thread not found: ${threadId}`);
+      log(`Thread not found: ${id}`);
       return null;
     }
 
