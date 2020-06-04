@@ -5,7 +5,13 @@ import { v4 as uuidv4 } from "uuid";
 const log = debug("bobaserver:threads:queries-log");
 const error = debug("bobaserver:threads:queries-error");
 
-export const getThreadByStringId = async (threadId: string): Promise<any> => {
+export const getThreadByStringId = async ({
+  id,
+  user,
+}: {
+  id: string;
+  user?: string;
+}): Promise<any> => {
   const query = `
     WITH
         thread_comments AS
@@ -22,16 +28,16 @@ export const getThreadByStringId = async (threadId: string): Promise<any> => {
     GROUP BY threads.id`;
 
   try {
-    const { rows } = await pool.query(query, [threadId]);
+    const { rows } = await pool.query(query, [id]);
 
     if (rows.length === 0) {
-      log(`Thread not found: ${threadId}`);
+      log(`Thread not found: ${id}`);
       return null;
     }
     if (rows.length > 1) {
       // TODO: decide whether to throw
       error(
-        `Error: found ${rows.length} thread while fetching thread by id (${threadId}).`
+        `Error: found ${rows.length} thread while fetching thread by id (${id}).`
       );
     }
 

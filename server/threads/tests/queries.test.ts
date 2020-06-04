@@ -5,9 +5,9 @@ import { getThreadByStringId, getThreadIdentitiesByStringId } from "../queries";
 
 describe("Tests threads queries", () => {
   it("fetches threads by string id (with comments)", async () => {
-    const thread = await getThreadByStringId(
-      "29d1b2da-3289-454a-9089-2ed47db4967b"
-    );
+    const thread = await getThreadByStringId({
+      id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+    });
 
     expect(thread).to.eql({
       id: "1",
@@ -92,9 +92,9 @@ describe("Tests threads queries", () => {
   });
 
   it("fetches threads by string id (no comments)", async () => {
-    const thread = await getThreadByStringId(
-      "a5c903df-35e8-43b2-a41a-208c43154671"
-    );
+    const thread = await getThreadByStringId({
+      id: "a5c903df-35e8-43b2-a41a-208c43154671",
+    });
     expect(thread).to.eql({
       id: "2",
       parent_board: "2",
@@ -150,7 +150,9 @@ describe("Tests threads queries", () => {
   });
 
   it("returns null thread when id not found", async () => {
-    const thread = await getThreadByStringId("this_will_not_be_in_the_db");
+    const thread = await getThreadByStringId({
+      id: "this_will_not_be_in_the_db",
+    });
 
     expect(thread).to.be.null;
   });
