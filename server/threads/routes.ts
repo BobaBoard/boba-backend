@@ -12,18 +12,16 @@ const log = debug("bobaserver:threads:routes");
 
 const router = express.Router();
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", isLoggedIn, async (req, res) => {
   const { id } = req.params;
   log(`Fetching data for thread with id ${id}`);
 
-  // We do two separate queries for now. It's not ideal
-  // but it beats writing a complex SQL query.
-  const [thread, identities] = await Promise.all([
-    getThreadByStringId(id),
-    getThreadIdentitiesByStringId(id),
-  ]);
+  const thread = await getThreadByStringId({
+    id,
+    // @ts-ignore
+    user: req.currentUser?.uid,
+  });
   info(`Found thread %O`, thread);
-  info(`Found identities %O`, identities);
 
   if (!thread) {
     res.sendStatus(404);
@@ -39,6 +37,10 @@ router.get("/activity/latest", async (req, res) => {
 });
 
 router.post("/:boardSlug/create", isLoggedIn, async (req, res) => {
+  // @ts-ignore
+  if (!req.currentUser) {
+    return res.sendStatus(301);
+  }
   const { boardSlug } = req.params;
   log(`Creating thread in board with slug ${boardSlug}`);
   const { content, forceAnonymous } = req.body;
@@ -56,7 +58,13 @@ router.post("/:boardSlug/create", isLoggedIn, async (req, res) => {
     res.sendStatus(500);
     return;
   }
-  res.status(200).json(await getThreadByStringId(threadStringId));
+  res.status(200).json(
+    await getThreadByStringId({
+      id: threadStringId,
+      // @ts-ignore
+      user: req.currentUser.uid,
+    })
+  );
 });
 
 export default router;
