@@ -8,7 +8,7 @@ VALUES
   
 INSERT INTO Users(firebase_id, username, invited_by)
 VALUES
-    ('fb1', 'bobatan', NULL);
+    ('c6HimTlg2RhVH3fC1psXZORdLcx2', 'bobatan', NULL);
 
 INSERT INTO Users(firebase_id, username, invited_by)
 VALUES
