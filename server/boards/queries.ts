@@ -53,15 +53,8 @@ export const getBoardBySlug = async (slug: string): Promise<any> => {
       );
     }
 
-    const result = rows[0];
-    log(`Got getBoardBySlug query result %O`, result);
-    return {
-      tagline: result.tagline,
-      avatar: result.avatar_reference_id,
-      settings: result.settings,
-      slug: result.slug,
-      threadsCount: result.threads_count,
-    };
+    log(`Got getBoardBySlug query result %O`, rows[0]);
+    return rows[0];
   } catch (e) {
     error(`Error while fetching board by slug (${slug}).`);
     error(e);
