@@ -47,3 +47,44 @@ export const postNewContribution = async ({
     return null;
   }
 };
+
+export const postNewComment = async ({
+  userId,
+  replyTo,
+  content,
+  anonymityType,
+}: {
+  userId: number;
+  replyTo: string;
+  content: string;
+  anonymityType: string;
+}): Promise<any> => {
+  const query = `
+      INSERT INTO comments(string_id, parent_post, parent_thread, author, content, anonymity_type)
+      VALUES(
+        $1,
+        (SELECT id FROM posts WHERE posts.string_id = $2),
+        (SELECT parent_thread FROM posts WHERE posts.string_id = $2),
+        $3,
+        $4,
+        $5
+      ) RETURNING *`;
+
+  try {
+    const { rows } = await pool.query(query, [
+      uuidv4(),
+      replyTo,
+      userId,
+      content,
+      anonymityType,
+    ]);
+
+    log(`Post insertion successful. Result: `, rows[0]);
+
+    return rows[0];
+  } catch (e) {
+    error(`Error while fetching boards.`);
+    error(e);
+    return null;
+  }
+};
