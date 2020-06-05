@@ -2,23 +2,11 @@ import debug from "debug";
 import express from "express";
 import { getBoardBySlug, getBoardActivityBySlug, getBoards } from "./queries";
 import { isLoggedIn } from "../auth-handler";
+import { transformImageUrls } from "../response-utils";
 
 const log = debug("bobaserver:board:routes");
 
 const router = express.Router();
-
-const turnReferencesIntoUrls = (response: any) => {
-  if (response.avatar) {
-    if (response.avatar.startsWith("http")) {
-      response.avatarUrl = response.avatar;
-    } else {
-      response.avatarUrl = `/${response.avatar}`;
-    }
-  }
-  delete response.avatar;
-
-  return response;
-};
 
 const mergeIdentities = (activity: any[]) => {
   return activity.map((post: any) => {
@@ -53,7 +41,7 @@ router.get("/:slug", async (req, res) => {
     res.sendStatus(404);
     return;
   }
-  res.status(200).json(turnReferencesIntoUrls(board));
+  res.status(200).json(transformImageUrls(board));
 });
 
 router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
@@ -76,7 +64,7 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
 
 router.get("/", async (req, res) => {
   const boards = await getBoards();
-  res.status(200).json(boards);
+  res.status(200).json(boards.map((board: any) => transformImageUrls(board)));
 });
 
 router.get("/activity/latest", async (req, res) => {
