@@ -1,6 +1,7 @@
 database.env
 node_modules/
 .env
+.env.prod
 dist/
 .dblogs
 firebase-sdk.json
