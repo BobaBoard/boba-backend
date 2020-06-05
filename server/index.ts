@@ -29,7 +29,11 @@ app.set("json spaces", 2);
 
 if (require.main === module) {
   app.listen(port, () =>
-    console.log(`Example app listening at http://localhost:${port}`)
+    log(
+      process.env.NODE_ENV == "production"
+        ? `Remote app started on port ${port}`
+        : `Local app listening at http://localhost:${port}`
+    )
   );
 }
 

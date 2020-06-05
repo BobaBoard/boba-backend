@@ -9,7 +9,11 @@ const router = express.Router();
 
 const turnReferencesIntoUrls = (response: any) => {
   if (response.avatar) {
-    response.avatarUrl = `/${response.avatar}`;
+    if (response.avatar.startsWith("http")) {
+      response.avatarUrl = response.avatar;
+    } else {
+      response.avatarUrl = `/${response.avatar}`;
+    }
   }
   delete response.avatar;
 
