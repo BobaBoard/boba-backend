@@ -6,50 +6,12 @@ import {
   createThread,
 } from "./queries";
 import { isLoggedIn } from "../auth-handler";
+import { mergeThreadAndIdentities } from "../response-utils";
 
 const info = debug("bobaserver:threads:routes-info");
 const log = debug("bobaserver:threads:routes-log");
 
 const router = express.Router();
-
-const mergeThreadAndIdentities = (thread: any, identities: any[]) => {
-  log(identities);
-  const identitiesMap = identities.reduce((accumulator, identity) => {
-    log(identity);
-    accumulator[identity.id] = identity;
-    return accumulator;
-  }, {});
-  thread.posts.map((post: any) => {
-    const authorIdentity = identitiesMap[post.author];
-    delete post.author;
-    post.secret_identity = {
-      name: authorIdentity.display_name,
-      avatar: authorIdentity.secret_identity_avatar_reference_id,
-    };
-    if (authorIdentity.friend) {
-      post.userIdentity = {
-        name: authorIdentity.username,
-        avatar: authorIdentity.user_avatar_reference_id,
-      };
-    }
-
-    post.comments?.map((comment: any) => {
-      const authorIdentity = identitiesMap[comment.author];
-      delete comment.author;
-      comment.secret_identity = {
-        name: authorIdentity.display_name,
-        avatar: authorIdentity.secret_identity_avatar_reference_id,
-      };
-      if (authorIdentity.friend) {
-        comment.userIdentity = {
-          name: authorIdentity.username,
-          avatar: authorIdentity.user_avatar_reference_id,
-        };
-      }
-    });
-  });
-  return thread;
-};
 
 router.get("/:id", isLoggedIn, async (req, res) => {
   const { id } = req.params;
@@ -67,13 +29,15 @@ router.get("/:id", isLoggedIn, async (req, res) => {
       user: req.currentUser?.uid,
     }),
   ]);
-  info(`Found thread %O`, thread);
+  info(`Found thread: `, thread);
+  info(`Found identities: `, identities);
 
   if (!thread) {
     res.sendStatus(404);
     return;
   }
-  // TODO: add identity management logic to thread
+
+  info(`sending back data for thread ${id}.`);
   res.status(200).json(mergeThreadAndIdentities(thread, identities));
 });
 
