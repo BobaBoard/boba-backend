@@ -96,7 +96,8 @@ export const getThreadIdentitiesByStringId = async ({
             users.avatar_reference_id as user_avatar_reference_id,
             display_name,
             secret_identities.avatar_reference_id as secret_identity_avatar_reference_id,
-            is_friend.friend
+            is_friend.friend,
+            user_id = $1 as self
         FROM user_thread_identities AS uti 
             LEFT JOIN users ON uti.user_id = users.id 
             LEFT JOIN secret_identities ON secret_identities.id = uti.identity_id 
