@@ -21,9 +21,9 @@ export const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
       req.currentUser = decodedToken;
       next();
     })
-    .catch((error) => {
+    .catch((e) => {
       error("Error during verification. No user set.");
-      error(error);
+      error(e);
       next();
     });
 };
