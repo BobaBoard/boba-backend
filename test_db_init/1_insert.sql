@@ -6,9 +6,9 @@ VALUES
     ('gore', 'Blood! Blood! Blood!', 'gore.png', '{ "accentColor": "#f96680" }'),
     ('anime', 'I wish I had a funny one for this.', 'anime.png', '{ "accentColor": "#24d282"}');
   
-INSERT INTO Users(firebase_id, username, invited_by)
+INSERT INTO Users(firebase_id, username, avatar_reference_id, invited_by)
 VALUES
-    ('c6HimTlg2RhVH3fC1psXZORdLcx2', 'bobatan', NULL);
+    ('c6HimTlg2RhVH3fC1psXZORdLcx2', 'bobatan', 'bobatan.png', NULL);
 
 INSERT INTO Users(firebase_id, username, invited_by)
 VALUES

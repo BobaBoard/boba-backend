@@ -2,7 +2,8 @@ import firebaseAuth from "firebase-admin";
 import { Request, Response, NextFunction } from "express";
 import debug from "debug";
 
-const log = debug("bobaserver:auth");
+const log = debug("bobaserver:auth-log");
+const error = debug("bobaserver:auth-error");
 
 export const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
   const idToken = req.headers?.authorization;
@@ -15,15 +16,14 @@ export const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
     .auth()
     .verifyIdToken(idToken)
     .then((decodedToken) => {
-      log(decodedToken.uid);
-
+      log(`Founs id token in request: ${decodedToken.uid}`);
       // @ts-ignore
       req.currentUser = decodedToken;
       next();
     })
     .catch((error) => {
-      log("Error during verification, redirecting.");
-      log(error);
+      error("Error during verification. No user set.");
+      error(error);
       next();
     });
 };
