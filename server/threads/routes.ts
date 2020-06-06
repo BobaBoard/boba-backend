@@ -7,8 +7,8 @@ import {
 } from "./queries";
 import { isLoggedIn } from "../auth-handler";
 
-const info = debug("bobaserver:threads:routes:info");
-const log = debug("bobaserver:threads:routes");
+const info = debug("bobaserver:threads:routes-info");
+const log = debug("bobaserver:threads:routes-log");
 
 const router = express.Router();
 
