@@ -60,12 +60,12 @@ router.post("/:postId/comment", isLoggedIn, async (req, res) => {
 
   const post = await postNewComment({
     // @ts-ignore
-    userId: 1,
+    firebaseId: req.currentUser.uid,
     replyTo: postId,
     content,
     anonymityType: forceAnonymous ? "everyone" : "strangers",
   });
-  log(`Contribution posted: `, post);
+  log(`Comment posted: `, post);
 
   if (!post) {
     res.sendStatus(500);
