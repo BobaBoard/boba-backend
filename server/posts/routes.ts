@@ -27,7 +27,7 @@ router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
 
   const post = await postNewContribution({
     // @ts-ignore
-    userId: 1,
+    firebaseId: req.currentUser.uid,
     replyTo: postId,
     content,
     anonymityType: forceAnonymous ? "everyone" : "strangers",

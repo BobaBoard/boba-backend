@@ -84,10 +84,10 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
     VALUES
      ((SELECT id FROM new_thread_id),
       (SELECT id FROM Users WHERE username = 'bobatan'),
-      (SELECT id FROM secret_identities WHERE display_name = 'Sunglasses Raccoon')),
+      (SELECT id FROM secret_identities WHERE display_name = 'Old Time-y Anon')),
      ((SELECT id FROM new_thread_id),
       (SELECT id FROM Users WHERE username = 'oncest5evah'),
-      (SELECT id FROM secret_identities WHERE display_name = 'Evil Moth'));
+      (SELECT id FROM secret_identities WHERE display_name = 'DragonFucker'));
 
 WITH
   new_thread_id AS
@@ -130,13 +130,13 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
     VALUES
      ((SELECT id FROM new_thread_id),
       (SELECT id FROM Users WHERE username = 'oncest5evah'),
-      (SELECT id FROM secret_identities WHERE display_name = 'Solid Ocelot')),
+      (SELECT id FROM secret_identities WHERE display_name = 'Outdated Meme')),
      ((SELECT id FROM new_thread_id),
       (SELECT id FROM Users WHERE username = 'jersey_devil_69'),
-      (SELECT id FROM secret_identities WHERE display_name = 'Sunglasses Raccoon')),
+      (SELECT id FROM secret_identities WHERE display_name = 'Old Time-y Anon')),
      ((SELECT id FROM new_thread_id),
       (SELECT id FROM Users WHERE username = 'bobatan'),
-      (SELECT id FROM secret_identities WHERE display_name = 'Evil Moth'));
+      (SELECT id FROM secret_identities WHERE display_name = 'DragonFucker'));
 
 WITH
   new_thread_id AS
@@ -151,7 +151,7 @@ WITH
         ('987f795b-d60d-4016-af82-8684411f7785',
          NULL,
          (SELECT id FROM new_thread_id),
-         (SELECT id FROM Users WHERE username = 'bobatan'),
+         (SELECT id FROM Users WHERE username = 'jersey_devil_69'),
          '[{"insert":"Stuff will be inserted here!"}]', 
          'text', 
          ARRAY['this is a test post'], 
@@ -160,5 +160,5 @@ WITH
 INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
     VALUES
      ((SELECT id FROM new_thread_id),
-      (SELECT id FROM Users WHERE username = 'bobatan'),
-      (SELECT id FROM secret_identities WHERE display_name = 'Evil Moth'));
+      (SELECT id FROM Users WHERE username = 'jersey_devil_69'),
+      (SELECT id FROM secret_identities WHERE display_name = 'DragonFucker'));
