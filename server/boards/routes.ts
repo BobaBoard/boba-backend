@@ -35,7 +35,7 @@ router.get("/:slug", async (req, res) => {
   log(`Fetching data for board with slug ${slug}`);
 
   const board = await getBoardBySlug(slug);
-  log(`Found board %O`, board);
+  log(`Found board`, board);
 
   if (!board) {
     res.sendStatus(404);
@@ -53,10 +53,14 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
     // @ts-ignore
     firebaseId: req.currentUser?.uid,
   });
-  log(`Found activity for board %0: %1`, slug, activity);
+  log(`Found activity for board ${slug}:`, activity);
 
   if (!activity) {
     res.sendStatus(404);
+    return;
+  }
+  if (!activity.length) {
+    res.sendStatus(204);
     return;
   }
   res.status(200).json(mergeIdentities(activity));
