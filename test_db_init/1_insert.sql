@@ -16,11 +16,11 @@ VALUES
     ('fb3', 'oncest5evah', (SELECT id FROM users WHERE username = 'bobatan'));
 
 
-INSERT INTO secret_identities(display_name)
+INSERT INTO secret_identities(display_name, avatar_reference_id)
 VALUES
-    ('Sunglasses Raccoon'), 
-    ('Solid Ocelot'), 
-    ('Evil Moth');
+    ('Old Time-y Anon', 'https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png'), 
+    ('DragonFucker', 'https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg'), 
+    ('Outdated Meme', 'outdated-meme.png');
 
 WITH
   new_thread_id AS
