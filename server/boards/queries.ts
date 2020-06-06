@@ -115,9 +115,9 @@ export const getBoardActivityBySlug = async ({
            MAX(comments.created) as last_comments,
            COUNT(DISTINCT posts.id) as posts_amount
        FROM boards 
-       INNER JOIN threads
+       LEFT JOIN threads
            ON boards.id = threads.parent_board
-       INNER JOIN posts
+       LEFT JOIN posts
           ON posts.parent_thread = threads.id
        LEFT JOIN comments
            ON comments.parent_thread = threads.id
@@ -143,15 +143,14 @@ export const getBoardActivityBySlug = async ({
       log(`Board not found: ${slug}`);
       return null;
     }
-    if (rows.length > 1) {
-      // TODO: decide whether to throw
-      error(
-        `Error: found ${rows.length} boards while fetching board by slug (${slug}).`
-      );
+    if (rows.length == 1 && rows[0].thread_id == null) {
+      // Only one row with just the null thread)
+      log(`Board empty: ${slug}`);
+      return [];
     }
 
     const result = rows;
-    log(`Got getBoardActivityBySlug query result %O`, result);
+    log(`Got getBoardActivityBySlug query result`, result);
     return result;
   } catch (e) {
     error(`Error while fetching board by slug (${slug}).`);
