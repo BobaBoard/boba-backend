@@ -1,3 +1,8 @@
+import debug from "debug";
+
+const info = debug("bobaserver:response-utils-info");
+const log = debug("bobaserver::response-utils-log");
+
 const TRANSFORM_DICT: { [key: string]: string } = {
   avatar_reference_id: "avatarUrl",
   avatar: "avatar",
@@ -55,11 +60,13 @@ export const mergeThreadAndIdentities = (thread: any, identities: any[]) => {
   thread.posts.map((post: any) => {
     const authorIdentity = identitiesMap[post.author];
     delete post.author;
+    info(`Adding identity to post made by ${authorIdentity.username}.`);
     post.secret_identity = transformImageUrls({
       name: authorIdentity.display_name,
       avatar: authorIdentity.secret_identity_avatar_reference_id,
     });
     if (authorIdentity.friend || authorIdentity.self) {
+      info(`...who is our friend (or us).`);
       post.user_identity = transformImageUrls({
         name: authorIdentity.username,
         avatar: authorIdentity.user_avatar_reference_id,
@@ -69,11 +76,13 @@ export const mergeThreadAndIdentities = (thread: any, identities: any[]) => {
     post.comments?.map((comment: any) => {
       const authorIdentity = identitiesMap[comment.author];
       delete comment.author;
+      info(`Adding identity to comment made by ${authorIdentity.username}.`);
       comment.secret_identity = transformImageUrls({
         name: authorIdentity.display_name,
         avatar: authorIdentity.secret_identity_avatar_reference_id,
       });
       if (authorIdentity.friend || authorIdentity.self) {
+        info(`...who is our friend (or us).`);
         comment.user_identity = transformImageUrls({
           name: authorIdentity.username,
           avatar: authorIdentity.user_avatar_reference_id,
