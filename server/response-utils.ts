@@ -24,6 +24,28 @@ export const transformImageUrls = (obj: any) => {
   return obj;
 };
 
+export const mergeActivityIdentities = (activity: any[]) => {
+  return activity.map((post: any) => {
+    if (post.friend || post.self) {
+      post.user_identity = transformImageUrls({
+        name: post.username,
+        avatar: post.user_avatar,
+      });
+    }
+    post.secret_identity = transformImageUrls({
+      name: post.secret_identity,
+      avatar: post.secret_avatar,
+    });
+
+    delete post.username;
+    delete post.user_avatar;
+    delete post.user_id;
+    delete post.secret_avatar;
+
+    return post;
+  });
+};
+
 // TODO: decide whether transformImageUrls should be here.
 export const mergeThreadAndIdentities = (thread: any, identities: any[]) => {
   const identitiesMap = identities.reduce((accumulator, identity) => {
