@@ -106,3 +106,24 @@ WITH
       ON thread_identities.user_id = outer_posts.author AND thread_identities.thread_id = outer_posts.parent_thread
     LEFT JOIN LATERAL (SELECT true as friends FROM friends WHERE friends.user_id = 1 AND friends.friend_id = author limit 1) as is_friend 
         ON true;
+
+        SELECT 
+              thread_comments.parent_post, 
+              json_agg(json_build_object(
+                'id', thread_comments.string_id,
+                'parent_post', thread_comments.parent_thread_string_id,
+                'author', thread_comments.author,
+                'content', thread_comments.content,
+                'created',  TO_CHAR(thread_comments.created, 'YYYY-MM-DD"T"HH24:MI:SS'),
+                'anonymity_type', thread_comments.anonymity_type
+              )) as comments 
+              FROM (
+                SELECT 
+                  comments.*,
+                  thread.string_id as parent_thread_string_id
+                FROM comments 
+                LEFT JOIN threads as thread
+                  ON comments.parent_thread = thread.id
+                WHERE thread.string_id = '29d1b2da-3289-454a-9089-2ed47db4967b'
+                ORDER BY comments.created ASC) as thread_comments
+              GROUP BY thread_comments.parent_post;
