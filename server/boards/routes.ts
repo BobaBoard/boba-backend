@@ -3,32 +3,11 @@ import express from "express";
 import { getBoardBySlug, getBoardActivityBySlug, getBoards } from "./queries";
 import { isLoggedIn } from "../auth-handler";
 import { transformImageUrls } from "../response-utils";
+import { mergeActivityIdentities } from "../response-utils";
 
 const log = debug("bobaserver:board:routes");
 
 const router = express.Router();
-
-const mergeIdentities = (activity: any[]) => {
-  return activity.map((post: any) => {
-    if (post.friend) {
-      post.user_identity = {
-        name: post.username,
-        avatar: post.user_avatar,
-      };
-    }
-    post.secret_identity = {
-      name: post.secret_identity,
-      avatar: post.secret_avatar,
-    };
-
-    delete post.username;
-    delete post.user_avatar;
-    delete post.user_id;
-    delete post.secret_avatar;
-
-    return post;
-  });
-};
 
 router.get("/:slug", async (req, res) => {
   const { slug } = req.params;
@@ -63,7 +42,7 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
     res.sendStatus(204);
     return;
   }
-  res.status(200).json(mergeIdentities(activity));
+  res.status(200).json(mergeActivityIdentities(activity));
 });
 
 router.get("/", async (req, res) => {

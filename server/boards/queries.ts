@@ -105,7 +105,8 @@ export const getBoardActivityBySlug = async ({
       threads_amount.count as threads_amount,
       comments_amount.count as comments_amount,
       TO_CHAR(GREATEST(first_post, last_post), 'YYYY-MM-DD"T"HH:MI:SS') as last_activity,
-      is_friend.friend
+      is_friend.friend,
+      user_id = $2 as self
     FROM
       (SELECT
            threads.string_id as threads_string_id,
