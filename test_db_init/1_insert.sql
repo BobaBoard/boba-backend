@@ -10,10 +10,10 @@ INSERT INTO Users(firebase_id, username, avatar_reference_id, invited_by)
 VALUES
     ('c6HimTlg2RhVH3fC1psXZORdLcx2', 'bobatan', 'bobatan.png', NULL);
 
-INSERT INTO Users(firebase_id, username, invited_by)
+INSERT INTO Users(firebase_id, username, avatar_reference_id, invited_by)
 VALUES
-    ('fb2', 'jersey_devil_69', (SELECT id FROM users WHERE username = 'bobatan')),
-    ('fb3', 'oncest5evah', (SELECT id FROM users WHERE username = 'bobatan'));
+    ('fb2', 'jersey_devil_69', 'hannibal.png', (SELECT id FROM users WHERE username = 'bobatan')),
+    ('fb3', 'oncest5evah', 'greedler.jpg', (SELECT id FROM users WHERE username = 'bobatan'));
 
 
 INSERT INTO secret_identities(display_name, avatar_reference_id)
@@ -162,3 +162,5 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
      ((SELECT id FROM new_thread_id),
       (SELECT id FROM Users WHERE username = 'jersey_devil_69'),
       (SELECT id FROM secret_identities WHERE display_name = 'DragonFucker'));
+
+INSERT INTO friends(user_id,friend_id) VALUES (1,3),(3,1);

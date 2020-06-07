@@ -133,7 +133,7 @@ export const getBoardActivityBySlug = async ({
       ON true
     LEFT JOIN LATERAL (SELECT COUNT(*) as count FROM comments WHERE comments.parent_post = outer_posts.id) as comments_amount
         ON true
-    LEFT JOIN LATERAL (SELECT true as friend FROM friends WHERE friends.user_id = $2 AND friends.friend_id = user_id limit 1) as is_friend 
+    LEFT JOIN LATERAL (SELECT true as friend FROM friends WHERE friends.user_id = $2 AND friends.friend_id = author limit 1) as is_friend 
         ON true
     ORDER BY last_activity DESC`;
 

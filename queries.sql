@@ -65,3 +65,44 @@ FROM user_thread_identities AS uti
     LEFT JOIN threads ON threads.id = uti.thread_id
     LEFT JOIN LATERAL (SELECT true as friend FROM friends WHERE friends.user_id = 1 AND friends.friend_id = users.id limit 1) as is_friend ON 1=1 
 WHERE threads.string_id = 'a5c903df-35e8-43b2-a41a-208c43154671';
+
+WITH 
+        thread_identities AS
+            (SELECT
+              uti.thread_id as thread_id,
+              uti.user_id as user_id,
+              users.username as username,
+              users.avatar_reference_id as user_avatar,
+              secret_identities.display_name as secret_identity,
+              secret_identities.avatar_reference_id as secret_avatar
+             FROM user_thread_identities AS uti 
+             INNER JOIN users 
+                  ON uti.user_id = users.id 
+             INNER JOIN secret_identities 
+                  ON secret_identities.id = uti.identity_id)
+    SELECT
+      *
+    FROM
+      (SELECT
+           threads.string_id as threads_string_id,
+           threads.id as threads_id,
+           MIN(posts.created) as first_post,
+           MAX(posts.created) as last_post,
+           MAX(comments.created) as last_comments,
+           COUNT(DISTINCT posts.id) as posts_amount
+       FROM boards 
+       LEFT JOIN threads
+           ON boards.id = threads.parent_board
+       LEFT JOIN posts
+          ON posts.parent_thread = threads.id
+       LEFT JOIN comments
+           ON comments.parent_thread = threads.id
+       WHERE boards.slug = 'gore'
+       GROUP BY
+         threads.id, boards.id) as thread_updates
+    LEFT JOIN posts as outer_posts
+      ON thread_updates.threads_id = outer_posts.parent_thread AND outer_posts.created = thread_updates.first_post
+    LEFT JOIN thread_identities
+      ON thread_identities.user_id = outer_posts.author AND thread_identities.thread_id = outer_posts.parent_thread
+    LEFT JOIN LATERAL (SELECT true as friends FROM friends WHERE friends.user_id = 1 AND friends.friend_id = author limit 1) as is_friend 
+        ON true;
