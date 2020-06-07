@@ -102,7 +102,7 @@ export const getThreadIdentitiesByStringId = async ({
             LEFT JOIN users ON uti.user_id = users.id 
             LEFT JOIN secret_identities ON secret_identities.id = uti.identity_id 
             LEFT JOIN threads ON threads.id = uti.thread_id
-            LEFT JOIN LATERAL (SELECT true as friend FROM friends WHERE friends.user_id = $1 AND friends.user_id = users.id limit 1) as is_friend ON 1=1 
+            LEFT JOIN LATERAL (SELECT true as friend FROM friends WHERE friends.user_id = $1 AND friends.friend_id = users.id limit 1) as is_friend ON 1=1 
         WHERE threads.string_id = $2`;
 
   try {

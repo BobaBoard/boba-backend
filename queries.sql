@@ -50,3 +50,18 @@ VALUES
          WHERE uti.thread_id = NULL
          ORDER BY RANDOM()
          LIMIT 1
+
+SELECT
+    user_id as id,
+    username,
+    users.avatar_reference_id as user_avatar_reference_id,
+    display_name,
+    secret_identities.avatar_reference_id as secret_identity_avatar_reference_id,
+    is_friend.friend,
+    user_id = 1 as self
+FROM user_thread_identities AS uti 
+    LEFT JOIN users ON uti.user_id = users.id 
+    LEFT JOIN secret_identities ON secret_identities.id = uti.identity_id 
+    LEFT JOIN threads ON threads.id = uti.thread_id
+    LEFT JOIN LATERAL (SELECT true as friend FROM friends WHERE friends.user_id = 1 AND friends.friend_id = users.id limit 1) as is_friend ON 1=1 
+WHERE threads.string_id = 'a5c903df-35e8-43b2-a41a-208c43154671';
