@@ -99,12 +99,12 @@ export const getBoardActivityBySlug = async ({
       user_avatar,
       secret_identity,
       secret_avatar,
-      TO_CHAR(created, 'YYYY-MM-DD"T"HH:MI:SS') as created,
+      TO_CHAR(created, 'YYYY-MM-DD"T"HH24:MI:SS') as created,
       content,
       posts_amount,
       threads_amount.count as threads_amount,
       comments_amount.count as comments_amount,
-      TO_CHAR(GREATEST(first_post, last_post), 'YYYY-MM-DD"T"HH:MI:SS') as last_activity,
+      TO_CHAR(GREATEST(first_post, last_post), 'YYYY-MM-DD"T"HH24:MI:SS') as last_activity,
       is_friend.friend,
       user_id = $2 as self
     FROM

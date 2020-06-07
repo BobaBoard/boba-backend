@@ -16,26 +16,32 @@ export const getThreadByStringId = async ({
     WITH
         thread_comments AS
             (SELECT 
-              comments.parent_post, 
+              thread_comments.parent_post, 
               json_agg(json_build_object(
-                'id', comments.string_id,
-                'parent_post', parent.string_id,
-                'author', comments.author,
-                'content', comments.content,
-                'created', comments.created,
-                'anonymity_type', comments.anonymity_type
+                'id', thread_comments.string_id,
+                'parent_post', thread_comments.parent_thread_string_id,
+                'author', thread_comments.author,
+                'content', thread_comments.content,
+                'created',  TO_CHAR(thread_comments.created, 'YYYY-MM-DD"T"HH24:MI:SS'),
+                'anonymity_type', thread_comments.anonymity_type
               )) as comments 
-              FROM comments 
-              LEFT JOIN posts as parent
-               ON comments.parent_post = parent.id
-              GROUP BY comments.parent_post),
+              FROM (
+                SELECT 
+                  comments.*,
+                  thread.string_id as parent_thread_string_id
+                FROM comments 
+                LEFT JOIN threads as thread
+                  ON comments.parent_thread = thread.id
+                WHERE thread.string_id = '29d1b2da-3289-454a-9089-2ed47db4967b'
+                ORDER BY comments.created ASC) as thread_comments
+              GROUP BY thread_comments.parent_post),
         thread_posts AS
             (SELECT 
               posts.string_id as id,
               posts.parent_thread as parent_thread_id,
               parent.string_id as parent_post_id,
               posts.author,
-              posts.created,
+              TO_CHAR(posts.created, 'YYYY-MM-DD"T"HH24:MI:SS') as created,
               posts.content,
               posts.type,
               posts.whisper_tags,
@@ -45,7 +51,8 @@ export const getThreadByStringId = async ({
              LEFT JOIN posts as parent
               ON posts.parent_post = parent.id
              LEFT JOIN thread_comments 
-              ON posts.id = thread_comments.parent_post)
+              ON posts.id = thread_comments.parent_post
+             ORDER BY posts.created DESC)
     SELECT 
         threads.string_id, 
         json_agg(row_to_json(thread_posts)) as posts
