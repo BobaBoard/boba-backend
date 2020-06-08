@@ -130,14 +130,15 @@ WITH
         WITH
               last_visited AS
             (SELECT
-              last_visit_time
+              CASE WHEN last_visit_time IS NOT NULL THEN last_visit_time ELSE to_timestamp(0) END as last_visit_time
              FROM user_thread_last_visits
              LEFT JOIN users
               ON users.id = user_thread_last_visits.user_id
             LEFT JOIN threads
               ON threads.id = user_thread_last_visits.thread_id
-            WHERE users.firebase_id = 'c6HimTlg2RhVH3fC1psXZORdLcx2' AND threads.string_id = 'a5c903df-35e8-43b2-a41a-208c43154671')
-            (SELECT 
+            WHERE users.firebase_id = 'c6HimTlg2RhVH3fC1psXZORdLcx2' AND threads.string_id = '29d1b2da-3289-454a-9089-2ed47db4967b')
+          SELECT * FROM last_visited;
+          SELECT 
               thread_comments.parent_post, 
               SUM(CASE WHEN last_visit_time < thread_comments.created THEN 1 ELSE 0 END) as new_comments,
               json_agg(json_build_object(
@@ -162,3 +163,70 @@ WITH
                 WHERE thread.string_id = 'a5c903df-35e8-43b2-a41a-208c43154671'
                 ORDER BY comments.created ASC) as thread_comments
               GROUP BY thread_comments.parent_post)
+              SELECT
+              CASE WHEN last_visit_time IS NOT NULL THEN last_visit_time ELSE to_timestamp(0) END as last_visit_time
+             FROM user_thread_last_visits
+             LEFT JOIN users
+              ON users.id = user_thread_last_visits.user_id
+            LEFT JOIN threads
+              ON threads.id = user_thread_last_visits.thread_id
+            WHERE users.firebase_id = 'c6HimTlg2RhVH3fC1psXZORdLcx2' AND threads.string_id = '29d1b2da-3289-454a-9089-2ed47db4967b'
+
+
+
+      (SELECT
+           threads.string_id as threads_string_id,
+           threads.id as threads_id,
+           MIN(posts.created) as first_post,
+           MAX(posts.created) as last_post,
+           COUNT(DISTINCT posts.id) as posts_amount,              
+           SUM(CASE WHEN last_visit_time IS NULL OR last_visit_time < posts.created THEN 1 ELSE 0 END) as new_posts_amount,
+       FROM boards 
+       LEFT JOIN threads
+           ON boards.id = threads.parent_board
+       LEFT JOIN posts
+          ON posts.parent_thread = threads.id
+       LEFT JOIN comments
+           ON comments.parent_thread = threads.id AND comments.parent_post = posts.id
+       LEFT JOIN user_thread_last_visits
+           ON threads.id = user_thread_last_visits.thread_id
+              AND user_thread_last_visits.user_id = $2
+       WHERE boards.slug = $1
+       GROUP BY
+         threads.id, boards.id) as thread_updates
+
+
+MAX(comments.created) as last_comments,
+SUM(CASE WHEN last_visit_time IS NULL OR last_visit_time < comments.created THEN 1 ELSE 0 END) as new_comments_amount
+
+WITH thread_posts_updates AS
+(SELECT
+           threads.string_id as threads_string_id,
+           threads.id as threads_id,
+           MIN(posts.created) as first_post,
+           MAX(posts.created) as last_post,
+           COUNT(posts.id) as posts_amount,              
+           SUM(CASE WHEN last_visit_time IS NULL OR last_visit_time < posts.created THEN 1 ELSE 0 END) as new_posts_amount       FROM boards 
+       LEFT JOIN threads
+           ON boards.id = threads.parent_board
+       LEFT JOIN posts
+          ON posts.parent_thread = threads.id
+       LEFT JOIN user_thread_last_visits
+           ON threads.id = user_thread_last_visits.thread_id
+              AND user_thread_last_visits.user_id = 1
+       WHERE boards.slug = 'gore'
+       GROUP BY
+         threads.id, boards.id)
+SELECT * 
+FROM (SELECT
+        thread_posts_updates.threads_id,
+        MAX(comments.created) as last_comments,
+        COUNT(comments.id) as comments_amount,  
+        SUM(CASE WHEN last_visit_time IS NULL OR last_visit_time < comments.created THEN 1 ELSE 0 END) as new_comments_amount
+      FROM thread_posts_updates 
+      INNER JOIN comments
+        ON thread_posts_updates.threads_id = comments.parent_thread 
+        LEFT JOIN user_thread_last_visits
+            ON thread_posts_updates.id = user_thread_last_visits.thread_id
+               AND user_thread_last_visits.user_id = 1
+      ) as thread_comments_updates;

@@ -34,6 +34,10 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
   });
   log(`Found activity for board ${slug}:`, activity);
 
+  if (activity === false) {
+    res.sendStatus(500);
+    return;
+  }
   if (!activity) {
     res.sendStatus(404);
     return;
