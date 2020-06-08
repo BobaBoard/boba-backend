@@ -27,6 +27,7 @@ export const getThreadByStringId = async ({
             (SELECT 
               thread_comments.parent_post,
               SUM(CASE WHEN last_visit_time IS NULL OR last_visit_time < thread_comments.created THEN 1 ELSE 0 END) as new_comments,
+              COUNT(*) as total_comments,
               json_agg(json_build_object(
                 'id', thread_comments.string_id,
                 'parent_post', thread_comments.parent_thread_string_id,
@@ -61,13 +62,12 @@ export const getThreadByStringId = async ({
               posts.whisper_tags,
               posts.anonymity_type,
               thread_comments.comments,
+              thread_comments.total_comments,
               thread_comments.new_comments,
               last_visited.last_visit_time < posts.created OR last_visited.last_visit_time IS NULL as is_new
              FROM posts
              LEFT JOIN posts as parent
               ON posts.parent_post = parent.id
-            LEFT JOIN posts as child
-              ON child.parent_post = posts.id
              LEFT JOIN thread_comments 
               ON posts.id = thread_comments.parent_post
              LEFT JOIN last_visited
@@ -77,6 +77,7 @@ export const getThreadByStringId = async ({
         threads.string_id, 
         json_agg(row_to_json(thread_posts)) as posts,
         SUM(thread_posts.new_comments) as new_comments,
+        SUM(thread_posts.total_comments) as total_comments,
         SUM(CASE WHEN thread_posts.is_new IS NULL OR thread_posts.is_new THEN 1 ELSE 0 END) as new_posts
     FROM threads
     LEFT JOIN thread_posts
