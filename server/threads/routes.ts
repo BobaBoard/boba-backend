@@ -4,6 +4,7 @@ import {
   getThreadByStringId,
   getThreadIdentitiesByStringId,
   createThread,
+  markThreadVisit,
 } from "./queries";
 import { isLoggedIn } from "../auth-handler";
 import { mergeThreadAndIdentities } from "../response-utils";
@@ -39,6 +40,29 @@ router.get("/:id", isLoggedIn, async (req, res) => {
 
   info(`sending back data for thread ${id}.`);
   res.status(200).json(mergeThreadAndIdentities(thread, identities));
+});
+
+router.get("/:threadId/visit", isLoggedIn, async (req, res) => {
+  const { threadId } = req.params;
+  // @ts-ignore
+  if (!req.currentUser) {
+    return res.sendStatus(301);
+  }
+  log(`Setting last visited time for thread: ${threadId}`);
+
+  if (
+    !(await markThreadVisit({
+      // @ts-ignore
+      firebaseId: req.currentUser.uid,
+      threadId,
+    }))
+  ) {
+    res.sendStatus(500);
+    return;
+  }
+
+  info(`Marked last visited time for thread: ${threadId}.`);
+  res.status(200).json();
 });
 
 router.get("/activity/latest", async (req, res) => {

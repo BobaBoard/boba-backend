@@ -191,10 +191,23 @@ CREATE INDEX comments_parent_thread on comments(parent_thread);
 CREATE INDEX comments_parent_post on comments(parent_post);
 CREATE INDEX comments_author on comments(author);
 
-
 CREATE TABLE IF NOT EXISTS comment_audits (
     comment_id BIGINT REFERENCES comments(id) ON DELETE RESTRICT NOT NULL,
     deleted_by BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
     /* UTC timestamp. */
     deleted_time timestamp NOT NULL DEFAULT now()
 );
+
+CREATE TABLE IF NOT EXISTS user_board_last_visits(
+    user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
+    board_id BIGINT REFERENCES boards(id) ON DELETE RESTRICT NOT NULL,
+    last_visit_time timestamp NOT NULL DEFAULT now()
+);
+CREATE UNIQUE INDEX user_board_entry on user_board_last_visits(user_id, board_id);
+
+CREATE TABLE IF NOT EXISTS user_thread_last_visits(
+    user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
+    thread_id BIGINT REFERENCES threads(id) ON DELETE RESTRICT NOT NULL,
+    last_visit_time timestamp NOT NULL DEFAULT now()
+);
+CREATE UNIQUE INDEX user_thread_entry on user_thread_last_visits(user_id, thread_id);
