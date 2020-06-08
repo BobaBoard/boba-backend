@@ -121,16 +121,16 @@ export const getBoardActivityBySlug = async ({
       secret_avatar,
       TO_CHAR(created, 'YYYY-MM-DD"T"HH24:MI:SS') as created,
       content,
-      posts_amount,
-      threads_amount.count as threads_amount,
-      TO_CHAR(GREATEST(first_post, last_post, last_comments), 'YYY+9Y-MM-DD"T"HH24:MI:SS') as last_activity,
+      CAST(posts_amount AS INT),
+      CAST(threads_amount.count AS int) as threads_amount,
+      TO_CHAR(GREATEST(first_post, last_post, last_comments), 'YYYY-MM-DD"T"HH24:MI:SS') as last_activity,
       is_friend.friend,
       user_id = $2 as self,
-      new_posts_amount,
-      new_comments_amount,
+      CAST(new_posts_amount AS int),
+      CAST(new_comments_amount AS int),
       last_comments,
       last_visit_time IS NULL OR last_visit_time < first_post.created as is_new,
-      comments_amount
+      CAST(comments_amount AS int)
     FROM
       thread_posts_updates
       LEFT JOIN 
