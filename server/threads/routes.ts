@@ -20,9 +20,9 @@ router.get("/:id", isLoggedIn, async (req, res) => {
 
   const [thread, identities] = await Promise.all([
     getThreadByStringId({
-      id,
+      threadId: id,
       // @ts-ignore
-      user: req.currentUser?.uid,
+      firebaseId: req.currentUser?.uid,
     }),
     getThreadIdentitiesByStringId({
       id,
@@ -33,6 +33,10 @@ router.get("/:id", isLoggedIn, async (req, res) => {
   info(`Found thread: `, thread);
   info(`Found identities: `, identities);
 
+  if (thread === false) {
+    res.sendStatus(500);
+    return;
+  }
   if (!thread) {
     res.sendStatus(404);
     return;
@@ -94,9 +98,9 @@ router.post("/:boardSlug/create", isLoggedIn, async (req, res) => {
   }
   res.status(200).json(
     await getThreadByStringId({
-      id: threadStringId,
+      threadId: threadStringId,
       // @ts-ignore
-      user: req.currentUser.uid,
+      firebaseId: req.currentUser.uid,
     })
   );
 });

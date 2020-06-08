@@ -6,33 +6,47 @@ const log = debug("bobaserver:threads:queries-log");
 const error = debug("bobaserver:threads:queries-error");
 
 export const getThreadByStringId = async ({
-  id,
-  user,
+  threadId,
+  firebaseId,
 }: {
-  id: string;
-  user?: string;
+  threadId: string;
+  firebaseId?: string;
 }): Promise<any> => {
   const query = `
     WITH
+        last_visited AS
+            (SELECT
+              last_visit_time
+             FROM user_thread_last_visits
+             LEFT JOIN users
+              ON users.id = user_thread_last_visits.user_id
+            LEFT JOIN threads
+              ON threads.id = user_thread_last_visits.thread_id
+            WHERE users.firebase_id = $2 AND threads.string_id = $1),
         thread_comments AS
             (SELECT 
-              thread_comments.parent_post, 
+              thread_comments.parent_post,
+              SUM(CASE WHEN last_visit_time IS NULL OR last_visit_time < thread_comments.created THEN 1 ELSE 0 END) as new_comments,
               json_agg(json_build_object(
                 'id', thread_comments.string_id,
                 'parent_post', thread_comments.parent_thread_string_id,
                 'author', thread_comments.author,
                 'content', thread_comments.content,
                 'created',  TO_CHAR(thread_comments.created, 'YYYY-MM-DD"T"HH24:MI:SS'),
-                'anonymity_type', thread_comments.anonymity_type
+                'anonymity_type', thread_comments.anonymity_type,
+                'is_new', last_visit_time < thread_comments.created OR last_visit_time IS NULL
               )) as comments 
               FROM (
                 SELECT 
                   comments.*,
-                  thread.string_id as parent_thread_string_id
+                  thread.string_id as parent_thread_string_id,
+                  last_visited.last_visit_time
                 FROM comments 
                 LEFT JOIN threads as thread
                   ON comments.parent_thread = thread.id
-                WHERE thread.string_id = '29d1b2da-3289-454a-9089-2ed47db4967b'
+                LEFT JOIN last_visited
+                  ON 1=1
+                WHERE thread.string_id = $1
                 ORDER BY comments.created ASC) as thread_comments
               GROUP BY thread_comments.parent_post),
         thread_posts AS
@@ -46,16 +60,24 @@ export const getThreadByStringId = async ({
               posts.type,
               posts.whisper_tags,
               posts.anonymity_type,
-              thread_comments.comments 
+              thread_comments.comments,
+              thread_comments.new_comments,
+              last_visited.last_visit_time < posts.created OR last_visited.last_visit_time IS NULL as is_new
              FROM posts
              LEFT JOIN posts as parent
               ON posts.parent_post = parent.id
+            LEFT JOIN posts as child
+              ON child.parent_post = posts.id
              LEFT JOIN thread_comments 
               ON posts.id = thread_comments.parent_post
+             LEFT JOIN last_visited
+              ON 1=1
              ORDER BY posts.created DESC)
     SELECT 
         threads.string_id, 
-        json_agg(row_to_json(thread_posts)) as posts
+        json_agg(row_to_json(thread_posts)) as posts,
+        SUM(thread_posts.new_comments) as new_comments,
+        SUM(CASE WHEN thread_posts.is_new IS NULL OR thread_posts.is_new THEN 1 ELSE 0 END) as new_posts
     FROM threads
     LEFT JOIN thread_posts
         ON threads.id = thread_posts.parent_thread_id
@@ -63,24 +85,24 @@ export const getThreadByStringId = async ({
     GROUP BY threads.id`;
 
   try {
-    const { rows } = await pool.query(query, [id]);
+    const { rows } = await pool.query(query, [threadId, firebaseId]);
 
     if (rows.length === 0) {
-      log(`Thread not found: ${id}`);
+      log(`Thread not found: ${threadId}`);
       return null;
     }
     if (rows.length > 1) {
       // TODO: decide whether to throw
       error(
-        `Error: found ${rows.length} thread while fetching thread by id (${id}).`
+        `Error: found ${rows.length} thread while fetching thread by id (${threadId}).`
       );
     }
 
     return rows[0];
   } catch (e) {
-    error(`Error while fetching threads.`);
+    error(`Error while fetching thread: ${threadId}.`);
     error(e);
-    return null;
+    return false;
   }
 };
 
