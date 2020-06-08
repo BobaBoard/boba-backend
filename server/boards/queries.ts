@@ -177,3 +177,29 @@ export const getBoardActivityBySlug = async ({
     return false;
   }
 };
+
+export const markBoardVisit = async ({
+  slug,
+  firebaseId,
+}: {
+  slug: string;
+  firebaseId: string;
+}) => {
+  const query = `
+    INSERT INTO user_board_last_visits(user_id, board_id) VALUES (
+      (SELECT id FROM users WHERE users.firebase_id = $1),
+      (SELECT id from boards WHERE boards.slug = $2))
+    ON CONFLICT(user_id, board_id) DO UPDATE 
+      SET last_visit_time = DEFAULT
+      WHERE user_board_last_visits.user_id = (SELECT id FROM users WHERE users.firebase_id = $1)
+      AND user_board_last_visits.board_id = (SELECT id from boards WHERE boards.slug = $2)`;
+
+  try {
+    await pool.query(query, [firebaseId, slug]);
+    return true;
+  } catch (e) {
+    error(`Error while recording thread visit.`);
+    error(e);
+    return false;
+  }
+};

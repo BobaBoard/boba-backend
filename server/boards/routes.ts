@@ -1,9 +1,13 @@
 import debug from "debug";
 import express from "express";
-import { getBoardBySlug, getBoardActivityBySlug, getBoards } from "./queries";
+import {
+  getBoardBySlug,
+  getBoardActivityBySlug,
+  getBoards,
+  markBoardVisit,
+} from "./queries";
 import { isLoggedIn } from "../auth-handler";
-import { transformImageUrls } from "../response-utils";
-import { mergeActivityIdentities } from "../response-utils";
+import { transformImageUrls, mergeActivityIdentities } from "../response-utils";
 
 const log = debug("bobaserver:board:routes");
 
@@ -21,6 +25,30 @@ router.get("/:slug", async (req, res) => {
     return;
   }
   res.status(200).json(transformImageUrls(board));
+});
+
+router.get("/:slug/visit", isLoggedIn, async (req, res) => {
+  const { slug } = req.params;
+  // @ts-ignore
+  if (!req.currentUser) {
+    // TODO: fix wrong status
+    return res.sendStatus(301);
+  }
+  log(`Setting last visited time for board: ${slug}`);
+
+  if (
+    !(await markBoardVisit({
+      // @ts-ignore
+      firebaseId: req.currentUser.uid,
+      slug,
+    }))
+  ) {
+    res.sendStatus(500);
+    return;
+  }
+
+  log(`Marked last visited time for board: ${slug}.`);
+  res.status(200).json();
 });
 
 router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
