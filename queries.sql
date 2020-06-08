@@ -127,3 +127,38 @@ WITH
                 WHERE thread.string_id = '29d1b2da-3289-454a-9089-2ed47db4967b'
                 ORDER BY comments.created ASC) as thread_comments
               GROUP BY thread_comments.parent_post;
+        WITH
+              last_visited AS
+            (SELECT
+              last_visit_time
+             FROM user_thread_last_visits
+             LEFT JOIN users
+              ON users.id = user_thread_last_visits.user_id
+            LEFT JOIN threads
+              ON threads.id = user_thread_last_visits.thread_id
+            WHERE users.firebase_id = 'c6HimTlg2RhVH3fC1psXZORdLcx2' AND threads.string_id = 'a5c903df-35e8-43b2-a41a-208c43154671')
+            (SELECT 
+              thread_comments.parent_post, 
+              SUM(CASE WHEN last_visit_time < thread_comments.created THEN 1 ELSE 0 END) as new_comments,
+              json_agg(json_build_object(
+                'id', thread_comments.string_id,
+                'parent_post', thread_comments.parent_thread_string_id,
+                'author', thread_comments.author,
+                'content', thread_comments.content,
+                'created',  TO_CHAR(thread_comments.created, 'YYYY-MM-DD"T"HH24:MI:SS'),
+                'anonymity_type', thread_comments.anonymity_type,
+                'is_new', last_visit_time < thread_comments.created
+              )) as comments 
+              FROM (
+                SELECT 
+                  comments.*,
+                  thread.string_id as parent_thread_string_id,
+                  last_visited.last_visit_time
+                FROM comments 
+                LEFT JOIN threads as thread
+                  ON comments.parent_thread = thread.id
+                LEFT JOIN last_visited
+                  ON 1=1
+                WHERE thread.string_id = 'a5c903df-35e8-43b2-a41a-208c43154671'
+                ORDER BY comments.created ASC) as thread_comments
+              GROUP BY thread_comments.parent_post)
