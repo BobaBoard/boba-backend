@@ -77,8 +77,11 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
   res.status(200).json(mergeActivityIdentities(activity));
 });
 
-router.get("/", async (req, res) => {
-  const boards = await getBoards();
+router.get("/", isLoggedIn, async (req, res) => {
+  const boards = await getBoards({
+    // @ts-ignore
+    firebaseId: req.currentUser?.uid,
+  });
   res.status(200).json(boards.map((board: any) => transformImageUrls(board)));
 });
 
