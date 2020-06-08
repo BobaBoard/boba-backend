@@ -50,6 +50,7 @@ router.get("/:threadId/visit", isLoggedIn, async (req, res) => {
   const { threadId } = req.params;
   // @ts-ignore
   if (!req.currentUser) {
+    // TODO: fix wrong status
     return res.sendStatus(301);
   }
   log(`Setting last visited time for thread: ${threadId}`);
