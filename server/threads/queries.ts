@@ -197,3 +197,29 @@ export const createThread = async ({
     client.release();
   }
 };
+
+export const markThreadVisit = async ({
+  threadId,
+  firebaseId,
+}: {
+  threadId: string;
+  firebaseId: string;
+}) => {
+  const query = `
+    INSERT INTO user_thread_last_visits(user_id, thread_id) VALUES (
+      (SELECT id FROM users WHERE users.firebase_id = $1),
+      (SELECT id from threads WHERE threads.string_id = $2))
+    ON CONFLICT(user_id, thread_id) DO UPDATE 
+      SET last_visit_time = DEFAULT
+      WHERE user_thread_last_visits.user_id = (SELECT id FROM users WHERE users.firebase_id = $1)
+      AND user_thread_last_visits.thread_id = (SELECT id from threads WHERE threads.string_id = $2)`;
+
+  try {
+    await pool.query(query, [firebaseId, threadId]);
+    return true;
+  } catch (e) {
+    error(`Error while recording thread visit.`);
+    error(e);
+    return false;
+  }
+};
