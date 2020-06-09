@@ -56,7 +56,7 @@ CREATE TABLE IF NOT EXISTS boards
     avatar_reference_id TEXT,
     settings JSONB NOT NULL
 );
-CREATE INDEX boards_string_id on boards(slug);
+CREATE UNIQUE INDEX boards_string_id on boards(slug);
 
 CREATE TABLE IF NOT EXISTS board_tags
 (

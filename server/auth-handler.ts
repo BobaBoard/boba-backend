@@ -16,7 +16,7 @@ export const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
     .auth()
     .verifyIdToken(idToken)
     .then((decodedToken) => {
-      log(`Founs id token in request: ${decodedToken.uid}`);
+      log(`Found id token in request: ${decodedToken.uid}`);
       // @ts-ignore
       req.currentUser = decodedToken;
       next();
