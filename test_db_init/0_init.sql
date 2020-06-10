@@ -100,6 +100,7 @@ CREATE TABLE IF NOT EXISTS secret_identities
     /* This can be null if generated on the fly*/
     avatar_reference_id TEXT
 );
+CREATE UNIQUE INDEX secret_identities_display_name on secret_identities(display_name);
 
 CREATE TABLE IF NOT EXISTS threads
 (
