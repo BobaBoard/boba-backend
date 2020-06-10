@@ -43,13 +43,12 @@ export const createBoardsIfNotExists = async (
         ]);
     });
     const result = await Promise.all(promises);
-    log(
-      `Added ${result.reduce(
-        (value, row) => value + (row?.rowCount || 0),
-        0
-      )} records.`
+    const recordsAdded = result.reduce(
+      (value, row) => value + (row?.rowCount || 0),
+      0
     );
-    return true;
+    log(`Added ${recordsAdded} records.`);
+    return recordsAdded;
   } catch (e) {
     error(`Error while adding new board.`);
     error(e);
