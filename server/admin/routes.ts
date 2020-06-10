@@ -23,10 +23,9 @@ router.get("/generate/boards", isLoggedIn, async (req, res) => {
   }
 
   const data = await getSpreadsheetData(getSheetUrl(BOARDS_SHEET_ID));
-  log(data);
-  createBoardsIfNotExists(data);
+  const recordsAdded = createBoardsIfNotExists(data);
 
-  res.status(200).json(data);
+  res.status(200).json({ added: recordsAdded });
 });
 
 const getSpreadsheetData = (url: string) => {
