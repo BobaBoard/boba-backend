@@ -3,58 +3,17 @@ import { expect } from "chai";
 
 import { getThreadByStringId, getThreadIdentitiesByStringId } from "../queries";
 
-describe("Tests threads queries", () => {
+describe("threads queries", () => {
   it("fetches threads by string id (with comments)", async () => {
     const thread = await getThreadByStringId({
-      id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      threadId: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
     });
 
     expect(thread).to.eql({
-      id: "1",
-      parent_board: "2",
+      string_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
       posts: [
         {
-          id: 1,
-          string_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
-          parent_thread: 1,
-          parent_post: null,
-          author: 3,
-          created: "2020-04-30T03:23:00",
-          content: '[{"insert":"Favorite character to maim?"}]',
-          type: "text",
-          whisper_tags: null,
-          is_deleted: false,
-          anonymity_type: "strangers",
-          comments: null,
-        },
-        {
-          anonymity_type: "strangers",
-          author: 1,
-          comments: null,
-          content: '[{"insert":"Revolver Ocelot"}]',
-          created: "2020-05-01T05:42:00",
-          id: 2,
-          is_deleted: false,
-          parent_thread: 1,
-          parent_post: 1,
-          string_id: "619adf62-833f-4bea-b591-03e807338a8e",
-          type: "text",
-          whisper_tags: ["fight me on this"],
-        },
-        {
-          content: '[{"insert":"Kermit the Frog"}]',
-          created: "2020-05-02T06:04:00",
-          id: 3,
-          is_deleted: false,
-          parent_thread: 1,
-          parent_post: 1,
-          string_id: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
-          type: "text",
-          whisper_tags: [
-            "Im too ashamed to admit this ok",
-            "sorry mom",
-            "YOU WILL NEVER KNOW WHO I AM",
-          ],
           anonymity_type: "everyone",
           author: 3,
           comments: [
@@ -63,71 +22,81 @@ describe("Tests threads queries", () => {
               author: 1,
               content: '[{"insert":"OMG ME TOO"}]',
               created: "2020-04-30T00:22:00",
-              id: 1,
-              image_reference_id: null,
-              is_deleted: false,
-              parent_comment: null,
-              parent_post: 3,
-              parent_thread: 1,
-              string_id: "46a16199-33d1-48c2-bb79-4d4095014688",
+              id: "46a16199-33d1-48c2-bb79-4d4095014688",
+              is_new: false,
+              parent_post: "29d1b2da-3289-454a-9089-2ed47db4967b",
             },
             {
               anonymity_type: "strangers",
               author: 1,
               content: '[{"insert":"friends!!!!!"}]',
               created: "2020-05-23T05:52:00",
-              id: 2,
-              image_reference_id: null,
-              is_deleted: false,
-              parent_comment: null,
-              parent_post: 3,
-              parent_thread: 1,
-              string_id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
+              id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
+              is_new: false,
+              parent_post: "29d1b2da-3289-454a-9089-2ed47db4967b",
             },
           ],
-        },
-      ],
-      string_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
-    });
-  });
-
-  it("fetches threads by string id (no comments)", async () => {
-    const thread = await getThreadByStringId({
-      id: "a5c903df-35e8-43b2-a41a-208c43154671",
-    });
-    expect(thread).to.eql({
-      id: "2",
-      parent_board: "2",
-      string_id: "a5c903df-35e8-43b2-a41a-208c43154671",
-      posts: [
-        {
-          id: 4,
-          string_id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
-          parent_thread: 2,
-          parent_post: null,
-          author: 1,
-          created: "2020-04-24T05:42:00",
-          content: '[{"insert":"Favorite murder scene in videogames?"}]',
+          content: '[{"insert":"Kermit the Frog"}]',
+          created: "2020-05-02T06:04:00",
+          id: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
+          is_new: false,
+          new_comments: 0,
+          parent_post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
+          parent_thread_id: 1,
+          total_comments: 2,
           type: "text",
-          whisper_tags: ["mwehehehehe"],
-          is_deleted: false,
+          whisper_tags: [
+            "Im too ashamed to admit this ok",
+            "sorry mom",
+            "YOU WILL NEVER KNOW WHO I AM",
+          ],
+        },
+        {
           anonymity_type: "strangers",
+          author: 1,
           comments: null,
+          content: '[{"insert":"Revolver Ocelot"}]',
+          created: "2020-05-01T05:42:00",
+          id: "619adf62-833f-4bea-b591-03e807338a8e",
+          is_new: false,
+          new_comments: null,
+          parent_post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
+          parent_thread_id: 1,
+          total_comments: null,
+          type: "text",
+          whisper_tags: ["fight me on this"],
         },
         {
           anonymity_type: "strangers",
           author: 3,
           comments: null,
-          content: '[{"insert":"Everything in The Evil Within tbh"}]',
-          created: "2020-04-30T08:22:00",
-          id: 5,
-          is_deleted: false,
-          parent_thread: 2,
-          parent_post: 4,
-          string_id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
+          content: '[{"insert":"Favorite character to maim?"}]',
+          created: "2020-04-30T03:23:00",
+          id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
+          is_new: false,
+          new_comments: null,
+          parent_post_id: null,
+          parent_thread_id: 1,
+          total_comments: null,
           type: "text",
-          whisper_tags: ["joseph oda is love", "joseph oda is life"],
+          whisper_tags: null,
         },
+      ],
+      total_comments: "2",
+      new_comments: "0",
+      new_posts: "0",
+    });
+  });
+
+  it("fetches threads by string id (no comments)", async () => {
+    const thread = await getThreadByStringId({
+      threadId: "a5c903df-35e8-43b2-a41a-208c43154671",
+      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+    });
+    expect(thread).to.eql({
+      new_comments: null,
+      new_posts: "3",
+      posts: [
         {
           anonymity_type: "strangers",
           author: 2,
@@ -135,54 +104,96 @@ describe("Tests threads queries", () => {
           content:
             '[{"insert":"(chants) Leon Kennedy! Leon Kennedy! Leon Kennedy!)"}]',
           created: "2020-04-30T09:47:00",
-          id: 6,
-          is_deleted: false,
-          parent_thread: 2,
-          parent_post: 4,
-          string_id: "1f1ad4fa-f02a-48c0-a78a-51221a7db170",
+          id: "1f1ad4fa-f02a-48c0-a78a-51221a7db170",
+          is_new: true,
+          new_comments: null,
+          parent_post_id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
+          parent_thread_id: 2,
+          total_comments: null,
           type: "text",
           whisper_tags: [
             "nothing beats a himbo getting gangbanged by a herd of hungry hungry zombies",
           ],
         },
+        {
+          anonymity_type: "strangers",
+          author: 3,
+          comments: null,
+          content: '[{"insert":"Everything in The Evil Within tbh"}]',
+          created: "2020-04-30T08:22:00",
+          id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
+          is_new: true,
+          new_comments: null,
+          parent_post_id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
+          parent_thread_id: 2,
+          total_comments: null,
+          type: "text",
+          whisper_tags: ["joseph oda is love", "joseph oda is life"],
+        },
+        {
+          anonymity_type: "strangers",
+          author: 1,
+          comments: null,
+          content: '[{"insert":"Favorite murder scene in videogames?"}]',
+          created: "2020-04-24T05:42:00",
+          id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
+          is_new: true,
+          new_comments: null,
+          parent_post_id: null,
+          parent_thread_id: 2,
+          total_comments: null,
+          type: "text",
+          whisper_tags: ["mwehehehehe"],
+        },
       ],
+      string_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+      total_comments: null,
     });
   });
 
   it("returns null thread when id not found", async () => {
     const thread = await getThreadByStringId({
-      id: "this_will_not_be_in_the_db",
+      threadId: "this_will_not_be_in_the_db",
+      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
     });
 
     expect(thread).to.be.null;
   });
 
   it("fetches thread identities by string id", async () => {
-    const identities = await getThreadIdentitiesByStringId(
-      "29d1b2da-3289-454a-9089-2ed47db4967b"
-    );
+    const identities = await getThreadIdentitiesByStringId({
+      threadId: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+    });
     expect(identities.length).to.eql(2);
     expect(identities[0]).to.eql({
-      display_name: "Sunglasses Raccoon",
+      display_name: "Old Time-y Anon",
+      friend: null,
       id: "1",
-      secret_identity_avatar_reference_id: null,
-      user_avatar_reference_id: null,
+      self: true,
+      secret_identity_avatar_reference_id:
+        "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
+      user_avatar_reference_id: "bobatan.png",
       username: "bobatan",
     });
     expect(identities[1]).to.eql({
-      display_name: "Evil Moth",
+      display_name: "DragonFucker",
+      friend: true,
       id: "3",
-      secret_identity_avatar_reference_id: null,
-      user_avatar_reference_id: null,
+      secret_identity_avatar_reference_id:
+        "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
+      self: false,
+      user_avatar_reference_id: "greedler.jpg",
       username: "oncest5evah",
     });
   });
 
-  it("return null for thread identities when thread not found", async () => {
-    const thread = await getThreadIdentitiesByStringId(
-      "this_will_not_be_in_the_db"
-    );
+  it("return false for thread identities when thread not found", async () => {
+    const thread = await getThreadIdentitiesByStringId({
+      threadId: "this_will_not_be_in_the_db",
+      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+    });
 
-    expect(thread).to.be.null;
+    expect(thread).to.be.false;
   });
 });
