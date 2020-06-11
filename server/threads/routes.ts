@@ -25,9 +25,9 @@ router.get("/:id", isLoggedIn, async (req, res) => {
       firebaseId: req.currentUser?.uid,
     }),
     getThreadIdentitiesByStringId({
-      id,
+      threadId: id,
       // @ts-ignore
-      user: req.currentUser?.uid,
+      firebaseId: req.currentUser?.uid,
     }),
   ]);
   info(`Found thread: `, thread);
@@ -93,13 +93,13 @@ router.post("/:boardSlug/create", isLoggedIn, async (req, res) => {
   });
   info(`Created new thread %O`, threadStringId);
 
-  if (!threadStringId) {
+  if (threadStringId === false) {
     res.sendStatus(500);
     return;
   }
   res.status(200).json(
     await getThreadByStringId({
-      threadId: threadStringId,
+      threadId: threadStringId as string,
       // @ts-ignore
       firebaseId: req.currentUser.uid,
     })
