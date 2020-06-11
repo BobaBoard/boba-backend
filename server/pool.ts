@@ -6,7 +6,7 @@ const log = debug("bobaserver:pool");
 let databaseConfig;
 log(`Attempting db connection...`);
 if (process.env.NODE_ENV == "production") {
-  log(`Connecting to remove database host: ${process.env.POSTGRES_HOST}`);
+  log(`Connecting to remote database host: ${process.env.POSTGRES_HOST}`);
   databaseConfig = {
     host: process.env.POSTGRES_HOST,
     user: process.env.POSTGRES_USER,
