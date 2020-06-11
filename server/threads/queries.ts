@@ -36,7 +36,7 @@ export const getThreadByStringId = async ({
                 'created',  TO_CHAR(thread_comments.created, 'YYYY-MM-DD"T"HH24:MI:SS'),
                 'anonymity_type', thread_comments.anonymity_type,
                 'is_new', last_visit_time < thread_comments.created OR last_visit_time IS NULL
-              )) as comments 
+              ) ORDER BY thread_comments.created ASC) as comments 
               FROM (
                 SELECT 
                   comments.*,
@@ -47,8 +47,7 @@ export const getThreadByStringId = async ({
                   ON comments.parent_thread = thread.id
                 LEFT JOIN last_visited
                   ON 1=1
-                WHERE thread.string_id = $1
-                ORDER BY comments.created ASC) as thread_comments
+                WHERE thread.string_id = $1) as thread_comments
               GROUP BY thread_comments.parent_post),
         thread_posts AS
             (SELECT 
