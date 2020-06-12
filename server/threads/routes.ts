@@ -86,12 +86,12 @@ router.post("/:boardSlug/create", isLoggedIn, async (req, res) => {
 
   const threadStringId = await createThread({
     // @ts-ignore
-    userId: req.currentUser.uid,
+    firebaseId: req.currentUser.uid,
     content,
     anonymityType: "everyone",
     boardSlug: boardSlug,
   });
-  info(`Created new thread %O`, threadStringId);
+  info(`Created new thread`, threadStringId);
 
   if (threadStringId === false) {
     res.sendStatus(500);
