@@ -1,7 +1,9 @@
 import debug from "debug";
 import pgp from "pg-promise";
 
-const log = debug("bobaserver:pool");
+const error = debug("bobaserver:pool-error");
+const log = debug("bobaserver:pool-log");
+const info = debug("bobaserver:pool-info");
 
 let databaseConfig;
 log(`Attempting db connection...`);
@@ -23,10 +25,10 @@ const pgLib = pgp({
     log(`connected to the db on port ${process.env.POSTGRES_PORT}`);
   },
   error: (e) => {
-    log(`error occurred on the db `, e);
+    error(`error occurred on the db `, e);
   },
   query: (q) => {
-    log("executing query: ", q);
+    info("executing query: ", q);
   },
 });
 const pool = pgLib(databaseConfig);

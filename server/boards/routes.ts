@@ -82,6 +82,10 @@ router.get("/", isLoggedIn, async (req, res) => {
     // @ts-ignore
     firebaseId: req.currentUser?.uid,
   });
+  if (!boards) {
+    res.status(500);
+  }
+
   res.status(200).json(boards.map((board: any) => transformImageUrls(board)));
 });
 
