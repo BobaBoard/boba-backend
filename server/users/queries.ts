@@ -3,6 +3,7 @@ import pool from "../pool";
 
 const log = debug("bobaserver:users:queries-log");
 const error = debug("bobaserver:users:queries-error");
+const info = debug("bobaserver:users:queries-info");
 
 export const getUserFromFirebaseId = async ({
   firebaseId,
@@ -12,9 +13,9 @@ export const getUserFromFirebaseId = async ({
   const query = "SELECT * FROM users WHERE firebase_id = $1 LIMIT 1";
 
   try {
-    const { rows } = await pool.query(query, [firebaseId]);
-    log(`Fetched user data: `, rows[0]);
-    return rows[0];
+    const user = await pool.one(query, [firebaseId]);
+    info(`Fetched user data: `, user);
+    return user;
   } catch (e) {
     error(`Error while fetching users.`);
     error(e);

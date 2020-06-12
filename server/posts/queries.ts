@@ -92,7 +92,7 @@ export const postNewContribution = async ({
     error(e);
     return null;
   } finally {
-    client.release();
+    //client.release();
   }
 };
 
@@ -181,6 +181,6 @@ export const postNewComment = async ({
     error(e);
     return null;
   } finally {
-    client.release();
+    //client.release();
   }
 };
