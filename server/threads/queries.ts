@@ -74,7 +74,7 @@ export const createThread = async ({
         INSERT INTO threads(string_id, parent_board)
         VALUES (
           $/thread_string_id/,
-          (SELECT id FROM boards WHERE slug = $/board_slug/)
+          (SELECT id FROM boards WHERE slug = $/board_slug/))
         RETURNING id`,
         {
           thread_string_id: threadStringId,
@@ -82,7 +82,7 @@ export const createThread = async ({
         }
       );
 
-      await t.one(
+      await t.none(
         `
         INSERT INTO posts(string_id, parent_post, parent_thread, 
                           author, content, type, 
@@ -101,7 +101,7 @@ export const createThread = async ({
           parent_thread: createThreadResult.id,
           firebase_id: firebaseId,
           content,
-          anonimity_type: anonymityType,
+          anonymity_type: anonymityType,
         }
       );
 
@@ -109,7 +109,7 @@ export const createThread = async ({
         "SELECT id FROM secret_identities ORDER BY RANDOM() LIMIT 1";
       const identityRes = await t.one(randomIdentityId);
 
-      t.one(
+      t.none(
         `INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
        VALUES(
          $/thread_id/,
@@ -137,7 +137,7 @@ export const markThreadVisit = async ({
   firebaseId: string;
 }) => {
   try {
-    await pool.one(sql.visitThreadByStringId, {
+    await pool.none(sql.visitThreadByStringId, {
       firebase_id: firebaseId,
       thread_string_id: threadId,
     });
