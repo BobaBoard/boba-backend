@@ -10,9 +10,6 @@ const router = express.Router();
 
 router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
   const { postId } = req.params;
-  log(`body: `, req.body);
-  // @ts-ignore
-  log(`user`, req.currentUser);
   const { content, forceAnonymous } = req.body;
 
   // @ts-ignore
@@ -28,7 +25,7 @@ router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
   const post = await postNewContribution({
     // @ts-ignore
     firebaseId: req.currentUser.uid,
-    replyTo: postId,
+    parentPostId: postId,
     content,
     anonymityType: forceAnonymous ? "everyone" : "strangers",
   });
@@ -43,9 +40,6 @@ router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
 
 router.post("/:postId/comment", isLoggedIn, async (req, res) => {
   const { postId } = req.params;
-  log(`body: `, req.body);
-  // @ts-ignore
-  log(`user`, req.currentUser);
   const { content, forceAnonymous } = req.body;
 
   // @ts-ignore
@@ -61,7 +55,7 @@ router.post("/:postId/comment", isLoggedIn, async (req, res) => {
   const post = await postNewComment({
     // @ts-ignore
     firebaseId: req.currentUser.uid,
-    replyTo: postId,
+    parentPostId: postId,
     content,
     anonymityType: forceAnonymous ? "everyone" : "strangers",
   });
