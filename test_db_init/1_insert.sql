@@ -187,4 +187,4 @@ INSERT INTO user_thread_last_visits(user_id, thread_id, last_visit_time) VALUES
   ((SELECT id FROM users WHERE username = 'jersey_devil_69'),
    (SELECT id FROM threads WHERE string_id = 'a5c903df-35e8-43b2-a41a-208c43154671'),
     -- Give jersey_devil_69 a visit so he has unseen posts, but from them.
-    to_timestamp('2020-05-10 9:42:00', 'YYYY-MM-DD HH:MI:SS'))
+    to_timestamp('2020-05-01 9:42:00', 'YYYY-MM-DD HH:MI:SS'))
