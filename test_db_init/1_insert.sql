@@ -67,7 +67,7 @@ WITH
         (SELECT id FROM posts_insert ORDER BY id DESC LIMIT 1),
         (SELECT id FROM new_thread_id),
         (SELECT id FROM Users WHERE username = 'bobatan'),
-        to_timestamp('2020-04-30 12:22:00', 'YYYY-MM-DD HH:MI:SS'),
+        to_timestamp('2020-05-22 12:22:00', 'YYYY-MM-DD HH:MI:SS'),
         '[{"insert":"OMG ME TOO"}]', 
         'strangers'
       ),
@@ -108,7 +108,7 @@ WITH
          ARRAY['mwehehehehe'], 
          'strangers',
          to_timestamp('2020-04-24 05:42:00', 'YYYY-MM-DD HH:MI:SS')),
-        ('89fc3682-cb74-43f9-9a63-bd97d0f59bb9', 
+        ('08f25ef1-82dc-4202-a410-c0723ef76789', 
          4,
          (SELECT id FROM new_thread_id),
          (SELECT id FROM Users WHERE username = 'oncest5evah'),
@@ -125,7 +125,7 @@ WITH
          'text', 
          ARRAY['nothing beats a himbo getting gangbanged by a herd of hungry hungry zombies'], 
          'strangers',
-         to_timestamp('2020-04-30 9:42:00', 'YYYY-MM-DD HH:MI:SS') + INTERVAL'5 minute'))
+         to_timestamp('2020-05-03 9:42:00', 'YYYY-MM-DD HH:MI:SS') + INTERVAL'5 minute'))
 INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
     VALUES
      ((SELECT id FROM new_thread_id),
@@ -164,3 +164,27 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
       (SELECT id FROM secret_identities WHERE display_name = 'DragonFucker'));
 
 INSERT INTO friends(user_id,friend_id) VALUES (1,3),(3,1);
+
+INSERT INTO user_thread_last_visits(user_id, thread_id, last_visit_time) VALUES
+  ((SELECT id FROM users WHERE username = 'bobatan'),
+   (SELECT id FROM threads WHERE string_id = '29d1b2da-3289-454a-9089-2ed47db4967b'),
+    -- Give bobatan a visit so she has unseen comments, but they're from her.
+    to_timestamp('2020-05-10 9:42:00', 'YYYY-MM-DD HH:MI:SS')),
+  ((SELECT id FROM users WHERE username = 'oncest5evah'),
+   (SELECT id FROM threads WHERE string_id = '29d1b2da-3289-454a-9089-2ed47db4967b'),
+    -- Give oncest5evah a visit so he has unseen comments.
+    to_timestamp('2020-05-10 9:42:00', 'YYYY-MM-DD HH:MI:SS'));
+
+INSERT INTO user_thread_last_visits(user_id, thread_id, last_visit_time) VALUES
+  ((SELECT id FROM users WHERE username = 'bobatan'),
+   (SELECT id FROM threads WHERE string_id = 'a5c903df-35e8-43b2-a41a-208c43154671'),
+    -- Give bobatan a visit past the last post so she has no unseen posts.
+    to_timestamp('2020-05-25 9:42:00', 'YYYY-MM-DD HH:MI:SS')),
+  ((SELECT id FROM users WHERE username = 'oncest5evah'),
+   (SELECT id FROM threads WHERE string_id = 'a5c903df-35e8-43b2-a41a-208c43154671'),
+    -- Give oncest5evah a visit so he has unseen posts.
+    to_timestamp('2020-05-01 9:42:00', 'YYYY-MM-DD HH:MI:SS')),
+  ((SELECT id FROM users WHERE username = 'jersey_devil_69'),
+   (SELECT id FROM threads WHERE string_id = 'a5c903df-35e8-43b2-a41a-208c43154671'),
+    -- Give jersey_devil_69 a visit so he has unseen posts, but from them.
+    to_timestamp('2020-05-10 9:42:00', 'YYYY-MM-DD HH:MI:SS'))

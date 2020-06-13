@@ -38,8 +38,20 @@ VALUES
     ('eJkLdtCShhVTgNWmjw70K8a8Aqs1', 'Irenes', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2Ff5a35653-7e9a-4485-b89a-e2f3acd5ddf5?alt=media&token=edad2b77-2dbd-4c12-9eda-42d53f2cbd04', NULL),
     ('pmv3BcXeKAYKX8XtK3hnJ76WI2z1', 'pizzagate', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F82c9b1a9-1b29-47a9-8939-eff9e47af89d?alt=media&token=89706703-1cd5-4efb-94a9-d2efd39098f6', NULL),
     ('hwqO40WWYYYNbYZj7811EfZF4642', 'Tango', '', NULL),
-    ('W9AGS2DBCmZIQrVDzYLuWE4RmSL2', 'Yuu', '', NULL);
+    ('QKfOtUWxMzbiVOZC2cLCnwrt57B2', 'Yuu', '', NULL);
     
 INSERT INTO Users(firebase_id, username, avatar_reference_id, invited_by)
 VALUES
-    ('W9AGS2DBCmZIQrVDzYLuWE4RmSL2', 'vaincity', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2Ff8abde62-6aab-4dfd-8949-08424a74078c?alt=media&token=4852526c-2b88-4325-9d95-32c6a8b23e7c', NULL);
+    ('ZDFlphXtnrZVJpOMVbIymakkGrM2', 'vaincity', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2Ff8abde62-6aab-4dfd-8949-08424a74078c?alt=media&token=4852526c-2b88-4325-9d95-32c6a8b23e7c', NULL);
+
+INSERT INTO Users(firebase_id, username, avatar_reference_id, invited_by)
+VALUES
+('5QYRmektxxXa8WGTpZPA9MzNtqj1', 'Radial', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2Fbb74c6c5-0c31-4aad-a9ad-7af46dd6916f?alt=media&token=994c5b8a-405e-4e5b-8aca-24f4c32e9742', NULL);
+
+
+INSERT INTO Users(firebase_id, username, avatar_reference_id, invited_by)
+VALUES
+('jIcoToapd0Smi3pWhmagmJKgv3G2', 'playerprophet', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2Fa3792b86-14de-4711-bf07-a7b1188211b5?alt=media&token=8eb68019-0e0a-4220-b6fc-badb9ef3bd38', NULL);
+
+
+

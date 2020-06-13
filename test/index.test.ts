@@ -29,18 +29,59 @@ describe("Tests threads REST API", () => {
 
     expect(res.status).to.equal(200);
     expect(res.body).to.eql({
-      new_comments: "2",
-      new_posts: "3",
+      new_comments: 0,
+      new_posts: 0,
       posts: [
+        {
+          anonymity_type: "strangers",
+          comments: null,
+          content: '[{"insert":"Favorite character to maim?"}]',
+          created: "2020-04-30T03:23:00",
+          id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
+          is_new: false,
+          is_own: false,
+          new_comments: 0,
+          parent_post_id: null,
+          parent_thread_id: 1,
+          secret_identity: {
+            avatar:
+              "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
+            name: "DragonFucker",
+          },
+          total_comments: 0,
+          type: "text",
+          whisper_tags: null,
+        },
+        {
+          anonymity_type: "strangers",
+          comments: null,
+          content: '[{"insert":"Revolver Ocelot"}]',
+          created: "2020-05-01T05:42:00",
+          id: "619adf62-833f-4bea-b591-03e807338a8e",
+          is_new: false,
+          is_own: false,
+          new_comments: 0,
+          parent_post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
+          parent_thread_id: 1,
+          secret_identity: {
+            avatar:
+              "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
+            name: "Old Time-y Anon",
+          },
+          total_comments: 0,
+          type: "text",
+          whisper_tags: ["fight me on this"],
+        },
         {
           anonymity_type: "everyone",
           comments: [
             {
               anonymity_type: "strangers",
               content: '[{"insert":"OMG ME TOO"}]',
-              created: "2020-04-30T00:22:00",
+              created: "2020-05-22T00:22:00",
               id: "46a16199-33d1-48c2-bb79-4d4095014688",
-              is_new: true,
+              is_new: false,
+              is_own: false,
               parent_post: "29d1b2da-3289-454a-9089-2ed47db4967b",
               secret_identity: {
                 avatar:
@@ -53,7 +94,8 @@ describe("Tests threads REST API", () => {
               content: '[{"insert":"friends!!!!!"}]',
               created: "2020-05-23T05:52:00",
               id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
-              is_new: true,
+              is_new: false,
+              is_own: false,
               parent_post: "29d1b2da-3289-454a-9089-2ed47db4967b",
               secret_identity: {
                 avatar:
@@ -65,8 +107,9 @@ describe("Tests threads REST API", () => {
           content: '[{"insert":"Kermit the Frog"}]',
           created: "2020-05-02T06:04:00",
           id: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
-          is_new: true,
-          new_comments: 2,
+          is_new: false,
+          is_own: false,
+          new_comments: 0,
           parent_post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
           parent_thread_id: 1,
           secret_identity: {
@@ -82,47 +125,9 @@ describe("Tests threads REST API", () => {
             "YOU WILL NEVER KNOW WHO I AM",
           ],
         },
-        {
-          anonymity_type: "strangers",
-          comments: null,
-          content: '[{"insert":"Revolver Ocelot"}]',
-          created: "2020-05-01T05:42:00",
-          id: "619adf62-833f-4bea-b591-03e807338a8e",
-          is_new: true,
-          new_comments: null,
-          parent_post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
-          parent_thread_id: 1,
-          secret_identity: {
-            avatar:
-              "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
-            name: "Old Time-y Anon",
-          },
-          total_comments: null,
-          type: "text",
-          whisper_tags: ["fight me on this"],
-        },
-        {
-          anonymity_type: "strangers",
-          comments: null,
-          content: '[{"insert":"Favorite character to maim?"}]',
-          created: "2020-04-30T03:23:00",
-          id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
-          is_new: true,
-          new_comments: null,
-          parent_post_id: null,
-          parent_thread_id: 1,
-          secret_identity: {
-            avatar:
-              "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
-            name: "DragonFucker",
-          },
-          total_comments: null,
-          type: "text",
-          whisper_tags: null,
-        },
       ],
       string_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
-      total_comments: "2",
+      total_comments: 2,
     });
   });
 });
