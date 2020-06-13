@@ -69,58 +69,31 @@ export const createThread = async ({
   return pool
     .tx("create-thread", async (t) => {
       const threadStringId = uuidv4();
-      const createThreadResult = await t.one(
-        `
-        INSERT INTO threads(string_id, parent_board)
-        VALUES (
-          $/thread_string_id/,
-          (SELECT id FROM boards WHERE slug = $/board_slug/))
-        RETURNING id`,
-        {
-          thread_string_id: threadStringId,
-          board_slug: boardSlug,
-        }
-      );
+      const createThreadResult = await t.one(sql.createThread, {
+        thread_string_id: threadStringId,
+        board_slug: boardSlug,
+      });
+      log(`Created thread entry for thread ${threadStringId}`);
 
-      await t.none(
-        `
-        INSERT INTO posts(string_id, parent_post, parent_thread, 
-                          author, content, type, 
-                          whisper_tags, anonymity_type)
-        VALUES
-          ($/post_string_id/,
-          NULL,
-          $/parent_thread/,
-          (SELECT id FROM users WHERE firebase_id = $/firebase_id/),
-          $/content/, 
-          'text', 
-          NULL, 
-          $/anonymity_type/)`,
-        {
-          post_string_id: uuidv4(),
-          parent_thread: createThreadResult.id,
-          firebase_id: firebaseId,
-          content,
-          anonymity_type: anonymityType,
-        }
-      );
+      const postStringId = uuidv4();
+      await t.one(sql.createPost, {
+        post_string_id: postStringId,
+        parent_thread: createThreadResult.id,
+        firebase_id: firebaseId,
+        content,
+        anonymity_type: anonymityType,
+      });
+      log(`Created post entry for thread ${postStringId}`);
 
-      const randomIdentityId =
-        "SELECT id FROM secret_identities ORDER BY RANDOM() LIMIT 1";
-      const identityRes = await t.one(randomIdentityId);
+      const identityRes = await t.one(sql.getRandomIdentityId);
+      log(`Got new identity for thread ${threadStringId}: ${identityRes}.`);
 
-      t.none(
-        `INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
-       VALUES(
-         $/thread_id/,
-         (SELECT id FROM users WHERE firebase_id = $/firebase_id/), 
-         $/secret_identity_id/)`,
-        {
-          thread_id: createThreadResult.id,
-          firebase_id: firebaseId,
-          secret_identity_id: randomIdentityId,
-        }
-      );
+      await t.none(sql.insertNewIdentity, {
+        thread_id: createThreadResult.id,
+        firebase_id: firebaseId,
+        secret_identity_id: identityRes.id,
+      });
+      log(`Added identity for ${threadStringId}.`);
       return threadStringId;
     })
     .catch((e) => {

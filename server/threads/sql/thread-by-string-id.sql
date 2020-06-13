@@ -21,14 +21,14 @@ WITH
                 'content', thread_comments.content,
                 'created',  TO_CHAR(thread_comments.created, 'YYYY-MM-DD"T"HH24:MI:SS'),
                 'anonymity_type', thread_comments.anonymity_type,
-                'is_new', (${firebase_id} IS NOT NULL AND is_new AND NOT is_own),
-                'is_own', (${firebase_id} IS NOT NULL AND is_own)
+                'is_new', (is_new AND NOT is_own),
+                'is_own', is_own
             ) ORDER BY thread_comments.created ASC) as comments 
          FROM (
             SELECT 
                 comments.*,
-                comments.author = (SELECT id FROM users WHERE firebase_id = ${firebase_id}) as is_own,
-                last_visit_time < comments.created OR last_visit_time IS NULL as is_new,
+                ${firebase_id} IS NOT NULL AND comments.author = (SELECT id FROM users WHERE firebase_id = ${firebase_id}) as is_own,
+                ${firebase_id} IS NOT NULL AND (last_visit_time IS NULL OR last_visit_time < comments.created) as is_new,
                 threads.string_id as parent_thread_string_id,
                 last_visited.last_visit_time
             FROM comments 
@@ -51,8 +51,8 @@ WITH
             COALESCE(thread_comments.total_comments, 0) as total_comments,
             COALESCE(thread_comments.new_comments, 0) as new_comments,
             thread_comments.comments,
-            COALESCE(posts.author = (SELECT id FROM users WHERE firebase_id = ${firebase_id}), FALSE) as is_own,
-            ${firebase_id} IS NOT NULL AND last_visited.last_visit_time IS NOT NULL AND last_visited.last_visit_time < posts.created as is_new
+            COALESCE(${firebase_id} IS NOT NULL AND posts.author = (SELECT id FROM users WHERE firebase_id = ${firebase_id}), FALSE) as is_own,
+            ${firebase_id} IS NOT NULL AND (last_visited.last_visit_time IS NULL OR last_visited.last_visit_time < posts.created) as is_new
          FROM posts               
          LEFT JOIN posts as parent
             ON posts.parent_post = parent.id
