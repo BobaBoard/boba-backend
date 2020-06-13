@@ -22,6 +22,7 @@ const markBoardVisit = `
         WHERE user_board_last_visits.user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
             AND user_board_last_visits.board_id = (SELECT id from boards WHERE boards.slug = $/board_slug/)`;
 
+// TODO: fix return types so they are consistent
 export default {
   getAllBoards: new QueryFile(path.join(__dirname, "all-boards.sql")),
   getBoardActivityBySlug: new QueryFile(
