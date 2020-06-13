@@ -52,7 +52,14 @@ WITH
             COALESCE(thread_comments.new_comments, 0) as new_comments,
             thread_comments.comments,
             COALESCE(${firebase_id} IS NOT NULL AND posts.author = (SELECT id FROM users WHERE firebase_id = ${firebase_id}), FALSE) as is_own,
-            ${firebase_id} IS NOT NULL AND (last_visited.last_visit_time IS NULL OR last_visited.last_visit_time < posts.created) as is_new
+            CASE
+                WHEN ${firebase_id} IS NULL THEN FALSE
+                -- Firebase id is not null here, but make sure not to count our posts
+                WHEN posts.author = (SELECT id FROM users WHERE firebase_id = ${firebase_id}) THEN FALSE
+                -- Firebase id is not null and the post is not ours
+                WHEN last_visit_time IS NULL OR last_visit_time < posts.created THEN TRUE 
+                ELSE FALSE
+            END as is_new
          FROM posts               
          LEFT JOIN posts as parent
             ON posts.parent_post = parent.id

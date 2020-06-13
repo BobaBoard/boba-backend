@@ -319,6 +319,7 @@ describe("threads queries", () => {
         ],
       });
     });
+
     it("gets correct amounts with new comments (not self)", async () => {
       // The new comments are not from the user itself
       const thread = await getThreadByStringId({
