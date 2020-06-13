@@ -33,7 +33,7 @@ router.get("/:id", isLoggedIn, async (req, res) => {
   info(`Found thread: `, thread);
   info(`Found identities: `, identities);
 
-  if (thread === false) {
+  if (thread === false || identities == false) {
     res.sendStatus(500);
     return;
   }

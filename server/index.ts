@@ -10,12 +10,11 @@ dotenvExpand(dotenv.config());
 
 const serviceAccount = require(process.env.GOOGLE_APPLICATION_CREDENTIALS_PATH);
 
-if (!firebaseAuth.app) {
+if (!firebaseAuth.apps.length) {
   firebaseAuth.initializeApp({
     credential: firebaseAuth.credential.cert(serviceAccount),
   });
 }
-const firebaseApp = firebaseAuth.app;
 
 import { applyRoutes } from "./all-routes";
 

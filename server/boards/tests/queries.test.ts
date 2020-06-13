@@ -301,8 +301,9 @@ describe("Tests boards queries", () => {
         },
       ]);
     });
+
     it("gets correct amounts with new comments (not self)", async () => {
-      // The only new comments are from the user itself
+      // The new comments are not from the user itself
       const boardActivity = await getBoardActivityBySlug({
         slug: "gore",
         // Oncest
@@ -332,8 +333,9 @@ describe("Tests boards queries", () => {
         },
       ]);
     });
+
     it("gets correct amounts with new posts (self)", async () => {
-      // Since there was no visit we expect every post/comment to be marked as new
+      // Since we made the last posts since the visit we expect no new ones
       const boardActivity = await getBoardActivityBySlug({
         slug: "gore",
         // Jersey Devil
@@ -363,8 +365,9 @@ describe("Tests boards queries", () => {
         },
       ]);
     });
+
     it("gets correct amounts with new posts (not self)", async () => {
-      // Since there was no visit we expect every post/comment to be marked as new
+      // We expect new posts after the last visit
       const boardActivity = await getBoardActivityBySlug({
         slug: "gore",
         // Oncest
@@ -394,6 +397,7 @@ describe("Tests boards queries", () => {
         },
       ]);
     });
+
     it("gets correct amounts with no updates", async () => {
       // Since there was no visit we expect every post/comment to be marked as new
       const boardActivity = await getBoardActivityBySlug({
