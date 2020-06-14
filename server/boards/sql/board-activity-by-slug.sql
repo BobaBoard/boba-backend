@@ -22,6 +22,7 @@
             COUNT(posts.id)::int as posts_amount,    
             -- Count all the new posts that aren't ours, unless we aren't logged in          
             SUM(CASE
+                    -- If firebase_id is null then no one is logged in and posts are never new 
                     WHEN ${firebase_id} IS NULL THEN 0
                     -- Firebase id is not null here, but make sure not to count our posts
                     WHEN posts.author = (SELECT id FROM users WHERE firebase_id = ${firebase_id}) THEN 0
@@ -58,7 +59,15 @@ SELECT
     COALESCE(new_posts_amount, 0) as new_posts_amount,
     COALESCE(new_comments_amount, 0) as new_comments_amount,
     last_comment,
-    GREATEST(new_posts_amount, new_comments_amount) > 0 as is_new,
+    CASE
+        -- If firebase_id is null then no one is logged in and posts are never new 
+        WHEN ${firebase_id} IS NULL THEN FALSE
+        -- Firebase id is not null here, but make sure not to count our posts
+        WHEN first_post.author = (SELECT id FROM users WHERE firebase_id = ${firebase_id}) THEN FALSE
+        -- Firebase id is not null and the post is not ours
+        WHEN last_visit_time IS NULL OR last_visit_time < first_post.created THEN TRUE 
+        ELSE FALSE
+    END as is_new,
     COALESCE(comments_amount, 0) as comments_amount
 FROM
     thread_posts_updates

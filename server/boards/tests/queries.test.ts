@@ -132,7 +132,7 @@ describe("Tests boards queries", () => {
         content: '[{"insert":"Favorite character to maim?"}]',
         created: "2020-04-30T03:23:00",
         friend: false,
-        is_new: true,
+        is_new: false,
         last_activity: "2020-05-23T05:52:00",
         last_comment: new Date(Date.UTC(2020, 4, 23, 12, 52)),
         new_comments_amount: 2,
@@ -154,7 +154,7 @@ describe("Tests boards queries", () => {
         content: '[{"insert":"Favorite murder scene in videogames?"}]',
         created: "2020-04-24T05:42:00",
         friend: true,
-        is_new: true,
+        is_new: false,
         last_activity: "2020-05-03T09:47:00",
         last_comment: null,
         new_comments_amount: 0,
@@ -327,7 +327,7 @@ describe("Tests boards queries", () => {
       ).to.eql([
         {
           thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
-          is_new: true,
+          is_new: false,
           new_comments_amount: 2,
           new_posts_amount: 0,
         },
@@ -391,7 +391,7 @@ describe("Tests boards queries", () => {
       ).to.eql([
         {
           thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
-          is_new: true,
+          is_new: false,
           new_comments_amount: 0,
           new_posts_amount: 1,
         },
