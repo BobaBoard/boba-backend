@@ -150,6 +150,7 @@ describe("Tests boards queries", () => {
       slug: "gore",
       // Oncest
       firebaseId: "fb3",
+      cursor: null,
     });
 
     expect(board).to.eql([
@@ -204,6 +205,7 @@ describe("Tests boards queries", () => {
     const board = await getBoardActivityBySlug({
       slug: "gore",
       firebaseId: undefined,
+      cursor: null,
     });
 
     expect(board).to.eql([
@@ -259,6 +261,7 @@ describe("Tests boards queries", () => {
       slug: "main_street",
       // Bobatan
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      cursor: null,
     });
 
     expect(board).to.eql([]);
@@ -271,6 +274,7 @@ describe("Tests boards queries", () => {
         slug: "gore",
         // Jersey Devil
         firebaseId: "fb2",
+        cursor: null,
       });
 
       // get only activity-related values
@@ -302,6 +306,7 @@ describe("Tests boards queries", () => {
         slug: "gore",
         // Bobatan
         firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+        cursor: null,
       });
 
       // get only activity-related values
@@ -334,6 +339,7 @@ describe("Tests boards queries", () => {
         slug: "gore",
         // Oncest
         firebaseId: "fb3",
+        cursor: null,
       });
 
       // get only activity-related values
@@ -366,6 +372,7 @@ describe("Tests boards queries", () => {
         slug: "gore",
         // Jersey Devil
         firebaseId: "fb2",
+        cursor: null,
       });
 
       // get only activity-related values
@@ -398,6 +405,7 @@ describe("Tests boards queries", () => {
         slug: "gore",
         // Oncest
         firebaseId: "fb3",
+        cursor: null,
       });
 
       // get only activity-related values
@@ -430,6 +438,7 @@ describe("Tests boards queries", () => {
         slug: "gore",
         // Bobatan
         firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+        cursor: null,
       });
 
       // get only activity-related values
@@ -459,6 +468,7 @@ describe("Tests boards queries", () => {
       const boardActivity = await getBoardActivityBySlug({
         slug: "gore",
         firebaseId: undefined,
+        cursor: null,
       });
 
       // get only activity-related values
