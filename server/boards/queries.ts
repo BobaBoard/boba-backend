@@ -78,12 +78,12 @@ export const getBoardActivityBySlug = async ({
     if (rows.length == 1 && rows[0].thread_id == null) {
       // Only one row with just the null thread)
       log(`Board empty: ${slug}`);
-      return [];
+      return { cursor: undefined, activity: [] };
     }
 
     const result = rows;
     log(`Got getBoardActivityBySlug query result`, result);
-    return result;
+    return { cursor: undefined, activity: rows };
   } catch (e) {
     error(`Error while fetching board by slug (${slug}).`);
     error(e);
