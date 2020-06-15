@@ -5,7 +5,10 @@ import sql from "./sql";
 const log = debug("bobaserver:board:queries-log");
 const error = debug("bobaserver:board:queries-error");
 
-const encodeCursor = (cursor: { [key: string]: string }) => {
+const encodeCursor = (cursor: {
+  last_activity_cursor: string;
+  page_size: number;
+}) => {
   return Buffer.from(JSON.stringify(cursor)).toString("base64");
 };
 
@@ -63,11 +66,12 @@ export const getBoardActivityBySlug = async ({
   try {
     const decodedCursor = cursor && decodeCursor(cursor);
 
+    const pageSize = decodedCursor?.page_size || DEFAULT_PAGE_SIZE;
     const rows = await pool.manyOrNone(sql.getBoardActivityBySlug, {
       board_slug: slug,
       firebase_id: firebaseId,
       last_activity_cursor: decodedCursor?.last_activity_cursor || null,
-      page_size: decodedCursor?.page_size || DEFAULT_PAGE_SIZE,
+      page_size: pageSize,
     });
 
     if (!rows) {
@@ -81,9 +85,19 @@ export const getBoardActivityBySlug = async ({
       return { cursor: undefined, activity: [] };
     }
 
-    const result = rows;
+    let result = rows;
+    let nextCursor = null;
     log(`Got getBoardActivityBySlug query result`, result);
-    return { cursor: undefined, activity: rows };
+    if (result.length > pageSize) {
+      nextCursor = encodeCursor({
+        last_activity_cursor: result[result.length - 1].last_activity,
+        page_size: pageSize,
+      });
+      // remove last element from array
+      result.pop();
+    }
+
+    return { cursor: nextCursor, activity: rows };
   } catch (e) {
     error(`Error while fetching board by slug (${slug}).`);
     error(e);
