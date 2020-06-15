@@ -55,27 +55,32 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
   log(`Fetching activity data for board with slug ${slug}`);
 
-  const activity = await getBoardActivityBySlug({
+  const result = await getBoardActivityBySlug({
     slug,
     // @ts-ignore
     firebaseId: req.currentUser?.uid,
     cursor: null,
   });
-  log(`Found activity for board ${slug}:`, activity);
+  log(`Found activity for board ${slug}:`, result);
 
-  if (activity === false) {
+  if (result === false) {
     res.sendStatus(500);
     return;
   }
-  if (!activity) {
+  if (!result) {
     res.sendStatus(404);
     return;
   }
-  if (!activity.length) {
+  if (!result.activity.length) {
     res.sendStatus(204);
     return;
   }
-  res.status(200).json(mergeActivityIdentities(activity));
+
+  const activityWithIdentity = mergeActivityIdentities(result.activity);
+  res.status(200).json({
+    next_page_cursor: result.cursor,
+    activity: activityWithIdentity,
+  });
 });
 
 router.get("/", isLoggedIn, async (req, res) => {
