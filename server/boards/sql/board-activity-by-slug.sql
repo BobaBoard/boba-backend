@@ -105,4 +105,6 @@ LEFT JOIN LATERAL
             friends.friend_id = author
         LIMIT 1) as is_friend 
     ON true
+WHERE GREATEST(first_post, last_post, last_comment) < COALESCE(${last_activity_cursor}, NOW())
 ORDER BY last_activity DESC
+LIMIT ${page_size} + 1
