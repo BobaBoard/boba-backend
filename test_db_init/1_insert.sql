@@ -4,7 +4,8 @@ INSERT INTO Boards(slug, tagline, avatar_reference_id, settings)
 VALUES
     ('main_street', 'For BobaBoard-related discussions.', 'villains.png', '{ "accentColor": "#ff5252" }'),
     ('gore', 'Blood! Blood! Blood!', 'gore.png', '{ "accentColor": "#f96680" }'),
-    ('anime', 'I wish I had a funny one for this.', 'anime.png', '{ "accentColor": "#24d282"}');
+    ('anime', 'I wish I had a funny one for this.', 'anime.png', '{ "accentColor": "#24d282"}'),
+    ('long', 'A board to test with many posts.', 'onceler-board.png', '{ "accentColor": "#00b8ff"}');
   
 INSERT INTO Users(firebase_id, username, avatar_reference_id, invited_by)
 VALUES

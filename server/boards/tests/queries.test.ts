@@ -50,6 +50,19 @@ describe("Tests boards queries", () => {
         tagline: "I wish I had a funny one for this.",
         threads_count: "1",
       },
+      {
+        avatar_reference_id: "onceler-board.png",
+        has_updates: true,
+        last_comment: null,
+        last_post: new Date(Date.UTC(2020, 3, 25, 12, 42)),
+        last_visit: null,
+        settings: {
+          accentColor: "#00b8ff",
+        },
+        slug: "long",
+        tagline: "A board to test with many posts.",
+        threads_count: "26",
+      },
     ]);
   });
 
@@ -95,6 +108,19 @@ describe("Tests boards queries", () => {
         slug: "anime",
         tagline: "I wish I had a funny one for this.",
         threads_count: "1",
+      },
+      {
+        avatar_reference_id: "onceler-board.png",
+        has_updates: false,
+        last_comment: null,
+        last_post: new Date(Date.UTC(2020, 3, 25, 12, 42)),
+        last_visit: null,
+        settings: {
+          accentColor: "#00b8ff",
+        },
+        slug: "long",
+        tagline: "A board to test with many posts.",
+        threads_count: "26",
       },
     ]);
   });
