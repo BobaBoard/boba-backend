@@ -53,13 +53,14 @@ router.get("/:slug/visit", isLoggedIn, async (req, res) => {
 
 router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
+  const { cursor } = req.query;
   log(`Fetching activity data for board with slug ${slug}`);
 
   const result = await getBoardActivityBySlug({
     slug,
     // @ts-ignore
     firebaseId: req.currentUser?.uid,
-    cursor: null,
+    cursor: (cursor as string) || null,
   });
   log(`Found activity for board ${slug}:`, result);
 
