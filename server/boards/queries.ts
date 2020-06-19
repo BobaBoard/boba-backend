@@ -5,7 +5,8 @@ import sql from "./sql";
 const log = debug("bobaserver:board:queries-log");
 const error = debug("bobaserver:board:queries-error");
 
-const encodeCursor = (cursor: {
+// visible for testing
+export const encodeCursor = (cursor: {
   last_activity_cursor: string;
   page_size: number;
 }) => {
@@ -58,20 +59,23 @@ export const getBoardActivityBySlug = async ({
   slug,
   firebaseId,
   cursor,
+  pageSize,
 }: {
   slug: string;
   firebaseId: string;
   cursor: string;
+  pageSize?: number;
 }): Promise<any> => {
   try {
     const decodedCursor = cursor && decodeCursor(cursor);
 
-    const pageSize = decodedCursor?.page_size || DEFAULT_PAGE_SIZE;
+    const finalPageSize =
+      decodedCursor?.page_size || pageSize || DEFAULT_PAGE_SIZE;
     const rows = await pool.manyOrNone(sql.getBoardActivityBySlug, {
       board_slug: slug,
       firebase_id: firebaseId,
       last_activity_cursor: decodedCursor?.last_activity_cursor || null,
-      page_size: pageSize,
+      page_size: finalPageSize,
     });
 
     if (!rows) {
@@ -88,10 +92,10 @@ export const getBoardActivityBySlug = async ({
     let result = rows;
     let nextCursor = null;
     log(`Got getBoardActivityBySlug query result`, result);
-    if (result.length > pageSize) {
+    if (result.length > finalPageSize) {
       nextCursor = encodeCursor({
         last_activity_cursor: result[result.length - 1].last_activity,
-        page_size: pageSize,
+        page_size: finalPageSize,
       });
       // remove last element from array
       result.pop();

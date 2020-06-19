@@ -514,11 +514,11 @@ WITH
         NULL,
         (SELECT id FROM new_thread_id),
         (SELECT id FROM Users WHERE username = 'jersey_devil_69'),
-        '[{"insert":"Post 21!"}]', 
+        '[{"insert":"Post 21 (with milliseconds)!"}]', 
         'text', 
         NULL, 
         'strangers',
-        to_timestamp('2020-04-20 05:42:00', 'YYYY-MM-DD HH:MI:SS')))
+        to_timestamp('2020-04-20 05:42:00', 'YYYY-MM-DD HH:MI:SS') + INTERVAL'65 MILLISECONDS'))
 INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
     VALUES
     ((SELECT id FROM new_thread_id),
