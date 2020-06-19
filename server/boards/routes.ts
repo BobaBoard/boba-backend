@@ -54,7 +54,9 @@ router.get("/:slug/visit", isLoggedIn, async (req, res) => {
 router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
   const { cursor } = req.query;
-  log(`Fetching activity data for board with slug ${slug}`);
+  log(
+    `Fetching activity data for board with slug ${slug} with cursor ${cursor}`
+  );
 
   const result = await getBoardActivityBySlug({
     slug,
