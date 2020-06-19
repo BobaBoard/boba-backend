@@ -53,7 +53,7 @@ SELECT
     content,
     COALESCE(posts_amount, 0) as posts_amount,
     threads_amount.count as threads_amount,
-    TO_CHAR(GREATEST(first_post, last_post, last_comment), 'YYYY-MM-DD"T"HH24:MI:SS.MS') as last_activity,
+    TO_CHAR(GREATEST(first_post, last_post, last_comment), 'YYYY-MM-DD"T"HH24:MI:SS.US') as last_activity,
     COALESCE(is_friend.friend, FALSE) as friend,
     COALESCE(user_id = (SELECT id FROM users WHERE firebase_id = ${firebase_id}), FALSE) as self,
     COALESCE(new_posts_amount, 0) as new_posts_amount,
