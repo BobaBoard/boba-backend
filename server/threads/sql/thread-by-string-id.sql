@@ -1,13 +1,16 @@
 WITH
-    last_visited AS
+    last_visited_or_dismissed AS
         (SELECT
-            last_visit_time
-            FROM user_thread_last_visits
-            LEFT JOIN users
-            ON users.id = user_thread_last_visits.user_id
-        LEFT JOIN threads
+            GREATEST(last_visit_time, dismiss_request_time) as cutoff_time
+         FROM user_thread_last_visits
+         FULL OUTER JOIN dismiss_notifications_requests as dnr
+            ON user_thread_last_visits.user_id = dnr.user_id
+         LEFT JOIN users
+            ON users.id = user_thread_last_visits.user_id or dnr.user_id = users.id
+         LEFT JOIN threads
             ON threads.id = user_thread_last_visits.thread_id
-        WHERE users.firebase_id = ${firebase_id} AND threads.string_id = ${thread_string_id}),
+                OR user_thread_last_visits.thread_id IS NULL
+         WHERE users.firebase_id = ${firebase_id} AND threads.string_id = ${thread_string_id}),
     thread_comments AS
         (SELECT 
             thread_comments.parent_post,
@@ -28,13 +31,13 @@ WITH
             SELECT 
                 comments.*,
                 ${firebase_id} IS NOT NULL AND comments.author = (SELECT id FROM users WHERE firebase_id = ${firebase_id}) as is_own,
-                ${firebase_id} IS NOT NULL AND (last_visit_time IS NULL OR last_visit_time < comments.created) as is_new,
+                ${firebase_id} IS NOT NULL AND (cutoff_time IS NULL OR cutoff_time < comments.created) as is_new,
                 threads.string_id as parent_thread_string_id,
-                last_visited.last_visit_time
+                last_visited_or_dismissed.cutoff_time
             FROM comments 
             LEFT JOIN threads
                 ON comments.parent_thread = threads.id
-            LEFT JOIN last_visited ON 1=1
+            LEFT JOIN last_visited_or_dismissed ON 1=1
             WHERE threads.string_id = ${thread_string_id}) as thread_comments
          GROUP BY thread_comments.parent_post),
     thread_posts AS
@@ -57,7 +60,7 @@ WITH
                 -- Firebase id is not null here, but make sure not to count our posts
                 WHEN posts.author = (SELECT id FROM users WHERE firebase_id = ${firebase_id}) THEN FALSE
                 -- Firebase id is not null and the post is not ours
-                WHEN last_visit_time IS NULL OR last_visit_time < posts.created THEN TRUE 
+                WHEN cutoff_time IS NULL OR cutoff_time < posts.created THEN TRUE 
                 ELSE FALSE
             END as is_new
          FROM posts               
@@ -67,7 +70,7 @@ WITH
             ON posts.parent_thread = threads.id
          LEFT JOIN thread_comments 
             ON posts.id = thread_comments.parent_post
-         LEFT JOIN last_visited ON 1=1
+         LEFT JOIN last_visited_or_dismissed ON 1=1
          WHERE threads.string_id = ${thread_string_id})
 SELECT 
     threads.string_id, 
