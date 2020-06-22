@@ -125,6 +125,68 @@ describe("Tests boards queries", () => {
     ]);
   });
 
+  it("fetches all boards with dismissed notifications", async () => {
+    const boards = await getBoards({
+      // Zodiac Killer
+      firebaseId: "fb5",
+    });
+
+    expect(boards).to.eql([
+      {
+        avatar_reference_id: "villains.png",
+        has_updates: false,
+        last_comment: null,
+        last_post: null,
+        last_visit: null,
+        settings: {
+          accentColor: "#ff5252",
+        },
+        slug: "main_street",
+        tagline: "For BobaBoard-related discussions.",
+        threads_count: "0",
+      },
+      {
+        avatar_reference_id: "gore.png",
+        has_updates: true,
+        last_comment: new Date(Date.UTC(2020, 4, 23, 12, 52)),
+        last_post: new Date(Date.UTC(2020, 4, 3, 16, 47)),
+        last_visit: null,
+        settings: {
+          accentColor: "#f96680",
+        },
+        slug: "gore",
+        tagline: "Blood! Blood! Blood!",
+        threads_count: "2",
+      },
+      {
+        avatar_reference_id: "anime.png",
+        has_updates: false,
+        last_comment: null,
+        last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
+        last_visit: new Date(Date.UTC(2020, 3, 26, 7, 0)),
+        settings: {
+          accentColor: "#24d282",
+        },
+        slug: "anime",
+        tagline: "I wish I had a funny one for this.",
+        threads_count: "1",
+      },
+      {
+        avatar_reference_id: "onceler-board.png",
+        has_updates: true,
+        last_comment: null,
+        last_post: new Date(Date.UTC(2020, 3, 25, 12, 42)),
+        last_visit: new Date(Date.UTC(2020, 3, 24, 7, 0)),
+        settings: {
+          accentColor: "#00b8ff",
+        },
+        slug: "long",
+        tagline: "A board to test with many posts.",
+        threads_count: "26",
+      },
+    ]);
+  });
+
   it("fetches board by slug when slug present", async () => {
     const board = await getBoardBySlug("gore");
 

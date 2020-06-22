@@ -18,7 +18,8 @@ VALUES
 
 INSERT INTO Users(firebase_id, username, avatar_reference_id, invited_by)
 VALUES
-    ('fb4', 'SexyDaddy69', 'mamoru.png', (SELECT id FROM users WHERE username='oncest5evah'));
+    ('fb4', 'SexyDaddy69', 'mamoru.png', (SELECT id FROM users WHERE username='oncest5evah')),
+    ('fb5', 'The Zodiac Killer', 'villains.png', (SELECT id FROM users WHERE username='oncest5evah'));
 
 INSERT INTO secret_identities(display_name, avatar_reference_id)
 VALUES
@@ -168,38 +169,3 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
       (SELECT id FROM secret_identities WHERE display_name = 'DragonFucker'));
 
 INSERT INTO friends(user_id,friend_id) VALUES (1,3),(3,1);
-
-INSERT INTO user_thread_last_visits(user_id, thread_id, last_visit_time) VALUES
-  ((SELECT id FROM users WHERE username = 'bobatan'),
-   (SELECT id FROM threads WHERE string_id = '29d1b2da-3289-454a-9089-2ed47db4967b'),
-    -- Give bobatan a visit so she has unseen comments, but they're from her.
-    to_timestamp('2020-05-10 9:42:00', 'YYYY-MM-DD HH:MI:SS')),
-  ((SELECT id FROM users WHERE username = 'oncest5evah'),
-   (SELECT id FROM threads WHERE string_id = '29d1b2da-3289-454a-9089-2ed47db4967b'),
-    -- Give oncest5evah a visit so he has unseen comments.
-    to_timestamp('2020-05-10 9:42:00', 'YYYY-MM-DD HH:MI:SS'));
-
-INSERT INTO user_thread_last_visits(user_id, thread_id, last_visit_time) VALUES
-  ((SELECT id FROM users WHERE username = 'bobatan'),
-   (SELECT id FROM threads WHERE string_id = 'a5c903df-35e8-43b2-a41a-208c43154671'),
-    -- Give bobatan a visit past the last post so she has no unseen posts.
-    to_timestamp('2020-05-25 9:42:00', 'YYYY-MM-DD HH:MI:SS')),
-  ((SELECT id FROM users WHERE username = 'oncest5evah'),
-   (SELECT id FROM threads WHERE string_id = 'a5c903df-35e8-43b2-a41a-208c43154671'),
-    -- Give oncest5evah a visit so he has unseen posts.
-    to_timestamp('2020-05-01 9:42:00', 'YYYY-MM-DD HH:MI:SS')),
-  ((SELECT id FROM users WHERE username = 'jersey_devil_69'),
-   (SELECT id FROM threads WHERE string_id = 'a5c903df-35e8-43b2-a41a-208c43154671'),
-    -- Give jersey_devil_69 a visit so he has unseen posts, but from them.
-    to_timestamp('2020-05-01 9:42:00', 'YYYY-MM-DD HH:MI:SS'));
-
-INSERT INTO dismiss_notifications_requests(user_id, dismiss_request_time) VALUES
-  ((SELECT id FROM users WHERE username = 'SexyDaddy69'),
-    -- SexyDaddy69 dismissed notifications end of april, so everything from May should be new.
-    -- However, despite never having visited any post, everything from before then should be
-    -- marked as viewed.
-    to_timestamp('2020-04-30 23:59:59', 'YYYY-MM-DD HH24:MI:SS')),
-  ((SELECT id FROM users WHERE username = 'bobatan'),
-    -- Give Bobatan a really far in the past dismiss date to check it doesn't interfere with queries
-    -- without changing the logic of other tests.
-    to_timestamp('2019-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
