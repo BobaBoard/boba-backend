@@ -2,15 +2,14 @@ WITH
     last_visited_or_dismissed AS
         (SELECT
             GREATEST(last_visit_time, dismiss_request_time) as cutoff_time
-         FROM user_thread_last_visits
-         FULL OUTER JOIN dismiss_notifications_requests as dnr
-            ON user_thread_last_visits.user_id = dnr.user_id
-         LEFT JOIN users
-            ON users.id = user_thread_last_visits.user_id or dnr.user_id = users.id
-         LEFT JOIN threads
-            ON threads.id = user_thread_last_visits.thread_id
-                OR user_thread_last_visits.thread_id IS NULL
-         WHERE users.firebase_id = ${firebase_id} AND threads.string_id = ${thread_string_id}),
+         FROM threads
+         JOIN users
+            ON users.firebase_id = ${firebase_id}
+         LEFT JOIN user_thread_last_visits
+            ON threads.id = user_thread_last_visits.thread_id AND user_thread_last_visits.user_id = users.id
+         LEFT JOIN dismiss_notifications_requests
+            ON dismiss_notifications_requests.user_id = users.id
+         WHERE threads.string_id = ${thread_string_id}),
     thread_comments AS
         (SELECT 
             thread_comments.parent_post,
