@@ -16,15 +16,15 @@
         (SELECT
             threads.id as thread_id,
             GREATEST(last_visit_time, dismiss_request_time) as cutoff_time
-         FROM user_thread_last_visits
-         FULL OUTER JOIN dismiss_notifications_requests as dnr
-            ON user_thread_last_visits.user_id = dnr.user_id
-         LEFT JOIN users
-            ON users.id = user_thread_last_visits.user_id or dnr.user_id = users.id
-         LEFT JOIN threads
-            ON threads.id = user_thread_last_visits.thread_id 
-                OR user_thread_last_visits.thread_id IS NULL
-         WHERE users.firebase_id = ${firebase_id}),
+         FROM threads
+         INNER JOIN boards
+            ON boards.id = threads.parent_board AND boards.slug = ${board_slug}
+         JOIN users
+            ON users.firebase_id = ${firebase_id}
+         LEFT JOIN user_thread_last_visits
+            ON threads.id = user_thread_last_visits.thread_id AND user_thread_last_visits.user_id = users.id
+         LEFT JOIN dismiss_notifications_requests
+            ON dismiss_notifications_requests.user_id = users.id),
     thread_posts_updates AS
         (SELECT
             threads.string_id as threads_string_id,
@@ -49,7 +49,7 @@
          LEFT JOIN posts
             ON posts.parent_thread = threads.id
          LEFT JOIN last_visited_or_dismissed
-            ON last_visited_or_dismissed.thread_id = threads.id
+            ON last_visited_or_dismissed.thread_id = threads.id OR last_visited_or_dismissed.thread_id is NULL
          WHERE boards.slug = ${board_slug}
          GROUP BY
             threads.id, boards.id, cutoff_time)
