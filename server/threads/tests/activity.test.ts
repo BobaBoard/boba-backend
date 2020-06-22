@@ -380,4 +380,100 @@ describe("threads activity queries", () => {
       ],
     });
   });
+
+  describe("Test correct amounts with both dismiss and visit", async () => {
+    it("Visited earlier than dismiss", async () => {
+      // The only new comments are from the user itself
+      const thread = await getThreadByStringId({
+        // Visited earlier than dismiss
+        threadId: "32a0174b-091e-4fe6-82f3-bffd6c6026ae",
+        // Zodiac Killer
+        firebaseId: "fb5",
+      });
+
+      // get only activity-related values
+      expect(extractActivityFromThread(thread)).to.eql({
+        string_id: "32a0174b-091e-4fe6-82f3-bffd6c6026ae",
+        new_comments: 0,
+        new_posts: 0,
+        posts: [
+          {
+            id: "bd6efcb5-1b0e-4ebc-bc48-4c9a23b14cdb",
+            comments: undefined,
+            is_new: false,
+            new_comments: 0,
+          },
+        ],
+      });
+    });
+
+    it("Visited after dismiss", async () => {
+      // The only new comments are from the user itself
+      const thread = await getThreadByStringId({
+        // Visited after dismiss
+        threadId: "c55314b4-0b61-41c9-aa2f-b7fa28adf651",
+        // Zodiac Killer
+        firebaseId: "fb5",
+      });
+      expect(extractActivityFromThread(thread)).to.eql({
+        string_id: "c55314b4-0b61-41c9-aa2f-b7fa28adf651",
+        new_comments: 0,
+        new_posts: 0,
+        posts: [
+          {
+            id: "6c698c20-754a-42d2-b60f-7f73ca2c6fa0",
+            comments: undefined,
+            is_new: false,
+            new_comments: 0,
+          },
+        ],
+      });
+    });
+
+    it("Never visited, created before dismiss", async () => {
+      // The only new comments are from the user itself
+      const thread = await getThreadByStringId({
+        // Never visited, before dismiss
+        threadId: "dacfb175-0d47-4c5e-8ecc-7fbf176ad915",
+        // Zodiac Killer
+        firebaseId: "fb5",
+      });
+      expect(extractActivityFromThread(thread)).to.eql({
+        string_id: "dacfb175-0d47-4c5e-8ecc-7fbf176ad915",
+        new_comments: 0,
+        new_posts: 0,
+        posts: [
+          {
+            id: "c137f3e9-8810-4807-9a1d-0ddd27ce52ca",
+            comments: undefined,
+            is_new: false,
+            new_comments: 0,
+          },
+        ],
+      });
+    });
+
+    it("Never visited, created after dismiss", async () => {
+      // The only new comments are from the user itself
+      const thread = await getThreadByStringId({
+        // Never visited, after dismiss
+        threadId: "7d88a537-f23f-46de-970e-29ae392cd5f9",
+        // Zodiac Killer
+        firebaseId: "fb5",
+      });
+      expect(extractActivityFromThread(thread)).to.eql({
+        string_id: "7d88a537-f23f-46de-970e-29ae392cd5f9",
+        new_comments: 0,
+        new_posts: 1,
+        posts: [
+          {
+            id: "995d80d3-d8b9-445d-9723-e39f7a682665",
+            comments: undefined,
+            is_new: true,
+            new_comments: 0,
+          },
+        ],
+      });
+    });
+  });
 });
