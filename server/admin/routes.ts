@@ -16,7 +16,7 @@ const API_KEY = "AIzaSyA2KQh1wqrLwsrWvKQvFWeWoWMR8KOyTD4";
 const getSheetUrl = (url: string) =>
   `https://sheets.googleapis.com/v4/spreadsheets/${url}/?key=${API_KEY}&includeGridData=true`;
 
-router.get("/generate/boards", isLoggedIn, async (req, res) => {
+router.post("/generate/boards", isLoggedIn, async (req, res) => {
   // @ts-ignore
   if (req.currentUser?.uid !== ADMIN_ID) {
     // TODO: fix wrong status
@@ -37,7 +37,7 @@ router.get("/generate/boards", isLoggedIn, async (req, res) => {
   res.status(200).json({ added: recordsAdded });
 });
 
-router.get("/generate/identities", isLoggedIn, async (req, res) => {
+router.post("/generate/identities", isLoggedIn, async (req, res) => {
   // @ts-ignore
   if (req.currentUser?.uid !== ADMIN_ID) {
     // TODO: fix wrong status
@@ -66,9 +66,12 @@ const getSpreadsheetData = (
     let i = 1;
     const rows = [];
     while (hasData && i < rowData.length) {
-      rows.push(transform(rowData, i));
+      const currentRow = transform(rowData, i);
+      log(`Got data for row ${i}:`);
+      log(currentRow);
+      rows.push(currentRow);
       i++;
-      hasData = !!rowData[i].values[1]?.formattedValue;
+      hasData = !!rowData[i]?.values[1]?.formattedValue;
     }
     return rows;
   });
