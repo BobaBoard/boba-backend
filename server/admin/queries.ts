@@ -12,9 +12,11 @@ export const createIdentitiesIfNotExist = async (
 ) => {
   const query = `
     INSERT INTO secret_identities(display_name, avatar_reference_id) VALUES (
-      $1,
-      $2)
-    ON CONFLICT(display_name) DO NOTHING`;
+      $/display_name/,
+      $/avatar_reference_id/)
+    ON CONFLICT(display_name) DO UPDATE 
+    SET avatar_reference_id = $/avatar_reference_id/
+    WHERE secret_identities.display_name = $/display_name/`;
   try {
     const promises = identities.map(({ name, avatar }) => {
       log(`Attempting to insert identity: ${name}`);
@@ -25,15 +27,15 @@ export const createIdentitiesIfNotExist = async (
       if (!(name && avatar)) {
         log(`...data missing.`);
         return null;
-      } else return pool.query(query, [name, avatar]);
+      }
+      return pool.none(query, {
+        display_name: name,
+        avatar_reference_id: avatar,
+      });
     });
     const result = await Promise.all(promises);
-    const recordsAdded = result.reduce(
-      (value, row) => value + (row?.rowCount || 0),
-      0
-    );
-    log(`Added ${recordsAdded} records.`);
-    return recordsAdded;
+    log(`Added identity records.`);
+    return true;
   } catch (e) {
     error(`Error while adding new identities.`);
     error(e);
@@ -49,13 +51,18 @@ export const createBoardsIfNotExist = async (
     accent?: string;
   }[]
 ) => {
+  // TODO: make this a transaction maybe?
   const query = `
       INSERT INTO boards(slug, tagline, avatar_reference_id, settings) VALUES (
-        $1,
-        $2,
-        $3,
-        $4)
-      ON CONFLICT(slug) DO NOTHING`;
+        $/slug/,
+        $/tagline/,
+        $/avatar_reference_id/,
+        $/settings/)
+      ON CONFLICT(slug) DO UPDATE 
+      SET tagline = $/tagline/,
+          avatar_reference_id = $/avatar_reference_id/,
+          settings = $/settings/
+      WHERE boards.slug = $/slug/`;
 
   try {
     const promises = boards.map(({ slug, tagline, avatar, accent }) => {
@@ -69,23 +76,19 @@ export const createBoardsIfNotExist = async (
       if (!(slug && tagline && avatar && accent)) {
         log(`...data missing.`);
         return null;
-      } else
-        return pool.query(query, [
-          slug,
-          tagline,
-          avatar,
-          {
-            accentColor: accent,
-          },
-        ]);
+      }
+      return pool.none(query, {
+        slug,
+        tagline,
+        avatar_reference_id: avatar,
+        settings: {
+          accentColor: accent,
+        },
+      });
     });
     const result = await Promise.all(promises);
-    const recordsAdded = result.reduce(
-      (value, row) => value + (row?.rowCount || 0),
-      0
-    );
-    log(`Added ${recordsAdded} records.`);
-    return recordsAdded;
+    log(`Added new board records.`);
+    return true;
   } catch (e) {
     error(`Error while adding new board.`);
     error(e);
