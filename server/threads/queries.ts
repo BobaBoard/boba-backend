@@ -58,11 +58,13 @@ export const getThreadIdentitiesByStringId = async ({
 export const createThread = async ({
   firebaseId,
   content,
+  isLarge,
   anonymityType,
   boardSlug,
 }: {
   firebaseId: string;
   content: string;
+  isLarge: boolean;
   anonymityType: string;
   boardSlug: string;
 }) => {
@@ -80,13 +82,17 @@ export const createThread = async ({
         post_string_id: postStringId,
         parent_thread: createThreadResult.id,
         firebase_id: firebaseId,
+        options: {
+          wide: isLarge,
+        },
         content,
         anonymity_type: anonymityType,
       });
       log(`Created post entry for thread ${postStringId}`);
 
       const identityRes = await t.one(sql.getRandomIdentityId);
-      log(`Got new identity for thread ${threadStringId}: ${identityRes}.`);
+      log(`Got new identity for thread ${threadStringId}:`);
+      log(identityRes);
 
       await t.none(sql.insertNewIdentity, {
         thread_id: createThreadResult.id,
