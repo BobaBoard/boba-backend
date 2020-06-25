@@ -10,11 +10,13 @@ export const postNewContribution = async ({
   firebaseId,
   parentPostId,
   content,
+  isLarge,
   anonymityType,
 }: {
   firebaseId: string;
   parentPostId: string;
   content: string;
+  isLarge: boolean;
   anonymityType: string;
 }): Promise<any> => {
   return pool
@@ -50,6 +52,9 @@ export const postNewContribution = async ({
         user_id,
         content,
         anonymity_type: anonymityType,
+        options: {
+          wide: isLarge,
+        },
       });
     })
     .catch((e) => {

@@ -47,6 +47,7 @@ WITH
             posts.author,
             TO_CHAR(posts.created, 'YYYY-MM-DD"T"HH24:MI:SS') as created,
             posts.content,
+            posts.options,
             posts.type,
             posts.whisper_tags,
             posts.anonymity_type,

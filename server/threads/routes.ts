@@ -82,13 +82,14 @@ router.post("/:boardSlug/create", isLoggedIn, async (req, res) => {
   }
   const { boardSlug } = req.params;
   log(`Creating thread in board with slug ${boardSlug}`);
-  const { content, forceAnonymous } = req.body;
+  const { content, forceAnonymous, large } = req.body;
 
   const threadStringId = await createThread({
     // @ts-ignore
     firebaseId: req.currentUser.uid,
     content,
     anonymityType: "everyone",
+    isLarge: !!large,
     boardSlug: boardSlug,
   });
   info(`Created new thread`, threadStringId);

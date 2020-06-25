@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
   const { postId } = req.params;
-  const { content, forceAnonymous } = req.body;
+  const { content, forceAnonymous, large } = req.body;
 
   // @ts-ignore
   if (!req.currentUser) {
@@ -29,6 +29,7 @@ router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
     firebaseId: req.currentUser.uid,
     parentPostId: postId,
     content,
+    isLarge: !!large,
     anonymityType: forceAnonymous ? "everyone" : "strangers",
   });
   log(`Contribution posted: `, post);

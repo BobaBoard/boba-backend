@@ -63,6 +63,7 @@ SELECT
     secret_avatar,
     TO_CHAR(created, 'YYYY-MM-DD"T"HH24:MI:SS') as created,
     content,
+    options,
     COALESCE(posts_amount, 0) as posts_amount,
     threads_amount.count as threads_amount,
     TO_CHAR(GREATEST(first_post, last_post, last_comment), 'YYYY-MM-DD"T"HH24:MI:SS.US') as last_activity,

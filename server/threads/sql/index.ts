@@ -9,18 +9,19 @@ const createThread = `
     RETURNING id`;
 
 const createPost = `
-    INSERT INTO posts(string_id, parent_post, parent_thread, 
-      author, content, type, 
-      whisper_tags, anonymity_type)
+    INSERT INTO posts(
+      string_id, parent_post, parent_thread, 
+      author, 
+      content, type, 
+      whisper_tags, 
+      anonymity_type, options)
     VALUES
-      ($/post_string_id/,
-      NULL,
-      $/parent_thread/,
-      (SELECT id FROM users WHERE firebase_id = $/firebase_id/),
-      $/content/, 
-      'text', 
+      ($/post_string_id/, NULL, $/parent_thread/,
+       (SELECT id FROM users WHERE firebase_id = $/firebase_id/),
+      $/content/, 'text', 
       NULL, 
-      $/anonymity_type/) 
+      $/anonymity_type/,
+      $/options/) 
     RETURNING id`;
 
 const getRandomIdentityId = `

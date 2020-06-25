@@ -19,7 +19,7 @@ const addIdentityToThread = `
         $/secret_identity_id/)`;
 
 const makePost = `
-    INSERT INTO posts(string_id, parent_post, parent_thread, author, content, type, whisper_tags, anonymity_type)
+    INSERT INTO posts(string_id, parent_post, parent_thread, author, content, type, whisper_tags, anonymity_type, options)
     VALUES(
         $/post_string_id/,
         $/parent_post/,
@@ -28,7 +28,8 @@ const makePost = `
         $/content/,
         'text',
         NULL,
-        $/anonymity_type/
+        $/anonymity_type/,
+        $/options/
     ) RETURNING *`;
 
 const makeComment = `
