@@ -51,7 +51,7 @@ router.get("/:threadId/visit", isLoggedIn, async (req, res) => {
   // @ts-ignore
   if (!req.currentUser) {
     // TODO: fix wrong status
-    return res.sendStatus(301);
+    return res.sendStatus(401);
   }
   log(`Setting last visited time for thread: ${threadId}`);
 
@@ -78,7 +78,7 @@ router.get("/activity/latest", async (req, res) => {
 router.post("/:boardSlug/create", isLoggedIn, async (req, res) => {
   // @ts-ignore
   if (!req.currentUser) {
-    return res.sendStatus(301);
+    return res.sendStatus(401);
   }
   const { boardSlug } = req.params;
   log(`Creating thread in board with slug ${boardSlug}`);
