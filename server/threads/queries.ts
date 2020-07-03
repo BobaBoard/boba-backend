@@ -61,12 +61,14 @@ export const createThread = async ({
   isLarge,
   anonymityType,
   boardSlug,
+  whisperTags,
 }: {
   firebaseId: string;
   content: string;
   isLarge: boolean;
   anonymityType: string;
   boardSlug: string;
+  whisperTags: string;
 }) => {
   return pool
     .tx("create-thread", async (t) => {
@@ -87,6 +89,7 @@ export const createThread = async ({
         },
         content,
         anonymity_type: anonymityType,
+        whisper_tags: whisperTags,
       });
       log(`Created post entry for thread ${postStringId}`);
 

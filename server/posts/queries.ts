@@ -12,12 +12,14 @@ export const postNewContribution = async ({
   content,
   isLarge,
   anonymityType,
+  whisperTags,
 }: {
   firebaseId: string;
   parentPostId: string;
   content: string;
   isLarge: boolean;
   anonymityType: string;
+  whisperTags: string;
 }): Promise<any> => {
   return pool
     .tx("create-contribution", async (t) => {
@@ -52,6 +54,7 @@ export const postNewContribution = async ({
         user_id,
         content,
         anonymity_type: anonymityType,
+        whisper_tags: whisperTags,
         options: {
           wide: isLarge,
         },

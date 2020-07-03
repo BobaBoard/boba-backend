@@ -29,6 +29,7 @@ describe("threads queries", () => {
           total_comments: 0,
           type: "text",
           whisper_tags: null,
+          options: {},
         },
         {
           anonymity_type: "strangers",
@@ -45,6 +46,7 @@ describe("threads queries", () => {
           total_comments: 0,
           type: "text",
           whisper_tags: ["fight me on this"],
+          options: {},
         },
         {
           anonymity_type: "everyone",
@@ -86,6 +88,7 @@ describe("threads queries", () => {
             "sorry mom",
             "YOU WILL NEVER KNOW WHO I AM",
           ],
+          options: {},
         },
       ],
       total_comments: 2,
@@ -119,6 +122,7 @@ describe("threads queries", () => {
           total_comments: 0,
           type: "text",
           whisper_tags: ["mwehehehehe"],
+          options: {},
         },
         {
           anonymity_type: "strangers",
@@ -135,6 +139,7 @@ describe("threads queries", () => {
           total_comments: 0,
           type: "text",
           whisper_tags: ["joseph oda is love", "joseph oda is life"],
+          options: {},
         },
         {
           anonymity_type: "strangers",
@@ -154,6 +159,7 @@ describe("threads queries", () => {
           whisper_tags: [
             "nothing beats a himbo getting gangbanged by a herd of hungry hungry zombies",
           ],
+          options: {},
         },
       ],
       string_id: "a5c903df-35e8-43b2-a41a-208c43154671",

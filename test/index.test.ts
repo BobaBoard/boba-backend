@@ -51,6 +51,7 @@ describe("Tests threads REST API", () => {
           total_comments: 0,
           type: "text",
           whisper_tags: null,
+          options: {},
         },
         {
           anonymity_type: "strangers",
@@ -71,6 +72,7 @@ describe("Tests threads REST API", () => {
           total_comments: 0,
           type: "text",
           whisper_tags: ["fight me on this"],
+          options: {},
         },
         {
           anonymity_type: "everyone",
@@ -124,6 +126,7 @@ describe("Tests threads REST API", () => {
             "sorry mom",
             "YOU WILL NEVER KNOW WHO I AM",
           ],
+          options: {},
         },
       ],
       string_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
