@@ -237,6 +237,8 @@ describe("Tests boards queries", () => {
         user_avatar: "greedler.jpg",
         user_id: "3",
         username: "oncest5evah",
+        options: {},
+        whisper_tags: null,
       },
       {
         comments_amount: 0,
@@ -259,6 +261,8 @@ describe("Tests boards queries", () => {
         user_avatar: "bobatan.png",
         user_id: "1",
         username: "bobatan",
+        options: {},
+        whisper_tags: ["mwehehehehe"],
       },
     ]);
   });
@@ -292,6 +296,8 @@ describe("Tests boards queries", () => {
         user_avatar: "greedler.jpg",
         user_id: "3",
         username: "oncest5evah",
+        options: {},
+        whisper_tags: null,
       },
       {
         comments_amount: 0,
@@ -314,6 +320,8 @@ describe("Tests boards queries", () => {
         user_avatar: "bobatan.png",
         user_id: "1",
         username: "bobatan",
+        options: {},
+        whisper_tags: ["mwehehehehe"],
       },
     ]);
   });

@@ -27,7 +27,7 @@ const makePost = `
         $/user_id/,
         $/content/,
         'text',
-        NULL,
+        $/whisper_tags/,
         $/anonymity_type/,
         $/options/
     ) RETURNING *`;

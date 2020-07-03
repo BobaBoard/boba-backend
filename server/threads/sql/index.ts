@@ -19,7 +19,7 @@ const createPost = `
       ($/post_string_id/, NULL, $/parent_thread/,
        (SELECT id FROM users WHERE firebase_id = $/firebase_id/),
       $/content/, 'text', 
-      NULL, 
+      $/whisper_tags/, 
       $/anonymity_type/,
       $/options/) 
     RETURNING id`;
