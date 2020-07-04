@@ -75,8 +75,8 @@ WITH
 SELECT 
     threads.string_id, 
     json_agg(row_to_json(thread_posts) ORDER BY thread_posts.created ASC) as posts,
-    COALESCE(SUM(thread_posts.new_comments)::int, 0) as new_comments,
-    COALESCE(SUM(thread_posts.total_comments)::int, 0) as total_comments, 
+    COALESCE(SUM(thread_posts.new_comments_amount)::int, 0) as new_comments_amount,
+    COALESCE(SUM(thread_posts.total_comments_amount)::int, 0) as total_comments_amount, 
     -- Count all the new posts that aren't ours, unless we aren't logged in.
     COALESCE(SUM((${firebase_id} IS NOT NULL AND thread_posts.is_new AND NOT thread_posts.is_own)::int)::int, 0) as new_posts
 FROM threads
