@@ -41,7 +41,7 @@ WITH
          GROUP BY thread_comments.parent_post),
     thread_posts AS
         (SELECT 
-            posts.string_id as id,
+            posts.string_id as post_id,
             posts.parent_thread as parent_thread_id,
             parent.string_id as parent_post_id,
             posts.author,
@@ -51,8 +51,8 @@ WITH
             posts.type,
             posts.whisper_tags,
             posts.anonymity_type,
-            COALESCE(thread_comments.total_comments, 0) as total_comments,
-            COALESCE(thread_comments.new_comments, 0) as new_comments,
+            COALESCE(thread_comments.total_comments, 0) as total_comments_amount,
+            COALESCE(thread_comments.new_comments, 0) as new_comments_amount,
             thread_comments.comments,
             COALESCE(${firebase_id} IS NOT NULL AND posts.author = (SELECT id FROM users WHERE firebase_id = ${firebase_id}), FALSE) as is_own,
             CASE
