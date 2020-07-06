@@ -3,6 +3,7 @@ import express from "express";
 import { postNewContribution, postNewComment } from "./queries";
 import { isLoggedIn } from "../auth-handler";
 import axios from "axios";
+import { ServerPostType } from "../types/Types";
 
 const info = debug("bobaserver:posts:routes-info");
 const log = debug("bobaserver:posts:routes-log");
@@ -70,7 +71,39 @@ router.post("/:postId/comment", isLoggedIn, async (req, res) => {
     res.sendStatus(500);
     return;
   }
-  res.status(200).json(post);
+
+  // const responsePost : ServerPostType = {
+  //   post_id: string;
+  //   thread_id: string;
+  //   parent_post_id: string;
+  //   secret_identity: {
+  //     name: string;
+  //     avatar: string;
+  //   };
+  //   user_identity?: {
+  //     name: string;
+  //     avatar: string;
+  //   };
+  //   created: string;
+  //   content: string;
+  //   options: {
+  //     wide?: boolean;
+  //   };
+  //   tags: {
+  //     whisper_tags: string[];
+  //   };
+  //   comments?: ServerCommentType[];
+  //   posts_amount: number;
+  //   comments_amount: number;
+  //   threads_amount: number;
+  //   new_posts_amount: number;
+  //   new_comments_amount: number;
+  //   is_new: boolean;
+  //   last_activity: string;
+  // }
+  res.status(200).json({
+    post: {},
+  });
 });
 
 const EXTRACT_HREF_REGEX = /data-href="([^"]+)"/;

@@ -47,7 +47,7 @@ export const postNewContribution = async ({
         });
       }
 
-      return t.one(sql.makePost, {
+      const result = await t.one(sql.makePost, {
         post_string_id: uuidv4(),
         parent_post: post_id,
         parent_thread: thread_id,
@@ -59,6 +59,9 @@ export const postNewContribution = async ({
           wide: isLarge,
         },
       });
+      log(`Added new contribution to thread ${thread_id}.`);
+      log(result);
+      return result;
     })
     .catch((e) => {
       error(`Error while creating contribution.`);
