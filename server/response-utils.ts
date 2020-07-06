@@ -1,4 +1,5 @@
 import debug from "debug";
+import { ServerPostType, DbIdentityType } from "./types/Types";
 
 const info = debug("bobaserver:response-utils-info");
 const log = debug("bobaserver::response-utils-log");
@@ -51,44 +52,59 @@ export const mergeActivityIdentities = (activity: any[]) => {
   });
 };
 
+export const mergeCommentsAndIdentities = (
+  comment: any,
+  identitiesMap: Map<string, DbIdentityType>
+) => {
+  const authorIdentity = identitiesMap.get(comment.author.toString());
+  delete comment.author;
+  info(`Adding identity to comment made by ${authorIdentity.username}.`);
+  comment.secret_identity = transformImageUrls({
+    name: authorIdentity.display_name,
+    avatar: authorIdentity.secret_identity_avatar_reference_id,
+  });
+  if (authorIdentity.friend || authorIdentity.self) {
+    info(`...who is our friend (or us).`);
+    comment.user_identity = transformImageUrls({
+      name: authorIdentity.username,
+      avatar: authorIdentity.user_avatar_reference_id,
+    });
+  }
+};
+
+export const mergePostAndIdentities = (
+  post: any,
+  identitiesMap: Map<string, DbIdentityType>
+) => {
+  info(`Getting identity for post author: ${post.author}`);
+  const authorIdentity = identitiesMap.get(post.author.toString());
+  info(authorIdentity);
+  delete post.author;
+  info(`Adding identity to post made by ${authorIdentity.username}.`);
+  post.secret_identity = transformImageUrls({
+    name: authorIdentity.display_name,
+    avatar: authorIdentity.secret_identity_avatar_reference_id,
+  });
+  if (authorIdentity.friend || authorIdentity.self) {
+    info(`...who is our friend (or us).`);
+    post.user_identity = transformImageUrls({
+      name: authorIdentity.username,
+      avatar: authorIdentity.user_avatar_reference_id,
+    });
+  }
+
+  post.comments?.map((comment: any) => {
+    mergeCommentsAndIdentities(comment, identitiesMap);
+  });
+};
+
 // TODO: decide whether transformImageUrls should be here.
 export const mergeThreadAndIdentities = (thread: any, identities: any[]) => {
-  const identitiesMap = identities.reduce((accumulator, identity) => {
-    accumulator[identity.id] = identity;
-    return accumulator;
-  }, {});
-  thread.posts.map((post: any) => {
-    const authorIdentity = identitiesMap[post.author];
-    delete post.author;
-    info(`Adding identity to post made by ${authorIdentity.username}.`);
-    post.secret_identity = transformImageUrls({
-      name: authorIdentity.display_name,
-      avatar: authorIdentity.secret_identity_avatar_reference_id,
-    });
-    if (authorIdentity.friend || authorIdentity.self) {
-      info(`...who is our friend (or us).`);
-      post.user_identity = transformImageUrls({
-        name: authorIdentity.username,
-        avatar: authorIdentity.user_avatar_reference_id,
-      });
-    }
-
-    post.comments?.map((comment: any) => {
-      const authorIdentity = identitiesMap[comment.author];
-      delete comment.author;
-      info(`Adding identity to comment made by ${authorIdentity.username}.`);
-      comment.secret_identity = transformImageUrls({
-        name: authorIdentity.display_name,
-        avatar: authorIdentity.secret_identity_avatar_reference_id,
-      });
-      if (authorIdentity.friend || authorIdentity.self) {
-        info(`...who is our friend (or us).`);
-        comment.user_identity = transformImageUrls({
-          name: authorIdentity.username,
-          avatar: authorIdentity.user_avatar_reference_id,
-        });
-      }
-    });
-  });
+  const identitiesMap = new Map<string, DbIdentityType>();
+  identities.forEach((identity) =>
+    identitiesMap.set(identity.id.toString(), identity)
+  );
+  info(identitiesMap);
+  thread.posts.map((post: any) => mergePostAndIdentities(post, identitiesMap));
   return thread;
 };

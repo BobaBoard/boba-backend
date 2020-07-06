@@ -16,7 +16,8 @@ const addIdentityToThread = `
     VALUES(
         $/thread_id/,
         $/user_id/, 
-        $/secret_identity_id/)`;
+        $/secret_identity_id/
+    ) RETURNING *`;
 
 const makePost = `
     INSERT INTO posts(string_id, parent_post, parent_thread, author, content, type, whisper_tags, anonymity_type, options)

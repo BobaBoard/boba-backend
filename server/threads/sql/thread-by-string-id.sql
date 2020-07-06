@@ -78,7 +78,7 @@ SELECT
     COALESCE(SUM(thread_posts.new_comments_amount)::int, 0) as new_comments_amount,
     COALESCE(SUM(thread_posts.total_comments_amount)::int, 0) as total_comments_amount, 
     -- Count all the new posts that aren't ours, unless we aren't logged in.
-    COALESCE(SUM((${firebase_id} IS NOT NULL AND thread_posts.is_new AND NOT thread_posts.is_own)::int)::int, 0) as new_posts
+    COALESCE(SUM((${firebase_id} IS NOT NULL AND thread_posts.is_new AND NOT thread_posts.is_own)::int)::int, 0) as new_posts_amount
 FROM threads
 LEFT JOIN thread_posts
     ON threads.id = thread_posts.parent_thread_id

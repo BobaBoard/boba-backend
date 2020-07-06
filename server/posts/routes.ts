@@ -41,6 +41,35 @@ router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
     res.sendStatus(500);
     return;
   }
+
+  const responsePost: ServerPostType = {
+    post_id: post.string_id,
+    thread_id: "not_implemented",
+    parent_post_id: postId,
+    secret_identity: {
+      name: "name",
+      avatar: "name",
+    },
+    user_identity: {
+      name: "name",
+      avatar: "name",
+    },
+    created: post.created,
+    content: post.content,
+    options: post.options,
+    tags: {
+      whisper_tags: post.whisper_tags,
+    },
+    comments: undefined,
+    posts_amount: 1,
+    comments_amount: 0,
+    threads_amount: 1,
+    new_posts_amount: 0,
+    new_comments_amount: 0,
+    is_new: true,
+    last_activity: undefined,
+  };
+
   res.status(200).json(post);
 });
 
@@ -58,52 +87,21 @@ router.post("/:postId/comment", isLoggedIn, async (req, res) => {
   log(`Content: `, content);
   log(`Anonymous: `, forceAnonymous);
 
-  const post = await postNewComment({
+  const comment = await postNewComment({
     // @ts-ignore
     firebaseId: req.currentUser.uid,
     parentPostId: postId,
     content,
     anonymityType: forceAnonymous ? "everyone" : "strangers",
   });
-  log(`Comment posted: `, post);
+  log(`Comment posted: `, comment);
 
-  if (!post) {
+  if (!comment) {
     res.sendStatus(500);
     return;
   }
 
-  // const responsePost : ServerPostType = {
-  //   post_id: string;
-  //   thread_id: string;
-  //   parent_post_id: string;
-  //   secret_identity: {
-  //     name: string;
-  //     avatar: string;
-  //   };
-  //   user_identity?: {
-  //     name: string;
-  //     avatar: string;
-  //   };
-  //   created: string;
-  //   content: string;
-  //   options: {
-  //     wide?: boolean;
-  //   };
-  //   tags: {
-  //     whisper_tags: string[];
-  //   };
-  //   comments?: ServerCommentType[];
-  //   posts_amount: number;
-  //   comments_amount: number;
-  //   threads_amount: number;
-  //   new_posts_amount: number;
-  //   new_comments_amount: number;
-  //   is_new: boolean;
-  //   last_activity: string;
-  // }
-  res.status(200).json({
-    post: {},
-  });
+  res.status(200).json(comment);
 });
 
 const EXTRACT_HREF_REGEX = /data-href="([^"]+)"/;

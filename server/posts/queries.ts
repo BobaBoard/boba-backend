@@ -30,7 +30,7 @@ export const postNewContribution = async ({
           firebase_id: firebaseId,
         }
       );
-      const secret_identity_id =
+      const secret_identity =
         identity_id ||
         (
           await t.one(sql.getRandomIdentity, {
@@ -40,10 +40,10 @@ export const postNewContribution = async ({
       if (!identity_id) {
         // The secret identity id is not currently in the thread data.
         // Add it.
-        await t.none(sql.addIdentityToThread, {
+        await t.one(sql.addIdentityToThread, {
           user_id,
           thread_id,
-          secret_identity_id,
+          secret_identity,
         });
       }
 
