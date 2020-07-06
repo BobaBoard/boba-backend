@@ -41,3 +41,13 @@ export interface ServerPostType {
   is_new: boolean;
   last_activity: string;
 }
+
+export interface DbIdentityType {
+  id: string;
+  username: string;
+  user_avatar_reference_id: string;
+  display_name: string;
+  secret_identity_avatar_reference_id: string;
+  friend: boolean;
+  self: boolean;
+}

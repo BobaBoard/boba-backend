@@ -6,14 +6,14 @@ import { getThreadByStringId } from "../queries";
 const extractActivityFromThread = (thread: any) => {
   return {
     string_id: thread.string_id,
-    new_comments: thread.new_comments,
-    new_posts: thread.new_posts,
+    new_comments_amount: thread.new_comments_amount,
+    new_posts_amount: thread.new_posts_amount,
     posts: thread.posts?.map((post: any) => ({
-      id: post.id,
+      post_id: post.post_id,
       is_new: post.is_new,
-      new_comments: post.new_comments,
+      new_comments_amount: post.new_comments_amount,
       comments: post.comments?.map((comment: any) => ({
-        id: comment.id,
+        post_id: comment.id,
         is_new: comment.is_new,
       })),
     })),
@@ -33,35 +33,35 @@ describe("threads activity queries", () => {
     // get only activity-related values
     expect(extractActivityFromThread(thread)).to.eql({
       string_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
-      new_comments: 2,
-      new_posts: 3,
+      new_comments_amount: 2,
+      new_posts_amount: 3,
       posts: [
         {
-          id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
+          post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
           comments: undefined,
           is_new: true,
-          new_comments: 0,
+          new_comments_amount: 0,
         },
         {
           comments: undefined,
-          id: "619adf62-833f-4bea-b591-03e807338a8e",
+          post_id: "619adf62-833f-4bea-b591-03e807338a8e",
           is_new: true,
-          new_comments: 0,
+          new_comments_amount: 0,
         },
         {
           comments: [
             {
-              id: "46a16199-33d1-48c2-bb79-4d4095014688",
+              post_id: "46a16199-33d1-48c2-bb79-4d4095014688",
               is_new: true,
             },
             {
-              id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
+              post_id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
               is_new: true,
             },
           ],
-          id: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
+          post_id: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
           is_new: true,
-          new_comments: 2,
+          new_comments_amount: 2,
         },
       ],
     });
@@ -78,35 +78,35 @@ describe("threads activity queries", () => {
     // get only activity-related values
     expect(extractActivityFromThread(thread)).to.eql({
       string_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
-      new_comments: 0,
-      new_posts: 0,
+      new_comments_amount: 0,
+      new_posts_amount: 0,
       posts: [
         {
-          id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
+          post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
           comments: undefined,
           is_new: false,
-          new_comments: 0,
+          new_comments_amount: 0,
         },
         {
           comments: undefined,
-          id: "619adf62-833f-4bea-b591-03e807338a8e",
+          post_id: "619adf62-833f-4bea-b591-03e807338a8e",
           is_new: false,
-          new_comments: 0,
+          new_comments_amount: 0,
         },
         {
           comments: [
             {
-              id: "46a16199-33d1-48c2-bb79-4d4095014688",
+              post_id: "46a16199-33d1-48c2-bb79-4d4095014688",
               is_new: false,
             },
             {
-              id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
+              post_id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
               is_new: false,
             },
           ],
-          id: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
+          post_id: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
           is_new: false,
-          new_comments: 0,
+          new_comments_amount: 0,
         },
       ],
     });
@@ -124,35 +124,35 @@ describe("threads activity queries", () => {
     // get only activity-related values
     expect(extractActivityFromThread(thread)).to.eql({
       string_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
-      new_comments: 2,
-      new_posts: 0,
+      new_comments_amount: 2,
+      new_posts_amount: 0,
       posts: [
         {
-          id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
+          post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
           comments: undefined,
           is_new: false,
-          new_comments: 0,
+          new_comments_amount: 0,
         },
         {
           comments: undefined,
-          id: "619adf62-833f-4bea-b591-03e807338a8e",
+          post_id: "619adf62-833f-4bea-b591-03e807338a8e",
           is_new: false,
-          new_comments: 0,
+          new_comments_amount: 0,
         },
         {
           comments: [
             {
-              id: "46a16199-33d1-48c2-bb79-4d4095014688",
+              post_id: "46a16199-33d1-48c2-bb79-4d4095014688",
               is_new: true,
             },
             {
-              id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
+              post_id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
               is_new: true,
             },
           ],
-          id: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
+          post_id: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
           is_new: false,
-          new_comments: 2,
+          new_comments_amount: 2,
         },
       ],
     });
@@ -168,26 +168,26 @@ describe("threads activity queries", () => {
 
     // get only activity-related values
     expect(extractActivityFromThread(thread)).to.eql({
-      new_comments: 0,
-      new_posts: 0,
+      new_comments_amount: 0,
+      new_posts_amount: 0,
       posts: [
         {
           comments: undefined,
-          id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
+          post_id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
           is_new: false,
-          new_comments: 0,
+          new_comments_amount: 0,
         },
         {
           comments: undefined,
-          id: "08f25ef1-82dc-4202-a410-c0723ef76789",
+          post_id: "08f25ef1-82dc-4202-a410-c0723ef76789",
           is_new: false,
-          new_comments: 0,
+          new_comments_amount: 0,
         },
         {
           comments: undefined,
-          id: "1f1ad4fa-f02a-48c0-a78a-51221a7db170",
+          post_id: "1f1ad4fa-f02a-48c0-a78a-51221a7db170",
           is_new: false,
-          new_comments: 0,
+          new_comments_amount: 0,
         },
       ],
       string_id: "a5c903df-35e8-43b2-a41a-208c43154671",
@@ -204,26 +204,26 @@ describe("threads activity queries", () => {
 
     // get only activity-related values
     expect(extractActivityFromThread(thread)).to.eql({
-      new_comments: 0,
-      new_posts: 1,
+      new_comments_amount: 0,
+      new_posts_amount: 1,
       posts: [
         {
           comments: undefined,
-          id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
+          post_id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
           is_new: false,
-          new_comments: 0,
+          new_comments_amount: 0,
         },
         {
           comments: undefined,
-          id: "08f25ef1-82dc-4202-a410-c0723ef76789",
+          post_id: "08f25ef1-82dc-4202-a410-c0723ef76789",
           is_new: false,
-          new_comments: 0,
+          new_comments_amount: 0,
         },
         {
           comments: undefined,
-          id: "1f1ad4fa-f02a-48c0-a78a-51221a7db170",
+          post_id: "1f1ad4fa-f02a-48c0-a78a-51221a7db170",
           is_new: true,
-          new_comments: 0,
+          new_comments_amount: 0,
         },
       ],
       string_id: "a5c903df-35e8-43b2-a41a-208c43154671",
@@ -240,26 +240,26 @@ describe("threads activity queries", () => {
 
     // get only activity-related values
     expect(extractActivityFromThread(thread)).to.eql({
-      new_comments: 0,
-      new_posts: 0,
+      new_comments_amount: 0,
+      new_posts_amount: 0,
       posts: [
         {
           comments: undefined,
-          id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
+          post_id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
           is_new: false,
-          new_comments: 0,
+          new_comments_amount: 0,
         },
         {
           comments: undefined,
-          id: "08f25ef1-82dc-4202-a410-c0723ef76789",
+          post_id: "08f25ef1-82dc-4202-a410-c0723ef76789",
           is_new: false,
-          new_comments: 0,
+          new_comments_amount: 0,
         },
         {
           comments: undefined,
-          id: "1f1ad4fa-f02a-48c0-a78a-51221a7db170",
+          post_id: "1f1ad4fa-f02a-48c0-a78a-51221a7db170",
           is_new: false,
-          new_comments: 0,
+          new_comments_amount: 0,
         },
       ],
       string_id: "a5c903df-35e8-43b2-a41a-208c43154671",
@@ -276,35 +276,35 @@ describe("threads activity queries", () => {
     // get only activity-related values
     expect(extractActivityFromThread(thread)).to.eql({
       string_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
-      new_comments: 0,
-      new_posts: 0,
+      new_comments_amount: 0,
+      new_posts_amount: 0,
       posts: [
         {
-          id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
+          post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
           comments: undefined,
           is_new: false,
-          new_comments: 0,
+          new_comments_amount: 0,
         },
         {
           comments: undefined,
-          id: "619adf62-833f-4bea-b591-03e807338a8e",
+          post_id: "619adf62-833f-4bea-b591-03e807338a8e",
           is_new: false,
-          new_comments: 0,
+          new_comments_amount: 0,
         },
         {
           comments: [
             {
-              id: "46a16199-33d1-48c2-bb79-4d4095014688",
+              post_id: "46a16199-33d1-48c2-bb79-4d4095014688",
               is_new: false,
             },
             {
-              id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
+              post_id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
               is_new: false,
             },
           ],
-          id: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
+          post_id: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
           is_new: false,
-          new_comments: 0,
+          new_comments_amount: 0,
         },
       ],
     });
@@ -322,35 +322,35 @@ describe("threads activity queries", () => {
     // get only activity-related values
     expect(extractActivityFromThread(thread)).to.eql({
       string_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
-      new_comments: 2,
-      new_posts: 2,
+      new_comments_amount: 2,
+      new_posts_amount: 2,
       posts: [
         {
-          id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
+          post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
           comments: undefined,
           is_new: false,
-          new_comments: 0,
+          new_comments_amount: 0,
         },
         {
           comments: undefined,
-          id: "619adf62-833f-4bea-b591-03e807338a8e",
+          post_id: "619adf62-833f-4bea-b591-03e807338a8e",
           is_new: true,
-          new_comments: 0,
+          new_comments_amount: 0,
         },
         {
           comments: [
             {
-              id: "46a16199-33d1-48c2-bb79-4d4095014688",
+              post_id: "46a16199-33d1-48c2-bb79-4d4095014688",
               is_new: true,
             },
             {
-              id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
+              post_id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
               is_new: true,
             },
           ],
-          id: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
+          post_id: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
           is_new: true,
-          new_comments: 2,
+          new_comments_amount: 2,
         },
       ],
     });
@@ -368,14 +368,14 @@ describe("threads activity queries", () => {
     // get only activity-related values
     expect(extractActivityFromThread(thread)).to.eql({
       string_id: "b27710a8-0a9f-4c09-b3a5-54668bab7051",
-      new_comments: 0,
-      new_posts: 0,
+      new_comments_amount: 0,
+      new_posts_amount: 0,
       posts: [
         {
-          id: "987f795b-d60d-4016-af82-8684411f7785",
+          post_id: "987f795b-d60d-4016-af82-8684411f7785",
           comments: undefined,
           is_new: false,
-          new_comments: 0,
+          new_comments_amount: 0,
         },
       ],
     });
@@ -394,14 +394,14 @@ describe("threads activity queries", () => {
       // get only activity-related values
       expect(extractActivityFromThread(thread)).to.eql({
         string_id: "32a0174b-091e-4fe6-82f3-bffd6c6026ae",
-        new_comments: 0,
-        new_posts: 0,
+        new_comments_amount: 0,
+        new_posts_amount: 0,
         posts: [
           {
-            id: "bd6efcb5-1b0e-4ebc-bc48-4c9a23b14cdb",
+            post_id: "bd6efcb5-1b0e-4ebc-bc48-4c9a23b14cdb",
             comments: undefined,
             is_new: false,
-            new_comments: 0,
+            new_comments_amount: 0,
           },
         ],
       });
@@ -417,14 +417,14 @@ describe("threads activity queries", () => {
       });
       expect(extractActivityFromThread(thread)).to.eql({
         string_id: "c55314b4-0b61-41c9-aa2f-b7fa28adf651",
-        new_comments: 0,
-        new_posts: 0,
+        new_comments_amount: 0,
+        new_posts_amount: 0,
         posts: [
           {
-            id: "6c698c20-754a-42d2-b60f-7f73ca2c6fa0",
+            post_id: "6c698c20-754a-42d2-b60f-7f73ca2c6fa0",
             comments: undefined,
             is_new: false,
-            new_comments: 0,
+            new_comments_amount: 0,
           },
         ],
       });
@@ -440,14 +440,14 @@ describe("threads activity queries", () => {
       });
       expect(extractActivityFromThread(thread)).to.eql({
         string_id: "dacfb175-0d47-4c5e-8ecc-7fbf176ad915",
-        new_comments: 0,
-        new_posts: 0,
+        new_comments_amount: 0,
+        new_posts_amount: 0,
         posts: [
           {
-            id: "c137f3e9-8810-4807-9a1d-0ddd27ce52ca",
+            post_id: "c137f3e9-8810-4807-9a1d-0ddd27ce52ca",
             comments: undefined,
             is_new: false,
-            new_comments: 0,
+            new_comments_amount: 0,
           },
         ],
       });
@@ -463,14 +463,14 @@ describe("threads activity queries", () => {
       });
       expect(extractActivityFromThread(thread)).to.eql({
         string_id: "7d88a537-f23f-46de-970e-29ae392cd5f9",
-        new_comments: 0,
-        new_posts: 1,
+        new_comments_amount: 0,
+        new_posts_amount: 1,
         posts: [
           {
-            id: "995d80d3-d8b9-445d-9723-e39f7a682665",
+            post_id: "995d80d3-d8b9-445d-9723-e39f7a682665",
             comments: undefined,
             is_new: true,
-            new_comments: 0,
+            new_comments_amount: 0,
           },
         ],
       });
