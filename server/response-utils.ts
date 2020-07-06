@@ -1,5 +1,5 @@
 import debug from "debug";
-import { ServerPostType, DbIdentityType } from "./types/Types";
+import { ServerPostType, DbIdentityType, DbThreadType } from "./types/Types";
 
 const info = debug("bobaserver:response-utils-info");
 const log = debug("bobaserver::response-utils-log");
@@ -30,25 +30,38 @@ export const transformImageUrls = (obj: any) => {
   return obj;
 };
 
-export const mergeActivityIdentities = (activity: any[]) => {
-  return activity.map((post: any) => {
-    if (post.friend || post.self) {
-      post.user_identity = transformImageUrls({
-        name: post.username,
-        avatar: post.user_avatar,
+export const mergeActivityIdentities = (
+  activity: DbThreadType[]
+): (ServerPostType & { whisper_tags: string[] })[] => {
+  return activity.map((thread: DbThreadType) => {
+    info(`Transforming thread post:`);
+    info(thread);
+
+    const {
+      user_id,
+      username,
+      user_avatar,
+      secret_identity_name,
+      secret_avatar,
+      ...rest
+    } = thread;
+    let user_identity;
+    if (thread.friend || thread.self) {
+      user_identity = transformImageUrls({
+        name: username,
+        avatar: user_avatar,
       });
     }
-    post.secret_identity = transformImageUrls({
-      name: post.secret_identity,
-      avatar: post.secret_avatar,
+    let secret_identity = transformImageUrls({
+      name: secret_identity_name,
+      avatar: secret_avatar,
     });
 
-    delete post.username;
-    delete post.user_avatar;
-    delete post.user_id;
-    delete post.secret_avatar;
-
-    return post;
+    return {
+      ...rest,
+      user_identity,
+      secret_identity,
+    };
   });
 };
 

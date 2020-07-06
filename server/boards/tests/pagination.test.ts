@@ -13,6 +13,10 @@ describe("Tests boards queries", () => {
       cursor: null,
     });
 
+    if (boardActivity === false) {
+      throw Error("Board activity fetching encountered an Error.");
+    }
+
     expect(boardActivity.cursor).to.equal(
       "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDQtMTVUMDU6NDI6MDAuMDAwMDAwIiwicGFnZV9zaXplIjoxMH0="
     );
@@ -31,6 +35,10 @@ describe("Tests boards queries", () => {
       cursor:
         "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDQtMTVUMDU6NDI6MDAuMDAwMDAwIiwicGFnZV9zaXplIjoxMH0=",
     });
+
+    if (boardActivity === false) {
+      throw Error("Board activity fetching encountered an Error.");
+    }
 
     expect(boardActivity.cursor).to.equal(
       "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDQtMDVUMDU6NDI6MDAuMDAwMDAwIiwicGFnZV9zaXplIjoxMH0="
@@ -51,6 +59,10 @@ describe("Tests boards queries", () => {
         "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDQtMDVUMDU6NDI6MDAuMDAwMDAwIiwicGFnZV9zaXplIjoxMH0=",
     });
 
+    if (boardActivity === false) {
+      throw Error("Board activity fetching encountered an Error.");
+    }
+
     expect(boardActivity.cursor).to.be.null;
     expect(boardActivity.activity.length).to.eql(6);
     expect(boardActivity.activity[0].content).to.eql('[{"insert":"Post 6!"}]');
@@ -68,6 +80,10 @@ describe("Tests boards queries", () => {
         "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDQtMTBUMDU6NDI6MDAiLCJwYWdlX3NpemUiOjEwfQ==",
     });
 
+    if (boardActivity === false) {
+      throw Error("Board activity fetching encountered an Error.");
+    }
+
     expect(boardActivity.activity.length).to.eql(10);
     expect(boardActivity.activity[0].content).to.eql('[{"insert":"Post 11!"}]');
     expect(
@@ -81,6 +97,10 @@ describe("Tests boards queries", () => {
       cursor: boardActivity.cursor,
     });
 
+    if (boardActivity2 === false) {
+      throw Error("Board activity fetching encountered an Error.");
+    }
+
     expect(boardActivity2.activity.length).to.eql(1);
     expect(boardActivity2.activity[0].content).to.eql('[{"insert":"Post 1!"}]');
   });
@@ -93,6 +113,10 @@ describe("Tests boards queries", () => {
       cursor:
         "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMTktMDQtMTBUMDU6NDI6MDAiLCJwYWdlX3NpemUiOjEwfQ==",
     });
+
+    if (boardActivity === false) {
+      throw Error("Board activity fetching encountered an Error.");
+    }
 
     expect(boardActivity.cursor).to.be.null;
     expect(boardActivity.activity.length).to.eql(0);
@@ -109,6 +133,10 @@ describe("Tests boards queries", () => {
       cursor: undefined,
       pageSize: 5,
     });
+
+    if (boardActivityCursor === false) {
+      throw Error("Board activity fetching encountered an Error.");
+    }
 
     // This is the last post before the one with an activity that includes microseconds.
     // The cursor returned will include the timestamp of the next post as the
@@ -127,6 +155,10 @@ describe("Tests boards queries", () => {
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
       cursor: boardActivityCursor.cursor,
     });
+
+    if (boardActivity === false) {
+      throw Error("Board activity fetching encountered an Error.");
+    }
 
     // Expect the next returned post to be the correct one and have microseconds.
     expect(boardActivity.activity[0].content).to.eql(

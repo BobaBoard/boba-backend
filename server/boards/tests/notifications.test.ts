@@ -13,6 +13,10 @@ describe("Tests notifications", async () => {
       cursor: null,
     });
 
+    if (boardActivity === false) {
+      throw Error("Board activity fetching encountered an Error.");
+    }
+
     // get only activity-related values
     expect(
       boardActivity.activity
@@ -44,6 +48,10 @@ describe("Tests notifications", async () => {
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
       cursor: null,
     });
+
+    if (boardActivity === false) {
+      throw Error("Board activity fetching encountered an Error.");
+    }
 
     // get only activity-related values
     expect(
@@ -78,6 +86,10 @@ describe("Tests notifications", async () => {
       cursor: null,
     });
 
+    if (boardActivity === false) {
+      throw Error("Board activity fetching encountered an Error.");
+    }
+
     // get only activity-related values
     expect(
       boardActivity.activity
@@ -110,6 +122,10 @@ describe("Tests notifications", async () => {
       firebaseId: "fb2",
       cursor: null,
     });
+
+    if (boardActivity === false) {
+      throw Error("Board activity fetching encountered an Error.");
+    }
 
     // get only activity-related values
     expect(
@@ -144,6 +160,10 @@ describe("Tests notifications", async () => {
       cursor: null,
     });
 
+    if (boardActivity === false) {
+      throw Error("Board activity fetching encountered an Error.");
+    }
+
     // get only activity-related values
     expect(
       boardActivity.activity
@@ -177,6 +197,10 @@ describe("Tests notifications", async () => {
       cursor: null,
     });
 
+    if (boardActivity === false) {
+      throw Error("Board activity fetching encountered an Error.");
+    }
+
     // get only activity-related values
     expect(
       boardActivity.activity
@@ -206,6 +230,10 @@ describe("Tests notifications", async () => {
       firebaseId: undefined,
       cursor: null,
     });
+
+    if (boardActivity === false) {
+      throw Error("Board activity fetching encountered an Error.");
+    }
 
     // get only activity-related values
     expect(
@@ -239,6 +267,10 @@ describe("Tests notifications", async () => {
       cursor: null,
     });
 
+    if (boardActivity === false) {
+      throw Error("Board activity fetching encountered an Error.");
+    }
+
     // get only activity-related values
     expect(
       boardActivity.activity.map((activity: any) => ({
@@ -271,6 +303,10 @@ describe("Tests notifications", async () => {
       cursor: null,
     });
 
+    if (boardActivity === false) {
+      throw Error("Board activity fetching encountered an Error.");
+    }
+
     // get only activity-related values
     expect(
       boardActivity.activity.map((activity: any) => ({
@@ -297,6 +333,10 @@ describe("Tests notifications", async () => {
       cursor: null,
       pageSize: 50,
     });
+
+    if (boardActivity === false) {
+      throw Error("Board activity fetching encountered an Error.");
+    }
 
     // get only activity-related values
     expect(boardActivity.activity.length).to.eql(26);

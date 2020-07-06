@@ -53,13 +53,16 @@
          WHERE boards.slug = ${board_slug}
          GROUP BY
             threads.id, boards.id, cutoff_time)
+-- The return type of this query is DbThreadType.
+-- If updating, please also update DbThreadType in Types.
 SELECT
     first_post.string_id as post_id,
+    NULL as parent_post_id,
     threads_string_id as thread_id,
     user_id,
     username,
     user_avatar,
-    secret_identity,
+    secret_identity as secret_identity_name,
     secret_avatar,
     TO_CHAR(created, 'YYYY-MM-DD"T"HH24:MI:SS') as created,
     content,
@@ -67,12 +70,15 @@ SELECT
     whisper_tags,
     COALESCE(posts_amount, 0) as posts_amount,
     threads_amount.count as threads_amount,
+    -- This last activity must have the .US at the end or it will trigger a bug
+    -- where some posts are skipped by the last activity cursor.
+    -- See documentation on the queries JS file.
     TO_CHAR(GREATEST(first_post, last_post, last_comment), 'YYYY-MM-DD"T"HH24:MI:SS.US') as last_activity,
     COALESCE(is_friend.friend, FALSE) as friend,
     COALESCE(user_id = (SELECT id FROM users WHERE firebase_id = ${firebase_id}), FALSE) as self,
     COALESCE(new_posts_amount, 0) as new_posts_amount,
     COALESCE(new_comments_amount, 0) as new_comments_amount,
-    last_comment,
+    TO_CHAR(last_comment, 'YYYY-MM-DD"T"HH24:MI:SS') as last_comment,
     CASE
         -- If firebase_id is null then no one is logged in and posts are never new 
         WHEN ${firebase_id} IS NULL THEN FALSE
