@@ -2,10 +2,11 @@ SELECT
     users.id as user_id,
     users.username,
     users.avatar_reference_id as user_avatar,
-    identity_id,
-    secret_identities.display_name as secret_identities_display_name,
-    secret_identities.avatar_reference_id as secret_identities_avatar_reference_id,
+    identity_id as secret_identity_id,
+    secret_identities.display_name as secret_identity_name,
+    secret_identities.avatar_reference_id as secret_identity_avatar,
     threads.id as thread_id,
+    threads.string_id as thread_string_id,
     posts.id as post_id
 FROM users
 CROSS JOIN threads
