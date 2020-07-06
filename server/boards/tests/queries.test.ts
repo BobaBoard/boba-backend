@@ -215,6 +215,10 @@ describe("Tests boards queries", () => {
       cursor: null,
     });
 
+    if (board === false) {
+      throw Error("Board activity fetching encountered an Error.");
+    }
+
     expect(board.activity).to.eql([
       {
         comments_amount: 2,
@@ -223,14 +227,15 @@ describe("Tests boards queries", () => {
         friend: false,
         is_new: false,
         last_activity: "2020-05-23T05:52:00.000000",
-        last_comment: new Date(Date.UTC(2020, 4, 23, 12, 52)),
+        last_comment: "2020-05-23T05:52:00",
+        parent_post_id: null,
         new_comments_amount: 2,
         new_posts_amount: 0,
         post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
         posts_amount: 3,
         secret_avatar:
           "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
-        secret_identity: "DragonFucker",
+        secret_identity_name: "DragonFucker",
         self: true,
         thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
         threads_amount: 2,
@@ -254,7 +259,8 @@ describe("Tests boards queries", () => {
         posts_amount: 3,
         secret_avatar:
           "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
-        secret_identity: "DragonFucker",
+        secret_identity_name: "DragonFucker",
+        parent_post_id: null,
         self: false,
         thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
         threads_amount: 2,
@@ -274,6 +280,10 @@ describe("Tests boards queries", () => {
       cursor: null,
     });
 
+    if (board === false) {
+      throw Error("Board activity fetching encountered an Error.");
+    }
+
     expect(board.activity).to.eql([
       {
         comments_amount: 2,
@@ -282,14 +292,15 @@ describe("Tests boards queries", () => {
         friend: false,
         is_new: false,
         last_activity: "2020-05-23T05:52:00.000000",
-        last_comment: new Date(Date.UTC(2020, 4, 23, 12, 52)),
+        last_comment: "2020-05-23T05:52:00",
         new_comments_amount: 0,
         new_posts_amount: 0,
         post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
+        parent_post_id: null,
         posts_amount: 3,
         secret_avatar:
           "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
-        secret_identity: "DragonFucker",
+        secret_identity_name: "DragonFucker",
         self: false,
         thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
         threads_amount: 2,
@@ -310,10 +321,11 @@ describe("Tests boards queries", () => {
         new_comments_amount: 0,
         new_posts_amount: 0,
         post_id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
+        parent_post_id: null,
         posts_amount: 3,
         secret_avatar:
           "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
-        secret_identity: "DragonFucker",
+        secret_identity_name: "DragonFucker",
         self: false,
         thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
         threads_amount: 2,
@@ -333,6 +345,10 @@ describe("Tests boards queries", () => {
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
       cursor: null,
     });
+
+    if (board === false) {
+      throw Error("Board activity fetching encountered an Error.");
+    }
 
     expect(board.activity).to.eql([]);
   });

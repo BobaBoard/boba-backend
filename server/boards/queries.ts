@@ -1,6 +1,7 @@
 import debug from "debug";
 import pool from "../pool";
 import sql from "./sql";
+import { DbThreadType } from "../types/Types";
 
 const log = debug("bobaserver:board:queries-log");
 const error = debug("bobaserver:board:queries-error");
@@ -65,7 +66,13 @@ export const getBoardActivityBySlug = async ({
   firebaseId: string;
   cursor: string;
   pageSize?: number;
-}): Promise<any> => {
+}): Promise<
+  | {
+      cursor: string | null;
+      activity: DbThreadType[];
+    }
+  | false
+> => {
   try {
     const decodedCursor = cursor && decodeCursor(cursor);
 
