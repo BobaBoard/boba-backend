@@ -4,7 +4,8 @@ import { expect } from "chai";
 import {
   mergeCommentsAndIdentities,
   mergePostAndIdentities,
-  mergeActivityIdentities,
+  mergeObjectIdentity,
+  transformImageUrls,
 } from "../response-utils";
 
 describe("test identities", () => {

@@ -7,7 +7,12 @@ import {
   markBoardVisit,
 } from "./queries";
 import { isLoggedIn } from "../auth-handler";
-import { transformImageUrls, mergeActivityIdentities } from "../response-utils";
+import {
+  transformImageUrls,
+  mergeObjectIdentity,
+  ensureNoIdentityLeakage,
+} from "../response-utils";
+import { ServerPostType, DbThreadType } from "../types/Types";
 
 const log = debug("bobaserver:board:routes");
 
@@ -79,11 +84,16 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
     return;
   }
 
-  const activityWithIdentity = mergeActivityIdentities(result.activity);
-  res.status(200).json({
-    next_page_cursor: result.cursor,
-    activity: activityWithIdentity,
-  });
+  const activityWithIdentity = result.activity.map((post) =>
+    mergeObjectIdentity<DbThreadType>(post)
+  );
+  const response: {
+    next_page_cursor: string;
+    activity: ServerPostType[];
+  } = { next_page_cursor: result.cursor, activity: activityWithIdentity };
+
+  response.activity.map((post) => ensureNoIdentityLeakage(post));
+  res.status(200).json(response);
 });
 
 router.get("/", isLoggedIn, async (req, res) => {

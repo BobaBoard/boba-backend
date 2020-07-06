@@ -30,39 +30,55 @@ export const transformImageUrls = (obj: any) => {
   return obj;
 };
 
-export const mergeActivityIdentities = (
-  activity: DbThreadType[]
-): (ServerPostType & { whisper_tags: string[] })[] => {
-  return activity.map((thread: DbThreadType) => {
-    info(`Transforming thread post:`);
-    info(thread);
+// Merges the identity contain within a single object (rather than a map).
+export const mergeObjectIdentity = <T>(
+  object: T & {
+    author: number;
+    username: string;
+    user_avatar: string;
+    secret_identity_name: string;
+    secret_identity_avatar: string;
+    friend: boolean;
+    self: boolean;
+  }
+): T & {
+  secret_identity: {
+    name: string;
+    avatar: string;
+  };
+  user_identity?: {
+    name: string;
+    avatar: string;
+  };
+} => {
+  info(`Merging activity of object:`);
+  info(object);
 
-    const {
-      user_id,
-      username,
-      user_avatar,
-      secret_identity_name,
-      secret_avatar,
-      ...rest
-    } = thread;
-    let user_identity;
-    if (thread.friend || thread.self) {
-      user_identity = transformImageUrls({
-        name: username,
-        avatar: user_avatar,
-      });
-    }
-    let secret_identity = transformImageUrls({
-      name: secret_identity_name,
-      avatar: secret_avatar,
+  const {
+    author,
+    username,
+    user_avatar,
+    secret_identity_name,
+    secret_identity_avatar,
+    ...rest
+  } = object;
+  let user_identity;
+  if (object.friend || object.self) {
+    user_identity = transformImageUrls({
+      name: username,
+      avatar: user_avatar,
     });
-
-    return {
-      ...rest,
-      user_identity,
-      secret_identity,
-    };
+  }
+  let secret_identity = transformImageUrls({
+    name: secret_identity_name,
+    avatar: secret_identity_avatar,
   });
+
+  return {
+    ...rest,
+    user_identity,
+    secret_identity,
+  } as any;
 };
 
 export const mergeCommentsAndIdentities = (
@@ -120,4 +136,13 @@ export const mergeThreadAndIdentities = (thread: any, identities: any[]) => {
   info(identitiesMap);
   thread.posts.map((post: any) => mergePostAndIdentities(post, identitiesMap));
   return thread;
+};
+
+export const ensureNoIdentityLeakage = (post: any) => {
+  if (!post.friend && !post.self && post.user_identity) {
+    throw Error("Identity leakage detected.");
+  }
+  if (post.author) {
+    throw Error("Identity leakage detected.");
+  }
 };

@@ -4,6 +4,10 @@ import { postNewContribution, postNewComment } from "./queries";
 import { isLoggedIn } from "../auth-handler";
 import axios from "axios";
 import { ServerPostType } from "../types/Types";
+import {
+  mergeObjectIdentity,
+  ensureNoIdentityLeakage,
+} from "../response-utils";
 
 const info = debug("bobaserver:posts:routes-info");
 const log = debug("bobaserver:posts:routes-log");
@@ -42,35 +46,34 @@ router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
     return;
   }
 
+  const postWithIdentity = mergeObjectIdentity(post);
+
   const responsePost: ServerPostType = {
-    post_id: post.string_id,
-    thread_id: "not_implemented",
+    post_id: post.post_id,
+    thread_id: post.parent_thread_id,
     parent_post_id: postId,
-    secret_identity: {
-      name: "name",
-      avatar: "name",
-    },
-    user_identity: {
-      name: "name",
-      avatar: "name",
-    },
+    secret_identity: postWithIdentity.secret_identity,
+    user_identity: postWithIdentity.user_identity,
     created: post.created,
     content: post.content,
     options: post.options,
     tags: {
       whisper_tags: post.whisper_tags,
     },
-    comments: undefined,
+    friend: false,
+    self: true,
+    comments: null,
     posts_amount: 1,
     comments_amount: 0,
     threads_amount: 1,
     new_posts_amount: 0,
     new_comments_amount: 0,
     is_new: true,
-    last_activity: undefined,
+    last_activity: null,
   };
 
-  res.status(200).json(post);
+  ensureNoIdentityLeakage(responsePost);
+  res.status(200).json(responsePost);
 });
 
 router.post("/:postId/comment", isLoggedIn, async (req, res) => {

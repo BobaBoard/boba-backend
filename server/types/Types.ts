@@ -24,6 +24,8 @@ export interface ServerPostType {
     name: string;
     avatar: string;
   };
+  self: boolean;
+  friend: boolean;
   created: string;
   content: string;
   options: {
@@ -57,6 +59,12 @@ export interface DbPostType {
   parent_thread_id: string;
   parent_post_id: string;
   author: number;
+  username: string;
+  user_avatar: string;
+  secret_identity_name: string;
+  secret_identity_avatar: string;
+  friend: boolean;
+  self: boolean;
   created: string;
   content: string;
   options: {
@@ -86,11 +94,11 @@ export interface DbThreadType {
   post_id: string;
   parent_post_id: null;
   thread_id: string;
-  user_id: number;
+  author: number;
   username: string;
   user_avatar: string;
   secret_identity_name: string;
-  secret_avatar: string;
+  secret_identity_avatar: string;
   created: string;
   content: string;
   whisper_tags: string[] | null;

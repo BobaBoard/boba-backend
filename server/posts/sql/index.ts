@@ -3,7 +3,9 @@ import path from "path";
 
 const getRandomIdentity = `
     SELECT 
-        id as secret_identity_id 
+        id as secret_identity_id ,
+        display_name as secret_identity_name,
+        avatar_reference_id as secret_identity_avatar
     FROM secret_identities
     LEFT JOIN user_thread_identities as uti
         ON secret_identities.id = uti.identity_id AND uti.thread_id = $/thread_id/
