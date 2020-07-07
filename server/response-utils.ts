@@ -128,7 +128,10 @@ export const mergePostAndIdentities = (
 };
 
 // TODO: decide whether transformImageUrls should be here.
-export const mergeThreadAndIdentities = (thread: any, identities: any[]) => {
+export const mergeThreadAndIdentities = (
+  thread: any,
+  identities: DbIdentityType[]
+) => {
   const identitiesMap = new Map<string, DbIdentityType>();
   identities.forEach((identity) =>
     identitiesMap.set(identity.id.toString(), identity)

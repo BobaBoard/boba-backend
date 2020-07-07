@@ -2,6 +2,7 @@ import debug from "debug";
 import pool from "../pool";
 import { v4 as uuidv4 } from "uuid";
 import sql from "./sql";
+import { DbThreadType, DbIdentityType } from "../types/Types";
 
 const log = debug("bobaserver:threads:queries-log");
 const error = debug("bobaserver:threads:queries-error");
@@ -12,7 +13,7 @@ export const getThreadByStringId = async ({
 }: {
   threadId: string;
   firebaseId?: string;
-}): Promise<any> => {
+}): Promise<DbThreadType | false> => {
   try {
     const thread = await pool.oneOrNone(sql.threadIdByString, {
       thread_string_id: threadId,
@@ -38,7 +39,7 @@ export const getThreadIdentitiesByStringId = async ({
 }: {
   threadId: string;
   firebaseId?: string;
-}): Promise<any> => {
+}): Promise<DbIdentityType[] | false> => {
   try {
     const rows = await pool.many(sql.threadIdentitiesByStringId, {
       firebase_id: firebaseId,

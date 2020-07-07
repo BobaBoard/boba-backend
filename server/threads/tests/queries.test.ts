@@ -185,6 +185,11 @@ describe("threads queries", () => {
       threadId: "29d1b2da-3289-454a-9089-2ed47db4967b",
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
     });
+
+    if (identities === false) {
+      throw Error("Thread identities fetching encountered an Error.");
+    }
+
     expect(identities.length).to.eql(2);
     expect(identities[0]).to.eql({
       display_name: "Old Time-y Anon",
