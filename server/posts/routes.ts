@@ -73,7 +73,7 @@ router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
   };
 
   ensureNoIdentityLeakage(responsePost);
-  res.status(200).json(responsePost);
+  res.status(200).json({contribution: responsePost});
 });
 
 router.post("/:postId/comment", isLoggedIn, async (req, res) => {
