@@ -233,14 +233,14 @@ describe("Tests boards queries", () => {
         new_posts_amount: 0,
         post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
         posts_amount: 3,
-        secret_avatar:
+        secret_identity_avatar:
           "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
         secret_identity_name: "DragonFucker",
         self: true,
         thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
         threads_amount: 2,
         user_avatar: "greedler.jpg",
-        user_id: "3",
+        author: "3",
         username: "oncest5evah",
         options: {},
         whisper_tags: null,
@@ -257,7 +257,7 @@ describe("Tests boards queries", () => {
         new_posts_amount: 1,
         post_id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
         posts_amount: 3,
-        secret_avatar:
+        secret_identity_avatar:
           "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
         secret_identity_name: "DragonFucker",
         parent_post_id: null,
@@ -265,7 +265,7 @@ describe("Tests boards queries", () => {
         thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
         threads_amount: 2,
         user_avatar: "bobatan.png",
-        user_id: "1",
+        author: "1",
         username: "bobatan",
         options: {},
         whisper_tags: ["mwehehehehe"],
@@ -298,14 +298,14 @@ describe("Tests boards queries", () => {
         post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
         parent_post_id: null,
         posts_amount: 3,
-        secret_avatar:
+        secret_identity_avatar:
           "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
         secret_identity_name: "DragonFucker",
         self: false,
         thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
         threads_amount: 2,
         user_avatar: "greedler.jpg",
-        user_id: "3",
+        author: "3",
         username: "oncest5evah",
         options: {},
         whisper_tags: null,
@@ -323,14 +323,14 @@ describe("Tests boards queries", () => {
         post_id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
         parent_post_id: null,
         posts_amount: 3,
-        secret_avatar:
+        secret_identity_avatar:
           "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
         secret_identity_name: "DragonFucker",
         self: false,
         thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
         threads_amount: 2,
         user_avatar: "bobatan.png",
-        user_id: "1",
+        author: "1",
         username: "bobatan",
         options: {},
         whisper_tags: ["mwehehehehe"],

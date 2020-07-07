@@ -145,7 +145,7 @@ export const ensureNoIdentityLeakage = (post: any) => {
   if (!post.friend && !post.self && post.user_identity) {
     throw Error("Identity leakage detected.");
   }
-  if (post.author) {
+  if (post.author || post.user_id) {
     throw Error("Identity leakage detected.");
   }
 };
