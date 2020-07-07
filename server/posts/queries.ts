@@ -39,14 +39,34 @@ export const postNewContribution = async ({
         firebase_id: firebaseId,
       });
 
+      log(`Found details for thread:`);
+      log({
+        user_id,
+        username,
+        user_avatar,
+        secret_identity_id,
+        secret_identity_name,
+        secret_identity_avatar,
+        thread_id,
+        thread_string_id,
+        post_id,
+      });
+
       if (!secret_identity_id) {
         const randomIdentityResult = await t.one(sql.getRandomIdentity, {
           thread_id,
         });
+        secret_identity_id = randomIdentityResult.secret_identity_id;
         secret_identity_name = randomIdentityResult.secret_identity_name;
         secret_identity_avatar = randomIdentityResult.secret_identity_avatar;
         // The secret identity id is not currently in the thread data.
         // Add it.
+        log(`Adding identity to thread:`);
+        log({
+          secret_identity_id,
+          secret_identity_name,
+          secret_identity_avatar,
+        });
         await t.one(sql.addIdentityToThread, {
           user_id,
           thread_id,
