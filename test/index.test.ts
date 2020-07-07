@@ -42,7 +42,7 @@ describe("Tests threads REST API", () => {
           is_own: false,
           new_comments_amount: 0,
           parent_post_id: null,
-          parent_thread_id: 1,
+          parent_thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
           secret_identity: {
             avatar:
               "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
@@ -63,7 +63,7 @@ describe("Tests threads REST API", () => {
           is_own: false,
           new_comments_amount: 0,
           parent_post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
-          parent_thread_id: 1,
+          parent_thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
           secret_identity: {
             avatar:
               "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
@@ -113,7 +113,7 @@ describe("Tests threads REST API", () => {
           is_own: false,
           new_comments_amount: 0,
           parent_post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
-          parent_thread_id: 1,
+          parent_thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
           secret_identity: {
             avatar:
               "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",

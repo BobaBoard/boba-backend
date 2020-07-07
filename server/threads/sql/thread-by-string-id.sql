@@ -42,7 +42,7 @@ WITH
     thread_posts AS
         (SELECT 
             posts.string_id as post_id,
-            posts.parent_thread as parent_thread_id,
+            threads.string_id as parent_thread_id,
             parent.string_id as parent_post_id,
             posts.author,
             TO_CHAR(posts.created, 'YYYY-MM-DD"T"HH24:MI:SS') as created,
@@ -81,6 +81,6 @@ SELECT
     COALESCE(SUM((${firebase_id} IS NOT NULL AND thread_posts.is_new AND NOT thread_posts.is_own)::int)::int, 0) as new_posts_amount
 FROM threads
 LEFT JOIN thread_posts
-    ON threads.id = thread_posts.parent_thread_id
+    ON threads.string_id = thread_posts.parent_thread_id
 WHERE threads.string_id = ${thread_string_id}
 GROUP BY threads.id
