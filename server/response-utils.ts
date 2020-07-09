@@ -89,66 +89,6 @@ export const mergeObjectIdentity = <T>(
   } as any;
 };
 
-export const mergeCommentsAndIdentities = (
-  comment: any,
-  identitiesMap: Map<string, DbIdentityType>
-) => {
-  const authorIdentity = identitiesMap.get(comment.author.toString());
-  delete comment.author;
-  info(`Adding identity to comment made by ${authorIdentity.username}.`);
-  comment.secret_identity = transformImageUrls({
-    name: authorIdentity.display_name,
-    avatar: authorIdentity.secret_identity_avatar_reference_id,
-  });
-  if (authorIdentity.friend || authorIdentity.self) {
-    info(`...who is our friend (or us).`);
-    comment.user_identity = transformImageUrls({
-      name: authorIdentity.username,
-      avatar: authorIdentity.user_avatar_reference_id,
-    });
-  }
-};
-
-export const mergePostAndIdentities = (
-  post: any,
-  identitiesMap: Map<string, DbIdentityType>
-) => {
-  info(`Getting identity for post author: ${post.author}`);
-  const authorIdentity = identitiesMap.get(post.author.toString());
-  info(authorIdentity);
-  delete post.author;
-  info(`Adding identity to post made by ${authorIdentity.username}.`);
-  post.secret_identity = transformImageUrls({
-    name: authorIdentity.display_name,
-    avatar: authorIdentity.secret_identity_avatar_reference_id,
-  });
-  if (authorIdentity.friend || authorIdentity.self) {
-    info(`...who is our friend (or us).`);
-    post.user_identity = transformImageUrls({
-      name: authorIdentity.username,
-      avatar: authorIdentity.user_avatar_reference_id,
-    });
-  }
-
-  post.comments?.map((comment: any) => {
-    mergeCommentsAndIdentities(comment, identitiesMap);
-  });
-};
-
-// TODO: decide whether transformImageUrls should be here.
-export const mergeThreadAndIdentities = (
-  thread: any,
-  identities: DbIdentityType[]
-) => {
-  const identitiesMap = new Map<string, DbIdentityType>();
-  identities.forEach((identity) =>
-    identitiesMap.set(identity.id.toString(), identity)
-  );
-  info(identitiesMap);
-  thread.posts.map((post: any) => mergePostAndIdentities(post, identitiesMap));
-  return thread;
-};
-
 export const makeServerThread = (thread: DbThreadType): ServerThreadType => {
   return {
     ...thread,
@@ -157,13 +97,21 @@ export const makeServerThread = (thread: DbThreadType): ServerThreadType => {
 };
 
 export const makeServerPost = (post: DbPostType): ServerPostType => {
-  return {
+  const serverPost = {
     ...mergeObjectIdentity<DbPostType>(post),
     comments: post.comments?.map(makeServerComment) || null,
+    tags: {
+      whisper_tags: post.whisper_tags,
+    },
   };
+  delete serverPost.whisper_tags;
+
+  return serverPost;
 };
 
-const makeServerComment = (comment: DbCommentType): ServerCommentType => {
+export const makeServerComment = (
+  comment: DbCommentType
+): ServerCommentType => {
   return mergeObjectIdentity<DbCommentType>(comment);
 };
 
