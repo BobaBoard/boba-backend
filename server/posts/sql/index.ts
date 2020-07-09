@@ -33,7 +33,8 @@ const makePost = `
         $/whisper_tags/,
         $/anonymity_type/,
         $/options/
-    ) RETURNING *`;
+    ) RETURNING *, TO_CHAR(posts.created, 'YYYY-MM-DD"T"HH24:MI:SS') as created_string
+    `;
 
 const makeComment = `
     INSERT INTO comments(string_id, parent_post, parent_thread, author, content, anonymity_type)
@@ -44,7 +45,7 @@ const makeComment = `
         $/user_id/,
         $/content/,
         $/anonymity_type/
-    ) RETURNING *`;
+    ) RETURNING *, TO_CHAR(comments.created, 'YYYY-MM-DD"T"HH24:MI:SS') as created_string`;
 
 export default {
   getThreadDetails: new QueryFile(

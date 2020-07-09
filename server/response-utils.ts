@@ -1,5 +1,13 @@
 import debug from "debug";
-import { ServerPostType, DbIdentityType, DbThreadType } from "./types/Types";
+import {
+  DbIdentityType,
+  DbPostType,
+  DbThreadType,
+  ServerThreadType,
+  ServerCommentType,
+  ServerPostType,
+  DbCommentType,
+} from "./types/Types";
 
 const info = debug("bobaserver:response-utils-info");
 const log = debug("bobaserver::response-utils-log");
@@ -141,11 +149,30 @@ export const mergeThreadAndIdentities = (
   return thread;
 };
 
+export const makeServerThread = (thread: DbThreadType): ServerThreadType => {
+  return {
+    ...thread,
+    posts: thread.posts?.map((post) => makeServerPost(post)),
+  };
+};
+
+export const makeServerPost = (post: DbPostType): ServerPostType => {
+  return {
+    ...mergeObjectIdentity<DbPostType>(post),
+    comments: post.comments?.map(makeServerComment) || null,
+  };
+};
+
+const makeServerComment = (comment: DbCommentType): ServerCommentType => {
+  return mergeObjectIdentity<DbCommentType>(comment);
+};
+
 export const ensureNoIdentityLeakage = (post: any) => {
   if (!post.friend && !post.self && post.user_identity) {
     throw Error("Identity leakage detected.");
   }
-  if (post.author || post.user_id) {
+  if (post.author || post.user_id || post.username || post.user_avatar) {
     throw Error("Identity leakage detected.");
   }
+  post.comments?.forEach((comment: any) => ensureNoIdentityLeakage(comment));
 };

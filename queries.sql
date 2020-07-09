@@ -55,3 +55,11 @@ VALUES
 
 
 
+
+INSERT INTO Users(firebase_id, username, avatar_reference_id, invited_by)
+VALUES
+    ('45mDSh3Wr8hgrbeFCnWyOMDIsz32', 'sodium_amytal', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F9f314b85-a943-4307-9b3c-747c45fc0b59?alt=media&token=886cc9d7-0d19-490b-acb6-303a3510c1e3', NULL),
+    ('eJkLdtCShhVTgNWmjw70K8a8Aqs1', 'Left-handed-rick (LHR)', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F7a82a355-b470-44ae-97f5-21d2f00cd73d?alt=media&token=c6ddd645-712a-406c-841e-0ee65d75d854', NULL),
+    ('9GHy8015OqdNDBC1diVB0lziNkh1', 'bias0', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2Fb606d5e8-f45b-4988-9560-d061c1242b8b?alt=media&token=2e271538-e46f-438c-a49b-1e4d2b5a7850', NULL),
+    ('hwqO40WWYYYNbYZj7811EfZF4642', 'fawn', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F3afcf3fc-a29c-4fbe-bda7-d950a903728a?alt=media&token=2b381ccc-6600-4a86-b00b-840bcd3560d8', NULL),
+    ('DVYYr07xpnd2EgWDggmOvqidg1A2', 'merelydovely', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F042d41e8-978f-4806-8a67-ca630c7ec3f2?alt=media&token=0f59fb36-0ed3-4ab4-a5d4-e1561dd13d40', NULL);

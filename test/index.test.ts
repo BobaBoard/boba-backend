@@ -19,6 +19,77 @@ describe("Tests boards REST API", () => {
       avatarUrl: "/gore.png",
     });
   });
+
+  it("should return activity data", async () => {
+    const res = await request(app).get("/boards/gore/activity/latest");
+
+    expect(res.status).to.equal(200);
+    expect(res.body).to.eql({
+      next_page_cursor: null,
+      activity: [
+        {
+          posts: [
+            {
+              post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
+              parent_thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+              parent_post_id: null,
+              secret_identity: {
+                name: "DragonFucker",
+                avatar:
+                  "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
+              },
+              self: false,
+              friend: false,
+              created: "2020-04-30T03:23:00",
+              content: '[{"insert":"Favorite character to maim?"}]',
+              options: {},
+              tags: {
+                whisper_tags: null,
+              },
+              total_comments_amount: 2,
+              new_comments_amount: 0,
+              is_new: false,
+            },
+          ],
+          thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+          thread_new_posts_amount: 0,
+          thread_new_comments_amount: 0,
+          thread_total_comments_amount: 2,
+          thread_total_posts_amount: 3,
+        },
+        {
+          posts: [
+            {
+              post_id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
+              parent_thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+              parent_post_id: null,
+              secret_identity: {
+                name: "DragonFucker",
+                avatar:
+                  "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
+              },
+              self: false,
+              friend: false,
+              created: "2020-04-24T05:42:00",
+              content: '[{"insert":"Favorite murder scene in videogames?"}]',
+              options: {},
+              tags: {
+                whisper_tags: ["mwehehehehe"],
+              },
+              total_comments_amount: 0,
+              new_comments_amount: 0,
+              is_new: false,
+            },
+          ],
+          thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+          thread_new_posts_amount: 0,
+          thread_new_comments_amount: 0,
+          thread_total_comments_amount: 0,
+          thread_total_posts_amount: 3,
+        },
+      ],
+    });
+  });
 });
 
 describe("Tests threads REST API", () => {
@@ -29,8 +100,11 @@ describe("Tests threads REST API", () => {
 
     expect(res.status).to.equal(200);
     expect(res.body).to.eql({
-      new_comments_amount: 0,
-      new_posts_amount: 0,
+      thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      thread_new_comments_amount: 0,
+      thread_total_posts_amount: 3,
+      thread_new_posts_amount: 0,
+      thread_total_comments_amount: 2,
       posts: [
         {
           anonymity_type: "strangers",
@@ -40,6 +114,8 @@ describe("Tests threads REST API", () => {
           post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
           is_new: false,
           is_own: false,
+          friend: false,
+          self: false,
           new_comments_amount: 0,
           parent_post_id: null,
           parent_thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
@@ -61,6 +137,8 @@ describe("Tests threads REST API", () => {
           post_id: "619adf62-833f-4bea-b591-03e807338a8e",
           is_new: false,
           is_own: false,
+          friend: false,
+          self: false,
           new_comments_amount: 0,
           parent_post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
           parent_thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
@@ -81,9 +159,11 @@ describe("Tests threads REST API", () => {
               anonymity_type: "strangers",
               content: '[{"insert":"OMG ME TOO"}]',
               created: "2020-05-22T00:22:00",
-              id: "46a16199-33d1-48c2-bb79-4d4095014688",
+              comment_id: "46a16199-33d1-48c2-bb79-4d4095014688",
               is_new: false,
               is_own: false,
+              friend: false,
+              self: false,
               parent_post: "29d1b2da-3289-454a-9089-2ed47db4967b",
               secret_identity: {
                 avatar:
@@ -95,9 +175,11 @@ describe("Tests threads REST API", () => {
               anonymity_type: "strangers",
               content: '[{"insert":"friends!!!!!"}]',
               created: "2020-05-23T05:52:00",
-              id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
+              comment_id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
               is_new: false,
               is_own: false,
+              friend: false,
+              self: false,
               parent_post: "29d1b2da-3289-454a-9089-2ed47db4967b",
               secret_identity: {
                 avatar:
@@ -111,6 +193,8 @@ describe("Tests threads REST API", () => {
           post_id: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
           is_new: false,
           is_own: false,
+          friend: false,
+          self: false,
           new_comments_amount: 0,
           parent_post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
           parent_thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
@@ -129,8 +213,6 @@ describe("Tests threads REST API", () => {
           options: {},
         },
       ],
-      string_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
-      total_comments_amount: 2,
     });
   });
 });

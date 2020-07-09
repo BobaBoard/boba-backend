@@ -14,7 +14,7 @@ export interface ServerCommentType {
 
 export interface ServerPostType {
   post_id: string;
-  thread_id: string;
+  parent_thread_id: string;
   parent_post_id: string;
   secret_identity: {
     name: string;
@@ -35,13 +35,18 @@ export interface ServerPostType {
     whisper_tags: string[];
   };
   comments?: ServerCommentType[];
-  posts_amount: number;
-  comments_amount: number;
-  threads_amount: number;
-  new_posts_amount: number;
+  total_comments_amount: number;
   new_comments_amount: number;
   is_new: boolean;
-  last_activity: string;
+}
+
+export interface ServerThreadType {
+  posts: ServerPostType[];
+  thread_id: string;
+  thread_new_posts_amount: number;
+  thread_new_comments_amount: number;
+  thread_total_comments_amount: number;
+  thread_total_posts_amount: number;
 }
 
 export interface DbIdentityType {
@@ -81,16 +86,32 @@ export interface DbPostType {
 }
 
 export interface DbCommentType {
-  id: string;
+  comment_id: string;
   parent_post: string;
   author: number;
+  username: string;
+  user_avatar: string;
+  secret_identity_name: string;
+  secret_identity_avatar: string;
+  friend: boolean;
+  self: boolean;
   content: string;
+  created: string;
   anonymity_type: "everyone" | "strangers";
   is_new: boolean;
   is_own: boolean;
 }
 
 export interface DbThreadType {
+  thread_id: string;
+  posts: DbPostType[];
+  thread_new_posts_amount: number;
+  thread_new_comments_amount: number;
+  thread_total_posts_amount: number;
+  thread_total_comments_amount: number;
+}
+
+export interface DbActivityThreadType {
   post_id: string;
   parent_post_id: null;
   thread_id: string;

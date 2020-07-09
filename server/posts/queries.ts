@@ -2,10 +2,92 @@ import debug from "debug";
 import pool from "../pool";
 import { v4 as uuidv4 } from "uuid";
 import sql from "./sql";
-import { DbPostType } from "../types/Types";
+import { DbPostType, DbCommentType } from "../types/Types";
+import { ITask } from "pg-promise";
 
 const log = debug("bobaserver:posts:queries-log");
 const error = debug("bobaserver:posts:queries-error");
+
+const getThreadDetails = async (
+  transaction: ITask<any>,
+  {
+    parentPostId,
+    firebaseId,
+  }: {
+    firebaseId: string;
+    parentPostId: string;
+  }
+): Promise<{
+  user_id: number;
+  username: string;
+  user_avatar: string;
+  secret_identity_name: string;
+  secret_identity_avatar: string;
+  thread_id: number;
+  thread_string_id: string;
+  post_id: number;
+}> => {
+  let {
+    user_id,
+    username,
+    user_avatar,
+    secret_identity_id,
+    secret_identity_name,
+    secret_identity_avatar,
+    thread_id,
+    thread_string_id,
+    post_id,
+  } = await transaction.one(sql.getThreadDetails, {
+    post_string_id: parentPostId,
+    firebase_id: firebaseId,
+  });
+
+  log(`Found details for thread:`);
+  log({
+    user_id,
+    username,
+    user_avatar,
+    secret_identity_id,
+    secret_identity_name,
+    secret_identity_avatar,
+    thread_id,
+    thread_string_id,
+    post_id,
+  });
+
+  if (!secret_identity_id) {
+    const randomIdentityResult = await transaction.one(sql.getRandomIdentity, {
+      thread_id,
+    });
+    secret_identity_id = randomIdentityResult.secret_identity_id;
+    secret_identity_name = randomIdentityResult.secret_identity_name;
+    secret_identity_avatar = randomIdentityResult.secret_identity_avatar;
+    // The secret identity id is not currently in the thread data.
+    // Add it.
+    log(`Adding identity to thread:`);
+    log({
+      secret_identity_id,
+      secret_identity_name,
+      secret_identity_avatar,
+    });
+    await transaction.one(sql.addIdentityToThread, {
+      user_id,
+      thread_id,
+      secret_identity_id,
+    });
+  }
+
+  return {
+    user_id,
+    username,
+    user_avatar,
+    secret_identity_name,
+    secret_identity_avatar,
+    thread_id,
+    thread_string_id,
+    post_id,
+  };
+};
 
 export const postNewContribution = async ({
   firebaseId,
@@ -28,52 +110,15 @@ export const postNewContribution = async ({
         user_id,
         username,
         user_avatar,
-        secret_identity_id,
         secret_identity_name,
         secret_identity_avatar,
         thread_id,
         thread_string_id,
         post_id,
-      } = await t.one(sql.getThreadDetails, {
-        post_string_id: parentPostId,
-        firebase_id: firebaseId,
+      } = await getThreadDetails(t, {
+        parentPostId,
+        firebaseId,
       });
-
-      log(`Found details for thread:`);
-      log({
-        user_id,
-        username,
-        user_avatar,
-        secret_identity_id,
-        secret_identity_name,
-        secret_identity_avatar,
-        thread_id,
-        thread_string_id,
-        post_id,
-      });
-
-      if (!secret_identity_id) {
-        const randomIdentityResult = await t.one(sql.getRandomIdentity, {
-          thread_id,
-        });
-        secret_identity_id = randomIdentityResult.secret_identity_id;
-        secret_identity_name = randomIdentityResult.secret_identity_name;
-        secret_identity_avatar = randomIdentityResult.secret_identity_avatar;
-        // The secret identity id is not currently in the thread data.
-        // Add it.
-        log(`Adding identity to thread:`);
-        log({
-          secret_identity_id,
-          secret_identity_name,
-          secret_identity_avatar,
-        });
-        await t.one(sql.addIdentityToThread, {
-          user_id,
-          thread_id,
-          secret_identity_id,
-        });
-      }
-
       const result = await t.one(sql.makePost, {
         post_string_id: uuidv4(),
         parent_post: post_id,
@@ -97,7 +142,7 @@ export const postNewContribution = async ({
         user_avatar,
         secret_identity_name,
         secret_identity_avatar,
-        created: result.created,
+        created: result.created_string,
         content: result.content,
         options: result.options,
         type: result.type,
@@ -129,34 +174,23 @@ export const postNewComment = async ({
   parentPostId: string;
   content: string;
   anonymityType: string;
-}): Promise<any> => {
+}): Promise<DbCommentType | false> => {
   return pool
     .tx("create-comment", async (t) => {
-      const { user_id, thread_id, post_id, identity_id } = await t.one(
-        sql.getThreadDetails,
-        {
-          post_string_id: parentPostId,
-          firebase_id: firebaseId,
-        }
-      );
-      const secret_identity_id =
-        identity_id ||
-        (
-          await t.one(sql.getRandomIdentity, {
-            thread_id,
-          })
-        ).secret_identity_id;
-      if (!identity_id) {
-        // The secret identity id is not currently in the thread data.
-        // Add it.
-        await t.none(sql.addIdentityToThread, {
-          user_id,
-          thread_id,
-          secret_identity_id,
-        });
-      }
+      let {
+        user_id,
+        username,
+        user_avatar,
+        secret_identity_name,
+        secret_identity_avatar,
+        thread_id,
+        post_id,
+      } = await getThreadDetails(t, {
+        parentPostId,
+        firebaseId,
+      });
 
-      return await t.one(sql.makeComment, {
+      const result = await t.one(sql.makeComment, {
         comment_string_id: uuidv4(),
         parent_post: post_id,
         parent_thread: thread_id,
@@ -164,6 +198,23 @@ export const postNewComment = async ({
         content,
         anonymity_type: anonymityType,
       });
+
+      return {
+        comment_id: result.string_id,
+        parent_post: parentPostId,
+        author: user_id,
+        content: result.content,
+        created: result.created_string,
+        anonymity_type: result.anonymity_type,
+        username,
+        user_avatar,
+        secret_identity_name,
+        secret_identity_avatar,
+        is_new: true,
+        is_own: true,
+        friend: false,
+        self: true,
+      };
     })
     .catch((e) => {
       error(`Error while creating comment.`);
