@@ -126,7 +126,9 @@ describe("Tests threads REST API", () => {
           },
           total_comments_amount: 0,
           type: "text",
-          whisper_tags: null,
+          tags: {
+            whisper_tags: null,
+          },
           options: {},
         },
         {
@@ -149,7 +151,9 @@ describe("Tests threads REST API", () => {
           },
           total_comments_amount: 0,
           type: "text",
-          whisper_tags: ["fight me on this"],
+          tags: {
+            whisper_tags: ["fight me on this"],
+          },
           options: {},
         },
         {
@@ -205,11 +209,13 @@ describe("Tests threads REST API", () => {
           },
           total_comments_amount: 2,
           type: "text",
-          whisper_tags: [
-            "Im too ashamed to admit this ok",
-            "sorry mom",
-            "YOU WILL NEVER KNOW WHO I AM",
-          ],
+          tags: {
+            whisper_tags: [
+              "Im too ashamed to admit this ok",
+              "sorry mom",
+              "YOU WILL NEVER KNOW WHO I AM",
+            ],
+          },
           options: {},
         },
       ],

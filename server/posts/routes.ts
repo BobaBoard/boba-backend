@@ -3,9 +3,10 @@ import express from "express";
 import { postNewContribution, postNewComment } from "./queries";
 import { isLoggedIn } from "../auth-handler";
 import axios from "axios";
-import { ServerPostType } from "../types/Types";
+import { ServerPostType, ServerCommentType } from "../types/Types";
 import {
-  mergeObjectIdentity,
+  makeServerPost,
+  makeServerComment,
   ensureNoIdentityLeakage,
 } from "../response-utils";
 
@@ -46,27 +47,7 @@ router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
     return;
   }
 
-  const postWithIdentity = mergeObjectIdentity(post);
-
-  const responsePost: ServerPostType = {
-    post_id: post.post_id,
-    parent_thread_id: post.parent_thread_id,
-    parent_post_id: postId,
-    secret_identity: postWithIdentity.secret_identity,
-    user_identity: postWithIdentity.user_identity,
-    created: post.created,
-    content: post.content,
-    options: post.options,
-    tags: {
-      whisper_tags: post.whisper_tags,
-    },
-    friend: false,
-    self: true,
-    comments: null,
-    total_comments_amount: 0,
-    new_comments_amount: 0,
-    is_new: true,
-  };
+  const responsePost = makeServerPost(post);
 
   ensureNoIdentityLeakage(responsePost);
   res.status(200).json({ contribution: responsePost });
@@ -100,7 +81,10 @@ router.post("/:postId/comment", isLoggedIn, async (req, res) => {
     return;
   }
 
-  res.status(200).json(comment);
+  const responseComment = makeServerComment(comment);
+
+  ensureNoIdentityLeakage(responseComment);
+  res.status(200).json({ comment: responseComment });
 });
 
 const EXTRACT_HREF_REGEX = /data-href="([^"]+)"/;
