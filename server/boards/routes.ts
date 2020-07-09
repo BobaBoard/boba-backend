@@ -12,7 +12,7 @@ import {
   mergeObjectIdentity,
   ensureNoIdentityLeakage,
 } from "../response-utils";
-import { ServerPostType, DbThreadType } from "../types/Types";
+import { DbActivityThreadType, ServerThreadType } from "../types/Types";
 
 const log = debug("bobaserver:board:routes");
 
@@ -84,13 +84,44 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
     return;
   }
 
-  const activityWithIdentity = result.activity.map((post) =>
-    mergeObjectIdentity<DbThreadType>(post)
+  const threadsWithIdentity = result.activity.map(
+    (thread): ServerThreadType => {
+      const threadWithIdentity = mergeObjectIdentity<DbActivityThreadType>(
+        thread
+      );
+      return {
+        posts: [
+          {
+            post_id: threadWithIdentity.post_id,
+            parent_thread_id: threadWithIdentity.thread_id,
+            parent_post_id: threadWithIdentity.parent_post_id,
+            secret_identity: threadWithIdentity.secret_identity,
+            user_identity: threadWithIdentity.user_identity,
+            self: threadWithIdentity.self,
+            friend: threadWithIdentity.friend,
+            created: threadWithIdentity.created,
+            content: threadWithIdentity.content,
+            options: threadWithIdentity.options,
+            tags: {
+              whisper_tags: threadWithIdentity.whisper_tags,
+            },
+            total_comments_amount: threadWithIdentity.comments_amount,
+            new_comments_amount: threadWithIdentity.new_comments_amount,
+            is_new: threadWithIdentity.is_new,
+          },
+        ],
+        thread_id: threadWithIdentity.thread_id,
+        thread_new_posts_amount: threadWithIdentity.new_posts_amount,
+        thread_new_comments_amount: threadWithIdentity.new_comments_amount,
+        thread_total_comments_amount: threadWithIdentity.comments_amount,
+        thread_total_posts_amount: threadWithIdentity.posts_amount,
+      };
+    }
   );
   const response: {
     next_page_cursor: string;
-    activity: ServerPostType[];
-  } = { next_page_cursor: result.cursor, activity: activityWithIdentity };
+    activity: ServerThreadType[];
+  } = { next_page_cursor: result.cursor, activity: threadsWithIdentity };
 
   response.activity.map((post) => ensureNoIdentityLeakage(post));
   res.status(200).json(response);

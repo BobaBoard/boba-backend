@@ -50,7 +50,7 @@ router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
 
   const responsePost: ServerPostType = {
     post_id: post.post_id,
-    thread_id: post.parent_thread_id,
+    parent_thread_id: post.parent_thread_id,
     parent_post_id: postId,
     secret_identity: postWithIdentity.secret_identity,
     user_identity: postWithIdentity.user_identity,
@@ -63,17 +63,13 @@ router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
     friend: false,
     self: true,
     comments: null,
-    posts_amount: 1,
-    comments_amount: 0,
-    threads_amount: 1,
-    new_posts_amount: 0,
+    total_comments_amount: 0,
     new_comments_amount: 0,
     is_new: true,
-    last_activity: null,
   };
 
   ensureNoIdentityLeakage(responsePost);
-  res.status(200).json({contribution: responsePost});
+  res.status(200).json({ contribution: responsePost });
 });
 
 router.post("/:postId/comment", isLoggedIn, async (req, res) => {

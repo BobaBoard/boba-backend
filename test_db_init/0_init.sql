@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users
     avatar_reference_id TEXT,
     invited_by BIGINT REFERENCES users(id)
 );
-CREATE INDEX users_firebase_id on users(firebase_id);
+CREATE UNIQUE INDEX users_firebase_id on users(firebase_id);
 
 /*
  * This is not a simmetric relationship. Friends must be added in

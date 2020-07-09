@@ -12,11 +12,22 @@ describe("threads queries", () => {
     });
 
     expect(thread).to.eql({
-      string_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      thread_total_comments_amount: 2,
+      thread_new_comments_amount: 0,
+      thread_total_posts_amount: 3,
+      thread_new_posts_amount: 0,
       posts: [
         {
           anonymity_type: "strangers",
           author: 3,
+          friend: true,
+          self: false,
+          username: "oncest5evah",
+          user_avatar: "greedler.jpg",
+          secret_identity_name: "DragonFucker",
+          secret_identity_avatar:
+            "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
           comments: null,
           content: '[{"insert":"Favorite character to maim?"}]',
           created: "2020-04-30T03:23:00",
@@ -34,6 +45,13 @@ describe("threads queries", () => {
         {
           anonymity_type: "strangers",
           author: 1,
+          user_avatar: "bobatan.png",
+          username: "bobatan",
+          secret_identity_name: "Old Time-y Anon",
+          secret_identity_avatar:
+            "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
+          friend: false,
+          self: true,
           comments: null,
           content: '[{"insert":"Revolver Ocelot"}]',
           created: "2020-05-01T05:42:00",
@@ -51,13 +69,27 @@ describe("threads queries", () => {
         {
           anonymity_type: "everyone",
           author: 3,
+          friend: true,
+          self: false,
+          username: "oncest5evah",
+          user_avatar: "greedler.jpg",
+          secret_identity_name: "DragonFucker",
+          secret_identity_avatar:
+            "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
           comments: [
             {
               anonymity_type: "strangers",
               author: 1,
+              user_avatar: "bobatan.png",
+              username: "bobatan",
+              secret_identity_name: "Old Time-y Anon",
+              secret_identity_avatar:
+                "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
+              friend: false,
+              self: true,
               content: '[{"insert":"OMG ME TOO"}]',
               created: "2020-05-22T00:22:00",
-              id: "46a16199-33d1-48c2-bb79-4d4095014688",
+              comment_id: "46a16199-33d1-48c2-bb79-4d4095014688",
               is_new: false,
               is_own: true,
               parent_post: "29d1b2da-3289-454a-9089-2ed47db4967b",
@@ -65,9 +97,16 @@ describe("threads queries", () => {
             {
               anonymity_type: "strangers",
               author: 1,
+              user_avatar: "bobatan.png",
+              username: "bobatan",
+              secret_identity_name: "Old Time-y Anon",
+              secret_identity_avatar:
+                "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
+              friend: false,
+              self: true,
               content: '[{"insert":"friends!!!!!"}]',
               created: "2020-05-23T05:52:00",
-              id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
+              comment_id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
               is_new: false,
               is_own: true,
               parent_post: "29d1b2da-3289-454a-9089-2ed47db4967b",
@@ -91,9 +130,6 @@ describe("threads queries", () => {
           options: {},
         },
       ],
-      total_comments_amount: 2,
-      new_comments_amount: 0,
-      new_posts_amount: 0,
     });
   });
 
@@ -104,12 +140,17 @@ describe("threads queries", () => {
       firebaseId: "fb3",
     });
     expect(thread).to.eql({
-      new_comments_amount: 0,
-      new_posts_amount: 1,
       posts: [
         {
           anonymity_type: "strangers",
           author: 1,
+          user_avatar: "bobatan.png",
+          username: "bobatan",
+          secret_identity_name: "DragonFucker",
+          secret_identity_avatar:
+            "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
+          friend: true,
+          self: false,
           comments: null,
           content: '[{"insert":"Favorite murder scene in videogames?"}]',
           created: "2020-04-24T05:42:00",
@@ -127,6 +168,12 @@ describe("threads queries", () => {
         {
           anonymity_type: "strangers",
           author: 3,
+          friend: false,
+          self: true,
+          username: "oncest5evah",
+          user_avatar: "greedler.jpg",
+          secret_identity_avatar: "outdated-meme.png",
+          secret_identity_name: "Outdated Meme",
           comments: null,
           content: '[{"insert":"Everything in The Evil Within tbh"}]',
           created: "2020-04-30T08:22:00",
@@ -144,6 +191,13 @@ describe("threads queries", () => {
         {
           anonymity_type: "strangers",
           author: 2,
+          username: "jersey_devil_69",
+          user_avatar: "hannibal.png",
+          secret_identity_name: "Old Time-y Anon",
+          secret_identity_avatar:
+            "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
+          friend: false,
+          self: false,
           comments: null,
           content:
             '[{"insert":"(chants) Leon Kennedy! Leon Kennedy! Leon Kennedy!)"}]',
@@ -162,8 +216,11 @@ describe("threads queries", () => {
           options: {},
         },
       ],
-      string_id: "a5c903df-35e8-43b2-a41a-208c43154671",
-      total_comments_amount: 0,
+      thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+      thread_total_comments_amount: 0,
+      thread_new_comments_amount: 0,
+      thread_total_posts_amount: 3,
+      thread_new_posts_amount: 1,
     });
   });
 

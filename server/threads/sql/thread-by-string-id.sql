@@ -10,6 +10,30 @@ WITH
          LEFT JOIN dismiss_notifications_requests
             ON dismiss_notifications_requests.user_id = users.id
          WHERE threads.string_id = ${thread_string_id}),
+    thread_identities AS
+        (SELECT
+            uti.thread_id as thread_id,
+            uti.user_id as user_id,
+            users.username as username,
+            users.avatar_reference_id as user_avatar,
+            secret_identities.display_name as secret_identity_name,
+            secret_identities.avatar_reference_id as secret_identity_avatar,
+            COALESCE(is_friend.friend, FALSE) as friend,
+            COALESCE(users.firebase_id = ${firebase_id}, FALSE) as self
+         FROM user_thread_identities AS uti 
+         LEFT JOIN threads
+            ON uti.thread_id = threads.id
+         INNER JOIN users 
+            ON uti.user_id = users.id 
+         INNER JOIN secret_identities 
+            ON secret_identities.id = uti.identity_id    
+         LEFT JOIN LATERAL (
+            SELECT true as friend 
+            FROM friends 
+            WHERE friends.user_id = (SELECT id FROM users WHERE users.firebase_id = ${firebase_id}) 
+            AND friends.friend_id = users.id 
+            LIMIT 1) as is_friend ON 1=1 
+        WHERE threads.string_id = ${thread_string_id}),
     thread_comments AS
         (SELECT 
             thread_comments.parent_post,
@@ -17,18 +41,25 @@ WITH
             COALESCE(SUM((${firebase_id} IS NOT NULL AND is_new AND NOT is_own)::int), 0) as new_comments,
             COALESCE(COUNT(*), 0) as total_comments,
             json_agg(json_build_object(
-                'id', thread_comments.string_id,
+                'comment_id', thread_comments.string_id,
                 'parent_post', thread_comments.parent_thread_string_id,
                 'author', thread_comments.author,
+                'username', thread_comments.username,
+                'user_avatar', thread_comments.user_avatar,
+                'secret_identity_name', thread_comments.secret_identity_name,
+                'secret_identity_avatar', thread_comments.secret_identity_avatar,
                 'content', thread_comments.content,
                 'created',  TO_CHAR(thread_comments.created, 'YYYY-MM-DD"T"HH24:MI:SS'),
                 'anonymity_type', thread_comments.anonymity_type,
+                'self', thread_comments.self,
+                'friend', thread_comments.friend,
                 'is_new', (is_new AND NOT is_own),
                 'is_own', is_own
             ) ORDER BY thread_comments.created ASC) as comments 
          FROM (
             SELECT 
                 comments.*,
+                thread_identities.*,
                 ${firebase_id} IS NOT NULL AND comments.author = (SELECT id FROM users WHERE firebase_id = ${firebase_id}) as is_own,
                 ${firebase_id} IS NOT NULL AND (cutoff_time IS NULL OR cutoff_time < comments.created) as is_new,
                 threads.string_id as parent_thread_string_id,
@@ -36,6 +67,8 @@ WITH
             FROM comments 
             LEFT JOIN threads
                 ON comments.parent_thread = threads.id
+            LEFT JOIN thread_identities
+                ON thread_identities.user_id = comments.author
             LEFT JOIN last_visited_or_dismissed ON 1=1
             WHERE threads.string_id = ${thread_string_id}) as thread_comments
          GROUP BY thread_comments.parent_post),
@@ -45,6 +78,12 @@ WITH
             threads.string_id as parent_thread_id,
             parent.string_id as parent_post_id,
             posts.author,
+            thread_identities.username,
+            thread_identities.user_avatar,
+            thread_identities.secret_identity_name,
+            thread_identities.secret_identity_avatar,
+            thread_identities.self,
+            thread_identities.friend,
             TO_CHAR(posts.created, 'YYYY-MM-DD"T"HH24:MI:SS') as created,
             posts.content,
             posts.options,
@@ -68,17 +107,20 @@ WITH
             ON posts.parent_post = parent.id
          LEFT JOIN threads
             ON posts.parent_thread = threads.id
+         LEFT JOIN thread_identities
+            ON thread_identities.user_id = posts.author
          LEFT JOIN thread_comments 
             ON posts.id = thread_comments.parent_post
          LEFT JOIN last_visited_or_dismissed ON 1=1
          WHERE threads.string_id = ${thread_string_id})
 SELECT 
-    threads.string_id, 
+    threads.string_id as thread_id, 
     json_agg(row_to_json(thread_posts) ORDER BY thread_posts.created ASC) as posts,
-    COALESCE(SUM(thread_posts.new_comments_amount)::int, 0) as new_comments_amount,
-    COALESCE(SUM(thread_posts.total_comments_amount)::int, 0) as total_comments_amount, 
+    COALESCE(SUM(thread_posts.new_comments_amount)::int, 0) as thread_new_comments_amount,
+    COALESCE(SUM(thread_posts.total_comments_amount)::int, 0) as thread_total_comments_amount, 
     -- Count all the new posts that aren't ours, unless we aren't logged in.
-    COALESCE(SUM((${firebase_id} IS NOT NULL AND thread_posts.is_new AND NOT thread_posts.is_own)::int)::int, 0) as new_posts_amount
+    COALESCE(SUM((${firebase_id} IS NOT NULL AND thread_posts.is_new AND NOT thread_posts.is_own)::int)::int, 0) as thread_new_posts_amount,
+    COALESCE(COUNT(thread_posts.*)::int, 0) as thread_total_posts_amount
 FROM threads
 LEFT JOIN thread_posts
     ON threads.string_id = thread_posts.parent_thread_id

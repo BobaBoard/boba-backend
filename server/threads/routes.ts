@@ -1,13 +1,8 @@
 import debug from "debug";
 import express from "express";
-import {
-  getThreadByStringId,
-  getThreadIdentitiesByStringId,
-  createThread,
-  markThreadVisit,
-} from "./queries";
+import { getThreadByStringId, createThread, markThreadVisit } from "./queries";
 import { isLoggedIn } from "../auth-handler";
-import { mergeThreadAndIdentities } from "../response-utils";
+import { makeServerThread, ensureNoIdentityLeakage } from "../response-utils";
 
 const info = debug("bobaserver:threads:routes-info");
 const log = debug("bobaserver:threads:routes-log");
@@ -18,22 +13,14 @@ router.get("/:id", isLoggedIn, async (req, res) => {
   const { id } = req.params;
   log(`Fetching data for thread with id ${id}`);
 
-  const [thread, identities] = await Promise.all([
-    getThreadByStringId({
-      threadId: id,
-      // @ts-ignore
-      firebaseId: req.currentUser?.uid,
-    }),
-    getThreadIdentitiesByStringId({
-      threadId: id,
-      // @ts-ignore
-      firebaseId: req.currentUser?.uid,
-    }),
-  ]);
+  const thread = await getThreadByStringId({
+    threadId: id,
+    // @ts-ignore
+    firebaseId: req.currentUser?.uid,
+  });
   info(`Found thread: `, thread);
-  info(`Found identities: `, identities);
 
-  if (thread === false || identities == false) {
+  if (thread === false) {
     res.sendStatus(500);
     return;
   }
@@ -42,8 +29,11 @@ router.get("/:id", isLoggedIn, async (req, res) => {
     return;
   }
 
+  const serverThread = makeServerThread(thread);
+  ensureNoIdentityLeakage(serverThread);
+
   info(`sending back data for thread ${id}.`);
-  res.status(200).json(mergeThreadAndIdentities(thread, identities));
+  res.status(200).json(serverThread);
 });
 
 router.get("/:threadId/visit", isLoggedIn, async (req, res) => {

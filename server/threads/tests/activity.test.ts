@@ -5,15 +5,15 @@ import { getThreadByStringId } from "../queries";
 
 const extractActivityFromThread = (thread: any) => {
   return {
-    string_id: thread.string_id,
-    new_comments_amount: thread.new_comments_amount,
-    new_posts_amount: thread.new_posts_amount,
+    thread_id: thread.thread_id,
+    new_comments_amount: thread.thread_new_comments_amount,
+    new_posts_amount: thread.thread_new_posts_amount,
     posts: thread.posts?.map((post: any) => ({
       post_id: post.post_id,
       is_new: post.is_new,
       new_comments_amount: post.new_comments_amount,
       comments: post.comments?.map((comment: any) => ({
-        post_id: comment.id,
+        comment_id: comment.comment_id,
         is_new: comment.is_new,
       })),
     })),
@@ -32,7 +32,7 @@ describe("threads activity queries", () => {
 
     // get only activity-related values
     expect(extractActivityFromThread(thread)).to.eql({
-      string_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
       new_comments_amount: 2,
       new_posts_amount: 3,
       posts: [
@@ -51,11 +51,11 @@ describe("threads activity queries", () => {
         {
           comments: [
             {
-              post_id: "46a16199-33d1-48c2-bb79-4d4095014688",
+              comment_id: "46a16199-33d1-48c2-bb79-4d4095014688",
               is_new: true,
             },
             {
-              post_id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
+              comment_id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
               is_new: true,
             },
           ],
@@ -77,7 +77,7 @@ describe("threads activity queries", () => {
 
     // get only activity-related values
     expect(extractActivityFromThread(thread)).to.eql({
-      string_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
       new_comments_amount: 0,
       new_posts_amount: 0,
       posts: [
@@ -96,11 +96,11 @@ describe("threads activity queries", () => {
         {
           comments: [
             {
-              post_id: "46a16199-33d1-48c2-bb79-4d4095014688",
+              comment_id: "46a16199-33d1-48c2-bb79-4d4095014688",
               is_new: false,
             },
             {
-              post_id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
+              comment_id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
               is_new: false,
             },
           ],
@@ -123,7 +123,7 @@ describe("threads activity queries", () => {
 
     // get only activity-related values
     expect(extractActivityFromThread(thread)).to.eql({
-      string_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
       new_comments_amount: 2,
       new_posts_amount: 0,
       posts: [
@@ -142,11 +142,11 @@ describe("threads activity queries", () => {
         {
           comments: [
             {
-              post_id: "46a16199-33d1-48c2-bb79-4d4095014688",
+              comment_id: "46a16199-33d1-48c2-bb79-4d4095014688",
               is_new: true,
             },
             {
-              post_id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
+              comment_id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
               is_new: true,
             },
           ],
@@ -190,7 +190,7 @@ describe("threads activity queries", () => {
           new_comments_amount: 0,
         },
       ],
-      string_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+      thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
     });
   });
 
@@ -226,7 +226,7 @@ describe("threads activity queries", () => {
           new_comments_amount: 0,
         },
       ],
-      string_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+      thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
     });
   });
 
@@ -262,7 +262,7 @@ describe("threads activity queries", () => {
           new_comments_amount: 0,
         },
       ],
-      string_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+      thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
     });
   });
 
@@ -275,7 +275,7 @@ describe("threads activity queries", () => {
 
     // get only activity-related values
     expect(extractActivityFromThread(thread)).to.eql({
-      string_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
       new_comments_amount: 0,
       new_posts_amount: 0,
       posts: [
@@ -294,11 +294,11 @@ describe("threads activity queries", () => {
         {
           comments: [
             {
-              post_id: "46a16199-33d1-48c2-bb79-4d4095014688",
+              comment_id: "46a16199-33d1-48c2-bb79-4d4095014688",
               is_new: false,
             },
             {
-              post_id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
+              comment_id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
               is_new: false,
             },
           ],
@@ -321,7 +321,7 @@ describe("threads activity queries", () => {
 
     // get only activity-related values
     expect(extractActivityFromThread(thread)).to.eql({
-      string_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
       new_comments_amount: 2,
       new_posts_amount: 2,
       posts: [
@@ -340,11 +340,11 @@ describe("threads activity queries", () => {
         {
           comments: [
             {
-              post_id: "46a16199-33d1-48c2-bb79-4d4095014688",
+              comment_id: "46a16199-33d1-48c2-bb79-4d4095014688",
               is_new: true,
             },
             {
-              post_id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
+              comment_id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
               is_new: true,
             },
           ],
@@ -367,7 +367,7 @@ describe("threads activity queries", () => {
 
     // get only activity-related values
     expect(extractActivityFromThread(thread)).to.eql({
-      string_id: "b27710a8-0a9f-4c09-b3a5-54668bab7051",
+      thread_id: "b27710a8-0a9f-4c09-b3a5-54668bab7051",
       new_comments_amount: 0,
       new_posts_amount: 0,
       posts: [
@@ -393,7 +393,7 @@ describe("threads activity queries", () => {
 
       // get only activity-related values
       expect(extractActivityFromThread(thread)).to.eql({
-        string_id: "32a0174b-091e-4fe6-82f3-bffd6c6026ae",
+        thread_id: "32a0174b-091e-4fe6-82f3-bffd6c6026ae",
         new_comments_amount: 0,
         new_posts_amount: 0,
         posts: [
@@ -416,7 +416,7 @@ describe("threads activity queries", () => {
         firebaseId: "fb5",
       });
       expect(extractActivityFromThread(thread)).to.eql({
-        string_id: "c55314b4-0b61-41c9-aa2f-b7fa28adf651",
+        thread_id: "c55314b4-0b61-41c9-aa2f-b7fa28adf651",
         new_comments_amount: 0,
         new_posts_amount: 0,
         posts: [
@@ -439,7 +439,7 @@ describe("threads activity queries", () => {
         firebaseId: "fb5",
       });
       expect(extractActivityFromThread(thread)).to.eql({
-        string_id: "dacfb175-0d47-4c5e-8ecc-7fbf176ad915",
+        thread_id: "dacfb175-0d47-4c5e-8ecc-7fbf176ad915",
         new_comments_amount: 0,
         new_posts_amount: 0,
         posts: [
@@ -462,7 +462,7 @@ describe("threads activity queries", () => {
         firebaseId: "fb5",
       });
       expect(extractActivityFromThread(thread)).to.eql({
-        string_id: "7d88a537-f23f-46de-970e-29ae392cd5f9",
+        thread_id: "7d88a537-f23f-46de-970e-29ae392cd5f9",
         new_comments_amount: 0,
         new_posts_amount: 1,
         posts: [

@@ -1,7 +1,7 @@
 import debug from "debug";
 import pool from "../pool";
 import sql from "./sql";
-import { DbThreadType } from "../types/Types";
+import { DbActivityThreadType } from "../types/Types";
 
 const log = debug("bobaserver:board:queries-log");
 const error = debug("bobaserver:board:queries-error");
@@ -69,7 +69,7 @@ export const getBoardActivityBySlug = async ({
 }): Promise<
   | {
       cursor: string | null;
-      activity: DbThreadType[];
+      activity: DbActivityThreadType[];
     }
   | false
 > => {
