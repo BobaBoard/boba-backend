@@ -13,6 +13,8 @@ router.get("/:id", isLoggedIn, async (req, res) => {
   const { id } = req.params;
   log(`Fetching data for thread with id ${id}`);
 
+  // NOTE: if updating this (and it makes sense) also update
+  // the method for thread creation + retrieval.
   const thread = await getThreadByStringId({
     threadId: id,
     // @ts-ignore
@@ -65,7 +67,7 @@ router.get("/activity/latest", async (req, res) => {
   res.status(501);
 });
 
-router.post("/:boardSlug/create", isLoggedIn, async (req, res) => {
+router.post("/:boardSlug/create", isLoggedIn, async (req, res, next) => {
   // @ts-ignore
   if (!req.currentUser) {
     return res.sendStatus(401);
@@ -89,13 +91,28 @@ router.post("/:boardSlug/create", isLoggedIn, async (req, res) => {
     res.sendStatus(500);
     return;
   }
-  res.status(200).json(
-    await getThreadByStringId({
-      threadId: threadStringId as string,
-      // @ts-ignore
-      firebaseId: req.currentUser.uid,
-    })
-  );
+
+  const thread = await getThreadByStringId({
+    threadId: threadStringId as string,
+    // @ts-ignore
+    firebaseId: req.currentUser?.uid,
+  });
+  info(`Found thread: `, thread);
+
+  if (thread === false) {
+    res.sendStatus(500);
+    return;
+  }
+  if (!thread) {
+    res.sendStatus(404);
+    return;
+  }
+
+  const serverThread = makeServerThread(thread);
+  ensureNoIdentityLeakage(serverThread);
+
+  info(`sending back data for thread ${threadStringId}.`);
+  res.status(200).json(serverThread);
 });
 
 export default router;
