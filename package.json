@@ -11,7 +11,8 @@
     "test": "DEBUG=bobaserver:* ./node_modules/mocha/bin/mocha --exclude './node_modules/**' --timeout 3000 -r ts-node/register -r dotenv/config './**/*.test.ts'",
     "test:watch": "npm run test  -- --watch --watch-extensions ts --watch-files . ",
     "test:docker": "docker-compose -f docker-compose.test.yml run --rm test",
-    "deploy": "gcloud config set project bobaboard && gcloud app deploy --version live"
+    "deploy": "gcloud config set project bobaboard && gcloud app deploy --version live",
+    "stage": "gcloud config set project bobaboard && gcloud app deploy --quiet --version staging  && gcloud app services set-traffic default --splits live=1  --quiet"
   },
   "repository": {
     "type": "git",
