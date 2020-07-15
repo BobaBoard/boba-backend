@@ -101,7 +101,7 @@ export const getBoardActivityBySlug = async ({
     log(`Got getBoardActivityBySlug query result`, result);
     if (result.length > finalPageSize) {
       nextCursor = encodeCursor({
-        last_activity_cursor: result[result.length - 1].last_activity,
+        last_activity_cursor: result[result.length - 1].thread_last_activity,
         page_size: finalPageSize,
       });
       // remove last element from array

@@ -346,7 +346,7 @@ describe("Tests notifications", async () => {
     expect(
       boardActivity.activity.map((activity: any) => ({
         thread_id: activity.thread_id,
-        last_activity: activity.last_activity,
+        last_activity: activity.thread_last_activity,
         new_comments_amount: activity.new_comments_amount,
         new_posts_amount: activity.new_posts_amount,
         is_new: activity.is_new,
