@@ -73,7 +73,7 @@ SELECT
     -- This last activity must have the .US at the end or it will trigger a bug
     -- where some posts are skipped by the last activity cursor.
     -- See documentation on the queries JS file.
-    TO_CHAR(GREATEST(first_post, last_post, last_comment), 'YYYY-MM-DD"T"HH24:MI:SS.US') as last_activity,
+    TO_CHAR(GREATEST(first_post, last_post, last_comment), 'YYYY-MM-DD"T"HH24:MI:SS.US') as thread_last_activity,
     COALESCE(is_friend.friend, FALSE) as friend,
     COALESCE(user_id = (SELECT id FROM users WHERE firebase_id = ${firebase_id}), FALSE) as self,
     COALESCE(new_posts_amount, 0) as new_posts_amount,
@@ -126,5 +126,5 @@ LEFT JOIN LATERAL
         LIMIT 1) as is_friend 
     ON true
 WHERE GREATEST(first_post, last_post, last_comment) <= COALESCE(${last_activity_cursor}, NOW())
-ORDER BY last_activity DESC
+ORDER BY thread_last_activity DESC
 LIMIT ${page_size} + 1

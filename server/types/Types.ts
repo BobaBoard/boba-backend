@@ -47,6 +47,7 @@ export interface ServerThreadType {
   thread_new_comments_amount: number;
   thread_total_comments_amount: number;
   thread_total_posts_amount: number;
+  thread_last_activity: string;
 }
 
 export interface DbIdentityType {
@@ -109,6 +110,7 @@ export interface DbThreadType {
   thread_new_comments_amount: number;
   thread_total_posts_amount: number;
   thread_total_comments_amount: number;
+  thread_last_activity: string;
 }
 
 export interface DbActivityThreadType {
@@ -128,7 +130,6 @@ export interface DbActivityThreadType {
   };
   posts_amount: number;
   threads_amount: number;
-  last_activity: string;
   friend: boolean;
   self: boolean;
   new_posts_amount: number;
@@ -136,4 +137,5 @@ export interface DbActivityThreadType {
   last_comment: string;
   is_new: boolean;
   comments_amount: number;
+  thread_last_activity: string;
 }
