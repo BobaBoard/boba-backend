@@ -43,6 +43,7 @@ export interface ServerPostType {
 export interface ServerThreadType {
   posts: ServerPostType[];
   thread_id: string;
+  thread_direct_threads_amount: number;
   thread_new_posts_amount: number;
   thread_new_comments_amount: number;
   thread_total_comments_amount: number;
@@ -106,6 +107,7 @@ export interface DbCommentType {
 export interface DbThreadType {
   thread_id: string;
   posts: DbPostType[];
+  thread_direct_threads_amount: number;
   thread_new_posts_amount: number;
   thread_new_comments_amount: number;
   thread_total_posts_amount: number;

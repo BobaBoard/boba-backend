@@ -118,6 +118,8 @@ SELECT
     json_agg(row_to_json(thread_posts) ORDER BY thread_posts.created ASC) as posts,
     COALESCE(SUM(thread_posts.new_comments_amount)::int, 0) as thread_new_comments_amount,
     COALESCE(SUM(thread_posts.total_comments_amount)::int, 0) as thread_total_comments_amount, 
+    -- Get all the posts that are direct answers to the first one
+    COALESCE((SELECT COUNT(post_id) FROM thread_posts WHERE parent_post_id = (SELECT post_id FROM thread_posts WHERE parent_post_id IS null))::int, 0) as thread_direct_threads_amount,
     -- Count all the new posts that aren't ours, unless we aren't logged in.
     COALESCE(SUM((${firebase_id} IS NOT NULL AND thread_posts.is_new AND NOT thread_posts.is_own)::int)::int, 0) as thread_new_posts_amount,
     COALESCE(COUNT(thread_posts.*)::int, 0) as thread_total_posts_amount

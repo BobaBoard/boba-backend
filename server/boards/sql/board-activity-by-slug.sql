@@ -53,8 +53,8 @@
          WHERE boards.slug = ${board_slug}
          GROUP BY
             threads.id, boards.id, cutoff_time)
--- The return type of this query is DbThreadType.
--- If updating, please also update DbThreadType in Types.
+-- The return type of this query is DbActivityThreadType.
+-- If updating, please also update DbActivityThreadType in Types.
 SELECT
     first_post.string_id as post_id,
     NULL as parent_post_id,
