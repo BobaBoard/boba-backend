@@ -2,6 +2,7 @@ import debug from "debug";
 import pool from "../pool";
 import { v4 as uuidv4 } from "uuid";
 import sql from "./sql";
+import { maybeAddIndexTags } from "../posts/queries";
 import { DbThreadType, DbIdentityType } from "../types/Types";
 
 const log = debug("bobaserver:threads:queries-log");
@@ -63,13 +64,15 @@ export const createThread = async ({
   anonymityType,
   boardSlug,
   whisperTags,
+  indexTags,
 }: {
   firebaseId: string;
   content: string;
   isLarge: boolean;
   anonymityType: string;
   boardSlug: string;
-  whisperTags: string;
+  whisperTags: string[];
+  indexTags: string[];
 }) => {
   return pool
     .tx("create-thread", async (t) => {
@@ -81,7 +84,7 @@ export const createThread = async ({
       log(`Created thread entry for thread ${threadStringId}`);
 
       const postStringId = uuidv4();
-      await t.one(sql.createPost, {
+      const postResult = await t.one(sql.createPost, {
         post_string_id: postStringId,
         parent_thread: createThreadResult.id,
         firebase_id: firebaseId,
@@ -93,6 +96,11 @@ export const createThread = async ({
         whisper_tags: whisperTags,
       });
       log(`Created post entry for thread ${postStringId}`);
+
+      const addedIndexTags = maybeAddIndexTags(t, {
+        indexTags,
+        postId: postResult.id,
+      });
 
       const identityRes = await t.one(sql.getRandomIdentityId);
       log(`Got new identity for thread ${threadStringId}:`);

@@ -8,6 +8,29 @@ import { ITask } from "pg-promise";
 const log = debug("bobaserver:posts:queries-log");
 const error = debug("bobaserver:posts:queries-error");
 
+export const maybeAddIndexTags = async (
+  transaction: ITask<any>,
+  {
+    indexTags,
+    postId,
+  }: {
+    indexTags: string[];
+    postId: number;
+  }
+): Promise<string[]> => {
+  if (!indexTags?.length) {
+    return [];
+  }
+  const tags = indexTags
+    .filter((tag) => !!tag.trim().length)
+    .map((tag) => tag.trim());
+  await transaction.manyOrNone(sql.createAddTagsQuery(tags));
+  log(`Returning tags:`);
+  await transaction.many(sql.createAddTagsToPostQuery(postId, tags));
+
+  return tags.map((tag) => tag.toLowerCase());
+};
+
 const getThreadDetails = async (
   transaction: ITask<any>,
   {
@@ -96,13 +119,15 @@ export const postNewContribution = async ({
   isLarge,
   anonymityType,
   whisperTags,
+  indexTags,
 }: {
   firebaseId: string;
   parentPostId: string;
   content: string;
   isLarge: boolean;
   anonymityType: string;
-  whisperTags: string;
+  whisperTags: string[];
+  indexTags: string[];
 }): Promise<DbPostType | false> => {
   return pool
     .tx("create-contribution", async (t) => {
@@ -127,12 +152,19 @@ export const postNewContribution = async ({
         content,
         anonymity_type: anonymityType,
         whisper_tags: whisperTags,
+        indexTags: indexTags,
         options: {
           wide: isLarge,
         },
       });
       log(`Added new contribution to thread ${thread_id}.`);
       log(result);
+
+      const indexedTags = await maybeAddIndexTags(t, {
+        postId: result.id,
+        indexTags,
+      });
+
       return {
         post_id: result.string_id,
         parent_thread_id: thread_string_id,
@@ -147,6 +179,7 @@ export const postNewContribution = async ({
         options: result.options,
         type: result.type,
         whisper_tags: result.whisper_tags,
+        index_tags: indexedTags,
         anonymity_type: result.anonymity_type,
         total_comments_amount: 0,
         new_comments_amount: 0,

@@ -32,6 +32,7 @@ export interface ServerPostType {
     wide?: boolean;
   };
   tags?: {
+    index_tags: string[];
     whisper_tags: string[];
   };
   comments?: ServerCommentType[];
@@ -79,6 +80,7 @@ export interface DbPostType {
   };
   type: string;
   whisper_tags: string[] | null;
+  index_tags: string[] | null;
   anonymity_type: "everyone" | "strangers";
   total_comments_amount: number;
   new_comments_amount: number;
@@ -126,6 +128,7 @@ export interface DbActivityThreadType {
   secret_identity_avatar: string;
   created: string;
   content: string;
+  index_tags: string[] | null;
   whisper_tags: string[] | null;
   options: {
     wide?: boolean;

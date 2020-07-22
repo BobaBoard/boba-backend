@@ -11,6 +11,10 @@ DELETE FROM boards WHERE id = 3;
 #### MOVE THREADS ####
 UPDATE threads SET parent_board=6 WHERE string_id = '9fd12dfb-3f56-48e0-b000-58f224e99885';
 
+### ALTER INDEX TO BE UNIQUE ###
+DROP INDEX tags_tag;
+CREATE UNIQUE INDEX tags_tag on tags(tag);
+
 #### ADD USER ####
 
 INSERT INTO Users(firebase_id, username, avatar_reference_id, invited_by)

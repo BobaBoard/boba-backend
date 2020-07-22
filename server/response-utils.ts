@@ -102,9 +102,11 @@ export const makeServerPost = (post: DbPostType): ServerPostType => {
     comments: post.comments?.map(makeServerComment) || null,
     tags: {
       whisper_tags: post.whisper_tags,
+      index_tags: post.index_tags,
     },
   };
   delete serverPost.whisper_tags;
+  delete serverPost.index_tags;
 
   return serverPost;
 };
