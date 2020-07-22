@@ -88,6 +88,10 @@ WITH
             posts.content,
             posts.options,
             posts.type,
+            array(
+               SELECT tag FROM post_tags 
+               LEFT JOIN tags
+               ON post_tags.tag_id = tags.id WHERE post_tags.post_id = posts.id) as index_tags,
             posts.whisper_tags,
             posts.anonymity_type,
             COALESCE(thread_comments.total_comments, 0) as total_comments_amount,

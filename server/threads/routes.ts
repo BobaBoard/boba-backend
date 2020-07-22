@@ -74,7 +74,7 @@ router.post("/:boardSlug/create", isLoggedIn, async (req, res, next) => {
   }
   const { boardSlug } = req.params;
   log(`Creating thread in board with slug ${boardSlug}`);
-  const { content, forceAnonymous, large, whisperTags } = req.body;
+  const { content, forceAnonymous, large, whisperTags, indexTags } = req.body;
 
   const threadStringId = await createThread({
     // @ts-ignore
@@ -84,6 +84,7 @@ router.post("/:boardSlug/create", isLoggedIn, async (req, res, next) => {
     isLarge: !!large,
     boardSlug: boardSlug,
     whisperTags,
+    indexTags,
   });
   info(`Created new thread`, threadStringId);
 

@@ -68,6 +68,10 @@ SELECT
     content,
     options,
     whisper_tags,
+    array(
+        SELECT tag FROM post_tags 
+        LEFT JOIN tags
+        ON post_tags.tag_id = tags.id WHERE post_tags.post_id = first_post.id) as index_tags,
     COALESCE(posts_amount, 0) as posts_amount,
     threads_amount.count as threads_amount,
     -- This last activity must have the .US at the end or it will trigger a bug
