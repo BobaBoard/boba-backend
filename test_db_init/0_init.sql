@@ -102,11 +102,31 @@ CREATE TABLE IF NOT EXISTS secret_identities
 );
 CREATE UNIQUE INDEX secret_identities_display_name on secret_identities(display_name);
 
+CREATE TABLE IF NOT EXISTS collections
+(
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    string_id TEXT NOT NULL,
+    title TEXT NOT NULL,
+    content_description TEXT NOT NULL,
+    /** 
+     * Whisper Tags are textual tags that do not get indicized but act as an extra
+     * space for comments.
+     */
+    whisper_tags TEXT[]
+);
+CREATE UNIQUE INDEX collections_string_id on collections(string_id);
+
+CREATE TABLE IF NOT EXISTS collection_tags (
+    collection_id BIGINT REFERENCES collections(id) ON DELETE RESTRICT NOT NULL,
+    tag_id BIGINT REFERENCES tags(id) ON DELETE RESTRICT NOT NULL
+);
+
 CREATE TABLE IF NOT EXISTS threads
 (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     string_id TEXT NOT NULL,
-    parent_board BIGINT REFERENCES boards(id) ON DELETE RESTRICT NOT NULL
+    parent_board BIGINT REFERENCES boards(id) ON DELETE RESTRICT NOT NULL,
+    parent_collection BIGINT REFERENCES collections(id) ON DELETE RESTRICT DEFAULT NULL
     /* TODO: decide what to do with threads with deleted posts */
 );
 CREATE INDEX threads_string_id on threads(string_id);
