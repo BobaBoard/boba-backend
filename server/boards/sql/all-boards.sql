@@ -14,6 +14,12 @@ FROM boards
 LEFT JOIN threads 
     ON boards.id = threads.parent_board
 LEFT JOIN logged_in_user ON 1 = 1
+LEFT JOIN user_muted_threads
+    ON user_muted_threads.user_id = logged_in_user.id
+        AND user_muted_threads.thread_id = threads.id
+LEFT JOIN user_hidden_threads
+    ON user_hidden_threads.user_id = logged_in_user.id
+        AND user_hidden_threads.thread_id = threads.id
 LEFT JOIN user_board_last_visits
     ON user_board_last_visits.board_id = boards.id 
         AND user_board_last_visits.user_id = logged_in_user.id
@@ -52,4 +58,6 @@ LEFT JOIN LATERAL (
             ON dismiss_notifications_requests.user_id = logged_in_user.id
         WHERE comments.parent_thread = threads.id) as comments
     ON 1=1
+WHERE user_muted_threads.thread_id IS NULL 
+    AND user_hidden_threads.thread_id IS NULL
 GROUP BY boards.id

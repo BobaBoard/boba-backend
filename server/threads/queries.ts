@@ -139,3 +139,83 @@ export const markThreadVisit = async ({
     return false;
   }
 };
+
+export const muteThread = async ({
+  threadId,
+  firebaseId,
+}: {
+  threadId: string;
+  firebaseId: string;
+}) => {
+  try {
+    await pool.none(sql.muteThreadByStringId, {
+      firebase_id: firebaseId,
+      thread_string_id: threadId,
+    });
+    return true;
+  } catch (e) {
+    error(`Error while muting thread.`);
+    error(e);
+    return false;
+  }
+};
+
+export const unmuteThread = async ({
+  threadId,
+  firebaseId,
+}: {
+  threadId: string;
+  firebaseId: string;
+}) => {
+  try {
+    await pool.none(sql.unmuteThreadByStringId, {
+      firebase_id: firebaseId,
+      thread_string_id: threadId,
+    });
+    return true;
+  } catch (e) {
+    error(`Error while unmuting thread.`);
+    error(e);
+    return false;
+  }
+};
+
+export const hideThread = async ({
+  threadId,
+  firebaseId,
+}: {
+  threadId: string;
+  firebaseId: string;
+}) => {
+  try {
+    await pool.none(sql.hideThreadByStringId, {
+      firebase_id: firebaseId,
+      thread_string_id: threadId,
+    });
+    return true;
+  } catch (e) {
+    error(`Error while hiding thread.`);
+    error(e);
+    return false;
+  }
+};
+
+export const unhideThread = async ({
+  threadId,
+  firebaseId,
+}: {
+  threadId: string;
+  firebaseId: string;
+}) => {
+  try {
+    await pool.none(sql.unhideThreadByStringId, {
+      firebase_id: firebaseId,
+      thread_string_id: threadId,
+    });
+    return true;
+  } catch (e) {
+    error(`Error while unhiding thread.`);
+    error(e);
+    return false;
+  }
+};
