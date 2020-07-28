@@ -34,6 +34,30 @@ const insertNewIdentity = `
       (SELECT id FROM users WHERE firebase_id = $/firebase_id/), 
       $/secret_identity_id/)`;
 
+const muteThreadByStringId = `
+    INSERT INTO user_muted_threads(user_id, thread_id) VALUES (
+        (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
+        (SELECT id from threads WHERE threads.string_id = $/thread_string_id/))
+    ON CONFLICT(user_id, thread_id) DO NOTHING`;
+
+const unmuteThreadByStringId = `
+    DELETE FROM user_muted_threads WHERE
+        user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
+        AND
+        thread_id = (SELECT id from threads WHERE threads.string_id = $/thread_string_id/)`;
+
+const hideThreadByStringId = `
+    INSERT INTO user_muted_threads(user_id, thread_id) VALUES (
+        (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
+        (SELECT id from threads WHERE threads.string_id = $/thread_string_id/))
+    ON CONFLICT(user_id, thread_id) DO NOTHING`;
+
+const unhideThreadByStringId = `
+    DELETE FROM user_muted_threads WHERE
+        user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
+        AND
+        thread_id = (SELECT id from threads WHERE threads.string_id = $/thread_string_id/)`;
+
 export default {
   threadIdByString: new QueryFile(
     path.join(__dirname, "thread-by-string-id.sql")
@@ -48,4 +72,8 @@ export default {
   createPost,
   getRandomIdentityId,
   insertNewIdentity,
+  muteThreadByStringId,
+  unmuteThreadByStringId,
+  hideThreadByStringId,
+  unhideThreadByStringId,
 };

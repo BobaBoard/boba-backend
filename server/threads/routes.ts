@@ -1,6 +1,14 @@
 import debug from "debug";
 import express from "express";
-import { getThreadByStringId, createThread, markThreadVisit } from "./queries";
+import {
+  getThreadByStringId,
+  createThread,
+  markThreadVisit,
+  muteThread,
+  unmuteThread,
+  hideThread,
+  unhideThread,
+} from "./queries";
 import { isLoggedIn } from "../auth-handler";
 import { makeServerThread, ensureNoIdentityLeakage } from "../response-utils";
 
@@ -36,6 +44,102 @@ router.get("/:id", isLoggedIn, async (req, res) => {
 
   info(`sending back data for thread ${id}.`);
   res.status(200).json(serverThread);
+});
+
+router.get("/:threadId/mute", isLoggedIn, async (req, res) => {
+  const { threadId } = req.params;
+  // @ts-ignore
+  if (!req.currentUser) {
+    // TODO: fix wrong status
+    return res.sendStatus(401);
+  }
+  log(`Setting thread muted: ${threadId}`);
+
+  if (
+    !(await muteThread({
+      // @ts-ignore
+      firebaseId: req.currentUser.uid,
+      threadId,
+    }))
+  ) {
+    res.sendStatus(500);
+    return;
+  }
+
+  info(`Marked last visited time for thread: ${threadId}.`);
+  res.status(200).json();
+});
+
+router.get("/:threadId/unmute", isLoggedIn, async (req, res) => {
+  const { threadId } = req.params;
+  // @ts-ignore
+  if (!req.currentUser) {
+    // TODO: fix wrong status
+    return res.sendStatus(401);
+  }
+  log(`Setting thread unmuted: ${threadId}`);
+
+  if (
+    !(await unmuteThread({
+      // @ts-ignore
+      firebaseId: req.currentUser.uid,
+      threadId,
+    }))
+  ) {
+    res.sendStatus(500);
+    return;
+  }
+
+  info(`Marked last visited time for thread: ${threadId}.`);
+  res.status(200).json();
+});
+
+router.get("/:threadId/hide", isLoggedIn, async (req, res) => {
+  const { threadId } = req.params;
+  // @ts-ignore
+  if (!req.currentUser) {
+    // TODO: fix wrong status
+    return res.sendStatus(401);
+  }
+  log(`Setting thread hidden: ${threadId}`);
+
+  if (
+    !(await hideThread({
+      // @ts-ignore
+      firebaseId: req.currentUser.uid,
+      threadId,
+    }))
+  ) {
+    res.sendStatus(500);
+    return;
+  }
+
+  info(`Marked last visited time for thread: ${threadId}.`);
+  res.status(200).json();
+});
+
+router.get("/:threadId/unhide", isLoggedIn, async (req, res) => {
+  const { threadId } = req.params;
+  // @ts-ignore
+  if (!req.currentUser) {
+    // TODO: fix wrong status
+    return res.sendStatus(401);
+  }
+  log(`Setting thread visible: ${threadId}`);
+
+  if (
+    !(await unhideThread({
+      // @ts-ignore
+      firebaseId: req.currentUser.uid,
+      threadId,
+    }))
+  ) {
+    res.sendStatus(500);
+    return;
+  }
+
+  info(`Marked last visited time for thread: ${threadId}.`);
+  res.status(200).json();
 });
 
 router.get("/:threadId/visit", isLoggedIn, async (req, res) => {
