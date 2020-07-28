@@ -79,8 +79,8 @@ export interface DbPostType {
     wide?: boolean;
   };
   type: string;
-  whisper_tags: string[] | null;
-  index_tags: string[] | null;
+  whisper_tags: string[];
+  index_tags: string[];
   anonymity_type: "everyone" | "strangers";
   total_comments_amount: number;
   new_comments_amount: number;
@@ -128,8 +128,8 @@ export interface DbActivityThreadType {
   secret_identity_avatar: string;
   created: string;
   content: string;
-  index_tags: string[] | null;
-  whisper_tags: string[] | null;
+  index_tags: string[];
+  whisper_tags: string[];
   options: {
     wide?: boolean;
   };

@@ -67,7 +67,7 @@ SELECT
     TO_CHAR(created, 'YYYY-MM-DD"T"HH24:MI:SS') as created,
     content,
     options,
-    whisper_tags,
+    COALESCE(whisper_tags, ARRAY[]::text[]) as whisper_tags,
     array(
         SELECT tag FROM post_tags 
         LEFT JOIN tags

@@ -92,7 +92,7 @@ WITH
                SELECT tag FROM post_tags 
                LEFT JOIN tags
                ON post_tags.tag_id = tags.id WHERE post_tags.post_id = posts.id) as index_tags,
-            posts.whisper_tags,
+            COALESCE(posts.whisper_tags, ARRAY[]::text[]) as whisper_tags,
             posts.anonymity_type,
             COALESCE(thread_comments.total_comments, 0) as total_comments_amount,
             COALESCE(thread_comments.new_comments, 0) as new_comments_amount,
