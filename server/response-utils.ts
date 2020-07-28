@@ -101,8 +101,8 @@ export const makeServerPost = (post: DbPostType): ServerPostType => {
     ...mergeObjectIdentity<DbPostType>(post),
     comments: post.comments?.map(makeServerComment) || null,
     tags: {
-      whisper_tags: post.whisper_tags,
-      index_tags: post.index_tags,
+      whisper_tags: post.whisper_tags || [],
+      index_tags: post.index_tags || [],
     },
   };
   delete serverPost.whisper_tags;

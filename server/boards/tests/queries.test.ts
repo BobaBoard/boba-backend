@@ -243,7 +243,8 @@ describe("Tests boards queries", () => {
         author: "3",
         username: "oncest5evah",
         options: {},
-        whisper_tags: null,
+        index_tags: [],
+        whisper_tags: [],
       },
       {
         comments_amount: 0,
@@ -268,6 +269,7 @@ describe("Tests boards queries", () => {
         author: "1",
         username: "bobatan",
         options: {},
+        index_tags: [],
         whisper_tags: ["mwehehehehe"],
       },
     ]);
@@ -308,7 +310,8 @@ describe("Tests boards queries", () => {
         author: "3",
         username: "oncest5evah",
         options: {},
-        whisper_tags: null,
+        index_tags: [],
+        whisper_tags: [],
       },
       {
         comments_amount: 0,
@@ -333,6 +336,7 @@ describe("Tests boards queries", () => {
         author: "1",
         username: "bobatan",
         options: {},
+        index_tags: [],
         whisper_tags: ["mwehehehehe"],
       },
     ]);

@@ -44,7 +44,8 @@ describe("Tests boards REST API", () => {
               content: '[{"insert":"Favorite character to maim?"}]',
               options: {},
               tags: {
-                whisper_tags: null,
+                index_tags: [],
+                whisper_tags: [],
               },
               total_comments_amount: 2,
               new_comments_amount: 0,
@@ -76,6 +77,7 @@ describe("Tests boards REST API", () => {
               content: '[{"insert":"Favorite murder scene in videogames?"}]',
               options: {},
               tags: {
+                index_tags: [],
                 whisper_tags: ["mwehehehehe"],
               },
               total_comments_amount: 0,
@@ -132,7 +134,8 @@ describe("Tests threads REST API", () => {
           total_comments_amount: 0,
           type: "text",
           tags: {
-            whisper_tags: null,
+            index_tags: [],
+            whisper_tags: [],
           },
           options: {},
         },
@@ -157,6 +160,7 @@ describe("Tests threads REST API", () => {
           total_comments_amount: 0,
           type: "text",
           tags: {
+            index_tags: [],
             whisper_tags: ["fight me on this"],
           },
           options: {},
@@ -215,6 +219,7 @@ describe("Tests threads REST API", () => {
           total_comments_amount: 2,
           type: "text",
           tags: {
+            index_tags: [],
             whisper_tags: [
               "Im too ashamed to admit this ok",
               "sorry mom",
