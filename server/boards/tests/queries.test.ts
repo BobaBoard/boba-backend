@@ -63,6 +63,20 @@ describe("Tests boards queries", () => {
         tagline: "A board to test with many posts.",
         threads_count: "26",
       },
+      {
+        avatar_reference_id:
+          "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2Feded338a-e0e5-4a97-a368-5ae525c0eec4?alt=media&token=914f84b7-a581-430e-bb09-695f653e8e02",
+        has_updates: false,
+        last_comment: null,
+        last_post: null,
+        last_visit: null,
+        settings: {
+          accentColor: "#9b433b",
+        },
+        slug: "muted",
+        tagline: "A board to test for muting.",
+        threads_count: "1",
+      },
     ]);
   });
 
@@ -121,6 +135,20 @@ describe("Tests boards queries", () => {
         slug: "long",
         tagline: "A board to test with many posts.",
         threads_count: "26",
+      },
+      {
+        avatar_reference_id:
+          "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2Feded338a-e0e5-4a97-a368-5ae525c0eec4?alt=media&token=914f84b7-a581-430e-bb09-695f653e8e02",
+        has_updates: false,
+        last_comment: null,
+        last_post: new Date(Date.UTC(2020, 0, 14, 8, 42)),
+        last_visit: null,
+        settings: {
+          accentColor: "#9b433b",
+        },
+        slug: "muted",
+        tagline: "A board to test for muting.",
+        threads_count: "1",
       },
     ]);
   });
@@ -184,6 +212,20 @@ describe("Tests boards queries", () => {
         tagline: "A board to test with many posts.",
         threads_count: "26",
       },
+      {
+        avatar_reference_id:
+          "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2Feded338a-e0e5-4a97-a368-5ae525c0eec4?alt=media&token=914f84b7-a581-430e-bb09-695f653e8e02",
+        has_updates: false,
+        last_comment: null,
+        last_post: new Date(Date.UTC(2020, 0, 14, 8, 42)),
+        last_visit: null,
+        settings: {
+          accentColor: "#9b433b",
+        },
+        slug: "muted",
+        tagline: "A board to test for muting.",
+        threads_count: "1",
+      },
     ]);
   });
 
@@ -245,6 +287,8 @@ describe("Tests boards queries", () => {
         options: {},
         index_tags: [],
         whisper_tags: [],
+        muted: false,
+        hidden: false,
       },
       {
         comments_amount: 0,
@@ -271,6 +315,8 @@ describe("Tests boards queries", () => {
         options: {},
         index_tags: [],
         whisper_tags: ["mwehehehehe"],
+        muted: false,
+        hidden: false,
       },
     ]);
   });
@@ -312,6 +358,8 @@ describe("Tests boards queries", () => {
         options: {},
         index_tags: [],
         whisper_tags: [],
+        muted: false,
+        hidden: false,
       },
       {
         comments_amount: 0,
@@ -338,6 +386,8 @@ describe("Tests boards queries", () => {
         options: {},
         index_tags: [],
         whisper_tags: ["mwehehehehe"],
+        muted: false,
+        hidden: false,
       },
     ]);
   });

@@ -59,6 +59,8 @@ describe("Tests boards REST API", () => {
           thread_total_posts_amount: 3,
           thread_last_activity: "2020-05-23T05:52:00.000000",
           thread_direct_threads_amount: 2,
+          muted: false,
+          hidden: false,
         },
         {
           posts: [
@@ -92,6 +94,8 @@ describe("Tests boards REST API", () => {
           thread_total_posts_amount: 3,
           thread_last_activity: "2020-05-03T09:47:00.000000",
           thread_direct_threads_amount: 2,
+          muted: false,
+          hidden: false,
         },
       ],
     });
