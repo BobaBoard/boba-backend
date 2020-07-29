@@ -50,6 +50,8 @@ export interface ServerThreadType {
   thread_total_comments_amount: number;
   thread_total_posts_amount: number;
   thread_last_activity: string;
+  muted: boolean;
+  hidden: boolean;
 }
 
 export interface DbIdentityType {
@@ -115,6 +117,8 @@ export interface DbThreadType {
   thread_total_posts_amount: number;
   thread_total_comments_amount: number;
   thread_last_activity: string;
+  muted: boolean;
+  hidden: boolean;
 }
 
 export interface DbActivityThreadType {
@@ -130,6 +134,8 @@ export interface DbActivityThreadType {
   content: string;
   index_tags: string[];
   whisper_tags: string[];
+  muted: boolean;
+  hidden: boolean;
   options: {
     wide?: boolean;
   };

@@ -118,6 +118,8 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
         thread_total_posts_amount: threadWithIdentity.posts_amount,
         thread_last_activity: threadWithIdentity.thread_last_activity,
         thread_direct_threads_amount: threadWithIdentity.threads_amount,
+        muted: threadWithIdentity.muted,
+        hidden: threadWithIdentity.hidden,
       };
     }
   );

@@ -39,7 +39,10 @@ LEFT JOIN LATERAL (
             AND posts.parent_thread = utlv.thread_id
         LEFT JOIN dismiss_notifications_requests
             ON dismiss_notifications_requests.user_id = logged_in_user.id
-        WHERE posts.parent_thread = threads.id) as posts
+        WHERE 
+            user_muted_threads.thread_id IS NULL 
+            AND user_hidden_threads.thread_id IS NULL 
+            AND posts.parent_thread = threads.id) as posts
     ON 1=1
 LEFT JOIN LATERAL (
         SELECT 
@@ -56,8 +59,9 @@ LEFT JOIN LATERAL (
             AND comments.parent_thread = utlv.thread_id
         LEFT JOIN dismiss_notifications_requests
             ON dismiss_notifications_requests.user_id = logged_in_user.id
-        WHERE comments.parent_thread = threads.id) as comments
+        WHERE 
+            user_muted_threads.thread_id IS NULL 
+            AND user_hidden_threads.thread_id IS NULL 
+            AND comments.parent_thread = threads.id) as comments
     ON 1=1
-WHERE user_muted_threads.thread_id IS NULL 
-    AND user_hidden_threads.thread_id IS NULL
 GROUP BY boards.id

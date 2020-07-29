@@ -1,4 +1,6 @@
- WITH 
+ WITH
+    logged_in_user AS
+        (SELECT id FROM users WHERE users.firebase_id = ${firebase_id}),
     thread_identities AS
         (SELECT
             uti.thread_id as thread_id,
@@ -32,6 +34,8 @@
             cutoff_time,
             MIN(posts.created) as first_post,
             MAX(posts.created) as last_post,
+            user_muted_threads.thread_id IS NOT NULL as muted,
+            user_hidden_threads.thread_id IS NOT NULL as hidden,
             COUNT(posts.id)::int as posts_amount,
             -- Count all the new posts that aren't ours, unless we aren't logged in          
             SUM(CASE
@@ -46,13 +50,20 @@
          FROM boards 
          LEFT JOIN threads
             ON boards.id = threads.parent_board
+         LEFT JOIN logged_in_user ON 1 = 1
+         LEFT JOIN user_muted_threads
+            ON user_muted_threads.user_id = logged_in_user.id
+                AND user_muted_threads.thread_id = threads.id
+         LEFT JOIN user_hidden_threads
+            ON user_hidden_threads.user_id = logged_in_user.id
+                AND user_hidden_threads.thread_id = threads.id
          LEFT JOIN posts
             ON posts.parent_thread = threads.id
          LEFT JOIN last_visited_or_dismissed
             ON last_visited_or_dismissed.thread_id = threads.id OR last_visited_or_dismissed.thread_id is NULL
          WHERE boards.slug = ${board_slug}
          GROUP BY
-            threads.id, boards.id, cutoff_time)
+            threads.id, boards.id, cutoff_time, user_muted_threads.thread_id, user_hidden_threads.thread_id)
 -- The return type of this query is DbActivityThreadType.
 -- If updating, please also update DbActivityThreadType in Types.
 SELECT
@@ -67,6 +78,8 @@ SELECT
     TO_CHAR(created, 'YYYY-MM-DD"T"HH24:MI:SS') as created,
     content,
     options,
+    muted,
+    hidden,
     COALESCE(whisper_tags, ARRAY[]::text[]) as whisper_tags,
     array(
         SELECT tag FROM post_tags 
