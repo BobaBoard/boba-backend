@@ -10,7 +10,7 @@ export interface ServerCommentType {
   };
   content: string;
   created: string;
-  chain_parent_string_id: string | null;
+  chain_parent_id: string | null;
 }
 
 export interface ServerPostType {
@@ -100,7 +100,7 @@ export interface DbCommentType {
   user_avatar: string;
   secret_identity_name: string;
   secret_identity_avatar: string;
-  chain_parent_string_id: string | null;
+  chain_parent_id: string | null;
   friend: boolean;
   self: boolean;
   content: string;
