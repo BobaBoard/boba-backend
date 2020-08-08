@@ -65,8 +65,8 @@ WITH
          'everyone',
          to_timestamp('2020-05-02 06:04:00', 'YYYY-MM-DD HH:MI:SS'))
       RETURNING id),
-  comments_insert AS
-    (INSERT INTO comments(string_id, parent_post, parent_thread, author, created, content, anonymity_type)
+  comments_insert1 AS
+    (INSERT INTO comments(string_id, parent_post, parent_thread, author, created, content, anonymity_type, chain_parent_comment)
       VALUES (
         '46a16199-33d1-48c2-bb79-4d4095014688',
         (SELECT id FROM posts_insert ORDER BY id DESC LIMIT 1),
@@ -74,16 +74,20 @@ WITH
         (SELECT id FROM Users WHERE username = 'bobatan'),
         to_timestamp('2020-05-22 12:22:00', 'YYYY-MM-DD HH:MI:SS'),
         '[{"insert":"OMG ME TOO"}]', 
-        'strangers'
-      ),
-      (
+        'strangers',
+        NULL
+      ) RETURNING id),
+  comments_insert2 AS
+    (INSERT INTO comments(string_id, parent_post, parent_thread, author, created, content, anonymity_type, chain_parent_comment)
+      VALUES (
         '89fc3682-cb74-43f9-9a63-bd97d0f59bb9',
         (SELECT id FROM posts_insert ORDER BY id DESC LIMIT 1),
         (SELECT id FROM new_thread_id),
         (SELECT id FROM Users WHERE username = 'bobatan'),
         to_timestamp('2020-05-23 05:42:00', 'YYYY-MM-DD HH:MI:SS') + INTERVAL'10 minute',
         '[{"insert":"friends!!!!!"}]', 
-        'strangers'
+        'strangers',
+        (SELECT id FROM comments_insert1 LIMIT 1)
       ))
 INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
     VALUES
