@@ -1,9 +1,12 @@
 import debug from "debug";
 import express from "express";
-import { postNewContribution, postNewComment } from "./queries";
+import {
+  postNewContribution,
+  postNewComment,
+  postNewCommentChain,
+} from "./queries";
 import { isLoggedIn } from "../auth-handler";
 import axios from "axios";
-import { ServerPostType, ServerCommentType } from "../types/Types";
 import {
   makeServerPost,
   makeServerComment,
@@ -86,6 +89,42 @@ router.post("/:postId/comment", isLoggedIn, async (req, res) => {
 
   ensureNoIdentityLeakage(responseComment);
   res.status(200).json({ comment: responseComment });
+});
+
+router.post("/:postId/comment/chain", isLoggedIn, async (req, res) => {
+  const { postId } = req.params;
+  const { contentArray, forceAnonymous } = req.body;
+
+  // @ts-ignore
+  if (!req.currentUser) {
+    res.sendStatus(403);
+    return;
+  }
+
+  log(`Making comment to post with id ${postId}`);
+  log(`Content: `, contentArray);
+  log(`Anonymous: `, forceAnonymous);
+
+  const comments = await postNewCommentChain({
+    // @ts-ignore
+    firebaseId: req.currentUser.uid,
+    parentPostId: postId,
+    contentArray,
+    anonymityType: forceAnonymous ? "everyone" : "strangers",
+  });
+  log(`Comments posted: `, comments);
+
+  if (!comments) {
+    res.sendStatus(500);
+    return;
+  }
+
+  const responseComments = comments.map((comment) =>
+    makeServerComment(comment)
+  );
+
+  responseComments.map((comment) => ensureNoIdentityLeakage(comment));
+  res.status(200).json({ comments: responseComments });
 });
 
 const EXTRACT_HREF_REGEX = /data-href="([^"]+)"/;

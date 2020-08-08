@@ -7,7 +7,7 @@ import {
   ServerCommentType,
   ServerPostType,
   DbCommentType,
-} from "./types/Types";
+} from "../Types";
 
 const info = debug("bobaserver:response-utils-info");
 const log = debug("bobaserver::response-utils-log");
@@ -92,7 +92,7 @@ export const mergeObjectIdentity = <T>(
 export const makeServerThread = (thread: DbThreadType): ServerThreadType => {
   return {
     ...thread,
-    posts: thread.posts?.map((post) => makeServerPost(post)),
+    posts: thread.posts?.map((post: DbPostType) => makeServerPost(post)),
   };
 };
 

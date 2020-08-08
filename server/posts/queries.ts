@@ -2,7 +2,7 @@ import debug from "debug";
 import pool from "../pool";
 import { v4 as uuidv4 } from "uuid";
 import sql from "./sql";
-import { DbPostType, DbCommentType } from "../types/Types";
+import { DbPostType, DbCommentType } from "../../Types";
 import { ITask } from "pg-promise";
 
 const log = debug("bobaserver:posts:queries-log");
@@ -197,6 +197,66 @@ export const postNewContribution = async ({
     });
 };
 
+const postNewCommentWithTransaction = async ({
+  firebaseId,
+  parentPostId,
+  chainParentId,
+  content,
+  anonymityType,
+  transaction,
+}: {
+  transaction?: ITask<any>;
+  firebaseId: string;
+  parentPostId: string;
+  chainParentId: number | null;
+  content: string;
+  anonymityType: string;
+}): Promise<{ id: number; comment: DbCommentType }> => {
+  let {
+    user_id,
+    username,
+    user_avatar,
+    secret_identity_name,
+    secret_identity_avatar,
+    thread_id,
+    post_id,
+  } = await getThreadDetails(transaction, {
+    parentPostId,
+    firebaseId,
+  });
+
+  const result = await transaction.one(sql.makeComment, {
+    comment_string_id: uuidv4(),
+    parent_post: post_id,
+    parent_thread: thread_id,
+    chain_parent_comment: chainParentId,
+    user_id,
+    content,
+    anonymity_type: anonymityType,
+  });
+
+  return {
+    id: result.id,
+    comment: {
+      comment_id: result.string_id,
+      parent_post: parentPostId,
+      chain_parent_id: result.chain_parent_comment,
+      author: user_id,
+      content: result.content,
+      created: result.created_string,
+      anonymity_type: result.anonymity_type,
+      username,
+      user_avatar,
+      secret_identity_name,
+      secret_identity_avatar,
+      is_new: true,
+      is_own: true,
+      friend: false,
+      self: true,
+    },
+  };
+};
+
 export const postNewComment = async ({
   firebaseId,
   parentPostId,
@@ -209,46 +269,55 @@ export const postNewComment = async ({
   anonymityType: string;
 }): Promise<DbCommentType | false> => {
   return pool
-    .tx("create-comment", async (t) => {
-      let {
-        user_id,
-        username,
-        user_avatar,
-        secret_identity_name,
-        secret_identity_avatar,
-        thread_id,
-        post_id,
-      } = await getThreadDetails(t, {
-        parentPostId,
+    .tx("create-comment", async (transaction) => {
+      const result = await postNewCommentWithTransaction({
         firebaseId,
-      });
-
-      const result = await t.one(sql.makeComment, {
-        comment_string_id: uuidv4(),
-        parent_post: post_id,
-        parent_thread: thread_id,
-        user_id,
+        parentPostId,
+        chainParentId: null,
         content,
-        anonymity_type: anonymityType,
+        anonymityType,
+        transaction,
       });
+      return result.comment;
+    })
+    .catch((e) => {
+      error(`Error while creating comment.`);
+      error(e);
+      return false;
+    });
+};
 
-      return {
-        comment_id: result.string_id,
-        parent_post: parentPostId,
-        chain_parent_id: null,
-        author: user_id,
-        content: result.content,
-        created: result.created_string,
-        anonymity_type: result.anonymity_type,
-        username,
-        user_avatar,
-        secret_identity_name,
-        secret_identity_avatar,
-        is_new: true,
-        is_own: true,
-        friend: false,
-        self: true,
-      };
+export const postNewCommentChain = async ({
+  firebaseId,
+  parentPostId,
+  contentArray,
+  anonymityType,
+}: {
+  firebaseId: string;
+  parentPostId: string;
+  contentArray: string[];
+  anonymityType: string;
+}): Promise<DbCommentType[] | false> => {
+  return pool
+    .tx("create-comment-chaim", async (transaction) => {
+      let prevId: number = null;
+      let prevStringId: string = null;
+      const comments = [];
+      for (let content of contentArray) {
+        const newComment = await postNewCommentWithTransaction({
+          firebaseId,
+          parentPostId,
+          chainParentId: prevId,
+          content,
+          anonymityType,
+          transaction,
+        });
+        newComment.comment.chain_parent_id = prevStringId;
+        prevId = newComment.id;
+        prevStringId = newComment.comment.comment_id;
+        comments.push(newComment.comment);
+      }
+      return comments;
     })
     .catch((e) => {
       error(`Error while creating comment.`);

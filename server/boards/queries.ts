@@ -1,7 +1,7 @@
 import debug from "debug";
 import pool from "../pool";
 import sql from "./sql";
-import { DbActivityThreadType } from "../types/Types";
+import { DbActivityThreadType } from "../../Types";
 
 const log = debug("bobaserver:board:queries-log");
 const error = debug("bobaserver:board:queries-error");

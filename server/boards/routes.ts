@@ -12,7 +12,7 @@ import {
   mergeObjectIdentity,
   ensureNoIdentityLeakage,
 } from "../response-utils";
-import { DbActivityThreadType, ServerThreadType } from "../types/Types";
+import { DbActivityThreadType, ServerThreadType } from "../../Types";
 
 const log = debug("bobaserver:board:routes");
 
