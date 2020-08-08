@@ -3,7 +3,7 @@ import pool from "../pool";
 import { v4 as uuidv4 } from "uuid";
 import sql from "./sql";
 import { maybeAddIndexTags } from "../posts/queries";
-import { DbThreadType, DbIdentityType } from "../types/Types";
+import { DbThreadType, DbIdentityType } from "../../Types";
 
 const log = debug("bobaserver:threads:queries-log");
 const error = debug("bobaserver:threads:queries-error");

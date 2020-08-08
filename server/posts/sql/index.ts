@@ -37,14 +37,15 @@ const makePost = `
     `;
 
 const makeComment = `
-    INSERT INTO comments(string_id, parent_post, parent_thread, author, content, anonymity_type)
+    INSERT INTO comments(string_id, parent_post, parent_thread, author, content, anonymity_type, chain_parent_comment)
     VALUES(
         $/comment_string_id/,
         $/parent_post/,
         $/parent_thread/,
         $/user_id/,
         $/content/,
-        $/anonymity_type/
+        $/anonymity_type/,
+        $/chain_parent_comment/
     ) RETURNING *, TO_CHAR(comments.created, 'YYYY-MM-DD"T"HH24:MI:SS') as created_string`;
 
 const pgInstance = pg();

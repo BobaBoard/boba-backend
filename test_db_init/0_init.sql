@@ -198,7 +198,7 @@ CREATE TABLE IF NOT EXISTS comments (
     parent_thread BIGINT REFERENCES threads(id) ON DELETE RESTRICT NOT NULL,
     parent_post BIGINT REFERENCES posts(id) ON DELETE RESTRICT NOT NULL,
     parent_comment BIGINT REFERENCES comments(id) ON DELETE RESTRICT,
-    chain_parent_id_comment BIGINT REFERENCES comments(id) ON DELETE RESTRICT,
+    chain_parent_comment BIGINT REFERENCES comments(id) ON DELETE RESTRICT,
     author BIGINT REFERENCES users(id) ON DELETE RESTRICT,
     /* UTC timestamp. */
     created timestamp NOT NULL DEFAULT now(),
