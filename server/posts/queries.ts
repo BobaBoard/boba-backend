@@ -235,6 +235,7 @@ export const postNewComment = async ({
       return {
         comment_id: result.string_id,
         parent_post: parentPostId,
+        chain_parent_string_id: null,
         author: user_id,
         content: result.content,
         created: result.created_string,

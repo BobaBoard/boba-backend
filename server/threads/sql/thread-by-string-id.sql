@@ -43,6 +43,7 @@ WITH
             json_agg(json_build_object(
                 'comment_id', thread_comments.string_id,
                 'parent_post', thread_comments.parent_thread_string_id,
+                'chain_parent_string_id', (SELECT string_id FROM comments WHERE comments.id = thread_comments.chain_parent_comment),
                 'author', thread_comments.author,
                 'username', thread_comments.username,
                 'user_avatar', thread_comments.user_avatar,
