@@ -15,6 +15,10 @@ UPDATE threads SET parent_board=6 WHERE string_id = '9fd12dfb-3f56-48e0-b000-58f
 DROP INDEX tags_tag;
 CREATE UNIQUE INDEX tags_tag on tags(tag);
 
+### ADD COLUMN TO TABLE ####
+ALTER TABLE comments
+ADD chain_parent_comment2 BIGINT REFERENCES comments(id) ON DELETE RESTRICT;
+
 #### ADD USER ####
 
 INSERT INTO Users(firebase_id, username, avatar_reference_id, invited_by)
