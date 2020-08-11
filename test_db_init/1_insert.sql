@@ -165,7 +165,31 @@ WITH
          'text', 
          ARRAY['this is a test post'], 
          'strangers',
-         to_timestamp('2020-04-24 05:42:00', 'YYYY-MM-DD HH:MI:SS')))
+         to_timestamp('2020-04-24 05:42:00', 'YYYY-MM-DD HH:MI:SS'))
+     RETURNING id),
+  comments_insert1 AS
+    (INSERT INTO comments(string_id, parent_post, parent_thread, author, created, content, anonymity_type)
+      VALUES (
+        '21b16199-33d1-48c2-bb79-4d4095014avd',
+        (SELECT id FROM posts_insert ORDER BY id DESC LIMIT 1),
+        (SELECT id FROM new_thread_id),
+        (SELECT id FROM Users WHERE username = 'jersey_devil_69'),
+        to_timestamp('2020-04-24 05:43:00', 'YYYY-MM-DD HH:MI:SS'),
+        '[{"insert":"This is an example of a question?"}]', 
+        'strangers'
+      ) RETURNING id),
+  comments_insert2 AS
+    (INSERT INTO comments(string_id, parent_post, parent_thread, author, created, content, anonymity_type, parent_comment)
+      VALUES (
+        'ad3c3682-cb74-43f9-9a63-bd97d0f59z87',
+        (SELECT id FROM posts_insert ORDER BY id DESC LIMIT 1),
+        (SELECT id FROM new_thread_id),
+        (SELECT id FROM Users WHERE username = 'jersey_devil_69'),
+        to_timestamp('2020-04-24 05:44:00', 'YYYY-MM-DD HH:MI:SS'),
+        '[{"insert":"And this is an example of an answer!!!!!"}]', 
+        'strangers',
+        (SELECT id FROM comments_insert1 LIMIT 1)
+      ))
 INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
     VALUES
      ((SELECT id FROM new_thread_id),
