@@ -1,5 +1,6 @@
 export interface ServerCommentType {
   comment_id: string;
+  parent_comment: string;
   secret_identity: {
     name: string;
     avatar: string;
@@ -95,6 +96,7 @@ export interface DbPostType {
 export interface DbCommentType {
   comment_id: string;
   parent_post: string;
+  parent_comment: string;
   author: number;
   username: string;
   user_avatar: string;

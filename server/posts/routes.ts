@@ -59,7 +59,7 @@ router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
 
 router.post("/:postId/comment", isLoggedIn, async (req, res) => {
   const { postId } = req.params;
-  const { content, forceAnonymous } = req.body;
+  const { content, forceAnonymous, replyToCommentId } = req.body;
 
   // @ts-ignore
   if (!req.currentUser) {
@@ -75,6 +75,7 @@ router.post("/:postId/comment", isLoggedIn, async (req, res) => {
     // @ts-ignore
     firebaseId: req.currentUser.uid,
     parentPostId: postId,
+    parentCommentId: replyToCommentId,
     content,
     anonymityType: forceAnonymous ? "everyone" : "strangers",
   });
@@ -93,7 +94,7 @@ router.post("/:postId/comment", isLoggedIn, async (req, res) => {
 
 router.post("/:postId/comment/chain", isLoggedIn, async (req, res) => {
   const { postId } = req.params;
-  const { contentArray, forceAnonymous } = req.body;
+  const { contentArray, forceAnonymous, replyToCommentId } = req.body;
 
   // @ts-ignore
   if (!req.currentUser) {
@@ -109,6 +110,7 @@ router.post("/:postId/comment/chain", isLoggedIn, async (req, res) => {
     // @ts-ignore
     firebaseId: req.currentUser.uid,
     parentPostId: postId,
+    parentCommentId: replyToCommentId,
     contentArray,
     anonymityType: forceAnonymous ? "everyone" : "strangers",
   });

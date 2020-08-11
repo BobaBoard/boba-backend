@@ -36,9 +36,11 @@ const getThreadDetails = async (
   {
     parentPostId,
     firebaseId,
+    parentCommentId,
   }: {
     firebaseId: string;
     parentPostId: string;
+    parentCommentId?: string;
   }
 ): Promise<{
   user_id: number;
@@ -49,6 +51,7 @@ const getThreadDetails = async (
   thread_id: number;
   thread_string_id: string;
   post_id: number;
+  comment_id: number;
 }> => {
   let {
     user_id,
@@ -60,9 +63,11 @@ const getThreadDetails = async (
     thread_id,
     thread_string_id,
     post_id,
+    comment_id,
   } = await transaction.one(sql.getThreadDetails, {
     post_string_id: parentPostId,
     firebase_id: firebaseId,
+    parent_comment_string_id: parentCommentId,
   });
 
   log(`Found details for thread:`);
@@ -109,6 +114,7 @@ const getThreadDetails = async (
     thread_id,
     thread_string_id,
     post_id,
+    comment_id,
   };
 };
 
@@ -200,6 +206,7 @@ export const postNewContribution = async ({
 const postNewCommentWithTransaction = async ({
   firebaseId,
   parentPostId,
+  parentCommentId,
   chainParentId,
   content,
   anonymityType,
@@ -208,6 +215,7 @@ const postNewCommentWithTransaction = async ({
   transaction?: ITask<any>;
   firebaseId: string;
   parentPostId: string;
+  parentCommentId: string;
   chainParentId: number | null;
   content: string;
   anonymityType: string;
@@ -220,14 +228,29 @@ const postNewCommentWithTransaction = async ({
     secret_identity_avatar,
     thread_id,
     post_id,
+    comment_id,
   } = await getThreadDetails(transaction, {
     parentPostId,
     firebaseId,
+    parentCommentId,
+  });
+
+  log(`Retrieved details for thread ${parentPostId}:`);
+  log({
+    user_id,
+    username,
+    user_avatar,
+    secret_identity_name,
+    secret_identity_avatar,
+    thread_id,
+    post_id,
+    comment_id,
   });
 
   const result = await transaction.one(sql.makeComment, {
     comment_string_id: uuidv4(),
     parent_post: post_id,
+    parent_comment: comment_id,
     parent_thread: thread_id,
     chain_parent_comment: chainParentId,
     user_id,
@@ -240,6 +263,7 @@ const postNewCommentWithTransaction = async ({
     comment: {
       comment_id: result.string_id,
       parent_post: parentPostId,
+      parent_comment: parentCommentId,
       chain_parent_id: result.chain_parent_comment,
       author: user_id,
       content: result.content,
@@ -260,11 +284,13 @@ const postNewCommentWithTransaction = async ({
 export const postNewComment = async ({
   firebaseId,
   parentPostId,
+  parentCommentId,
   content,
   anonymityType,
 }: {
   firebaseId: string;
   parentPostId: string;
+  parentCommentId: string;
   content: string;
   anonymityType: string;
 }): Promise<DbCommentType | false> => {
@@ -273,6 +299,7 @@ export const postNewComment = async ({
       const result = await postNewCommentWithTransaction({
         firebaseId,
         parentPostId,
+        parentCommentId,
         chainParentId: null,
         content,
         anonymityType,
@@ -290,11 +317,13 @@ export const postNewComment = async ({
 export const postNewCommentChain = async ({
   firebaseId,
   parentPostId,
+  parentCommentId,
   contentArray,
   anonymityType,
 }: {
   firebaseId: string;
   parentPostId: string;
+  parentCommentId: string;
   contentArray: string[];
   anonymityType: string;
 }): Promise<DbCommentType[] | false> => {
@@ -307,6 +336,7 @@ export const postNewCommentChain = async ({
         const newComment = await postNewCommentWithTransaction({
           firebaseId,
           parentPostId,
+          parentCommentId,
           chainParentId: prevId,
           content,
           anonymityType,
