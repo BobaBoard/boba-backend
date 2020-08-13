@@ -67,7 +67,9 @@ router.post("/:postId/comment", isLoggedIn, async (req, res) => {
     return;
   }
 
-  log(`Making comment to post with id ${postId}`);
+  log(
+    `Making comment to post with id ${postId} replying to ${replyToCommentId}`
+  );
   log(`Content: `, content);
   log(`Anonymous: `, forceAnonymous);
 
@@ -102,7 +104,9 @@ router.post("/:postId/comment/chain", isLoggedIn, async (req, res) => {
     return;
   }
 
-  log(`Making comment to post with id ${postId}`);
+  log(
+    `Making chained comment to post with id ${postId} replying to ${replyToCommentId}`
+  );
   log(`Content: `, contentArray);
   log(`Anonymous: `, forceAnonymous);
 
