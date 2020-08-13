@@ -37,7 +37,7 @@ router.get("/:slug/visit", isLoggedIn, async (req, res) => {
   // @ts-ignore
   if (!req.currentUser) {
     // TODO: fix wrong status
-    return res.sendStatus(301);
+    return res.sendStatus(401);
   }
   log(`Setting last visited time for board: ${slug}`);
 
