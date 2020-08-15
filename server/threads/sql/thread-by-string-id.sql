@@ -94,6 +94,14 @@ WITH
                SELECT tag FROM post_tags 
                LEFT JOIN tags
                ON post_tags.tag_id = tags.id WHERE post_tags.post_id = posts.id) as index_tags,
+            array(
+               SELECT category FROM post_categories 
+               LEFT JOIN categories
+               ON post_categories.category_id = categories.id WHERE post_categories.post_id = posts.id) as category_tags,
+            array(
+               SELECT warning FROM post_warnings 
+               LEFT JOIN content_warnings
+               ON post_warnings.warning_id = content_warnings.id WHERE post_warnings.post_id = posts.id) as content_warnings,
             COALESCE(posts.whisper_tags, ARRAY[]::text[]) as whisper_tags,
             posts.anonymity_type,
             COALESCE(thread_comments.total_comments, 0) as total_comments_amount,

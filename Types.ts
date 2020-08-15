@@ -36,6 +36,8 @@ export interface ServerPostType {
   tags?: {
     index_tags: string[];
     whisper_tags: string[];
+    category_tags: string[];
+    content_warnings: string[];
   };
   comments?: ServerCommentType[];
   total_comments_amount: number;
@@ -85,6 +87,8 @@ export interface DbPostType {
   type: string;
   whisper_tags: string[];
   index_tags: string[];
+  category_tags: string[];
+  content_warnings: string[];
   anonymity_type: "everyone" | "strangers";
   total_comments_amount: number;
   new_comments_amount: number;
@@ -138,6 +142,8 @@ export interface DbActivityThreadType {
   content: string;
   index_tags: string[];
   whisper_tags: string[];
+  category_tags: string[];
+  content_warnings: string[];
   muted: boolean;
   hidden: boolean;
   options: {

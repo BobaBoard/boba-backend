@@ -31,6 +31,52 @@ export const maybeAddIndexTags = async (
   return tags.map((tag) => tag.toLowerCase());
 };
 
+export const maybeAddCategoryTags = async (
+  transaction: ITask<any>,
+  {
+    categoryTags,
+    postId,
+  }: {
+    categoryTags: string[];
+    postId: number;
+  }
+): Promise<string[]> => {
+  if (!categoryTags?.length) {
+    return [];
+  }
+  const tags = categoryTags
+    .filter((tag) => !!tag.trim().length)
+    .map((tag) => tag.trim());
+  await transaction.manyOrNone(sql.createAddCategoriesQuery(tags));
+  log(`Returning tags:`);
+  await transaction.many(sql.createAddCategoriesToPostQuery(postId, tags));
+
+  return tags.map((tag) => tag.toLowerCase());
+};
+
+export const maybeAddContentWarningTags = async (
+  transaction: ITask<any>,
+  {
+    contentWarnings,
+    postId,
+  }: {
+    contentWarnings: string[];
+    postId: number;
+  }
+): Promise<string[]> => {
+  if (!contentWarnings?.length) {
+    return [];
+  }
+  const tags = contentWarnings
+    .filter((tag) => !!tag.trim().length)
+    .map((tag) => tag.trim());
+  await transaction.manyOrNone(sql.createAddContentWarningsQuery(tags));
+  log(`Returning tags:`);
+  await transaction.many(sql.createAddContentWarningsToPostQuery(postId, tags));
+
+  return tags.map((tag) => tag.toLowerCase());
+};
+
 const getThreadDetails = async (
   transaction: ITask<any>,
   {
@@ -126,6 +172,8 @@ export const postNewContribution = async ({
   anonymityType,
   whisperTags,
   indexTags,
+  contentWarnings,
+  categoryTags,
 }: {
   firebaseId: string;
   parentPostId: string;
@@ -134,6 +182,8 @@ export const postNewContribution = async ({
   anonymityType: string;
   whisperTags: string[];
   indexTags: string[];
+  categoryTags: string[];
+  contentWarnings: string[];
 }): Promise<DbPostType | false> => {
   return pool
     .tx("create-contribution", async (t) => {
@@ -158,7 +208,6 @@ export const postNewContribution = async ({
         content,
         anonymity_type: anonymityType,
         whisper_tags: whisperTags,
-        indexTags: indexTags,
         options: {
           wide: isLarge,
         },
@@ -169,6 +218,15 @@ export const postNewContribution = async ({
       const indexedTags = await maybeAddIndexTags(t, {
         postId: result.id,
         indexTags,
+      });
+
+      const categoryTagsResult = await maybeAddCategoryTags(t, {
+        categoryTags,
+        postId: result.id,
+      });
+      const contentWarningsResult = await maybeAddContentWarningTags(t, {
+        contentWarnings,
+        postId: result.id,
       });
 
       return {
@@ -186,6 +244,8 @@ export const postNewContribution = async ({
         type: result.type,
         whisper_tags: result.whisper_tags,
         index_tags: indexedTags,
+        category_tags: categoryTagsResult,
+        content_warnings: contentWarningsResult,
         anonymity_type: result.anonymity_type,
         total_comments_amount: 0,
         new_comments_amount: 0,

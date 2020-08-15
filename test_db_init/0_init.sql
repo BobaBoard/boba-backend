@@ -46,6 +46,20 @@ CREATE TABLE IF NOT EXISTS tags
 );
 CREATE UNIQUE INDEX tags_tag on tags(tag);
 
+CREATE TABLE IF NOT EXISTS categories
+(
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    category TEXT NOT NULL
+);
+CREATE UNIQUE INDEX categories_category on categories(category);
+
+CREATE TABLE IF NOT EXISTS content_warnings
+(
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    warning TEXT NOT NULL
+);
+CREATE UNIQUE INDEX content_warnings_warning on content_warnings(warning);
+
 CREATE TABLE IF NOT EXISTS boards
 (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
@@ -184,6 +198,22 @@ CREATE TABLE IF NOT EXISTS post_tags (
     post_id BIGINT REFERENCES posts(id) ON DELETE RESTRICT NOT NULL,
     tag_id BIGINT REFERENCES tags(id) ON DELETE RESTRICT NOT NULL
 );
+CREATE INDEX post_tags_post_id on post_tags(post_id);
+CREATE INDEX post_tags_tag_id on post_tags(tag_id);
+
+CREATE TABLE IF NOT EXISTS post_categories (
+    post_id BIGINT REFERENCES posts(id) ON DELETE RESTRICT NOT NULL,
+    category_id BIGINT REFERENCES categories(id) ON DELETE RESTRICT NOT NULL
+);
+CREATE INDEX post_categories_post_id on post_categories(post_id);
+CREATE INDEX post_categories_category_id on post_categories(category_id);
+
+CREATE TABLE IF NOT EXISTS post_warnings (
+    post_id BIGINT REFERENCES posts(id) ON DELETE RESTRICT NOT NULL,
+    warning_id BIGINT REFERENCES content_warnings(id) ON DELETE RESTRICT NOT NULL
+);
+CREATE INDEX post_warnings_post_id on post_warnings(post_id);
+CREATE INDEX post_warnings_category_id on post_warnings(warning_id);
 
 CREATE TABLE IF NOT EXISTS post_audits (
     post_id BIGINT REFERENCES posts(id) ON DELETE RESTRICT NOT NULL,
