@@ -56,6 +56,8 @@ const createAddTagsQuery = (tags: string[]) => {
   });
   const tagsValues = tags.map((tag) => ({ tag: tag.toLowerCase() }));
   // NOTE: ON CONFLICT DO NOTHING DOESN'T WORK WITH RETURNING
+  // this means unfortunately that we have to always call select to get
+  // back the tag id.
   return (
     pgInstance.helpers.insert(tagsValues, tagsColumn) +
     " ON CONFLICT DO NOTHING RETURNING id, tag"
@@ -75,6 +77,76 @@ const createAddTagsToPostQuery = (postId: number, tags: string[]) => {
   );
 };
 
+const createAddCategoriesQuery = (categories: string[]) => {
+  const categoriesColumn = new pgInstance.helpers.ColumnSet(["category"], {
+    table: "categories",
+  });
+  const categoriesValues = categories.map((category) => ({
+    category: category.toLowerCase(),
+  }));
+  // NOTE: ON CONFLICT DO NOTHING DOESN'T WORK WITH RETURNING
+  // this means unfortunately that we have to always call select to get
+  // back the tag id.
+  return (
+    pgInstance.helpers.insert(categoriesValues, categoriesColumn) +
+    " ON CONFLICT DO NOTHING RETURNING id, category"
+  );
+};
+
+const createAddCategoriesToPostQuery = (
+  postId: number,
+  categories: string[]
+) => {
+  const insertCategoryQuery = `
+    INSERT INTO post_categories(post_id, category_id) 
+    VALUES($/post_id/, (SELECT id FROM categories WHERE category = $/category/)) 
+    RETURNING $/category/;`;
+  return pgInstance.helpers.concat(
+    categories.map((category) => ({
+      query: insertCategoryQuery,
+      values: {
+        post_id: postId,
+        category: category.toLowerCase(),
+      },
+    }))
+  );
+};
+
+const createAddContentWarningsQuery = (warnings: string[]) => {
+  const warningsColumn = new pgInstance.helpers.ColumnSet(["warning"], {
+    table: "content_warnings",
+  });
+  const warningsValues = warnings.map((warning) => ({
+    warning: warning.toLowerCase(),
+  }));
+  // NOTE: ON CONFLICT DO NOTHING DOESN'T WORK WITH RETURNING
+  // this means unfortunately that we have to always call select to get
+  // back the tag id.
+  return (
+    pgInstance.helpers.insert(warningsValues, warningsColumn) +
+    " ON CONFLICT DO NOTHING RETURNING id, warning"
+  );
+};
+
+const createAddContentWarningsToPostQuery = (
+  postId: number,
+  warnings: string[]
+) => {
+  const insertWarningQuery = `
+    INSERT INTO post_warnings(post_id, warning_id) 
+    VALUES($/post_id/, (SELECT id FROM content_warnings WHERE warning = $/warning/)) 
+    RETURNING $/warning/;`;
+  return pgInstance.helpers.concat(
+    warnings.map((warning) => ({
+      query: insertWarningQuery,
+      values: {
+        post_id: postId,
+        warning: warning.toLowerCase(),
+      },
+    }))
+  );
+};
+
 export default {
   getThreadDetails: new QueryFile(
     path.join(__dirname, "get-thread-details.sql")
@@ -84,5 +156,9 @@ export default {
   makeComment,
   addIdentityToThread,
   createAddTagsQuery,
+  createAddCategoriesQuery,
   createAddTagsToPostQuery,
+  createAddCategoriesToPostQuery,
+  createAddContentWarningsQuery,
+  createAddContentWarningsToPostQuery,
 };

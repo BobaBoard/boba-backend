@@ -21,7 +21,15 @@ const router = express.Router();
 
 router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
   const { postId } = req.params;
-  const { content, forceAnonymous, large, whisperTags, indexTags } = req.body;
+  const {
+    content,
+    forceAnonymous,
+    large,
+    whisperTags,
+    indexTags,
+    categoryTags,
+    contentWarnings,
+  } = req.body;
 
   // @ts-ignore
   if (!req.currentUser) {
@@ -43,6 +51,8 @@ router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
     anonymityType: forceAnonymous ? "everyone" : "strangers",
     whisperTags,
     indexTags,
+    categoryTags,
+    contentWarnings,
   });
   log(`Contribution posted: `, post);
 

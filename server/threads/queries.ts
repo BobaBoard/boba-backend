@@ -2,7 +2,11 @@ import debug from "debug";
 import pool from "../pool";
 import { v4 as uuidv4 } from "uuid";
 import sql from "./sql";
-import { maybeAddIndexTags } from "../posts/queries";
+import {
+  maybeAddIndexTags,
+  maybeAddCategoryTags,
+  maybeAddContentWarningTags,
+} from "../posts/queries";
 import { DbThreadType, DbIdentityType } from "../../Types";
 
 const log = debug("bobaserver:threads:queries-log");
@@ -65,6 +69,8 @@ export const createThread = async ({
   boardSlug,
   whisperTags,
   indexTags,
+  categoryTags,
+  contentWarnings,
 }: {
   firebaseId: string;
   content: string;
@@ -73,6 +79,8 @@ export const createThread = async ({
   boardSlug: string;
   whisperTags: string[];
   indexTags: string[];
+  categoryTags: string[];
+  contentWarnings: string[];
 }) => {
   return pool
     .tx("create-thread", async (t) => {
@@ -97,8 +105,16 @@ export const createThread = async ({
       });
       log(`Created post entry for thread ${postStringId}`);
 
-      const addedIndexTags = maybeAddIndexTags(t, {
+      maybeAddIndexTags(t, {
         indexTags,
+        postId: postResult.id,
+      });
+      maybeAddCategoryTags(t, {
+        categoryTags,
+        postId: postResult.id,
+      });
+      maybeAddContentWarningTags(t, {
+        contentWarnings,
         postId: postResult.id,
       });
 

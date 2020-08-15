@@ -105,6 +105,8 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
             tags: {
               whisper_tags: threadWithIdentity.whisper_tags,
               index_tags: threadWithIdentity.index_tags,
+              category_tags: threadWithIdentity.category_tags,
+              content_warnings: threadWithIdentity.content_warnings,
             },
             total_comments_amount: threadWithIdentity.comments_amount,
             new_comments_amount: threadWithIdentity.new_comments_amount,

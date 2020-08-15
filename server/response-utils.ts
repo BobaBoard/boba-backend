@@ -103,6 +103,8 @@ export const makeServerPost = (post: DbPostType): ServerPostType => {
     tags: {
       whisper_tags: post.whisper_tags || [],
       index_tags: post.index_tags || [],
+      category_tags: post.category_tags || [],
+      content_warnings: post.content_warnings || [],
     },
   };
   delete serverPost.whisper_tags;

@@ -85,7 +85,14 @@ SELECT
         SELECT tag FROM post_tags 
         LEFT JOIN tags
         ON post_tags.tag_id = tags.id WHERE post_tags.post_id = first_post.id) as index_tags,
-    COALESCE(posts_amount, 0) as posts_amount,
+    array(
+        SELECT category FROM post_categories 
+        LEFT JOIN categories
+        ON post_categories.category_id = categories.id WHERE post_categories.post_id = first_post.id) as category_tags,
+    array(
+        SELECT warning FROM post_warnings 
+        LEFT JOIN content_warnings
+        ON post_warnings.warning_id = content_warnings.id WHERE post_warnings.post_id = first_post.id) as content_warnings,
     threads_amount.count as threads_amount,
     -- This last activity must have the .US at the end or it will trigger a bug
     -- where some posts are skipped by the last activity cursor.

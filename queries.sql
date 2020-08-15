@@ -17,7 +17,7 @@ CREATE UNIQUE INDEX tags_tag on tags(tag);
 
 ### ADD COLUMN TO TABLE ####
 ALTER TABLE comments
-ADD chain_parent_comment2 BIGINT REFERENCES comments(id) ON DELETE RESTRICT;
+ADD COLUMN chain_parent_comment BIGINT REFERENCES comments(id) ON DELETE RESTRICT;
 
 #### ADD USER ####
 
