@@ -93,6 +93,7 @@ SELECT
         SELECT warning FROM post_warnings 
         LEFT JOIN content_warnings
         ON post_warnings.warning_id = content_warnings.id WHERE post_warnings.post_id = first_post.id) as content_warnings,
+    COALESCE(posts_amount, 0) as posts_amount,
     threads_amount.count as threads_amount,
     -- This last activity must have the .US at the end or it will trigger a bug
     -- where some posts are skipped by the last activity cursor.
