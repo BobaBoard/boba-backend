@@ -373,7 +373,16 @@ describe("threads activity queries", () => {
       posts: [
         {
           post_id: "987f795b-d60d-4016-af82-8684411f7785",
-          comments: undefined,
+          comments: [
+            {
+              comment_id: "21b16199-33d1-48c2-bb79-4d4095014avd",
+              is_new: false,
+            },
+            {
+              comment_id: "ad3c3682-cb74-43f9-9a63-bd97d0f59z87",
+              is_new: false,
+            },
+          ],
           is_new: false,
           new_comments_amount: 0,
         },

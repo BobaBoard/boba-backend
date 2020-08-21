@@ -46,6 +46,8 @@ describe("Tests boards REST API", () => {
               tags: {
                 index_tags: [],
                 whisper_tags: [],
+                category_tags: [],
+                content_warnings: [],
               },
               total_comments_amount: 2,
               new_comments_amount: 0,
@@ -81,6 +83,8 @@ describe("Tests boards REST API", () => {
               tags: {
                 index_tags: [],
                 whisper_tags: ["mwehehehehe"],
+                category_tags: [],
+                content_warnings: [],
               },
               total_comments_amount: 0,
               new_comments_amount: 0,
@@ -140,6 +144,8 @@ describe("Tests threads REST API", () => {
           tags: {
             index_tags: [],
             whisper_tags: [],
+            category_tags: [],
+            content_warnings: [],
           },
           options: {},
         },
@@ -166,6 +172,8 @@ describe("Tests threads REST API", () => {
           tags: {
             index_tags: [],
             whisper_tags: ["fight me on this"],
+            category_tags: [],
+            content_warnings: [],
           },
           options: {},
         },
@@ -183,6 +191,7 @@ describe("Tests threads REST API", () => {
               friend: false,
               self: false,
               parent_post: "29d1b2da-3289-454a-9089-2ed47db4967b",
+              parent_comment: null,
               secret_identity: {
                 avatar:
                   "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
@@ -199,6 +208,7 @@ describe("Tests threads REST API", () => {
               is_own: false,
               friend: false,
               self: false,
+              parent_comment: null,
               parent_post: "29d1b2da-3289-454a-9089-2ed47db4967b",
               secret_identity: {
                 avatar:
@@ -231,6 +241,8 @@ describe("Tests threads REST API", () => {
               "sorry mom",
               "YOU WILL NEVER KNOW WHO I AM",
             ],
+            category_tags: [],
+            content_warnings: [],
           },
           options: {},
         },

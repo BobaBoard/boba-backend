@@ -40,7 +40,7 @@ describe("Tests boards queries", () => {
       {
         avatar_reference_id: "anime.png",
         has_updates: true,
-        last_comment: null,
+        last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
         last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
         last_visit: null,
         settings: {
@@ -113,7 +113,7 @@ describe("Tests boards queries", () => {
       {
         avatar_reference_id: "anime.png",
         has_updates: false,
-        last_comment: null,
+        last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
         last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
         last_visit: null,
         settings: {
@@ -189,7 +189,7 @@ describe("Tests boards queries", () => {
       {
         avatar_reference_id: "anime.png",
         has_updates: false,
-        last_comment: null,
+        last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
         last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
         last_visit: new Date(Date.UTC(2020, 3, 26, 7, 0)),
         settings: {
@@ -287,6 +287,8 @@ describe("Tests boards queries", () => {
         options: {},
         index_tags: [],
         whisper_tags: [],
+        category_tags: [],
+        content_warnings: [],
         muted: false,
         hidden: false,
       },
@@ -315,6 +317,8 @@ describe("Tests boards queries", () => {
         options: {},
         index_tags: [],
         whisper_tags: ["mwehehehehe"],
+        category_tags: [],
+        content_warnings: [],
         muted: false,
         hidden: false,
       },
@@ -358,6 +362,8 @@ describe("Tests boards queries", () => {
         options: {},
         index_tags: [],
         whisper_tags: [],
+        category_tags: [],
+        content_warnings: [],
         muted: false,
         hidden: false,
       },
@@ -386,6 +392,8 @@ describe("Tests boards queries", () => {
         options: {},
         index_tags: [],
         whisper_tags: ["mwehehehehe"],
+        category_tags: [],
+        content_warnings: [],
         muted: false,
         hidden: false,
       },
