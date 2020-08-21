@@ -109,6 +109,8 @@ export const makeServerPost = (post: DbPostType): ServerPostType => {
   };
   delete serverPost.whisper_tags;
   delete serverPost.index_tags;
+  delete serverPost.category_tags;
+  delete serverPost.content_warnings;
 
   return serverPost;
 };
