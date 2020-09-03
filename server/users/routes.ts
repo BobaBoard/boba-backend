@@ -78,17 +78,26 @@ router.post("/invite/accept", async (req, res) => {
   const inviteDetails = await getInviteDetails({ nonce });
 
   if (!inviteDetails) {
-    res.sendStatus(404);
+    res.status(404).json({
+      errorCode: "",
+      message: "Invite not found.",
+    });
     return;
   }
 
   if (inviteDetails.expired || inviteDetails.used) {
-    res.status(403).send("Invite expired or already used.");
+    res.status(403).json({
+      errorCode: "",
+      message: "Invite expired or already used.",
+    });
     return;
   }
 
   if (inviteDetails.email.toLowerCase() != (email as string).toLowerCase()) {
-    res.status(403).send("Email doesn't match invite.");
+    res.status(403).json({
+      errorCode: "",
+      message: "Email doesn't match invite.",
+    });
     return;
   }
   firebaseAuth
@@ -103,7 +112,10 @@ router.post("/invite/accept", async (req, res) => {
       // TODO: decide whether to put these together in a transaction.
       const success = await markInviteUsed({ nonce });
       if (!success) {
-        res.status(500).send("Error marking invite as used. User not created.");
+        res.status(500).json({
+          errorCode: "",
+          message: "Error marking invite as used. User not created.",
+        });
         return;
       }
       const created = await createNewUser({
@@ -112,7 +124,10 @@ router.post("/invite/accept", async (req, res) => {
         createdOn: user.metadata.creationTime,
       });
       if (!created) {
-        res.status(500).send("Error when adding a new user to the database.");
+        res.status(500).json({
+          errorCode: "",
+          message: "Error when adding a new user to the database.",
+        });
         return;
       }
       res.sendStatus(200);
