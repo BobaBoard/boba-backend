@@ -73,7 +73,7 @@ router.post("/:postId/comment", isLoggedIn, async (req, res) => {
 
   // @ts-ignore
   if (!req.currentUser) {
-    res.sendStatus(403);
+    res.sendStatus(401);
     return;
   }
 
@@ -110,7 +110,7 @@ router.post("/:postId/comment/chain", isLoggedIn, async (req, res) => {
 
   // @ts-ignore
   if (!req.currentUser) {
-    res.sendStatus(403);
+    res.sendStatus(401);
     return;
   }
 
@@ -148,12 +148,6 @@ const EXTRACT_DID_REGEX = /data-did="([^"]+)"/;
 
 router.get("/embed/tumblr", isLoggedIn, async (req, res) => {
   const { url } = req.query;
-
-  // @ts-ignore
-  if (!req.currentUser) {
-    res.sendStatus(403);
-    return;
-  }
 
   axios
     .get(`https://www.tumblr.com/oembed/1.0?url=${url}`)

@@ -1,6 +1,10 @@
 import debug from "debug";
 import express from "express";
-import { getUserFromFirebaseId, dismissAllNotifications } from "./queries";
+import {
+  getUserFromFirebaseId,
+  dismissAllNotifications,
+  updateUserData,
+} from "./queries";
 import { isLoggedIn } from "../auth-handler";
 import { transformImageUrls } from "../response-utils";
 
@@ -15,6 +19,7 @@ router.get("/me", isLoggedIn, async (req, res) => {
   let currentUserId: string = req.currentUser?.uid;
   if (!currentUserId) {
     res.sendStatus(401);
+    return;
   }
   log(`Fetching user data for firebase id: ${currentUserId}`);
   const userData = transformImageUrls(
@@ -30,11 +35,45 @@ router.get("/me", isLoggedIn, async (req, res) => {
   });
 });
 
+router.post("/me/update", isLoggedIn, async (req, res) => {
+  // @ts-ignore
+  let currentUserId: string = req.currentUser?.uid;
+  if (!currentUserId) {
+    res.sendStatus(401);
+    return;
+  }
+  const { username, avatarUrl } = req.body;
+
+  if (!username || !avatarUrl) {
+    res.sendStatus(400);
+    return;
+  }
+  log(`Updating user data for firebase id: ${currentUserId}`);
+
+  const userData = await updateUserData({
+    firebaseId: currentUserId,
+    username,
+    avatarUrl,
+  });
+  info(`Updated user data : `, userData);
+
+  if (!userData) {
+    res.sendStatus(500);
+    return;
+  }
+
+  res.status(200).json({
+    username: userData.username,
+    avatarUrl: userData.avatarUrl,
+  });
+});
+
 router.post("/notifications/dismiss", isLoggedIn, async (req, res) => {
   // @ts-ignore
   let currentUserId: string = req.currentUser?.uid;
   if (!currentUserId) {
     res.sendStatus(401);
+    return;
   }
   log(`Dismissing notifications for firebase id: ${currentUserId}`);
   const dismissSuccessful = await dismissAllNotifications({
@@ -44,6 +83,7 @@ router.post("/notifications/dismiss", isLoggedIn, async (req, res) => {
   if (!dismissSuccessful) {
     error(`Dismiss failed`);
     return res.sendStatus(500);
+    return;
   }
 
   info(`Dismiss successful`);
