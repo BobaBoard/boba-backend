@@ -1,8 +1,16 @@
 import debug from "debug";
 import express from "express";
 import axios from "axios";
-import { createBoardsIfNotExist, createIdentitiesIfNotExist } from "./queries";
+import {
+  createBoardsIfNotExist,
+  createIdentitiesIfNotExist,
+  createInvite,
+} from "./queries";
 import { isLoggedIn } from "../auth-handler";
+import firebaseAuth from "firebase-admin";
+import { randomBytes } from "crypto";
+import { getUserFromFirebaseId } from "../users/queries";
+
 // import { transformImageUrls, mergeActivityIdentities } from "../response-utils";
 
 const log = debug("bobaserver:admin:routes");
@@ -19,8 +27,7 @@ const getSheetUrl = (url: string) =>
 router.post("/generate/boards", isLoggedIn, async (req, res) => {
   // @ts-ignore
   if (req.currentUser?.uid !== ADMIN_ID) {
-    // TODO: fix wrong status
-    return res.sendStatus(401);
+    return res.sendStatus(403);
   }
 
   const data = await getSpreadsheetData(
@@ -40,8 +47,7 @@ router.post("/generate/boards", isLoggedIn, async (req, res) => {
 router.post("/generate/identities", isLoggedIn, async (req, res) => {
   // @ts-ignore
   if (req.currentUser?.uid !== ADMIN_ID) {
-    // TODO: fix wrong status
-    return res.sendStatus(401);
+    return res.sendStatus(403);
   }
 
   const data = await getSpreadsheetData(
@@ -54,6 +60,60 @@ router.post("/generate/identities", isLoggedIn, async (req, res) => {
   const recordsAdded = await createIdentitiesIfNotExist(data);
 
   res.status(200).json({ added: recordsAdded });
+});
+
+router.post("/invite/generate", isLoggedIn, async (req, res) => {
+  // @ts-ignore
+  const user = req.currentUser?.uid;
+  if (user !== ADMIN_ID) {
+    return res.sendStatus(403);
+  }
+  const { email } = req.body;
+  // Generate 64 characters random id string
+  const inviteCode = randomBytes(32).toString("hex");
+  const adminId = await getUserFromFirebaseId({ firebaseId: user });
+
+  log(adminId);
+  const inviteAdded = await createInvite({
+    email,
+    inviteCode,
+    inviterId: adminId.id,
+  });
+
+  if (!inviteAdded) {
+    res.status(500).send(`Couldn't generate invite for email ${email}`);
+  }
+  res
+    .status(200)
+    .json({ inviteUrl: `https://v0.boba.social/invite/${inviteCode}` });
+});
+
+router.post("/migrate_fb_data", isLoggedIn, async (req, res) => {
+  // @ts-ignore
+  const user = req.currentUser?.uid;
+  if (user !== ADMIN_ID) {
+    return res.sendStatus(403);
+  }
+  // Get all users query
+  firebaseAuth
+    .auth()
+    .listUsers(1000)
+    .then((listUsersResult) => {
+      listUsersResult.users.forEach((userRecord) => {
+        userRecord.metadata.creationTime;
+        const hasSignedIn = !!userRecord.metadata.lastSignInTime;
+        // Add creation time
+        //
+        console.log("user", userRecord.toJSON());
+      });
+    })
+    .catch(function (error) {
+      console.log("Error listing users:", error);
+    });
+
+  log(await firebaseAuth.auth().getUser(user));
+
+  res.status(200).json({ added: true });
 });
 
 const getSpreadsheetData = (
