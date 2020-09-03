@@ -9,7 +9,9 @@ CREATE TABLE IF NOT EXISTS users
     username TEXT,
     /* Reference to the id of the image on external storage provider. */
     avatar_reference_id TEXT,
-    invited_by BIGINT REFERENCES users(id)
+    invited_by BIGINT REFERENCES users(id),
+    /* UTC timestamp. */
+    created_on timestamp
 );
 CREATE UNIQUE INDEX users_firebase_id on users(firebase_id);
 
@@ -46,7 +48,8 @@ CREATE TABLE IF NOT EXISTS account_invites (
     invitee_email TEXT NOT NULL,
     /* Timestamp the invite was sent at, UTC. */
     created timestamp NOT NULL DEFAULT now(),
-    duration INTERVAL NOT NULL
+    duration INTERVAL NOT NULL,
+    used BOOLEAN NOT NULL DEFAULT FALSE
 );
 CREATE INDEX iaccount_invites_inviter on account_invites(inviter);
 CREATE UNIQUE INDEX account_invites_nonce on account_invites(nonce);
