@@ -24,20 +24,32 @@ CREATE TABLE IF NOT EXISTS friends
 );
 CREATE INDEX friends_user on friends(user_id);
 
-CREATE TYPE invite_type AS ENUM ('website', 'identityShare');
-CREATE TABLE IF NOT EXISTS invites (
+-- CREATE TYPE invite_type AS ENUM ('website', 'identityShare');
+-- CREATE TABLE IF NOT EXISTS invites (
+--     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+--     nonce BIGINT NOT NULL,
+--     inviter BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
+--     invitee BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
+--     /* Timestamp the invite was sent at, UTC. */
+--     created timestamp NOT NULL DEFAULT now(),
+--     duration INTERVAL NOT NULL,
+--     invite_type invite_type[] NOT NULL
+-- );
+-- CREATE INDEX invites_inviter on invites(inviter);
+-- CREATE INDEX invites_invitee on invites(invitee);
+-- CREATE INDEX invites_nonce on invites(nonce);
+
+CREATE TABLE IF NOT EXISTS account_invites (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
-    nonce BIGINT NOT NULL,
+    nonce TEXT NOT NULL,
     inviter BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
-    invitee BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
+    invitee_email TEXT NOT NULL,
     /* Timestamp the invite was sent at, UTC. */
     created timestamp NOT NULL DEFAULT now(),
-    duration INTERVAL NOT NULL,
-    invite_type invite_type[] NOT NULL
+    duration INTERVAL NOT NULL
 );
-CREATE INDEX invites_inviter on invites(inviter);
-CREATE INDEX invites_invitee on invites(invitee);
-CREATE INDEX invites_nonce on invites(nonce);
+CREATE INDEX iaccount_invites_inviter on account_invites(inviter);
+CREATE UNIQUE INDEX account_invites_nonce on account_invites(nonce);
 
 CREATE TABLE IF NOT EXISTS tags
 (

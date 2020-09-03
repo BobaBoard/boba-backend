@@ -7,6 +7,7 @@ import {
 } from "./queries";
 import { isLoggedIn } from "../auth-handler";
 import { transformImageUrls } from "../response-utils";
+import firebaseAuth from "firebase-admin";
 
 const info = debug("bobaserver:users:routes-info");
 const log = debug("bobaserver:users:routes-log");
@@ -66,6 +67,23 @@ router.post("/me/update", isLoggedIn, async (req, res) => {
     username: userData.username,
     avatarUrl: userData.avatarUrl,
   });
+});
+
+router.post("/invite/accept", async (req, res) => {
+  const { email, password, nonce } = req.body;
+
+  // TODO: check nonce matches the email
+
+  firebaseAuth
+    .auth()
+    .createUser({
+      email,
+      password,
+    })
+    .then((user) => {
+      // TODO: add new user with
+      const uid = user.uid;
+    });
 });
 
 router.post("/notifications/dismiss", isLoggedIn, async (req, res) => {
