@@ -4,6 +4,9 @@ import {
   getUserFromFirebaseId,
   dismissAllNotifications,
   updateUserData,
+  getInviteDetails,
+  markInviteUsed,
+  createNewUser,
 } from "./queries";
 import { isLoggedIn } from "../auth-handler";
 import { transformImageUrls } from "../response-utils";
@@ -72,17 +75,54 @@ router.post("/me/update", isLoggedIn, async (req, res) => {
 router.post("/invite/accept", async (req, res) => {
   const { email, password, nonce } = req.body;
 
-  // TODO: check nonce matches the email
+  const inviteDetails = await getInviteDetails({ nonce });
 
+  if (!inviteDetails) {
+    res.sendStatus(404);
+    return;
+  }
+
+  if (inviteDetails.expired || inviteDetails.used) {
+    res.status(403).send("Invite expired or already used.");
+    return;
+  }
+
+  if (inviteDetails.email.toLowerCase() != (email as string).toLowerCase()) {
+    res.status(403).send("Email doesn't match invite.");
+    return;
+  }
   firebaseAuth
     .auth()
     .createUser({
       email,
       password,
     })
-    .then((user) => {
-      // TODO: add new user with
+    .then(async (user) => {
       const uid = user.uid;
+      log(`Created new firebase user with uid ${uid}`);
+      // TODO: decide whether to put these together in a transaction.
+      const success = await markInviteUsed({ nonce });
+      if (!success) {
+        res.status(500).send("Error marking invite as used. User not created.");
+        return;
+      }
+      const created = await createNewUser({
+        firebaseId: uid,
+        invitedBy: inviteDetails.inviter,
+        createdOn: user.metadata.creationTime,
+      });
+      if (!created) {
+        res.status(500).send("Error when adding a new user to the database.");
+        return;
+      }
+      res.sendStatus(200);
+    })
+    .catch((error) => {
+      log(error);
+      res.status(400).json({
+        errorCode: error.code,
+        message: error.message,
+      });
     });
 });
 
