@@ -46,3 +46,39 @@ export const dismissAllNotifications = async ({
     return false;
   }
 };
+
+export const updateUserData = async ({
+  firebaseId,
+  username,
+  avatarUrl,
+}: {
+  firebaseId: string;
+  username: string;
+  avatarUrl: string;
+}): Promise<{
+  username: string;
+  avatarUrl: string;
+} | null> => {
+  const updateUserDataQuery = `
+    UPDATE users
+    SET username = $/username/,
+        avatar_reference_id = $/avatar_url/
+    WHERE firebase_id = $/firebase_id/`;
+
+  try {
+    await pool.none(updateUserDataQuery, {
+      firebase_id: firebaseId,
+      username,
+      avatar_url: avatarUrl,
+    });
+    info(`Updated user data for user with firebaseId: `, firebaseId);
+    return {
+      username,
+      avatarUrl,
+    };
+  } catch (e) {
+    error(`Error while updating user data.`);
+    error(e);
+    return null;
+  }
+};
