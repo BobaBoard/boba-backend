@@ -7,6 +7,7 @@ import {
   getInviteDetails,
   markInviteUsed,
   createNewUser,
+  getBobadexIdentities,
 } from "./queries";
 import { isLoggedIn } from "../auth-handler";
 import { transformImageUrls } from "../response-utils";
@@ -139,6 +140,17 @@ router.post("/invite/accept", async (req, res) => {
         message: error.message,
       });
     });
+});
+
+router.get("/me/bobadex", isLoggedIn, async (req, res) => {
+  // @ts-ignore
+  let currentUserId: string = req.currentUser?.uid;
+  if (!currentUserId) {
+    res.sendStatus(401);
+    return;
+  }
+  const identities = await getBobadexIdentities({ firebaseId: currentUserId });
+  res.status(200).json(identities);
 });
 
 router.post("/notifications/dismiss", isLoggedIn, async (req, res) => {

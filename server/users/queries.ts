@@ -164,3 +164,32 @@ export const createNewUser = async (user: {
     return false;
   }
 };
+
+export const getBobadexIdentities = async ({
+  firebaseId,
+}: {
+  firebaseId: string;
+}) => {
+  const query = `      
+      SELECT 
+        (SELECT COUNT(*) FROM secret_identities)  AS identities_count,
+        json_agg(json_build_object(
+          'name', si.display_name,
+          'avatarUrl', si.avatar_reference_id,
+          'index', si.id - 1)) AS user_identities
+      FROM user_thread_identities uti 
+      LEFT JOIN users u ON uti.user_id = u.id
+      LEFT JOIN secret_identities si  ON uti.identity_id = si.id
+      WHERE u.firebase_id = $/firebase_id/`;
+  try {
+    const result = await pool.one(query, {
+      firebase_id: firebaseId,
+    });
+    log(`Getting boba identities firebase ID ${firebaseId}`);
+    return result;
+  } catch (e) {
+    error(`Error getting boba identities.`);
+    error(e);
+    return false;
+  }
+};
