@@ -173,10 +173,9 @@ export const getBobadexIdentities = async ({
   const query = `      
       SELECT 
         (SELECT COUNT(*) FROM secret_identities)  AS identities_count,
-        json_agg(json_build_object(
+        json_agg(DISTINCT jsonb_build_object(
           'name', si.display_name,
-          'avatarUrl', si.avatar_reference_id,
-          'index', si.id - 1)) AS user_identities
+          'avatarUrl', si.avatar_reference_id)) AS user_identities
       FROM user_thread_identities uti 
       LEFT JOIN users u ON uti.user_id = u.id
       LEFT JOIN secret_identities si  ON uti.identity_id = si.id
@@ -186,7 +185,15 @@ export const getBobadexIdentities = async ({
       firebase_id: firebaseId,
     });
     log(`Getting boba identities firebase ID ${firebaseId}`);
-    return result;
+    return {
+      identities_count: result.identities_count,
+      user_identities: result.user_identities.map(
+        (identity: any, index: number) => ({
+          ...identity,
+          index,
+        })
+      ),
+    };
   } catch (e) {
     error(`Error getting boba identities.`);
     error(e);
