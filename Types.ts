@@ -160,3 +160,16 @@ export interface DbActivityThreadType {
   comments_amount: number;
   thread_last_activity: string;
 }
+
+export interface BoardDescription {
+  id: number;
+  index: number;
+  title: string;
+  type: "text" | "category_filter";
+  description?: string;
+  categories?: string[];
+}
+
+export interface BoardMetadata {
+  descriptions: BoardDescription[];
+}
