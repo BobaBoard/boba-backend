@@ -1,7 +1,9 @@
 import debug from "debug";
 import pool from "../pool";
 import sql from "./sql";
-import { DbActivityThreadType } from "../../Types";
+import postsSQL from "../posts/sql";
+import { BoardMetadata, DbActivityThreadType } from "../../Types";
+import { getMetadataDelta } from "./utils";
 
 const log = debug("bobaserver:board:queries-log");
 const error = debug("bobaserver:board:queries-error");
@@ -52,6 +54,154 @@ export const getBoardBySlug = async (slug: string): Promise<any> => {
     error(`Error while fetching board by slug (${slug}).`);
     error(e);
     return null;
+  }
+};
+
+export const updateBoardMetadata = async (
+  slug: string,
+  metadata: BoardMetadata
+): Promise<any> => {
+  try {
+    log(`Updating metadata for board ${slug}`);
+    const board = (await pool.oneOrNone(sql.getBoardBySlug, {
+      board_slug: slug,
+    })) as BoardMetadata;
+    // TODO: ^ is actually a superset of board metadata.
+
+    if (!board) {
+      log(`Board not found: ${slug}`);
+      return null;
+    }
+
+    const delta = getMetadataDelta({
+      oldMetadata: board,
+      newMetadata: metadata,
+    });
+
+    log(`Received metadata delta for update to board ${slug}`);
+    // TODO: print at depth (now seeing [Object])
+    log(delta);
+
+    const success = await pool
+      .tx("update-descriptions", async (transaction) => {
+        // Delete all old texts
+        await Promise.all(
+          delta.texts.deleted.map(async (text) => {
+            await transaction.none(sql.deleteSection, {
+              section_id: text.id,
+              board_slug: slug,
+            });
+          })
+        );
+        log("Deleted obsolete text sections");
+
+        // Delete all old category filters
+        await Promise.all(
+          delta.categoryFilters.deleted.map(async (filter) => {
+            await transaction.none(sql.deleteSectionCategories, {
+              section_id: filter.id,
+              board_slug: slug,
+              category_names: null,
+            });
+            await transaction.none(sql.deleteSection, {
+              section_id: filter.id,
+              board_slug: slug,
+            });
+          })
+        );
+        log("Deleted obsolete category filters sections");
+
+        // Update or insert texts
+        await Promise.all(
+          delta.texts.newAndUpdated.map(async (text) => {
+            if (text.id) {
+              // this is the update of an already-existing section
+              await transaction.one(sql.updateSection, {
+                title: text.title,
+                description: text.description,
+                index: text.index,
+                board_slug: slug,
+                section_id: text.id,
+              });
+            } else {
+              await transaction.one(sql.createSection, {
+                title: text.title,
+                description: text.description,
+                index: text.index,
+                board_slug: slug,
+                type: "text",
+              });
+            }
+          })
+        );
+        log("Added (and updated) text sections.");
+
+        // Update or insert category sections
+        await Promise.all(
+          delta.categoryFilters.newAndUpdated.map(async (category) => {
+            if (category.id) {
+              // this is the update of an already-existing section
+              await transaction.one(sql.updateSection, {
+                title: category.title,
+                description: category.description,
+                index: category.index,
+                board_slug: slug,
+                section_id: category.id,
+              });
+            } else {
+              const newSection = await transaction.one(sql.createSection, {
+                title: category.title,
+                description: category.description,
+                index: category.index,
+                board_slug: slug,
+                type: "category_filter",
+              });
+              category.id = newSection.id;
+            }
+            log("Added (or updated) category filter.");
+            if (category.categories.deleted.length > 0) {
+              await transaction.none(sql.deleteSectionCategories, {
+                section_id: category.id,
+                board_slug: slug,
+                category_names: category.categories.deleted,
+              });
+              log("Removed obsolete categories from filter.");
+            }
+            if (category.categories.new.length > 0) {
+              await transaction.manyOrNone(
+                postsSQL.createAddCategoriesQuery(category.categories.new)
+              );
+              await transaction.manyOrNone(
+                sql.createAddCategoriesToFilterSectionQuery(
+                  category.id,
+                  category.categories.new
+                )
+              );
+              log("Added new categories to filter.");
+            }
+          })
+        );
+        log("Added (and updated) category filter sections.");
+        return true;
+      })
+      .catch((e) => {
+        error(`Error while updating board metadata.`);
+        error(e);
+        return false;
+      });
+
+    if (!success) {
+      return false;
+    }
+
+    // Now return the new result
+    return await pool.oneOrNone(sql.getBoardBySlug, {
+      board_slug: slug,
+    });
+  } catch (e) {
+    error(`Error while fetching board by slug (${slug}).`);
+    error(e);
+    return false;
   }
 };
 

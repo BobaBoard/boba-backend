@@ -5,6 +5,7 @@ import {
   getBoardActivityBySlug,
   getBoards,
   markBoardVisit,
+  updateBoardMetadata,
 } from "./queries";
 import { isLoggedIn } from "../auth-handler";
 import {
@@ -30,6 +31,25 @@ router.get("/:slug", async (req, res) => {
     return;
   }
   res.status(200).json(transformImageUrls(board));
+});
+
+const ADMIN_ID = "c6HimTlg2RhVH3fC1psXZORdLcx2";
+router.post("/:slug/update", isLoggedIn, async (req, res) => {
+  const { slug } = req.params;
+  const { descriptions } = req.body;
+
+  // @ts-ignore
+  if (req.currentUser?.uid !== ADMIN_ID) {
+    // TODO: check that the user has the right role
+    return res.sendStatus(403);
+  }
+  const newMetadata = await updateBoardMetadata(slug, { descriptions });
+
+  if (!newMetadata) {
+    res.sendStatus(500);
+    return;
+  }
+  res.status(200).json(newMetadata);
 });
 
 router.get("/:slug/visit", isLoggedIn, async (req, res) => {
