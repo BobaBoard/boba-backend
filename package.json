@@ -4,7 +4,7 @@
   "description": "Server for BobaBoard",
   "main": "dist/server/index.js",
   "scripts": {
-    "dev:watch": "DEBUG=bobaserver:*,-*info npm run start:watch",
+    "dev:watch": "DEBUG=bobaserver:*,-*info DEBUG_DEPTH=10 npm run start:watch",
     "start": "DEBUG=bobaserver:* ts-node -r dotenv/config server/index.ts dotenv_config_path=./.env.prod",
     "start:watch": "nodemon --exec 'ts-node' server/index.ts",
     "start-db": "docker-compose down && docker-compose up",
