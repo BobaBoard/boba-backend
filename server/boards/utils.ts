@@ -12,11 +12,16 @@ export const getMetadataDelta = ({
 }): {
   texts: {
     deleted: { id: number }[];
-    newAndUpdated: {}[];
+    newAndUpdated: BoardDescription[];
   };
   categoryFilters: {
     deleted: { id: number }[];
     newAndUpdated: {
+      id: number;
+      index: number;
+      title: string;
+      type: "text" | "category_filter";
+      description?: string;
       categories: {
         deleted: string[];
         new: string[];
