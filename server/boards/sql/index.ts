@@ -82,8 +82,8 @@ const createAddCategoriesToFilterSectionQuery = (
 ) => {
   const insertCategoryQuery = `
       INSERT INTO board_description_section_categories(section_id, category_id) 
-      VALUES($/section_id/, (SELECT id FROM categories WHERE category = $/category/)) 
-      RETURNING $/category/;`;
+      VALUES($/section_id/, (SELECT id FROM categories WHERE category = $/category/))
+      ON CONFLICT DO NOTHING;`;
   return pgInstance.helpers.concat(
     categories.map((category) => ({
       query: insertCategoryQuery,
