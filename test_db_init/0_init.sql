@@ -282,3 +282,27 @@ CREATE TABLE IF NOT EXISTS user_hidden_threads(
     thread_id BIGINT REFERENCES threads(id) ON DELETE RESTRICT NOT NULL
 );
 CREATE UNIQUE INDEX user_hidden_thread_entry on user_hidden_threads(user_id, thread_id);
+
+/**
+ * Roles tables.
+ */
+CREATE TYPE role_permissions AS ENUM ('all', 'edit_board_details');
+
+CREATE TABLE IF NOT EXISTS roles
+(
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    string_id TEXT NOT NULL,
+    name TEXT NOT NULL,
+    avatar_reference_id TEXT,
+    color TEXT,
+    description TEXT,
+    permissions role_permissions[] NOT NULL DEFAULT '{}'
+);
+CREATE UNIQUE INDEX roles_string_id on roles(string_id);
+
+CREATE TABLE IF NOT EXISTS board_user_roles(
+    user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
+    board_id BIGINT REFERENCES boards(id) ON DELETE RESTRICT NOT NULL,
+    role_id BIGINT REFERENCES roles(id) ON DELETE RESTRICT NOT NULL
+);
+CREATE UNIQUE INDEX board_user_roles_entry on board_user_roles(user_id, board_id);

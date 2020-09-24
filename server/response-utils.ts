@@ -7,10 +7,30 @@ import {
   ServerCommentType,
   ServerPostType,
   DbCommentType,
+  DbRolePermissions,
+  BoardPermissions,
 } from "../Types";
 
 const info = debug("bobaserver:response-utils-info");
 const log = debug("bobaserver::response-utils-log");
+
+export const transformPermissions = (
+  permissions?: string[]
+): BoardPermissions => {
+  log(`Transforming the following user permissions: ${permissions}`);
+  const hasAllPermissions = permissions.some(
+    (p) => (<any>DbRolePermissions)[p] == DbRolePermissions.all
+  );
+  return {
+    canEditBoardData:
+      hasAllPermissions ||
+      permissions.some(
+        (p) =>
+          (<any>DbRolePermissions)[p] ==
+          DbRolePermissions.edit_board_details.toString()
+      ),
+  };
+};
 
 const TRANSFORM_DICT: { [key: string]: string } = {
   avatar_reference_id: "avatarUrl",
