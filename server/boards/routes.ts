@@ -11,6 +11,7 @@ import {
   transformImageUrls,
   mergeObjectIdentity,
   ensureNoIdentityLeakage,
+  transformPermissions,
 } from "../response-utils";
 import { DbActivityThreadType, ServerThreadType } from "../../Types";
 
@@ -18,17 +19,22 @@ const log = debug("bobaserver:board:routes");
 
 const router = express.Router();
 
-router.get("/:slug", async (req, res) => {
+router.get("/:slug", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
   log(`Fetching data for board with slug ${slug}`);
 
-  const board = await getBoardBySlug(slug);
+  const board = await getBoardBySlug({
+    // @ts-ignore
+    firebaseId: req.currentUser?.uid,
+    slug,
+  });
   log(`Found board`, board);
 
   if (!board) {
     res.sendStatus(404);
     return;
   }
+  board.permissions = transformPermissions(board.permissions);
   res.status(200).json(transformImageUrls(board));
 });
 

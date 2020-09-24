@@ -37,9 +37,18 @@ export const getBoards = async ({
   }
 };
 
-export const getBoardBySlug = async (slug: string): Promise<any> => {
+export const getBoardBySlug = async ({
+  slug,
+  firebaseId,
+}: {
+  slug: string;
+  firebaseId: string;
+}): Promise<any> => {
   try {
-    const rows = await pool.oneOrNone(sql.getBoardBySlug, { board_slug: slug });
+    const rows = await pool.oneOrNone(sql.getBoardBySlug, {
+      board_slug: slug,
+      firebase_id: firebaseId,
+    });
 
     if (!rows) {
       log(`Board not found: ${slug}`);
