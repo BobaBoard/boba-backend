@@ -70,9 +70,9 @@ describe("Tests notifications", async () => {
     ).to.eql([
       {
         thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
-        is_new: false,
-        new_comments_amount: 0,
-        new_posts_amount: 0,
+        is_new: true,
+        new_comments_amount: 2,
+        new_posts_amount: 3,
       },
     ]);
   });
@@ -218,9 +218,9 @@ describe("Tests notifications", async () => {
     ).to.eql([
       {
         thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
-        is_new: false,
+        is_new: true,
         new_comments_amount: 0,
-        new_posts_amount: 0,
+        new_posts_amount: 3,
       },
     ]);
   });
