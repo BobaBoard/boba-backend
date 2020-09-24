@@ -79,33 +79,33 @@ describe("threads activity queries", () => {
     expect(extractActivityFromThread(thread)).to.eql({
       thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
       new_comments_amount: 0,
-      new_posts_amount: 0,
+      new_posts_amount: 3,
       posts: [
         {
           post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
           comments: undefined,
-          is_new: false,
+          is_new: true,
           new_comments_amount: 0,
         },
         {
           comments: undefined,
           post_id: "619adf62-833f-4bea-b591-03e807338a8e",
-          is_new: false,
+          is_new: true,
           new_comments_amount: 0,
         },
         {
           comments: [
             {
               comment_id: "46a16199-33d1-48c2-bb79-4d4095014688",
-              is_new: false,
+              is_new: null,
             },
             {
               comment_id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
-              is_new: false,
+              is_new: null,
             },
           ],
           post_id: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
-          is_new: false,
+          is_new: true,
           new_comments_amount: 0,
         },
       ],
@@ -241,24 +241,24 @@ describe("threads activity queries", () => {
     // get only activity-related values
     expect(extractActivityFromThread(thread)).to.eql({
       new_comments_amount: 0,
-      new_posts_amount: 0,
+      new_posts_amount: 3,
       posts: [
         {
           comments: undefined,
           post_id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
-          is_new: false,
+          is_new: true,
           new_comments_amount: 0,
         },
         {
           comments: undefined,
           post_id: "08f25ef1-82dc-4202-a410-c0723ef76789",
-          is_new: false,
+          is_new: true,
           new_comments_amount: 0,
         },
         {
           comments: undefined,
           post_id: "1f1ad4fa-f02a-48c0-a78a-51221a7db170",
-          is_new: false,
+          is_new: true,
           new_comments_amount: 0,
         },
       ],

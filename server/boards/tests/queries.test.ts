@@ -1,7 +1,8 @@
 import "mocha";
 import { expect } from "chai";
 
-import { getBoards, getBoardBySlug, getBoardActivityBySlug } from "../queries";
+import { getBoards, getBoardBySlug, getBoardActivityBySlug, updateBoardMetadata } from "../queries";
+
 
 describe("Tests boards queries", () => {
   it("fetches all boards (with user)", async () => {
@@ -29,7 +30,7 @@ describe("Tests boards queries", () => {
         has_updates: false,
         last_comment: new Date(Date.UTC(2020, 4, 23, 12, 52)),
         last_post: new Date(Date.UTC(2020, 4, 3, 16, 47)),
-        last_visit: new Date(Date.UTC(2020, 4, 25, 16, 42)),
+        last_visit: null,
         settings: {
           accentColor: "#f96680",
         },
@@ -39,7 +40,7 @@ describe("Tests boards queries", () => {
       },
       {
         avatar_reference_id: "anime.png",
-        has_updates: true,
+        has_updates: false,
         last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
         last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
         last_visit: null,
@@ -52,7 +53,7 @@ describe("Tests boards queries", () => {
       },
       {
         avatar_reference_id: "onceler-board.png",
-        has_updates: true,
+        has_updates: false,
         last_comment: null,
         last_post: new Date(Date.UTC(2020, 3, 25, 12, 42)),
         last_visit: null,
@@ -64,11 +65,24 @@ describe("Tests boards queries", () => {
         threads_count: "26",
       },
       {
+        avatar_reference_id: "kink-meme.png",
+        has_updates: false,
+        last_comment: null,
+        last_post: new Date(Date.UTC(2020, 7, 22, 10, 36, 55, 850)),
+        last_visit: null,
+        settings: {
+          accentColor: "#7b00ff",
+        },
+        slug: "memes",
+        tagline: "A board to test collections view.",
+        threads_count: "1",
+      },
+      {
         avatar_reference_id:
           "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2Feded338a-e0e5-4a97-a368-5ae525c0eec4?alt=media&token=914f84b7-a581-430e-bb09-695f653e8e02",
         has_updates: false,
         last_comment: null,
-        last_post: null,
+        last_post: new Date(Date.UTC(2020, 0, 14, 8, 42)),
         last_visit: null,
         settings: {
           accentColor: "#9b433b",
@@ -135,6 +149,19 @@ describe("Tests boards queries", () => {
         slug: "long",
         tagline: "A board to test with many posts.",
         threads_count: "26",
+      },
+      {
+        avatar_reference_id: "kink-meme.png",
+        has_updates: false,
+        last_comment: null,
+        last_post: new Date(Date.UTC(2020, 7, 22, 10, 36, 55, 850)),
+        last_visit: null,
+        settings: {
+          accentColor: "#7b00ff",
+        },
+        slug: "memes",
+        tagline: "A board to test collections view.",
+        threads_count: "1",
       },
       {
         avatar_reference_id:
@@ -213,6 +240,19 @@ describe("Tests boards queries", () => {
         threads_count: "26",
       },
       {
+        avatar_reference_id: "kink-meme.png",
+        has_updates: true,
+        last_comment: null,
+        last_post: new Date(Date.UTC(2020, 7, 22, 10, 36, 55, 850)),
+        last_visit: null,
+        settings: {
+          accentColor: "#7b00ff",
+        },
+        slug: "memes",
+        tagline: "A board to test collections view.",
+        threads_count: "1",
+      },
+      {
         avatar_reference_id:
           "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2Feded338a-e0e5-4a97-a368-5ae525c0eec4?alt=media&token=914f84b7-a581-430e-bb09-695f653e8e02",
         has_updates: false,
@@ -233,12 +273,34 @@ describe("Tests boards queries", () => {
     const board = await getBoardBySlug("gore");
 
     expect(board).to.eql({
+      descriptions: [
+        {
+          categories: [
+            "blood",
+            "bruises",
+          ],
+          description: null,
+          id: 1,
+          index: 2,
+          title: "Gore Categories",
+          type: "category_filter",
+        },
+        {
+          categories: [
+            null,
+          ],
+          description: '[{"insert": "pls b nice"}]',
+          id: 2,
+          index: 1,
+          title: "Gore description",
+          type: "text",
+        },
+      ],
       settings: {
         accentColor: "#f96680",
       },
       slug: "gore",
       tagline: "Blood! Blood! Blood!",
-      threads_count: "2",
       avatar_reference_id: "gore.png",
     });
   });
