@@ -6,16 +6,20 @@ const getBoardBySlug = `
         SELECT id FROM users WHERE firebase_id  = $/firebase_id/
     )
     SELECT 
-            boards.slug,
-            boards.tagline,
-            boards.avatar_reference_id,
-            boards.settings,
-            COUNT(threads.id) as threads_count,
-            COALESCE(json_agg(DISTINCT p.permissions) FILTER (WHERE p.permissions IS NOT NULL), '[]') AS permissions
-        FROM boards
+        boards.slug,
+        boards.tagline,
+        boards.avatar_reference_id,
+        boards.settings,
+        COALESCE(json_agg(DISTINCT jsonb_build_object(
+        	'id', p.role_id,
+        	'avatar_reference_id', p.avatar_reference_id,
+        	'name', p.role_name
+        )) FILTER (WHERE p.permissions = 'post_as_role'), '[]') AS posting_identities,
+        COALESCE(json_agg(DISTINCT p.permissions) FILTER (WHERE p.permissions IS NOT NULL AND p.permissions != 'post_as_role'), '[]') AS permissions
+    FROM boards 
         LEFT JOIN threads ON boards.id = threads.parent_board
         LEFT JOIN board_user_roles bur ON boards.id = board_id AND bur.user_id = (SELECT id FROM logged_in_user LIMIT 1)
-        LEFT JOIN LATERAL (SELECT UNNEST(roles.permissions) AS permissions FROM roles WHERE bur.role_id = roles.id) AS p ON 1=1
+        LEFT JOIN LATERAL (SELECT string_id AS role_id, avatar_reference_id AS avatar_reference_id, name AS role_name, UNNEST(roles.permissions) AS permissions FROM roles WHERE bur.role_id = roles.id) AS p ON 1=1
     WHERE boards.slug=$/board_slug/
     GROUP BY boards.id`;
 

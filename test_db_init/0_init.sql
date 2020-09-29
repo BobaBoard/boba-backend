@@ -286,7 +286,7 @@ CREATE UNIQUE INDEX user_hidden_thread_entry on user_hidden_threads(user_id, thr
 /**
  * Roles tables.
  */
-CREATE TYPE role_permissions AS ENUM ('all', 'edit_board_details');
+CREATE TYPE role_permissions AS ENUM ('all', 'edit_board_details', 'post_as_role');
 
 CREATE TABLE IF NOT EXISTS roles
 (
