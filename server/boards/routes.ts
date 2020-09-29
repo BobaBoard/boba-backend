@@ -11,8 +11,8 @@ import {
   transformImageUrls,
   mergeObjectIdentity,
   ensureNoIdentityLeakage,
-  transformPermissions,
 } from "../response-utils";
+import { transformPermissions } from "../permissions-utils";
 import { DbActivityThreadType, ServerThreadType } from "../../Types";
 
 const log = debug("bobaserver:board:routes");
@@ -35,6 +35,10 @@ router.get("/:slug", isLoggedIn, async (req, res) => {
     return;
   }
   board.permissions = transformPermissions(board.permissions);
+  board.postingIdentities = board.posting_identities.map((identity: any) =>
+    transformImageUrls(identity)
+  );
+  delete board.posting_identities;
   res.status(200).json(transformImageUrls(board));
 });
 
