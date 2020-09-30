@@ -184,3 +184,23 @@ export const unmuteBoard = async ({
     return false;
   }
 };
+
+export const dismissBoardNotifications = async ({
+  slug,
+  firebaseId,
+}: {
+  slug: string;
+  firebaseId: string;
+}) => {
+  try {
+    await pool.none(sql.dismissNotificationsBySlug, {
+      firebase_id: firebaseId,
+      board_slug: slug,
+    });
+    return true;
+  } catch (e) {
+    error(`Error while unmuting board.`);
+    error(e);
+    return false;
+  }
+};
