@@ -37,6 +37,17 @@ const unmuteBoardBySlug = `
         AND
         board_id = (SELECT id from boards WHERE boards.slug = $/board_slug/)`;
 
+const dismissNotificationsBySlug = `
+    INSERT INTO dismiss_board_notifications_requests(user_id, board_id, dismiss_request_time) VALUES (
+        (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
+        (SELECT id from boards WHERE boards.slug = $/board_slug/),
+        DEFAULT)
+    ON CONFLICT(user_id, board_id) DO UPDATE
+        SET dismiss_request_time = DEFAULT
+        WHERE
+            dismiss_board_notifications_requests.user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
+            AND dismiss_board_notifications_requests.board_id = (SELECT id from boards WHERE boards.slug = $/board_slug/)`;
+
 // TODO: fix return types so they are consistent
 export default {
   getAllBoards: new QueryFile(path.join(__dirname, "all-boards.sql")),
@@ -47,4 +58,5 @@ export default {
   markBoardVisit,
   muteBoardBySlug,
   unmuteBoardBySlug,
+  dismissNotificationsBySlug,
 };
