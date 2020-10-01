@@ -38,16 +38,16 @@ export const getBoards = async ({
 };
 
 export const getBoardBySlug = async ({
-  slug,
   firebaseId,
+  slug,
 }: {
+  firebaseId: string | undefined;
   slug: string;
-  firebaseId: string;
 }): Promise<any> => {
   try {
     const rows = await pool.oneOrNone(sql.getBoardBySlug, {
-      board_slug: slug,
       firebase_id: firebaseId,
+      board_slug: slug,
     });
 
     if (!rows) {
@@ -140,6 +140,66 @@ export const markBoardVisit = async ({
     return true;
   } catch (e) {
     error(`Error while recording thread visit.`);
+    error(e);
+    return false;
+  }
+};
+
+export const muteBoard = async ({
+  slug,
+  firebaseId,
+}: {
+  slug: string;
+  firebaseId: string;
+}) => {
+  try {
+    await pool.none(sql.muteBoardBySlug, {
+      firebase_id: firebaseId,
+      board_slug: slug,
+    });
+    return true;
+  } catch (e) {
+    error(`Error while muting board.`);
+    error(e);
+    return false;
+  }
+};
+
+export const unmuteBoard = async ({
+  slug,
+  firebaseId,
+}: {
+  slug: string;
+  firebaseId: string;
+}) => {
+  try {
+    await pool.none(sql.unmuteBoardBySlug, {
+      firebase_id: firebaseId,
+      board_slug: slug,
+    });
+    return true;
+  } catch (e) {
+    error(`Error while unmuting board.`);
+    error(e);
+    return false;
+  }
+};
+
+export const dismissBoardNotifications = async ({
+  slug,
+  firebaseId,
+}: {
+  slug: string;
+  firebaseId: string;
+}) => {
+  try {
+    await pool.none(sql.dismissNotificationsBySlug, {
+      firebase_id: firebaseId,
+      board_slug: slug,
+    });
+    return true;
+  } catch (e) {
+    error(`Error while unmuting board.`);
     error(e);
     return false;
   }

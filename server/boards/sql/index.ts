@@ -10,6 +10,7 @@ const getBoardBySlug = `
         boards.tagline,
         boards.avatar_reference_id,
         boards.settings,
+        umb.user_id IS NOT NULL as muted,
         COALESCE(json_agg(DISTINCT jsonb_build_object(
         	'id', p.role_id,
         	'avatar_reference_id', p.avatar_reference_id,
@@ -18,10 +19,12 @@ const getBoardBySlug = `
         COALESCE(json_agg(DISTINCT p.permissions) FILTER (WHERE p.permissions IS NOT NULL AND p.permissions != 'post_as_role'), '[]') AS permissions
     FROM boards 
         LEFT JOIN threads ON boards.id = threads.parent_board
+        LEFT JOIN user_muted_boards umb 
+            ON boards.id = umb.board_id AND umb.user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
         LEFT JOIN board_user_roles bur ON boards.id = board_id AND bur.user_id = (SELECT id FROM logged_in_user LIMIT 1)
         LEFT JOIN LATERAL (SELECT string_id AS role_id, avatar_reference_id AS avatar_reference_id, name AS role_name, UNNEST(roles.permissions) AS permissions FROM roles WHERE bur.role_id = roles.id) AS p ON 1=1
     WHERE boards.slug=$/board_slug/
-    GROUP BY boards.id`;
+    GROUP BY boards.id, umb.user_id`;
 
 const markBoardVisit = `
     INSERT INTO user_board_last_visits(user_id, board_id) VALUES (
@@ -32,6 +35,29 @@ const markBoardVisit = `
         WHERE user_board_last_visits.user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
             AND user_board_last_visits.board_id = (SELECT id from boards WHERE boards.slug = $/board_slug/)`;
 
+const muteBoardBySlug = `
+    INSERT INTO user_muted_boards(user_id, board_id) VALUES (
+        (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
+        (SELECT id from boards WHERE boards.slug = $/board_slug/))
+    ON CONFLICT(user_id, board_id) DO NOTHING`;
+
+const unmuteBoardBySlug = `
+    DELETE FROM user_muted_boards WHERE
+        user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
+        AND
+        board_id = (SELECT id from boards WHERE boards.slug = $/board_slug/)`;
+
+const dismissNotificationsBySlug = `
+    INSERT INTO dismiss_board_notifications_requests(user_id, board_id, dismiss_request_time) VALUES (
+        (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
+        (SELECT id from boards WHERE boards.slug = $/board_slug/),
+        DEFAULT)
+    ON CONFLICT(user_id, board_id) DO UPDATE
+        SET dismiss_request_time = DEFAULT
+        WHERE
+            dismiss_board_notifications_requests.user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
+            AND dismiss_board_notifications_requests.board_id = (SELECT id from boards WHERE boards.slug = $/board_slug/)`;
+
 // TODO: fix return types so they are consistent
 export default {
   getAllBoards: new QueryFile(path.join(__dirname, "all-boards.sql")),
@@ -40,4 +66,7 @@ export default {
   ),
   getBoardBySlug,
   markBoardVisit,
+  muteBoardBySlug,
+  unmuteBoardBySlug,
+  dismissNotificationsBySlug,
 };

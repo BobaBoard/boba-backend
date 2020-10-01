@@ -17,6 +17,7 @@ describe("Tests boards queries", () => {
         last_comment: null,
         last_post: null,
         last_visit: null,
+        muted: false,
         settings: {
           accentColor: "#ff5252",
         },
@@ -30,6 +31,7 @@ describe("Tests boards queries", () => {
         last_comment: new Date(Date.UTC(2020, 4, 23, 12, 52)),
         last_post: new Date(Date.UTC(2020, 4, 3, 16, 47)),
         last_visit: new Date(Date.UTC(2020, 4, 25, 16, 42)),
+        muted: false,
         settings: {
           accentColor: "#f96680",
         },
@@ -43,6 +45,7 @@ describe("Tests boards queries", () => {
         last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
         last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
         last_visit: null,
+        muted: false,
         settings: {
           accentColor: "#24d282",
         },
@@ -56,6 +59,7 @@ describe("Tests boards queries", () => {
         last_comment: null,
         last_post: new Date(Date.UTC(2020, 3, 25, 12, 42)),
         last_visit: null,
+        muted: false,
         settings: {
           accentColor: "#00b8ff",
         },
@@ -64,12 +68,27 @@ describe("Tests boards queries", () => {
         threads_count: "26",
       },
       {
+        avatar_reference_id: "kink-meme.png",
+        has_updates: false,
+        last_comment: null,
+        last_post: new Date(Date.UTC(2020, 7, 22, 10, 36, 55, 850)),
+        last_visit: null,
+        muted: false,
+        settings: {
+          accentColor: "#7b00ff",
+        },
+        slug: "memes",
+        tagline: "A board to test collections view.",
+        threads_count: "1",
+      },
+      {
         avatar_reference_id:
           "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2Feded338a-e0e5-4a97-a368-5ae525c0eec4?alt=media&token=914f84b7-a581-430e-bb09-695f653e8e02",
         has_updates: false,
         last_comment: null,
         last_post: null,
         last_visit: null,
+        muted: false,
         settings: {
           accentColor: "#9b433b",
         },
@@ -90,6 +109,7 @@ describe("Tests boards queries", () => {
         last_comment: null,
         last_post: null,
         last_visit: null,
+        muted: false,
         settings: {
           accentColor: "#ff5252",
         },
@@ -103,6 +123,7 @@ describe("Tests boards queries", () => {
         last_comment: new Date(Date.UTC(2020, 4, 23, 12, 52)),
         last_post: new Date(Date.UTC(2020, 4, 3, 16, 47)),
         last_visit: null,
+        muted: false,
         settings: {
           accentColor: "#f96680",
         },
@@ -116,6 +137,7 @@ describe("Tests boards queries", () => {
         last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
         last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
         last_visit: null,
+        muted: false,
         settings: {
           accentColor: "#24d282",
         },
@@ -129,6 +151,7 @@ describe("Tests boards queries", () => {
         last_comment: null,
         last_post: new Date(Date.UTC(2020, 3, 25, 12, 42)),
         last_visit: null,
+        muted: false,
         settings: {
           accentColor: "#00b8ff",
         },
@@ -137,12 +160,27 @@ describe("Tests boards queries", () => {
         threads_count: "26",
       },
       {
+        avatar_reference_id: "kink-meme.png",
+        has_updates: false,
+        last_comment: null,
+        last_post: new Date(Date.UTC(2020, 7, 22, 10, 36, 55, 850)),
+        last_visit: null,
+        muted: false,
+        settings: {
+          accentColor: "#7b00ff",
+        },
+        slug: "memes",
+        tagline: "A board to test collections view.",
+        threads_count: "1",
+      },
+      {
         avatar_reference_id:
           "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2Feded338a-e0e5-4a97-a368-5ae525c0eec4?alt=media&token=914f84b7-a581-430e-bb09-695f653e8e02",
         has_updates: false,
         last_comment: null,
         last_post: new Date(Date.UTC(2020, 0, 14, 8, 42)),
         last_visit: null,
+        muted: false,
         settings: {
           accentColor: "#9b433b",
         },
@@ -166,6 +204,7 @@ describe("Tests boards queries", () => {
         last_comment: null,
         last_post: null,
         last_visit: null,
+        muted: false,
         settings: {
           accentColor: "#ff5252",
         },
@@ -179,6 +218,7 @@ describe("Tests boards queries", () => {
         last_comment: new Date(Date.UTC(2020, 4, 23, 12, 52)),
         last_post: new Date(Date.UTC(2020, 4, 3, 16, 47)),
         last_visit: null,
+        muted: false,
         settings: {
           accentColor: "#f96680",
         },
@@ -192,6 +232,7 @@ describe("Tests boards queries", () => {
         last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
         last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
         last_visit: new Date(Date.UTC(2020, 3, 26, 7, 0)),
+        muted: false,
         settings: {
           accentColor: "#24d282",
         },
@@ -205,6 +246,7 @@ describe("Tests boards queries", () => {
         last_comment: null,
         last_post: new Date(Date.UTC(2020, 3, 25, 12, 42)),
         last_visit: new Date(Date.UTC(2020, 3, 24, 7, 0)),
+        muted: false,
         settings: {
           accentColor: "#00b8ff",
         },
@@ -213,12 +255,27 @@ describe("Tests boards queries", () => {
         threads_count: "26",
       },
       {
+        avatar_reference_id: "kink-meme.png",
+        has_updates: true,
+        last_comment: null,
+        last_post: new Date(Date.UTC(2020, 7, 22, 10, 36, 55, 850)),
+        last_visit: null,
+        muted: false,
+        settings: {
+          accentColor: "#7b00ff",
+        },
+        slug: "memes",
+        tagline: "A board to test collections view.",
+        threads_count: "1",
+      },
+      {
         avatar_reference_id:
           "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2Feded338a-e0e5-4a97-a368-5ae525c0eec4?alt=media&token=914f84b7-a581-430e-bb09-695f653e8e02",
         has_updates: false,
         last_comment: null,
         last_post: new Date(Date.UTC(2020, 0, 14, 8, 42)),
         last_visit: null,
+        muted: false,
         settings: {
           accentColor: "#9b433b",
         },
@@ -230,7 +287,7 @@ describe("Tests boards queries", () => {
   });
 
   it("fetches board by slug when slug present", async () => {
-    const board = await getBoardBySlug("gore");
+    const board = await getBoardBySlug({ slug: "gore", firebaseId: undefined });
 
     expect(board).to.eql({
       settings: {
@@ -240,11 +297,15 @@ describe("Tests boards queries", () => {
       tagline: "Blood! Blood! Blood!",
       threads_count: "2",
       avatar_reference_id: "gore.png",
+      muted: false,
     });
   });
 
   it("returns empty board when slugs not found", async () => {
-    const board = await getBoardBySlug("this_will_not_be_in_the_db");
+    const board = await getBoardBySlug({
+      slug: "this_will_not_be_in_the_db",
+      firebaseId: undefined,
+    });
 
     expect(board).to.be.null;
   });
