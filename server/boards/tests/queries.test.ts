@@ -295,9 +295,10 @@ describe("Tests boards queries", () => {
       },
       slug: "gore",
       tagline: "Blood! Blood! Blood!",
-      threads_count: "2",
       avatar_reference_id: "gore.png",
       muted: false,
+      permissions: [],
+      posting_identities: [],
     });
   });
 

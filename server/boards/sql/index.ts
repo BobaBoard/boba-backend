@@ -2,17 +2,27 @@ import { QueryFile } from "pg-promise";
 import path from "path";
 
 const getBoardBySlug = `
+    WITH logged_in_user AS (
+        SELECT id FROM users WHERE firebase_id  = $/firebase_id/
+    )
     SELECT 
         boards.slug,
         boards.tagline,
         boards.avatar_reference_id,
         boards.settings,
         umb.user_id IS NOT NULL as muted,
-        COUNT(threads.id) as threads_count
-    FROM boards
-    LEFT JOIN threads ON boards.id = threads.parent_board
-    LEFT JOIN user_muted_boards umb 
-        ON boards.id = umb.board_id AND umb.user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
+        COALESCE(json_agg(DISTINCT jsonb_build_object(
+        	'id', p.role_id,
+        	'avatar_reference_id', p.avatar_reference_id,
+        	'name', p.role_name
+        )) FILTER (WHERE p.permissions = 'post_as_role'), '[]') AS posting_identities,
+        COALESCE(json_agg(DISTINCT p.permissions) FILTER (WHERE p.permissions IS NOT NULL AND p.permissions != 'post_as_role'), '[]') AS permissions
+    FROM boards 
+        LEFT JOIN threads ON boards.id = threads.parent_board
+        LEFT JOIN user_muted_boards umb 
+            ON boards.id = umb.board_id AND umb.user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
+        LEFT JOIN board_user_roles bur ON boards.id = bur.board_id AND bur.user_id = (SELECT id FROM logged_in_user LIMIT 1)
+        LEFT JOIN LATERAL (SELECT string_id AS role_id, avatar_reference_id AS avatar_reference_id, name AS role_name, UNNEST(roles.permissions) AS permissions FROM roles WHERE bur.role_id = roles.id) AS p ON 1=1
     WHERE boards.slug=$/board_slug/
     GROUP BY boards.id, umb.user_id`;
 

@@ -15,6 +15,7 @@ import {
   mergeObjectIdentity,
   ensureNoIdentityLeakage,
 } from "../response-utils";
+import { transformPermissions } from "../permissions-utils";
 import { DbActivityThreadType, ServerThreadType } from "../../Types";
 
 const info = debug("bobaserver:board:routes-info");
@@ -27,9 +28,9 @@ router.get("/:slug", isLoggedIn, async (req, res) => {
   log(`Fetching data for board with slug ${slug}`);
 
   const board = await getBoardBySlug({
-    slug,
     // @ts-ignore
     firebaseId: req.currentUser?.uid,
+    slug,
   });
   log(`Found board`, board);
 
@@ -37,6 +38,11 @@ router.get("/:slug", isLoggedIn, async (req, res) => {
     res.sendStatus(404);
     return;
   }
+  board.permissions = transformPermissions(board.permissions);
+  board.postingIdentities = board.posting_identities.map((identity: any) =>
+    transformImageUrls(identity)
+  );
+  delete board.posting_identities;
   res.status(200).json(transformImageUrls(board));
 });
 

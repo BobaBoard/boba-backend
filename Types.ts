@@ -160,3 +160,29 @@ export interface DbActivityThreadType {
   comments_amount: number;
   thread_last_activity: string;
 }
+
+export enum DbRolePermissions {
+  all,
+  edit_board_details,
+}
+
+export interface BoardPermissions {
+  canEditBoardData: boolean;
+}
+
+export interface BoardDescription {
+  id?: number;
+  index: number;
+  title: string;
+  type: "text" | "category_filter";
+  description?: string;
+  categories?: string[];
+}
+
+export interface BoardData {
+  slug: string;
+  avatarUrl: string;
+  tagline: string;
+  accentColor: string;
+  descriptions: BoardDescription[];
+}
