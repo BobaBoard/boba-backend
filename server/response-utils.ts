@@ -1,6 +1,5 @@
 import debug from "debug";
 import {
-  DbIdentityType,
   DbPostType,
   DbThreadType,
   ServerThreadType,
