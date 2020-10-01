@@ -13,6 +13,7 @@ describe("Tests boards REST API", () => {
       settings: {
         accentColor: "#f96680",
       },
+      muted: false,
       slug: "gore",
       tagline: "Blood! Blood! Blood!",
       threads_count: "2",
