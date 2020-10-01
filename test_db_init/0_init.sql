@@ -271,11 +271,24 @@ CREATE TABLE IF NOT EXISTS dismiss_notifications_requests(
 );
 CREATE UNIQUE INDEX dismiss_notifications_request_user on dismiss_notifications_requests(user_id);
 
+CREATE TABLE IF NOT EXISTS dismiss_board_notifications_requests(
+    user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
+    board_id BIGINT REFERENCES boards(id) ON DELETE RESTRICT NOT NULL,
+    dismiss_request_time timestamp NOT NULL DEFAULT now()
+);
+CREATE UNIQUE INDEX dismiss_board_notifications_requests_entry on dismiss_board_notifications_requests(user_id, board_id);
+
 CREATE TABLE IF NOT EXISTS user_muted_threads(
     user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
     thread_id BIGINT REFERENCES threads(id) ON DELETE RESTRICT NOT NULL
 );
 CREATE UNIQUE INDEX user_muted_thread_entry on user_muted_threads(user_id, thread_id);
+
+CREATE TABLE IF NOT EXISTS user_muted_boards(
+    user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
+    board_id BIGINT REFERENCES boards(id) ON DELETE RESTRICT NOT NULL
+);
+CREATE UNIQUE INDEX user_muted_boards_entry on user_muted_boards(user_id, board_id);
 
 CREATE TABLE IF NOT EXISTS user_hidden_threads(
     user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
