@@ -17,7 +17,7 @@
     last_visited_or_dismissed AS
         (SELECT
             threads.id as thread_id,
-            GREATEST(last_visit_time, dismiss_request_time) as cutoff_time
+            GREATEST(last_visit_time, dnr.dismiss_request_time, dbnr.dismiss_request_time) as cutoff_time
          FROM threads
          INNER JOIN boards
             ON boards.id = threads.parent_board AND boards.slug = ${board_slug}
@@ -25,8 +25,10 @@
             ON users.firebase_id = ${firebase_id}
          LEFT JOIN user_thread_last_visits
             ON threads.id = user_thread_last_visits.thread_id AND user_thread_last_visits.user_id = users.id
-         LEFT JOIN dismiss_notifications_requests
-            ON dismiss_notifications_requests.user_id = users.id),
+         LEFT JOIN dismiss_notifications_requests dnr
+            ON dnr.user_id = users.id
+         LEFT JOIN dismiss_board_notifications_requests dbnr
+            ON dbnr.user_id = users.id AND dbnr.board_id = threads.parent_board),
     thread_posts_updates AS
         (SELECT
             threads.string_id as threads_string_id,

@@ -6,6 +6,9 @@ import {
   getBoards,
   markBoardVisit,
   updateBoardMetadata,
+  muteBoard,
+  unmuteBoard,
+  dismissBoardNotifications,
 } from "./queries";
 import { isLoggedIn } from "../auth-handler";
 import {
@@ -13,28 +16,39 @@ import {
   mergeObjectIdentity,
   ensureNoIdentityLeakage,
 } from "../response-utils";
+import { transformPermissions } from "../permissions-utils";
 import { DbActivityThreadType, ServerThreadType } from "../../Types";
 
+const info = debug("bobaserver:board:routes-info");
 const log = debug("bobaserver:board:routes");
 
 const router = express.Router();
 
-router.get("/:slug", async (req, res) => {
+router.get("/:slug", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
   log(`Fetching data for board with slug ${slug}`);
 
-  const board = await getBoardBySlug(slug);
+  const board = await getBoardBySlug({
+    // @ts-ignore
+    firebaseId: req.currentUser?.uid,
+    slug,
+  });
   log(`Found board`, board);
 
   if (!board) {
     res.sendStatus(404);
     return;
   }
+  board.permissions = transformPermissions(board.permissions);
+  board.postingIdentities = board.posting_identities.map((identity: any) =>
+    transformImageUrls(identity)
+  );
+  delete board.posting_identities;
   res.status(200).json(transformImageUrls(board));
 });
 
 const ADMIN_ID = "c6HimTlg2RhVH3fC1psXZORdLcx2";
-router.post("/:slug/update", isLoggedIn, async (req, res) => {
+router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
   const { descriptions } = req.body;
 
@@ -74,6 +88,79 @@ router.get("/:slug/visit", isLoggedIn, async (req, res) => {
 
   log(`Marked last visited time for board: ${slug}.`);
   res.status(200).json();
+});
+
+router.post("/:slug/mute", isLoggedIn, async (req, res) => {
+  const { slug } = req.params;
+  // @ts-ignore
+  if (!req.currentUser) {
+    return res.sendStatus(401);
+  }
+  log(`Setting board muted: ${slug}`);
+
+  if (
+    !(await muteBoard({
+      // @ts-ignore
+      firebaseId: req.currentUser.uid,
+      slug,
+    }))
+  ) {
+    res.sendStatus(500);
+    return;
+  }
+
+  // @ts-ignore
+  info(`Muted board: ${slug} for user ${req.currentUser.uid}.`);
+  res.status(200).json();
+});
+
+router.post("/:slug/unmute", isLoggedIn, async (req, res) => {
+  const { slug } = req.params;
+  // @ts-ignore
+  if (!req.currentUser) {
+    return res.sendStatus(401);
+  }
+  log(`Setting board unmuted: ${slug}`);
+
+  if (
+    !(await unmuteBoard({
+      // @ts-ignore
+      firebaseId: req.currentUser.uid,
+      slug,
+    }))
+  ) {
+    res.sendStatus(500);
+    return;
+  }
+
+  // @ts-ignore
+  info(`Unmuted board: ${slug} for user ${req.currentUser.uid}.`);
+  res.status(200).json();
+});
+
+0;
+router.post("/:slug/notifications/dismiss", isLoggedIn, async (req, res) => {
+  const { slug } = req.params;
+  // @ts-ignore
+  let currentUserId: string = req.currentUser?.uid;
+  if (!currentUserId) {
+    res.sendStatus(401);
+    return;
+  }
+  log(`Dismissing ${slug} notifications for firebase id: ${currentUserId}`);
+  const dismissSuccessful = await dismissBoardNotifications({
+    slug,
+    firebaseId: currentUserId,
+  });
+
+  if (!dismissSuccessful) {
+    log(`Dismiss failed`);
+    return res.sendStatus(500);
+  }
+
+  info(`Dismiss successful`);
+
+  res.sendStatus(204);
 });
 
 router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
@@ -164,11 +251,6 @@ router.get("/", isLoggedIn, async (req, res) => {
   }
 
   res.status(200).json(boards.map((board: any) => transformImageUrls(board)));
-});
-
-router.get("/activity/latest", async (req, res) => {
-  // TODO: implement. Gets latest active boards.
-  res.status(501);
 });
 
 export default router;
