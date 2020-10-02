@@ -13,9 +13,13 @@ describe("Tests boards REST API", () => {
       settings: {
         accentColor: "#f96680",
       },
+      muted: false,
       slug: "gore",
       tagline: "Blood! Blood! Blood!",
-      threads_count: "2",
+      postingIdentities: [],
+      permissions: {
+        canEditBoardData: false,
+      },
       avatarUrl: "/gore.png",
     });
   });

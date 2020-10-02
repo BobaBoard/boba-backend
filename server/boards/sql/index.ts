@@ -1,30 +1,6 @@
 import pg, { QueryFile } from "pg-promise";
 import path from "path";
 
-const getBoardBySlug = `
-    SELECT 
-        boards.slug,
-        boards.tagline,
-        boards.avatar_reference_id,
-        boards.settings,
-        json_agg(json_build_object(
-            'id', bds.id,
-            'index', bds.index, 
-            'title', bds.title,
-            'description', bds.description,
-            'type', bds.type,
-            'categories', (
-                SELECT json_agg(categories.category) 
-                FROM board_description_sections 
-                LEFT JOIN board_description_section_categories bdsc ON bds.id = bdsc.section_id
-                LEFT JOIN categories ON bdsc.category_id = categories.id 
-                WHERE board_description_sections.id = bds.id
-                GROUP BY bds.id ))) as descriptions
-    FROM boards
-    LEFT JOIN board_description_sections bds ON bds.board_id = boards.id 
-    WHERE boards.slug=$/board_slug/
-    GROUP BY boards.id`;
-
 const markBoardVisit = `
     INSERT INTO user_board_last_visits(user_id, board_id) VALUES (
         (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
@@ -95,17 +71,42 @@ const createAddCategoriesToFilterSectionQuery = (
   );
 };
 
-// TODO: fix return types so they are consistent
+const muteBoardBySlug = `
+    INSERT INTO user_muted_boards(user_id, board_id) VALUES (
+        (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
+        (SELECT id from boards WHERE boards.slug = $/board_slug/))
+    ON CONFLICT(user_id, board_id) DO NOTHING`;
+
+const unmuteBoardBySlug = `
+    DELETE FROM user_muted_boards WHERE
+        user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
+        AND
+        board_id = (SELECT id from boards WHERE boards.slug = $/board_slug/)`;
+
+const dismissNotificationsBySlug = `
+    INSERT INTO dismiss_board_notifications_requests(user_id, board_id, dismiss_request_time) VALUES (
+        (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
+        (SELECT id from boards WHERE boards.slug = $/board_slug/),
+        DEFAULT)
+    ON CONFLICT(user_id, board_id) DO UPDATE
+        SET dismiss_request_time = DEFAULT
+        WHERE
+            dismiss_board_notifications_requests.user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
+            AND dismiss_board_notifications_requests.board_id = (SELECT id from boards WHERE boards.slug = $/board_slug/)`;
+
 export default {
   getAllBoards: new QueryFile(path.join(__dirname, "all-boards.sql")),
   getBoardActivityBySlug: new QueryFile(
     path.join(__dirname, "board-activity-by-slug.sql")
   ),
-  getBoardBySlug,
+  getBoardBySlug: new QueryFile(path.join(__dirname, "board-by-slug.sql")),
   markBoardVisit,
   deleteSectionCategories,
   deleteSection,
   updateSection,
   createSection,
   createAddCategoriesToFilterSectionQuery,
+  muteBoardBySlug,
+  unmuteBoardBySlug,
+  dismissNotificationsBySlug,
 };

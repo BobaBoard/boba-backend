@@ -161,8 +161,17 @@ export interface DbActivityThreadType {
   thread_last_activity: string;
 }
 
+export enum DbRolePermissions {
+  all,
+  edit_board_details,
+}
+
+export interface BoardPermissions {
+  canEditBoardData: boolean;
+}
+
 export interface BoardDescription {
-  id: number;
+  id?: number;
   index: number;
   title: string;
   type: "text" | "category_filter";
@@ -171,5 +180,9 @@ export interface BoardDescription {
 }
 
 export interface BoardMetadata {
+  slug: string;
+  avatarUrl: string;
+  tagline: string;
+  accentColor: string;
   descriptions: BoardDescription[];
 }

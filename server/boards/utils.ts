@@ -8,7 +8,7 @@ export const getMetadataDelta = ({
   newMetadata,
 }: {
   oldMetadata: BoardMetadata;
-  newMetadata: BoardMetadata;
+  newMetadata: Partial<BoardMetadata>;
 }): {
   texts: {
     deleted: { id: number }[];
@@ -100,6 +100,8 @@ export const getMetadataDelta = ({
     },
     categoryFilters: {
       deleted: deletedFilters.map((filter) => ({ id: filter.id })),
+      // TODO: type this correctly
+      // @ts-ignore
       newAndUpdated: newAndUpdatedFilters,
     },
   };
