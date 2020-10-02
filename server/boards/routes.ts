@@ -15,8 +15,9 @@ import {
   transformImageUrls,
   mergeObjectIdentity,
   ensureNoIdentityLeakage,
+  processBoardMetadata,
 } from "../response-utils";
-import { transformPermissions, canEditBoard } from "../permissions-utils";
+import { canEditBoard } from "../permissions-utils";
 import { DbActivityThreadType, ServerThreadType } from "../../Types";
 
 const info = debug("bobaserver:board:routes-info");
@@ -40,16 +41,7 @@ router.get("/:slug", isLoggedIn, async (req, res) => {
     return;
   }
 
-  const boardResult = {
-    ...board,
-    permissions: transformPermissions(board.permissions),
-    postingIdentities: board.posting_identities.map((identity: any) =>
-      transformImageUrls(identity)
-    ),
-  };
-  delete boardResult.posting_identities;
-
-  res.status(200).json(transformImageUrls(boardResult));
+  res.status(200).json(processBoardMetadata(board));
 });
 
 router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
@@ -80,6 +72,8 @@ router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
 
   const newMetadata = await updateBoardMetadata({
     slug,
+    // @ts-ignore
+    firebaseId: req.currentUser?.uid,
     oldMetadata: board,
     newMetadata: { descriptions },
   });
@@ -88,7 +82,7 @@ router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
     res.sendStatus(500);
     return;
   }
-  res.status(200).json(newMetadata);
+  res.status(200).json(processBoardMetadata(newMetadata));
 });
 
 router.get("/:slug/visit", isLoggedIn, async (req, res) => {

@@ -68,10 +68,12 @@ export const getBoardBySlug = async ({
 
 export const updateBoardMetadata = async ({
   slug,
+  firebaseId,
   oldMetadata,
   newMetadata,
 }: {
   slug: string;
+  firebaseId: string;
   oldMetadata: DbBoardMetadata;
   newMetadata: Partial<DbBoardMetadata>;
 }): Promise<any> => {
@@ -200,6 +202,7 @@ export const updateBoardMetadata = async ({
     // Now return the new result
     return await pool.oneOrNone(sql.getBoardBySlug, {
       board_slug: slug,
+      firebase_id: firebaseId,
     });
   } catch (e) {
     error(`Error while fetching board by slug (${slug}).`);
