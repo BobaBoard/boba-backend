@@ -1,7 +1,12 @@
 import "mocha";
 import { expect } from "chai";
 
-import { getBoards, getBoardBySlug, getBoardActivityBySlug } from "../queries";
+import {
+  getBoards,
+  getBoardBySlug,
+  getBoardActivityBySlug,
+  updateBoardMetadata,
+} from "../queries";
 
 describe("Tests boards queries", () => {
   it("fetches all boards (with user)", async () => {

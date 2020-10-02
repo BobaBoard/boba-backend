@@ -10,9 +10,6 @@ describe("Tests boards REST API", () => {
 
     expect(res.status).to.equal(200);
     expect(res.body).to.eql({
-      settings: {
-        accentColor: "#f96680",
-      },
       descriptions: [
         {
           categories: ["blood", "bruises"],
@@ -31,6 +28,9 @@ describe("Tests boards REST API", () => {
           type: "text",
         },
       ],
+      settings: {
+        accentColor: "#f96680",
+      },
       muted: false,
       slug: "gore",
       tagline: "Blood! Blood! Blood!",
