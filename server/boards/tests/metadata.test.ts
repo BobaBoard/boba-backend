@@ -7,6 +7,10 @@ describe("Tests delta metadata", async () => {
   it("gets correct amounts with no visit", async () => {
     const delta = getMetadataDelta({
       oldMetadata: {
+        slug: "gore",
+        accentColor: "red",
+        avatarUrl: "this_is_a_url",
+        tagline: "The tagline!",
         descriptions: [
           {
             id: 1,
