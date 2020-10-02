@@ -16,7 +16,7 @@ import {
   mergeObjectIdentity,
   ensureNoIdentityLeakage,
 } from "../response-utils";
-import { transformPermissions } from "../permissions-utils";
+import { transformPermissions, canEditBoard } from "../permissions-utils";
 import { DbActivityThreadType, ServerThreadType } from "../../Types";
 
 const info = debug("bobaserver:board:routes-info");
@@ -39,25 +39,50 @@ router.get("/:slug", isLoggedIn, async (req, res) => {
     res.sendStatus(404);
     return;
   }
-  board.permissions = transformPermissions(board.permissions);
-  board.postingIdentities = board.posting_identities.map((identity: any) =>
-    transformImageUrls(identity)
-  );
-  delete board.posting_identities;
-  res.status(200).json(transformImageUrls(board));
+
+  const boardResult = {
+    ...board,
+    permissions: transformPermissions(board.permissions),
+    postingIdentities: board.posting_identities.map((identity: any) =>
+      transformImageUrls(identity)
+    ),
+  };
+  delete boardResult.posting_identities;
+
+  res.status(200).json(transformImageUrls(boardResult));
 });
 
-const ADMIN_ID = "c6HimTlg2RhVH3fC1psXZORdLcx2";
 router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
   const { descriptions } = req.body;
 
   // @ts-ignore
-  if (req.currentUser?.uid !== ADMIN_ID) {
-    // TODO: check that the user has the right role
+  if (!req.currentUser) {
+    return res.sendStatus(401);
+  }
+
+  const board = await getBoardBySlug({
+    // @ts-ignore
+    firebaseId: req.currentUser?.uid,
+    slug,
+  });
+  log(`Found board`, board);
+
+  if (!board) {
+    // TOOD: add error log
+    return res.sendStatus(404);
+  }
+
+  if (!canEditBoard(board.permissions)) {
+    // TOOD: add error log
     return res.sendStatus(403);
   }
-  const newMetadata = await updateBoardMetadata(slug, { descriptions });
+
+  const newMetadata = await updateBoardMetadata({
+    slug,
+    oldMetadata: board,
+    newMetadata: { descriptions },
+  });
 
   if (!newMetadata) {
     res.sendStatus(500);

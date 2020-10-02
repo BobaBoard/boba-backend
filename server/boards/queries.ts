@@ -2,7 +2,7 @@ import debug from "debug";
 import pool from "../pool";
 import sql from "./sql";
 import postsSQL from "../posts/sql";
-import { BoardMetadata, DbActivityThreadType } from "../../Types";
+import { DbBoardMetadata, DbActivityThreadType } from "../../Types";
 import { getMetadataDelta } from "./utils";
 
 const log = debug("bobaserver:board:queries-log");
@@ -45,7 +45,7 @@ export const getBoardBySlug = async ({
 }: {
   firebaseId: string | undefined;
   slug: string;
-}): Promise<any> => {
+}): Promise<DbBoardMetadata> => {
   try {
     const rows = await pool.oneOrNone(sql.getBoardBySlug, {
       firebase_id: firebaseId,
@@ -66,25 +66,19 @@ export const getBoardBySlug = async ({
   }
 };
 
-export const updateBoardMetadata = async (
-  slug: string,
-  metadata: Partial<BoardMetadata>
-): Promise<any> => {
+export const updateBoardMetadata = async ({
+  slug,
+  oldMetadata,
+  newMetadata,
+}: {
+  slug: string;
+  oldMetadata: DbBoardMetadata;
+  newMetadata: Partial<DbBoardMetadata>;
+}): Promise<any> => {
   try {
-    log(`Updating metadata for board ${slug}`);
-    const board = (await pool.oneOrNone(sql.getBoardBySlug, {
-      board_slug: slug,
-    })) as BoardMetadata;
-    // TODO: ^ is actually a superset of board metadata.
-
-    if (!board) {
-      log(`Board not found: ${slug}`);
-      return null;
-    }
-
     const delta = getMetadataDelta({
-      oldMetadata: board,
-      newMetadata: metadata,
+      oldMetadata,
+      newMetadata,
     });
 
     log(`Received metadata delta for update to board ${slug}`);

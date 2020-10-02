@@ -1,4 +1,4 @@
-import { BoardDescription, BoardMetadata } from "../../Types";
+import { BoardDescription, DbBoardMetadata } from "../../Types";
 
 /**
  * Returns a delta between the old metadata of a Board and the new one.
@@ -7,8 +7,8 @@ export const getMetadataDelta = ({
   oldMetadata,
   newMetadata,
 }: {
-  oldMetadata: BoardMetadata;
-  newMetadata: Partial<BoardMetadata>;
+  oldMetadata: Partial<DbBoardMetadata>;
+  newMetadata: Partial<DbBoardMetadata>;
 }): {
   texts: {
     deleted: { id: number }[];
