@@ -13,6 +13,24 @@ describe("Tests boards REST API", () => {
       settings: {
         accentColor: "#f96680",
       },
+      descriptions: [
+        {
+          categories: ["blood", "bruises"],
+          description: null,
+          id: 1,
+          index: 2,
+          title: "Gore Categories",
+          type: "category_filter",
+        },
+        {
+          categories: null,
+          description: '[{"insert": "pls b nice"}]',
+          id: 2,
+          index: 1,
+          title: "Gore description",
+          type: "text",
+        },
+      ],
       muted: false,
       slug: "gore",
       tagline: "Blood! Blood! Blood!",

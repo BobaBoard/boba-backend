@@ -6,14 +6,14 @@ SELECT
     boards.tagline,
     boards.avatar_reference_id,
     boards.settings,
-    json_agg(json_build_object(
+    json_agg(DISTINCT jsonb_build_object(
         'id', bds.id,
         'index', bds.index, 
         'title', bds.title,
         'description', bds.description,
         'type', bds.type,
         'categories', (
-            SELECT json_agg(categories.category) 
+            SELECT json_agg(categories.category) FILTER (WHERE categories.category IS NOT NULL) 
             FROM board_description_sections 
                 LEFT JOIN board_description_section_categories bdsc ON bds.id = bdsc.section_id
                 LEFT JOIN categories ON bdsc.category_id = categories.id 
