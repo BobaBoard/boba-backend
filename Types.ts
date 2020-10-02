@@ -179,10 +179,15 @@ export interface BoardDescription {
   categories?: string[];
 }
 
-export interface BoardMetadata {
+export interface DbBoardMetadata {
   slug: string;
   avatarUrl: string;
   tagline: string;
   accentColor: string;
   descriptions: BoardDescription[];
+  posting_identities: {
+    avatar_reference_id: string;
+    name: string;
+  }[];
+  permissions: string[];
 }
