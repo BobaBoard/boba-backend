@@ -13,35 +13,35 @@ describe("Tests delta metadata", async () => {
         tagline: "The tagline!",
         descriptions: [
           {
-            id: 1,
+            id: "1",
             index: 1,
             title: "title1",
             type: "text",
             description: "desc1",
           },
           {
-            id: 2,
+            id: "2",
             index: 2,
             title: "title2",
             type: "category_filter",
             categories: ["cat21", "cat22"],
           },
           {
-            id: 3,
+            id: "3",
             index: 3,
             title: "title3",
             type: "category_filter",
             categories: ["cat31", "cat32", "cat33"],
           },
           {
-            id: 4,
+            id: "4",
             index: 4,
             title: "title4",
             type: "text",
             description: "desc4",
           },
           {
-            id: 5,
+            id: "5",
             index: 5,
             title: "title5",
             type: "category_filter",
@@ -52,35 +52,35 @@ describe("Tests delta metadata", async () => {
       newMetadata: {
         descriptions: [
           {
-            id: 1,
+            id: "1",
             index: 1,
             title: "title1",
             type: "text",
             description: "desc1",
           },
           {
-            id: 6,
+            id: "6",
             index: 2,
             title: "title6",
             type: "text",
             description: "desc6",
           },
           {
-            id: 3,
+            id: "3",
             index: 3,
             title: "title3",
             type: "category_filter",
             categories: ["cat31", "cat33"],
           },
           {
-            id: 4,
+            id: "4",
             index: 4,
             title: "title4",
             type: "text",
             description: "a new description",
           },
           {
-            id: 5,
+            id: "5",
             index: 5,
             title: "title5",
             type: "category_filter",
@@ -95,21 +95,21 @@ describe("Tests delta metadata", async () => {
         deleted: [],
         newAndUpdated: [
           {
-            id: 1,
+            id: "1",
             index: 1,
             title: "title1",
             type: "text",
             description: "desc1",
           },
           {
-            id: 6,
+            id: "6",
             index: 2,
             title: "title6",
             type: "text",
             description: "desc6",
           },
           {
-            id: 4,
+            id: "4",
             index: 4,
             title: "title4",
             type: "text",
@@ -118,10 +118,10 @@ describe("Tests delta metadata", async () => {
         ],
       },
       categoryFilters: {
-        deleted: [{ id: 2 }],
+        deleted: [{ id: "2" }],
         newAndUpdated: [
           {
-            id: 3,
+            id: "3",
             index: 3,
             title: "title3",
             type: "category_filter",
@@ -131,7 +131,7 @@ describe("Tests delta metadata", async () => {
             },
           },
           {
-            id: 5,
+            id: "5",
             index: 5,
             title: "title5",
             type: "category_filter",

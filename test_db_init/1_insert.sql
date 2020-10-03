@@ -8,8 +8,8 @@ VALUES
     ('long', 'A board to test with many posts.', 'onceler-board.png', '{ "accentColor": "#00b8ff"}'),
     ('memes', 'A board to test collections view.', 'kink-meme.png', '{ "accentColor": "#7b00ff"}');
 
-INSERT INTO public.board_description_sections (board_id,title,description,"type","index") VALUES 
-(2,'Gore Categories',NULL,'category_filter',2),(2,'Gore description','[{"insert": "pls b nice"}]','text',1)
+INSERT INTO public.board_description_sections (string_id, board_id,title,description,"type","index") VALUES 
+('id1', 2,'Gore Categories',NULL,'category_filter',2),('id2', 2,'Gore description','[{"insert": "pls b nice"}]','text',1)
 ;
 INSERT INTO public.categories (category) VALUES 
 ('blood')

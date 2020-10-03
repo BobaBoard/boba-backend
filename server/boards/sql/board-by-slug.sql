@@ -7,7 +7,7 @@ SELECT
     boards.avatar_reference_id,
     boards.settings,
     json_agg(DISTINCT jsonb_build_object(
-        'id', bds.id,
+        'id', bds.string_id,
         'index', bds.index, 
         'title', bds.title,
         'description', bds.description,

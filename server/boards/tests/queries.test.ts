@@ -302,7 +302,7 @@ describe("Tests boards queries", () => {
         {
           categories: ["blood", "bruises"],
           description: null,
-          id: 1,
+          id: "id1",
           index: 2,
           title: "Gore Categories",
           type: "category_filter",
@@ -310,7 +310,7 @@ describe("Tests boards queries", () => {
         {
           categories: null,
           description: '[{"insert": "pls b nice"}]',
-          id: 2,
+          id: "id2",
           index: 1,
           title: "Gore description",
           type: "text",
