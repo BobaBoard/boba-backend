@@ -171,7 +171,7 @@ export interface BoardPermissions {
 }
 
 export interface BoardDescription {
-  id?: number;
+  id?: string;
   index: number;
   title: string;
   type: "text" | "category_filter";

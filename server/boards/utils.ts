@@ -11,13 +11,13 @@ export const getMetadataDelta = ({
   newMetadata: Partial<DbBoardMetadata>;
 }): {
   texts: {
-    deleted: { id: number }[];
+    deleted: { id: string }[];
     newAndUpdated: BoardDescription[];
   };
   categoryFilters: {
-    deleted: { id: number }[];
+    deleted: { id: string }[];
     newAndUpdated: {
-      id: number;
+      id: string;
       index: number;
       title: string;
       type: "text" | "category_filter";

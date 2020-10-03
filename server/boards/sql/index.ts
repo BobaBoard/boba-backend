@@ -14,7 +14,7 @@ const deleteSectionCategories = `
     DELETE FROM board_description_section_categories bdsc 
     USING board_description_sections bds
     WHERE  
-        bds.id = $/section_id/ AND 
+        bds.string_id = $/section_id/ AND 
         bds.id = bdsc.section_id AND 
         bds.board_id = (SELECT id from boards WHERE boards.slug = $/board_slug/) AND
         ($/category_names/ IS NULL OR bdsc.category_id IN (SELECT id FROM categories WHERE category = ANY($/category_names/)));`;
@@ -22,7 +22,7 @@ const deleteSectionCategories = `
 const deleteSection = `
     DELETE FROM board_description_sections bds
     WHERE  
-        bds.id = $/section_id/ AND
+        bds.string_id = $/section_id/ AND
         bds.board_id = (SELECT id from boards WHERE boards.slug = $/board_slug/);`;
 
 const updateSection = `
@@ -35,13 +35,14 @@ const updateSection = `
     WHERE
         boards.id = bds.board_id 
         AND bds.board_id  = (SELECT id from boards WHERE boards.slug = $/board_slug/)
-        AND bds.id = $/section_id/
+        AND bds.string_id = $/section_id/
     RETURNING *;
 `;
 
 const createSection = `
-    INSERT INTO board_description_sections(board_id, title, description, index, type)
+    INSERT INTO board_description_sections(string_id, board_id, title, description, index, type)
     VALUES(
+        $/section_id/,
         (SELECT id from boards WHERE boards.slug = $/board_slug/),
         $/title/,
         $/description/,
@@ -53,12 +54,14 @@ const createSection = `
 
 const pgInstance = pg();
 const createAddCategoriesToFilterSectionQuery = (
-  sectionId: number,
+  sectionId: string,
   categories: string[]
 ) => {
   const insertCategoryQuery = `
       INSERT INTO board_description_section_categories(section_id, category_id) 
-      VALUES($/section_id/, (SELECT id FROM categories WHERE category = $/category/))
+      VALUES(
+        (SELECT id FROM board_description_sections WHERE string_id = $/section_id/),
+        (SELECT id FROM categories WHERE category = $/category/))
       ON CONFLICT DO NOTHING;`;
   return pgInstance.helpers.concat(
     categories.map((category) => ({

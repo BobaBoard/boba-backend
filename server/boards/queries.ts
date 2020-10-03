@@ -119,7 +119,7 @@ export const updateBoardMetadata = async ({
         // Update or insert texts
         await Promise.all(
           delta.texts.newAndUpdated.map(async (text) => {
-            if (text.id) {
+            if (oldMetadata.descriptions.find((c) => c.id == text.id)) {
               // this is the update of an already-existing section
               await transaction.one(sql.updateSection, {
                 title: text.title,
@@ -130,6 +130,7 @@ export const updateBoardMetadata = async ({
               });
             } else {
               await transaction.one(sql.createSection, {
+                section_id: text.id,
                 title: text.title,
                 description: text.description,
                 index: text.index,
@@ -144,7 +145,7 @@ export const updateBoardMetadata = async ({
         // Update or insert category sections
         await Promise.all(
           delta.categoryFilters.newAndUpdated.map(async (category) => {
-            if (category.id) {
+            if (oldMetadata.descriptions.find((c) => c.id == category.id)) {
               // this is the update of an already-existing section
               await transaction.one(sql.updateSection, {
                 title: category.title,
@@ -155,6 +156,7 @@ export const updateBoardMetadata = async ({
               });
             } else {
               const newSection = await transaction.one(sql.createSection, {
+                section_id: category.id,
                 title: category.title,
                 description: category.description,
                 index: category.index,
