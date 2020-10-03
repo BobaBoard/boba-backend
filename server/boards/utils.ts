@@ -10,6 +10,8 @@ export const getMetadataDelta = ({
   oldMetadata: Partial<DbBoardMetadata>;
   newMetadata: Partial<DbBoardMetadata>;
 }): {
+  tagline?: string;
+  accentColor?: string;
   texts: {
     deleted: { id: string }[];
     newAndUpdated: BoardDescription[];
@@ -94,6 +96,14 @@ export const getMetadataDelta = ({
   });
 
   return {
+    accentColor:
+      oldMetadata.accentColor != newMetadata.accentColor
+        ? newMetadata.accentColor
+        : undefined,
+    tagline:
+      oldMetadata.tagline != newMetadata.tagline
+        ? newMetadata.tagline
+        : undefined,
     texts: {
       deleted: deletedTexts.map((text) => ({ id: text.id })),
       newAndUpdated: newAndUpdatedTexts,

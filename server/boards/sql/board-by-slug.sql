@@ -18,7 +18,7 @@ SELECT
                 LEFT JOIN board_description_section_categories bdsc ON bds.id = bdsc.section_id
                 LEFT JOIN categories ON bdsc.category_id = categories.id 
             WHERE board_description_sections.id = bds.id
-            GROUP BY bds.id ))) as descriptions,
+            GROUP BY bds.id ))) FILTER (WHERE bds.id IS NOT NULL) as descriptions,
     umb.user_id IS NOT NULL as muted,
     COALESCE(
         json_agg(DISTINCT jsonb_build_object(
