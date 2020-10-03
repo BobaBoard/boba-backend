@@ -188,6 +188,17 @@ export const updateBoardMetadata = async ({
             }
           })
         );
+
+        if (delta.tagline || delta.accentColor) {
+          await transaction.none(sql.updateBoardSettings, {
+            slug,
+            tagline: delta.tagline || oldMetadata.tagline,
+            settings: {
+              accentColor: delta.accentColor || oldMetadata.accentColor,
+            },
+          });
+        }
+
         log("Added (and updated) category filter sections.");
         return true;
       })

@@ -50,6 +50,8 @@ describe("Tests delta metadata", async () => {
         ],
       },
       newMetadata: {
+        accentColor: "blue",
+        tagline: "The new tagline!",
         descriptions: [
           {
             id: "1",
@@ -91,6 +93,8 @@ describe("Tests delta metadata", async () => {
     });
 
     expect(delta).to.eql({
+      accentColor: "blue",
+      tagline: "The new tagline!",
       texts: {
         deleted: [],
         newAndUpdated: [

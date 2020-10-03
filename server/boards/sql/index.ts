@@ -97,6 +97,12 @@ const dismissNotificationsBySlug = `
             dismiss_board_notifications_requests.user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
             AND dismiss_board_notifications_requests.board_id = (SELECT id from boards WHERE boards.slug = $/board_slug/)`;
 
+const updateBoardSettings = `
+    UPDATE boards
+    SET tagline = $/tagline/,
+        settings = $/settings/
+    WHERE boards.slug = $/slug/`;
+
 export default {
   getAllBoards: new QueryFile(path.join(__dirname, "all-boards.sql")),
   getBoardActivityBySlug: new QueryFile(
@@ -108,6 +114,7 @@ export default {
   deleteSection,
   updateSection,
   createSection,
+  updateBoardSettings,
   createAddCategoriesToFilterSectionQuery,
   muteBoardBySlug,
   unmuteBoardBySlug,

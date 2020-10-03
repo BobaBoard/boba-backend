@@ -46,7 +46,7 @@ router.get("/:slug", isLoggedIn, async (req, res) => {
 
 router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
-  const { descriptions } = req.body;
+  const { descriptions, accentColor, tagline } = req.body;
 
   // @ts-ignore
   if (!req.currentUser) {
@@ -75,7 +75,7 @@ router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
     // @ts-ignore
     firebaseId: req.currentUser?.uid,
     oldMetadata: board,
-    newMetadata: { descriptions },
+    newMetadata: { descriptions, accentColor, tagline },
   });
 
   if (!newMetadata) {
