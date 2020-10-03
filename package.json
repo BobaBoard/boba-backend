@@ -4,12 +4,13 @@
   "description": "Server for BobaBoard",
   "main": "dist/server/index.js",
   "scripts": {
-    "dev:watch": "DEBUG=bobaserver:*,-*info npm run start:watch",
+    "dev:watch": "DEBUG=bobaserver:*,-*info DEBUG_DEPTH=10 npm run start:watch",
     "start": "DEBUG=bobaserver:* ts-node -r dotenv/config server/index.ts dotenv_config_path=./.env.prod",
     "start:watch": "nodemon --exec 'ts-node' server/index.ts",
     "start-db": "docker-compose down && docker-compose up",
     "test": "DEBUG=bobaserver:* ./node_modules/mocha/bin/mocha --exclude './node_modules/**' --timeout 3000 -r ts-node/register -r dotenv/config './**/*.test.ts'",
     "test:watch": "npm run test  -- --watch --watch-extensions ts --watch-files . ",
+    "test:file": "DEBUG=bobaserver:* ./node_modules/mocha/bin/mocha --watch --watch-extensions ts --watch-files . --exclude './node_modules/**' --timeout 3000 -r ts-node/register -r dotenv/config",
     "test:docker": "docker-compose -f docker-compose.test.yml run --rm test",
     "deploy": "gcloud config set project bobaboard && gcloud app deploy --version live",
     "stage": "gcloud config set project bobaboard && gcloud app deploy --quiet --version staging  && gcloud app services set-traffic backend --splits live=1  --quiet"

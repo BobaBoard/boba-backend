@@ -296,6 +296,25 @@ CREATE TABLE IF NOT EXISTS user_hidden_threads(
 );
 CREATE UNIQUE INDEX user_hidden_thread_entry on user_hidden_threads(user_id, thread_id);
 
+CREATE TYPE board_description_section_type AS ENUM ('text', 'category_filter');
+CREATE TABLE IF NOT EXISTS board_description_sections(
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    string_id TEXT NOT NULL,
+    board_id BIGINT REFERENCES boards(id) ON DELETE RESTRICT NOT NULL,
+    title TEXT,
+    description TEXT,
+    type board_description_section_type NOT NULL,
+    index BIGINT NOT NULL
+);
+CREATE INDEX board_description_sections_board_id on board_description_sections(board_id);
+CREATE INDEX board_description_sections_string_id on board_description_sections(string_id);
+
+CREATE TABLE IF NOT EXISTS board_description_section_categories(
+    section_id BIGINT REFERENCES board_description_sections(id) ON DELETE RESTRICT NOT NULL,
+    category_id BIGINT REFERENCES categories(id) ON DELETE RESTRICT NOT NULL
+);
+CREATE UNIQUE INDEX board_description_section_categories_entry on board_description_section_categories(section_id, category_id);
+
 /**
  * Roles tables.
  */
