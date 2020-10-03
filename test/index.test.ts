@@ -10,6 +10,24 @@ describe("Tests boards REST API", () => {
 
     expect(res.status).to.equal(200);
     expect(res.body).to.eql({
+      descriptions: [
+        {
+          categories: ["blood", "bruises"],
+          description: null,
+          id: "id1",
+          index: 2,
+          title: "Gore Categories",
+          type: "category_filter",
+        },
+        {
+          categories: null,
+          description: '[{"insert": "pls b nice"}]',
+          id: "id2",
+          index: 1,
+          title: "Gore description",
+          type: "text",
+        },
+      ],
       settings: {
         accentColor: "#f96680",
       },

@@ -6,7 +6,9 @@ import {
   ServerCommentType,
   ServerPostType,
   DbCommentType,
+  DbBoardMetadata,
 } from "../Types";
+import { transformPermissions } from "./permissions-utils";
 
 const info = debug("bobaserver:response-utils-info");
 const log = debug("bobaserver::response-utils-log");
@@ -128,4 +130,17 @@ export const ensureNoIdentityLeakage = (post: any) => {
     throw Error("Identity leakage detected.");
   }
   post.comments?.forEach((comment: any) => ensureNoIdentityLeakage(comment));
+};
+
+export const processBoardMetadata = (metadata: DbBoardMetadata) => {
+  const finalMetadata = {
+    ...metadata,
+    permissions: transformPermissions(metadata.permissions),
+    postingIdentities: metadata.posting_identities.map((identity: any) =>
+      transformImageUrls(identity)
+    ),
+  };
+  delete finalMetadata.posting_identities;
+
+  return transformImageUrls(finalMetadata);
 };

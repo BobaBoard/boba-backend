@@ -1,7 +1,12 @@
 import "mocha";
 import { expect } from "chai";
 
-import { getBoards, getBoardBySlug, getBoardActivityBySlug } from "../queries";
+import {
+  getBoards,
+  getBoardBySlug,
+  getBoardActivityBySlug,
+  updateBoardMetadata,
+} from "../queries";
 
 describe("Tests boards queries", () => {
   it("fetches all boards (with user)", async () => {
@@ -293,6 +298,24 @@ describe("Tests boards queries", () => {
       settings: {
         accentColor: "#f96680",
       },
+      descriptions: [
+        {
+          categories: ["blood", "bruises"],
+          description: null,
+          id: "id1",
+          index: 2,
+          title: "Gore Categories",
+          type: "category_filter",
+        },
+        {
+          categories: null,
+          description: '[{"insert": "pls b nice"}]',
+          id: "id2",
+          index: 1,
+          title: "Gore description",
+          type: "text",
+        },
+      ],
       slug: "gore",
       tagline: "Blood! Blood! Blood!",
       avatar_reference_id: "gore.png",

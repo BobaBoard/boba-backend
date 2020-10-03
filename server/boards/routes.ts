@@ -5,6 +5,7 @@ import {
   getBoardActivityBySlug,
   getBoards,
   markBoardVisit,
+  updateBoardMetadata,
   muteBoard,
   unmuteBoard,
   dismissBoardNotifications,
@@ -14,8 +15,9 @@ import {
   transformImageUrls,
   mergeObjectIdentity,
   ensureNoIdentityLeakage,
+  processBoardMetadata,
 } from "../response-utils";
-import { transformPermissions } from "../permissions-utils";
+import { canEditBoard } from "../permissions-utils";
 import { DbActivityThreadType, ServerThreadType } from "../../Types";
 
 const info = debug("bobaserver:board:routes-info");
@@ -38,12 +40,49 @@ router.get("/:slug", isLoggedIn, async (req, res) => {
     res.sendStatus(404);
     return;
   }
-  board.permissions = transformPermissions(board.permissions);
-  board.postingIdentities = board.posting_identities.map((identity: any) =>
-    transformImageUrls(identity)
-  );
-  delete board.posting_identities;
-  res.status(200).json(transformImageUrls(board));
+
+  res.status(200).json(processBoardMetadata(board));
+});
+
+router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
+  const { slug } = req.params;
+  const { descriptions, accentColor, tagline } = req.body;
+
+  // @ts-ignore
+  if (!req.currentUser) {
+    return res.sendStatus(401);
+  }
+
+  const board = await getBoardBySlug({
+    // @ts-ignore
+    firebaseId: req.currentUser?.uid,
+    slug,
+  });
+  log(`Found board`, board);
+
+  if (!board) {
+    // TOOD: add error log
+    return res.sendStatus(404);
+  }
+
+  if (!canEditBoard(board.permissions)) {
+    // TOOD: add error log
+    return res.sendStatus(403);
+  }
+
+  const newMetadata = await updateBoardMetadata({
+    slug,
+    // @ts-ignore
+    firebaseId: req.currentUser?.uid,
+    oldMetadata: board,
+    newMetadata: { descriptions, accentColor, tagline },
+  });
+
+  if (!newMetadata) {
+    res.sendStatus(500);
+    return;
+  }
+  res.status(200).json(processBoardMetadata(newMetadata));
 });
 
 router.get("/:slug/visit", isLoggedIn, async (req, res) => {

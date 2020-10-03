@@ -171,7 +171,7 @@ export interface BoardPermissions {
 }
 
 export interface BoardDescription {
-  id?: number;
+  id?: string;
   index: number;
   title: string;
   type: "text" | "category_filter";
@@ -179,10 +179,15 @@ export interface BoardDescription {
   categories?: string[];
 }
 
-export interface BoardData {
+export interface DbBoardMetadata {
   slug: string;
   avatarUrl: string;
   tagline: string;
   accentColor: string;
   descriptions: BoardDescription[];
+  posting_identities: {
+    avatar_reference_id: string;
+    name: string;
+  }[];
+  permissions: string[];
 }
