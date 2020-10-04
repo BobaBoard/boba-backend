@@ -10,3 +10,58 @@ VALUES
     ((SELECT id FROM users WHERE username = 'bobatan'),
     (SELECT id FROM boards WHERE slug = 'gore'),
     (SELECT id FROM roles WHERE name = 'GoreMaster5000'));
+
+
+WITH
+  new_thread_id AS
+    (INSERT INTO threads(string_id, parent_board)
+      VALUES (
+        '8b2646af-2778-487e-8e44-7ae530c2549c',
+        (SELECT id FROM boards WHERE slug = 'gore'))
+     RETURNING id),
+  posts_insert AS 
+    (INSERT INTO posts(string_id, parent_post, parent_thread, author, content, type, whisper_tags, anonymity_type, created)
+      VALUES
+        ('ff9f2ae2-a254-4069-9791-3ac5e6dff5bb',
+         NULL,
+         (SELECT id FROM new_thread_id),
+         (SELECT id FROM Users WHERE username = 'bobatan'),
+         '[{"insert":"Remember to be excellent to each other and only be mean to fictional characters!"}]', 
+         'text', 
+         ARRAY['An announcement from your headmaster!'], 
+         'strangers',
+         to_timestamp('2020-09-25 05:42:00', 'YYYY-MM-DD HH:MI:SS'))
+     RETURNING id),
+  comments_insert1 AS
+    (INSERT INTO comments(string_id, parent_post, parent_thread, author, created, content, anonymity_type)
+      VALUES (
+        'd3c21e0c-7ab9-4cb6-b1ed-1b7e558ba375',
+        (SELECT id FROM posts_insert ORDER BY id DESC LIMIT 1),
+        (SELECT id FROM new_thread_id),
+        (SELECT id FROM Users WHERE username = 'jersey_devil_69'),
+        to_timestamp('2020-10-02 05:43:00', 'YYYY-MM-DD HH:MI:SS'),
+        '[{"insert":"But can we be mean to you?"}]',
+        'strangers'
+      ) RETURNING id),
+  comments_insert2 AS
+    (INSERT INTO comments(string_id, parent_post, parent_thread, author, created, content, anonymity_type, parent_comment)
+      VALUES (
+        '146d4087-e11e-4912-9d67-93065b9a0c78',
+        (SELECT id FROM posts_insert ORDER BY id DESC LIMIT 1),
+        (SELECT id FROM new_thread_id),
+        (SELECT id FROM Users WHERE username = 'bobatan'),
+        to_timestamp('2020-04-24 05:44:00', 'YYYY-MM-DD HH:MI:SS'),
+        '[{"insert":"BobaNitro users can be mean to the webmaster once a month."}]', 
+        'strangers',
+        (SELECT id FROM comments_insert1 LIMIT 1)
+      ))
+INSERT INTO user_thread_identities(thread_id, user_id, identity_id, role_id)
+    VALUES
+     ((SELECT id FROM new_thread_id),
+      (SELECT id FROM Users WHERE username = 'jersey_devil_69'),
+      (SELECT id FROM secret_identities WHERE display_name = 'DragonFucker'),
+      NULL),
+     ((SELECT id FROM new_thread_id),
+      (SELECT id FROM Users WHERE username = 'bobatan'),
+      NULL,
+      (SELECT id FROM roles WHERE name = 'GoreMaster5000'));
