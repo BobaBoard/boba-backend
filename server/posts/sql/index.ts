@@ -14,11 +14,12 @@ const getRandomIdentity = `
     LIMIT 1`;
 
 const addIdentityToThread = `
-    INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
+    INSERT INTO user_thread_identities(thread_id, user_id, identity_id, role_id)
     VALUES(
         $/thread_id/,
         $/user_id/, 
-        $/secret_identity_id/
+        $/secret_identity_id/,
+        $/role_identity_id/
     ) RETURNING *`;
 
 const makePost = `

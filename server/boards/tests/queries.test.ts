@@ -32,9 +32,9 @@ describe("Tests boards queries", () => {
       },
       {
         avatar_reference_id: "gore.png",
-        has_updates: false,
-        last_comment: new Date(Date.UTC(2020, 4, 23, 12, 52)),
-        last_post: new Date(Date.UTC(2020, 4, 3, 16, 47)),
+        has_updates: true,
+        last_comment: new Date(Date.UTC(2020, 9, 2, 12, 43)),
+        last_post: new Date(Date.UTC(2020, 8, 25, 12, 42)),
         last_visit: new Date(Date.UTC(2020, 4, 25, 16, 42)),
         muted: false,
         settings: {
@@ -42,7 +42,7 @@ describe("Tests boards queries", () => {
         },
         slug: "gore",
         tagline: "Blood! Blood! Blood!",
-        threads_count: "2",
+        threads_count: "3",
       },
       {
         avatar_reference_id: "anime.png",
@@ -125,8 +125,8 @@ describe("Tests boards queries", () => {
       {
         avatar_reference_id: "gore.png",
         has_updates: false,
-        last_comment: new Date(Date.UTC(2020, 4, 23, 12, 52)),
-        last_post: new Date(Date.UTC(2020, 4, 3, 16, 47)),
+        last_comment: new Date(Date.UTC(2020, 9, 2, 12, 43)),
+        last_post: new Date(Date.UTC(2020, 8, 25, 12, 42)),
         last_visit: null,
         muted: false,
         settings: {
@@ -134,7 +134,7 @@ describe("Tests boards queries", () => {
         },
         slug: "gore",
         tagline: "Blood! Blood! Blood!",
-        threads_count: "2",
+        threads_count: "3",
       },
       {
         avatar_reference_id: "anime.png",
@@ -220,8 +220,8 @@ describe("Tests boards queries", () => {
       {
         avatar_reference_id: "gore.png",
         has_updates: true,
-        last_comment: new Date(Date.UTC(2020, 4, 23, 12, 52)),
-        last_post: new Date(Date.UTC(2020, 4, 3, 16, 47)),
+        last_comment: new Date(Date.UTC(2020, 9, 2, 12, 43)),
+        last_post: new Date(Date.UTC(2020, 8, 25, 12, 42)),
         last_visit: null,
         muted: false,
         settings: {
@@ -229,7 +229,7 @@ describe("Tests boards queries", () => {
         },
         slug: "gore",
         tagline: "Blood! Blood! Blood!",
-        threads_count: "2",
+        threads_count: "3",
       },
       {
         avatar_reference_id: "anime.png",
@@ -348,6 +348,37 @@ describe("Tests boards queries", () => {
 
     expect(board.activity).to.eql([
       {
+        author: "1",
+        category_tags: [],
+        comments_amount: 2,
+        content:
+          '[{"insert":"Remember to be excellent to each other and only be mean to fictional characters!"}]',
+        content_warnings: [],
+        created: "2020-09-25T05:42:00",
+        friend: true,
+        hidden: false,
+        index_tags: [],
+        is_new: true,
+        last_comment: "2020-10-02T05:43:00",
+        muted: false,
+        new_comments_amount: 2,
+        new_posts_amount: 1,
+        options: {},
+        parent_post_id: null,
+        post_id: "ff9f2ae2-a254-4069-9791-3ac5e6dff5bb",
+        posts_amount: 1,
+        secret_identity_avatar:
+          "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F6518df53-2031-4ac5-8d75-57a0051ed924?alt=media&token=23df54b7-297c-42ff-a0ea-b9862c9814f8",
+        secret_identity_name: "GoreMaster5000",
+        self: false,
+        thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
+        thread_last_activity: "2020-10-02T05:43:00.000000",
+        threads_amount: 0,
+        user_avatar: "bobatan.png",
+        username: "bobatan",
+        whisper_tags: ["An announcement from your headmaster!"],
+      },
+      {
         comments_amount: 2,
         content: '[{"insert":"Favorite character to maim?"}]',
         created: "2020-04-30T03:23:00",
@@ -422,6 +453,37 @@ describe("Tests boards queries", () => {
     }
 
     expect(board.activity).to.eql([
+      {
+        author: "1",
+        category_tags: [],
+        comments_amount: 2,
+        content:
+          '[{"insert":"Remember to be excellent to each other and only be mean to fictional characters!"}]',
+        content_warnings: [],
+        created: "2020-09-25T05:42:00",
+        friend: false,
+        hidden: false,
+        index_tags: [],
+        is_new: false,
+        last_comment: "2020-10-02T05:43:00",
+        muted: false,
+        new_comments_amount: 0,
+        new_posts_amount: 0,
+        options: {},
+        parent_post_id: null,
+        post_id: "ff9f2ae2-a254-4069-9791-3ac5e6dff5bb",
+        posts_amount: 1,
+        secret_identity_avatar:
+          "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F6518df53-2031-4ac5-8d75-57a0051ed924?alt=media&token=23df54b7-297c-42ff-a0ea-b9862c9814f8",
+        secret_identity_name: "GoreMaster5000",
+        self: false,
+        thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
+        thread_last_activity: "2020-10-02T05:43:00.000000",
+        threads_amount: 0,
+        user_avatar: "bobatan.png",
+        username: "bobatan",
+        whisper_tags: ["An announcement from your headmaster!"],
+      },
       {
         comments_amount: 2,
         content: '[{"insert":"Favorite character to maim?"}]',

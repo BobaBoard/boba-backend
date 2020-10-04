@@ -13,6 +13,15 @@ export const canEditBoard = (permissions?: string[]) => {
   );
 };
 
+export const canPostAs = (permissions?: string[]) => {
+  return permissions.some(
+    (p) =>
+      (<any>DbRolePermissions)[p] ==
+        DbRolePermissions.post_as_role.toString() ||
+      (<any>DbRolePermissions)[p] == DbRolePermissions.all.toString()
+  );
+};
+
 export const transformPermissions = (
   permissions?: string[]
 ): BoardPermissions => {

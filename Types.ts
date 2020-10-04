@@ -164,6 +164,7 @@ export interface DbActivityThreadType {
 export enum DbRolePermissions {
   all,
   edit_board_details,
+  post_as_role,
 }
 
 export interface BoardPermissions {
@@ -186,6 +187,7 @@ export interface DbBoardMetadata {
   accentColor: string;
   descriptions: BoardDescription[];
   posting_identities: {
+    id: string;
     avatar_reference_id: string;
     name: string;
   }[];
