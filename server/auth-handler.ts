@@ -30,7 +30,7 @@ export const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
     })
     .catch((e) => {
       error("Error during verification. No user set.");
-      //error(e);
+      error(e);
       next();
     });
 };

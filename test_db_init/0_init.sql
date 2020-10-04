@@ -145,17 +145,6 @@ CREATE TABLE IF NOT EXISTS threads
 );
 CREATE INDEX threads_string_id on threads(string_id);
 
-/*
- * A mapping of which identity has been assigned to a user in each thread.
- */
-CREATE TABLE IF NOT EXISTS user_thread_identities
-(
-    thread_id BIGINT REFERENCES threads(id) NOT NULL,
-    user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
-    identity_id BIGINT REFERENCES secret_identities(id) ON DELETE RESTRICT NOT NULL
-);
-CREATE INDEX user_thread_identities_thread_id on user_thread_identities(thread_id);
-
 CREATE TABLE IF NOT EXISTS thread_watchers (
     thread_id BIGINT REFERENCES threads(id) ON DELETE RESTRICT NOT NULL,
     user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
@@ -338,3 +327,16 @@ CREATE TABLE IF NOT EXISTS board_user_roles(
     role_id BIGINT REFERENCES roles(id) ON DELETE RESTRICT NOT NULL
 );
 CREATE UNIQUE INDEX board_user_roles_entry on board_user_roles(user_id, board_id);
+
+/*
+ * A mapping of which identity has been assigned to a user in each thread.
+ */
+CREATE TABLE IF NOT EXISTS user_thread_identities
+(
+    thread_id BIGINT REFERENCES threads(id) NOT NULL,
+    user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
+    identity_id BIGINT REFERENCES secret_identities(id) ON DELETE RESTRICT,
+    role_id BIGINT REFERENCES roles(id) ON DELETE RESTRICT,
+    CHECK (identity_id is not null or role_id is not null)
+);
+CREATE INDEX user_thread_identities_thread_id on user_thread_identities(thread_id);

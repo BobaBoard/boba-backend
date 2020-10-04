@@ -7,13 +7,15 @@
             uti.user_id as user_id,
             users.username as username,
             users.avatar_reference_id as user_avatar,
-            secret_identities.display_name as secret_identity,
-            secret_identities.avatar_reference_id as secret_avatar
+            COALESCE(secret_identities.display_name, roles.name) as secret_identity,
+            COALESCE(secret_identities.avatar_reference_id, roles.avatar_reference_id) as secret_avatar
          FROM user_thread_identities AS uti 
          INNER JOIN users 
             ON uti.user_id = users.id 
-         INNER JOIN secret_identities 
-            ON secret_identities.id = uti.identity_id),
+         LEFT JOIN secret_identities 
+            ON secret_identities.id = uti.identity_id
+         LEFT JOIN roles
+         	ON roles.id = uti.role_id),
     last_visited_or_dismissed AS
         (SELECT
             threads.id as thread_id,

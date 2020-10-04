@@ -16,8 +16,8 @@ WITH
             uti.user_id as user_id,
             users.username as username,
             users.avatar_reference_id as user_avatar,
-            secret_identities.display_name as secret_identity_name,
-            secret_identities.avatar_reference_id as secret_identity_avatar,
+            COALESCE(secret_identities.display_name, roles.name) as secret_identity_name,
+            COALESCE(secret_identities.avatar_reference_id, roles.avatar_reference_id) as secret_identity_avatar,
             COALESCE(is_friend.friend, FALSE) as friend,
             COALESCE(users.firebase_id = ${firebase_id}, FALSE) as self
          FROM user_thread_identities AS uti 
@@ -25,8 +25,10 @@ WITH
             ON uti.thread_id = threads.id
          INNER JOIN users 
             ON uti.user_id = users.id 
-         INNER JOIN secret_identities 
-            ON secret_identities.id = uti.identity_id    
+         LEFT JOIN secret_identities 
+            ON secret_identities.id = uti.identity_id
+         LEFT JOIN roles 
+            ON roles.id = uti.role_id 
          LEFT JOIN LATERAL (
             SELECT true as friend 
             FROM friends 
