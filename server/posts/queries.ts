@@ -2,8 +2,10 @@ import debug from "debug";
 import pool from "../pool";
 import { v4 as uuidv4 } from "uuid";
 import sql from "./sql";
+import threadsSql from "../threads/sql";
 import { DbPostType, DbCommentType } from "../../Types";
 import { ITask } from "pg-promise";
+import { canPostAs } from "../permissions-utils";
 
 const log = debug("bobaserver:posts:queries-log");
 const error = debug("bobaserver:posts:queries-error");
@@ -83,10 +85,12 @@ const getThreadDetails = async (
     parentPostId,
     firebaseId,
     parentCommentId,
+    identityId,
   }: {
     firebaseId: string;
     parentPostId: string;
     parentCommentId?: string;
+    identityId?: string;
   }
 ): Promise<{
   user_id: number;
@@ -104,12 +108,14 @@ const getThreadDetails = async (
     username,
     user_avatar,
     secret_identity_id,
+    role_identity_id,
     secret_identity_name,
     secret_identity_avatar,
     thread_id,
     thread_string_id,
     post_id,
     comment_id,
+    board_slug,
   } = await transaction.one(sql.getThreadDetails, {
     post_string_id: parentPostId,
     firebase_id: firebaseId,
@@ -122,6 +128,7 @@ const getThreadDetails = async (
     username,
     user_avatar,
     secret_identity_id,
+    role_identity_id,
     secret_identity_name,
     secret_identity_avatar,
     thread_id,
@@ -129,26 +136,19 @@ const getThreadDetails = async (
     post_id,
   });
 
-  if (!secret_identity_id) {
-    const randomIdentityResult = await transaction.one(sql.getRandomIdentity, {
-      thread_id,
-    });
-    secret_identity_id = randomIdentityResult.secret_identity_id;
-    secret_identity_name = randomIdentityResult.secret_identity_name;
-    secret_identity_avatar = randomIdentityResult.secret_identity_avatar;
-    // The secret identity id is not currently in the thread data.
-    // Add it.
-    log(`Adding identity to thread:`);
-    log({
+  if (!role_identity_id && !secret_identity_id) {
+    ({
       secret_identity_id,
       secret_identity_name,
       secret_identity_avatar,
-    });
-    await transaction.one(sql.addIdentityToThread, {
+      role_identity_id,
+    } = await addNewIdentityToThread(transaction, {
       user_id,
+      identityId,
       thread_id,
-      secret_identity_id,
-    });
+      firebaseId,
+      board_slug,
+    }));
   }
 
   return {
@@ -166,6 +166,7 @@ const getThreadDetails = async (
 
 export const postNewContribution = async ({
   firebaseId,
+  identityId,
   parentPostId,
   content,
   isLarge,
@@ -176,6 +177,7 @@ export const postNewContribution = async ({
   categoryTags,
 }: {
   firebaseId: string;
+  identityId?: string;
   parentPostId: string;
   content: string;
   isLarge: boolean;
@@ -197,6 +199,7 @@ export const postNewContribution = async ({
         thread_string_id,
         post_id,
       } = await getThreadDetails(t, {
+        identityId,
         parentPostId,
         firebaseId,
       });
@@ -414,4 +417,73 @@ export const postNewCommentChain = async ({
       error(e);
       return false;
     });
+};
+
+const addNewIdentityToThread = async (
+  transaction: ITask<any>,
+  {
+    user_id,
+    identityId,
+    thread_id,
+    firebaseId,
+    board_slug,
+  }: {
+    identityId: string;
+    firebaseId: string;
+    user_id: any;
+    board_slug: any;
+    thread_id: any;
+  }
+) => {
+  let secret_identity_id = null;
+  let role_identity_id = null;
+  let secret_identity_name;
+  let secret_identity_avatar;
+
+  if (!identityId) {
+    const randomIdentityResult = await transaction.one(sql.getRandomIdentity, {
+      thread_id,
+    });
+    secret_identity_id = randomIdentityResult.secret_identity_id;
+    secret_identity_name = randomIdentityResult.secret_identity_name;
+    secret_identity_avatar = randomIdentityResult.secret_identity_avatar;
+  } else {
+    const roleResult = await transaction.one(threadsSql.getRoleByStringId, {
+      role_id: identityId,
+      firebase_id: firebaseId,
+      board_slug,
+    });
+    if (!canPostAs(roleResult.permissions)) {
+      throw new Error(
+        "Attempted to post on thread with identity without post as permissions"
+      );
+    }
+    role_identity_id = roleResult.id;
+    secret_identity_name = roleResult.name;
+    secret_identity_avatar = roleResult.avatar_reference_id;
+  }
+
+  // The secret identity id is not currently in the thread data.
+  // Add it.
+  log(`Adding identity to thread:`);
+  log({
+    role_identity_id,
+    secret_identity_id,
+    secret_identity_name,
+    secret_identity_avatar,
+  });
+
+  await transaction.one(sql.addIdentityToThread, {
+    user_id,
+    thread_id,
+    secret_identity_id,
+    role_identity_id,
+  });
+
+  return {
+    secret_identity_id,
+    secret_identity_name,
+    secret_identity_avatar,
+    role_identity_id,
+  };
 };

@@ -181,6 +181,7 @@ router.post("/:boardSlug/create", isLoggedIn, async (req, res, next) => {
     indexTags,
     categoryTags,
     contentWarnings,
+    identityId,
   } = req.body;
 
   const threadStringId = await createThread({
@@ -194,6 +195,7 @@ router.post("/:boardSlug/create", isLoggedIn, async (req, res, next) => {
     indexTags,
     categoryTags,
     contentWarnings,
+    identityId,
   });
   info(`Created new thread`, threadStringId);
 

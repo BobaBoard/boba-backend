@@ -52,6 +52,44 @@ describe("Tests boards REST API", () => {
         {
           posts: [
             {
+              content:
+                '[{"insert":"Remember to be excellent to each other and only be mean to fictional characters!"}]',
+              created: "2020-09-25T05:42:00",
+              friend: false,
+              is_new: false,
+              new_comments_amount: 0,
+              options: {},
+              parent_post_id: null,
+              parent_thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
+              post_id: "ff9f2ae2-a254-4069-9791-3ac5e6dff5bb",
+              secret_identity: {
+                avatar:
+                  "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F6518df53-2031-4ac5-8d75-57a0051ed924?alt=media&token=23df54b7-297c-42ff-a0ea-b9862c9814f8",
+                name: "GoreMaster5000",
+              },
+              self: false,
+              tags: {
+                category_tags: [],
+                content_warnings: [],
+                index_tags: [],
+                whisper_tags: ["An announcement from your headmaster!"],
+              },
+              total_comments_amount: 2,
+            },
+          ],
+          thread_direct_threads_amount: 0,
+          thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
+          thread_last_activity: "2020-10-02T05:43:00.000000",
+          thread_new_comments_amount: 0,
+          thread_new_posts_amount: 0,
+          thread_total_comments_amount: 2,
+          thread_total_posts_amount: 1,
+          muted: false,
+          hidden: false,
+        },
+        {
+          posts: [
+            {
               post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
               parent_thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
               parent_post_id: null,

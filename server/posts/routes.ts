@@ -29,6 +29,7 @@ router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
     indexTags,
     categoryTags,
     contentWarnings,
+    identityId,
   } = req.body;
 
   // @ts-ignore
@@ -45,6 +46,7 @@ router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
   const post = await postNewContribution({
     // @ts-ignore
     firebaseId: req.currentUser.uid,
+    identityId,
     parentPostId: postId,
     content,
     isLarge: !!large,
