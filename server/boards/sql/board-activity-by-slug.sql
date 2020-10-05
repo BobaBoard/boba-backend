@@ -40,6 +40,7 @@
             MAX(posts.created) as last_post,
             user_muted_threads.thread_id IS NOT NULL as muted,
             user_hidden_threads.thread_id IS NOT NULL as hidden,
+            COALESCE(threads.OPTIONS ->> 'default_view', 'thread')::view_types AS default_view,
             COUNT(posts.id)::int as posts_amount,
             -- Count all the new posts that aren't ours, unless we aren't logged in          
             SUM(CASE
@@ -84,6 +85,7 @@ SELECT
     options,
     muted,
     hidden,
+    default_view,
     COALESCE(whisper_tags, ARRAY[]::text[]) as whisper_tags,
     array(
         SELECT tag FROM post_tags 

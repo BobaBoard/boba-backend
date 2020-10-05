@@ -239,6 +239,7 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
             is_new: threadWithIdentity.is_new,
           },
         ],
+        default_view: threadWithIdentity.default_view,
         thread_id: threadWithIdentity.thread_id,
         thread_new_posts_amount: threadWithIdentity.new_posts_amount,
         thread_new_comments_amount: threadWithIdentity.new_comments_amount,

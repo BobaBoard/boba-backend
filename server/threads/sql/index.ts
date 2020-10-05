@@ -2,10 +2,11 @@ import { QueryFile } from "pg-promise";
 import path from "path";
 
 const createThread = `
-    INSERT INTO threads(string_id, parent_board)
+    INSERT INTO threads(string_id, parent_board, options)
     VALUES (
       $/thread_string_id/,
-      (SELECT id FROM boards WHERE slug = $/board_slug/))
+      (SELECT id FROM boards WHERE slug = $/board_slug/),
+      $/thread_options/)
     RETURNING id`;
 
 const createPost = `
