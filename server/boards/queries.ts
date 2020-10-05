@@ -119,7 +119,7 @@ export const updateBoardMetadata = async ({
         // Update or insert texts
         await Promise.all(
           delta.texts.newAndUpdated.map(async (text) => {
-            if (oldMetadata.descriptions.find((c) => c.id == text.id)) {
+            if (oldMetadata.descriptions?.find((c) => c.id == text.id)) {
               // this is the update of an already-existing section
               await transaction.one(sql.updateSection, {
                 title: text.title,
@@ -145,7 +145,7 @@ export const updateBoardMetadata = async ({
         // Update or insert category sections
         await Promise.all(
           delta.categoryFilters.newAndUpdated.map(async (category) => {
-            if (oldMetadata.descriptions.find((c) => c.id == category.id)) {
+            if (oldMetadata.descriptions?.find((c) => c.id == category.id)) {
               // this is the update of an already-existing section
               await transaction.one(sql.updateSection, {
                 title: category.title,
@@ -218,7 +218,7 @@ export const updateBoardMetadata = async ({
       firebase_id: firebaseId,
     });
   } catch (e) {
-    error(`Error while fetching board by slug (${slug}).`);
+    error(`Error while updating board (${slug}) metadata.`);
     error(e);
     return false;
   }
