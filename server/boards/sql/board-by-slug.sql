@@ -25,7 +25,7 @@ SELECT
             'id', p.role_id,
             'avatar_reference_id', p.avatar_reference_id,
             'name', p.role_name
-        )) FILTER (WHERE p.permissions = 'post_as_role'), '[]') AS posting_identities,
+        )) FILTER (WHERE p.permissions = 'post_as_role' OR p.permissions = 'all'), '[]') AS posting_identities,
     COALESCE(
         json_agg(DISTINCT p.permissions) 
             FILTER (WHERE p.permissions IS NOT NULL AND p.permissions != 'post_as_role'), '[]') AS permissions

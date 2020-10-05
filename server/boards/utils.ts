@@ -31,12 +31,12 @@ export const getMetadataDelta = ({
     }[];
   };
 } => {
-  const oldTexts = oldMetadata.descriptions.filter(
-    (desc) => desc.type == "text"
-  );
-  const oldCategoryFilters = oldMetadata.descriptions.filter(
-    (desc) => desc.type == "category_filter"
-  );
+  const oldTexts =
+    oldMetadata.descriptions?.filter((desc) => desc.type == "text") || [];
+  const oldCategoryFilters =
+    oldMetadata.descriptions?.filter(
+      (desc) => desc.type == "category_filter"
+    ) || [];
   const newTexts = newMetadata.descriptions.filter(
     (desc) => desc.type == "text"
   );
