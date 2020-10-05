@@ -132,6 +132,7 @@ WITH
 SELECT 
     threads.string_id as thread_id, 
     json_agg(row_to_json(thread_posts) ORDER BY thread_posts.created ASC) as posts,
+    COALESCE(threads.OPTIONS ->> 'default_view', 'thread')::view_types AS default_view,
     COALESCE(SUM(thread_posts.new_comments_amount)::int, 0) as thread_new_comments_amount,
     COALESCE(SUM(thread_posts.total_comments_amount)::int, 0) as thread_total_comments_amount, 
     -- Get all the posts that are direct answers to the first one

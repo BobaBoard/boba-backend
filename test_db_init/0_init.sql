@@ -135,12 +135,13 @@ CREATE TABLE IF NOT EXISTS collection_tags (
     tag_id BIGINT REFERENCES tags(id) ON DELETE RESTRICT NOT NULL
 );
 
+CREATE TYPE view_types AS ENUM ('thread', 'gallery', 'timeline');
 CREATE TABLE IF NOT EXISTS threads
 (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     string_id TEXT NOT NULL,
     parent_board BIGINT REFERENCES boards(id) ON DELETE RESTRICT NOT NULL,
-    parent_collection BIGINT REFERENCES collections(id) ON DELETE RESTRICT DEFAULT NULL
+    options JSONB NOT NULL DEFAULT '{}'::jsonb
     /* TODO: decide what to do with threads with deleted posts */
 );
 CREATE INDEX threads_string_id on threads(string_id);

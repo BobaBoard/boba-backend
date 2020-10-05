@@ -55,6 +55,7 @@ export interface ServerThreadType {
   thread_total_posts_amount: number;
   thread_last_activity: string;
   muted: boolean;
+  default_view: "thread" | "gallery" | "timeline";
   hidden: boolean;
 }
 
@@ -125,6 +126,7 @@ export interface DbThreadType {
   thread_total_posts_amount: number;
   thread_total_comments_amount: number;
   thread_last_activity: string;
+  default_view: "thread" | "gallery" | "timeline";
   muted: boolean;
   hidden: boolean;
 }
@@ -159,6 +161,7 @@ export interface DbActivityThreadType {
   is_new: boolean;
   comments_amount: number;
   thread_last_activity: string;
+  default_view: "thread" | "gallery" | "timeline";
 }
 
 export enum DbRolePermissions {
