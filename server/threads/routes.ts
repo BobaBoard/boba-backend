@@ -176,6 +176,7 @@ router.post("/:boardSlug/create", isLoggedIn, async (req, res, next) => {
   const {
     content,
     forceAnonymous,
+    defaultView,
     large,
     whisperTags,
     indexTags,
@@ -188,6 +189,7 @@ router.post("/:boardSlug/create", isLoggedIn, async (req, res, next) => {
     // @ts-ignore
     firebaseId: req.currentUser.uid,
     content,
+    defaultView,
     anonymityType: "everyone",
     isLarge: !!large,
     boardSlug: boardSlug,
