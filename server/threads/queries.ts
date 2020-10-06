@@ -73,10 +73,12 @@ export const createThread = async ({
   categoryTags,
   contentWarnings,
   identityId,
+  defaultView,
 }: {
   firebaseId: string;
   content: string;
   isLarge: boolean;
+  defaultView: string;
   anonymityType: string;
   boardSlug: string;
   whisperTags: string[];
@@ -91,6 +93,9 @@ export const createThread = async ({
       const createThreadResult = await t.one(sql.createThread, {
         thread_string_id: threadStringId,
         board_slug: boardSlug,
+        thread_options: {
+          default_view: defaultView,
+        },
       });
       log(`Created thread entry for thread ${threadStringId}`);
 
