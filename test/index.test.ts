@@ -86,6 +86,7 @@ describe("Tests boards REST API", () => {
           thread_total_posts_amount: 1,
           muted: false,
           hidden: false,
+          default_view: "thread",
         },
         {
           posts: [
@@ -123,6 +124,7 @@ describe("Tests boards REST API", () => {
           thread_direct_threads_amount: 2,
           muted: false,
           hidden: false,
+          default_view: "thread",
         },
         {
           posts: [
@@ -160,6 +162,7 @@ describe("Tests boards REST API", () => {
           thread_direct_threads_amount: 2,
           muted: false,
           hidden: false,
+          default_view: "thread",
         },
       ],
     });
@@ -180,6 +183,7 @@ describe("Tests threads REST API", () => {
       thread_new_posts_amount: 0,
       thread_total_comments_amount: 2,
       thread_direct_threads_amount: 2,
+      default_view: "thread",
       posts: [
         {
           anonymity_type: "strangers",
