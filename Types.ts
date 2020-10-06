@@ -157,7 +157,6 @@ export interface DbActivityThreadType {
   self: boolean;
   new_posts_amount: number;
   new_comments_amount: number;
-  last_comment: string;
   is_new: boolean;
   comments_amount: number;
   thread_last_activity: string;
