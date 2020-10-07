@@ -15,7 +15,7 @@
          LEFT JOIN secret_identities 
             ON secret_identities.id = uti.identity_id
          LEFT JOIN roles
-         	ON roles.id = uti.role_id),
+          ON roles.id = uti.role_id),
     last_visited_or_dismissed AS
         (SELECT
             threads.id as thread_id,
@@ -82,7 +82,7 @@
          LEFT JOIN posts
             ON posts.parent_thread = threads.id
          LEFT JOIN posts AS first_post
-         	  ON first_post.parent_thread = threads.id AND first_post.parent_post IS NULL
+            ON first_post.parent_thread = threads.id AND first_post.parent_post IS NULL
          LEFT JOIN last_visited_or_dismissed
             ON last_visited_or_dismissed.thread_id = threads.id OR last_visited_or_dismissed.thread_id is NULL
          LEFT JOIN friends
@@ -162,5 +162,6 @@ LEFT JOIN thread_comments_updates
 LEFT JOIN thread_identities
     ON thread_identities.user_id = (thread_posts_updates.first_post_author)::int AND thread_identities.thread_id = thread_posts_updates.threads_id
 WHERE GREATEST(thread_posts_updates.first_post_timestamp, thread_posts_updates.last_post_timestamp, thread_comments_updates.last_comment_timestamp) <= COALESCE(${last_activity_cursor}, NOW())
+    AND ${filtered_category} IS NULL OR (SELECT id FROM categories WHERE categories.category = ${filtered_category}) IN (SELECT category_id FROM post_categories WHERE post_categories.post_id = first_post_id)
 ORDER BY thread_last_activity DESC
-LIMIT ${page_size} + 1
+LIMIT ${page_size} + 1 
