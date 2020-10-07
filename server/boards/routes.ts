@@ -75,7 +75,7 @@ router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
     // @ts-ignore
     firebaseId: req.currentUser?.uid,
     oldMetadata: board,
-    newMetadata: { descriptions, accentColor, tagline },
+    newMetadata: { descriptions, settings: { accentColor }, tagline },
   });
 
   if (!newMetadata) {
@@ -184,15 +184,16 @@ router.post("/:slug/notifications/dismiss", isLoggedIn, async (req, res) => {
 
 router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
-  const { cursor } = req.query;
+  const { cursor, categoryFilter } = req.query;
   log(
-    `Fetching activity data for board with slug ${slug} with cursor ${cursor}`
+    `Fetching activity data for board with slug ${slug} with cursor ${cursor} and filtered category "${categoryFilter}"`
   );
 
   const result = await getBoardActivityBySlug({
     slug,
     // @ts-ignore
     firebaseId: req.currentUser?.uid,
+    filterCategory: (categoryFilter as string) || null,
     cursor: (cursor as string) || null,
   });
   log(`Found activity for board ${slug}:`, result);

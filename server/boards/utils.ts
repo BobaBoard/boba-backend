@@ -97,8 +97,8 @@ export const getMetadataDelta = ({
 
   return {
     accentColor:
-      oldMetadata.accentColor != newMetadata.accentColor
-        ? newMetadata.accentColor
+      oldMetadata.settings.accentColor != newMetadata.settings.accentColor
+        ? newMetadata.settings.accentColor
         : undefined,
     tagline:
       oldMetadata.tagline != newMetadata.tagline

@@ -186,7 +186,9 @@ export interface DbBoardMetadata {
   slug: string;
   avatarUrl: string;
   tagline: string;
-  accentColor: string;
+  settings: {
+    accentColor: string;
+  };
   descriptions: BoardDescription[];
   posting_identities: {
     id: string;

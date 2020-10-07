@@ -8,7 +8,9 @@ describe("Tests delta metadata", async () => {
     const delta = getMetadataDelta({
       oldMetadata: {
         slug: "gore",
-        accentColor: "red",
+        settings: {
+          accentColor: "red",
+        },
         avatarUrl: "this_is_a_url",
         tagline: "The tagline!",
         descriptions: [
@@ -50,7 +52,9 @@ describe("Tests delta metadata", async () => {
         ],
       },
       newMetadata: {
-        accentColor: "blue",
+        settings: {
+          accentColor: "blue",
+        },
         tagline: "The new tagline!",
         descriptions: [
           {

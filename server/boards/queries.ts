@@ -155,7 +155,7 @@ export const updateBoardMetadata = async ({
                 section_id: category.id,
               });
             } else {
-              const newSection = await transaction.one(sql.createSection, {
+              await transaction.one(sql.createSection, {
                 section_id: category.id,
                 title: category.title,
                 description: category.description,
@@ -163,9 +163,8 @@ export const updateBoardMetadata = async ({
                 board_slug: slug,
                 type: "category_filter",
               });
-              category.id = newSection.id;
             }
-            log("Added (or updated) category filter.");
+            log("Created new category section (or updated old one).");
             if (category.categories.deleted.length > 0) {
               await transaction.none(sql.deleteSectionCategories, {
                 section_id: category.id,
@@ -194,7 +193,8 @@ export const updateBoardMetadata = async ({
             slug,
             tagline: delta.tagline || oldMetadata.tagline,
             settings: {
-              accentColor: delta.accentColor || oldMetadata.accentColor,
+              accentColor:
+                delta.accentColor || oldMetadata.settings?.accentColor,
             },
           });
         }
@@ -228,11 +228,13 @@ const DEFAULT_PAGE_SIZE = 10;
 export const getBoardActivityBySlug = async ({
   slug,
   firebaseId,
+  filterCategory,
   cursor,
   pageSize,
 }: {
   slug: string;
   firebaseId: string;
+  filterCategory?: string | null;
   cursor: string;
   pageSize?: number;
 }): Promise<
@@ -250,6 +252,7 @@ export const getBoardActivityBySlug = async ({
     const rows = await pool.manyOrNone(sql.getBoardActivityBySlug, {
       board_slug: slug,
       firebase_id: firebaseId,
+      filtered_category: filterCategory || null,
       last_activity_cursor: decodedCursor?.last_activity_cursor || null,
       page_size: finalPageSize,
     });
