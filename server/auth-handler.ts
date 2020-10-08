@@ -19,11 +19,18 @@ export const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
       log(`Found id token in request: ${decodedToken.uid}`);
       // @ts-ignore
       req.currentUser = decodedToken;
+      if (process.env.NODE_ENV != "production" && process.env.FORCED_USER) {
+        log(
+          `Overriding user id with locally configured one (${process.env.FORCED_USER})`
+        );
+        // @ts-ignore
+        req.currentUser.uid = process.env.FORCED_USER;
+      }
       next();
     })
     .catch((e) => {
       error("Error during verification. No user set.");
-      //error(e);
+      error(e);
       next();
     });
 };

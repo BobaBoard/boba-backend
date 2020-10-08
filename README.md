@@ -59,6 +59,10 @@ Bobaserver is a TypeScript project using npm as package manager.
 
   Note: if you get a "module not found" Typescript error try running `docker-compose -f docker-compose.test.yml up --build` to fix it.
 
+  ```
+  yarn run test:file server/boards/tests/metadata.test.ts
+  ```
+
 ## How to Add a New Set of API Routes
 
 - Create a folder named like the prefix of the API route in /server/

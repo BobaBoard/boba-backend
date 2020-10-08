@@ -8,6 +8,7 @@ import {
   maybeAddContentWarningTags,
 } from "../posts/queries";
 import { DbThreadType, DbIdentityType } from "../../Types";
+import { canPostAs } from "../permissions-utils";
 
 const log = debug("bobaserver:threads:queries-log");
 const error = debug("bobaserver:threads:queries-error");
@@ -71,16 +72,20 @@ export const createThread = async ({
   indexTags,
   categoryTags,
   contentWarnings,
+  identityId,
+  defaultView,
 }: {
   firebaseId: string;
   content: string;
   isLarge: boolean;
+  defaultView: string;
   anonymityType: string;
   boardSlug: string;
   whisperTags: string[];
   indexTags: string[];
   categoryTags: string[];
   contentWarnings: string[];
+  identityId?: string;
 }) => {
   return pool
     .tx("create-thread", async (t) => {
@@ -88,6 +93,9 @@ export const createThread = async ({
       const createThreadResult = await t.one(sql.createThread, {
         thread_string_id: threadStringId,
         board_slug: boardSlug,
+        thread_options: {
+          default_view: defaultView,
+        },
       });
       log(`Created thread entry for thread ${threadStringId}`);
 
@@ -118,14 +126,29 @@ export const createThread = async ({
         postId: postResult.id,
       });
 
-      const identityRes = await t.one(sql.getRandomIdentityId);
-      log(`Got new identity for thread ${threadStringId}:`);
-      log(identityRes);
+      let identityRes: { id: string } | undefined;
+      let roleRes;
+      if (!identityId) {
+        identityRes = await t.one(sql.getRandomIdentityId);
+        log(`Got new identity for thread ${threadStringId}:`);
+        log(identityRes);
+      } else {
+        roleRes = await t.one(sql.getRoleByStringId, {
+          board_slug: boardSlug,
+          firebase_id: firebaseId,
+          role_id: identityId,
+        });
+        log(typeof roleRes.permissions);
+        if (!canPostAs(roleRes.permissions)) {
+          throw new Error("Tried to post as role without permissions");
+        }
+      }
 
       await t.none(sql.insertNewIdentity, {
         thread_id: createThreadResult.id,
         firebase_id: firebaseId,
-        secret_identity_id: identityRes.id,
+        secret_identity_id: identityRes?.id || null,
+        role_id: roleRes?.id || null,
       });
       log(`Added identity for ${threadStringId}.`);
       return threadStringId;

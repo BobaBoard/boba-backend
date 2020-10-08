@@ -1,7 +1,12 @@
 import "mocha";
 import { expect } from "chai";
 
-import { getBoards, getBoardBySlug, getBoardActivityBySlug } from "../queries";
+import {
+  getBoards,
+  getBoardBySlug,
+  getBoardActivityBySlug,
+  updateBoardMetadata,
+} from "../queries";
 
 describe("Tests boards queries", () => {
   it("fetches all boards (with user)", async () => {
@@ -17,6 +22,7 @@ describe("Tests boards queries", () => {
         last_comment: null,
         last_post: null,
         last_visit: null,
+        muted: false,
         settings: {
           accentColor: "#ff5252",
         },
@@ -26,16 +32,17 @@ describe("Tests boards queries", () => {
       },
       {
         avatar_reference_id: "gore.png",
-        has_updates: false,
-        last_comment: new Date(Date.UTC(2020, 4, 23, 12, 52)),
-        last_post: new Date(Date.UTC(2020, 4, 3, 16, 47)),
+        has_updates: true,
+        last_comment: new Date(Date.UTC(2020, 9, 2, 12, 43)),
+        last_post: new Date(Date.UTC(2020, 8, 25, 12, 42)),
         last_visit: new Date(Date.UTC(2020, 4, 25, 16, 42)),
+        muted: false,
         settings: {
           accentColor: "#f96680",
         },
         slug: "gore",
         tagline: "Blood! Blood! Blood!",
-        threads_count: "2",
+        threads_count: "3",
       },
       {
         avatar_reference_id: "anime.png",
@@ -43,6 +50,7 @@ describe("Tests boards queries", () => {
         last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
         last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
         last_visit: null,
+        muted: false,
         settings: {
           accentColor: "#24d282",
         },
@@ -56,6 +64,7 @@ describe("Tests boards queries", () => {
         last_comment: null,
         last_post: new Date(Date.UTC(2020, 3, 25, 12, 42)),
         last_visit: null,
+        muted: false,
         settings: {
           accentColor: "#00b8ff",
         },
@@ -64,12 +73,27 @@ describe("Tests boards queries", () => {
         threads_count: "26",
       },
       {
+        avatar_reference_id: "kink-meme.png",
+        has_updates: false,
+        last_comment: null,
+        last_post: new Date(Date.UTC(2020, 7, 22, 10, 36, 55, 850)),
+        last_visit: null,
+        muted: false,
+        settings: {
+          accentColor: "#7b00ff",
+        },
+        slug: "memes",
+        tagline: "A board to test collections view.",
+        threads_count: "1",
+      },
+      {
         avatar_reference_id:
           "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2Feded338a-e0e5-4a97-a368-5ae525c0eec4?alt=media&token=914f84b7-a581-430e-bb09-695f653e8e02",
         has_updates: false,
         last_comment: null,
         last_post: null,
         last_visit: null,
+        muted: false,
         settings: {
           accentColor: "#9b433b",
         },
@@ -90,6 +114,7 @@ describe("Tests boards queries", () => {
         last_comment: null,
         last_post: null,
         last_visit: null,
+        muted: false,
         settings: {
           accentColor: "#ff5252",
         },
@@ -100,15 +125,16 @@ describe("Tests boards queries", () => {
       {
         avatar_reference_id: "gore.png",
         has_updates: false,
-        last_comment: new Date(Date.UTC(2020, 4, 23, 12, 52)),
-        last_post: new Date(Date.UTC(2020, 4, 3, 16, 47)),
+        last_comment: new Date(Date.UTC(2020, 9, 2, 12, 43)),
+        last_post: new Date(Date.UTC(2020, 8, 25, 12, 42)),
         last_visit: null,
+        muted: false,
         settings: {
           accentColor: "#f96680",
         },
         slug: "gore",
         tagline: "Blood! Blood! Blood!",
-        threads_count: "2",
+        threads_count: "3",
       },
       {
         avatar_reference_id: "anime.png",
@@ -116,6 +142,7 @@ describe("Tests boards queries", () => {
         last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
         last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
         last_visit: null,
+        muted: false,
         settings: {
           accentColor: "#24d282",
         },
@@ -129,6 +156,7 @@ describe("Tests boards queries", () => {
         last_comment: null,
         last_post: new Date(Date.UTC(2020, 3, 25, 12, 42)),
         last_visit: null,
+        muted: false,
         settings: {
           accentColor: "#00b8ff",
         },
@@ -137,12 +165,27 @@ describe("Tests boards queries", () => {
         threads_count: "26",
       },
       {
+        avatar_reference_id: "kink-meme.png",
+        has_updates: false,
+        last_comment: null,
+        last_post: new Date(Date.UTC(2020, 7, 22, 10, 36, 55, 850)),
+        last_visit: null,
+        muted: false,
+        settings: {
+          accentColor: "#7b00ff",
+        },
+        slug: "memes",
+        tagline: "A board to test collections view.",
+        threads_count: "1",
+      },
+      {
         avatar_reference_id:
           "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2Feded338a-e0e5-4a97-a368-5ae525c0eec4?alt=media&token=914f84b7-a581-430e-bb09-695f653e8e02",
         has_updates: false,
         last_comment: null,
         last_post: new Date(Date.UTC(2020, 0, 14, 8, 42)),
         last_visit: null,
+        muted: false,
         settings: {
           accentColor: "#9b433b",
         },
@@ -166,6 +209,7 @@ describe("Tests boards queries", () => {
         last_comment: null,
         last_post: null,
         last_visit: null,
+        muted: false,
         settings: {
           accentColor: "#ff5252",
         },
@@ -176,15 +220,16 @@ describe("Tests boards queries", () => {
       {
         avatar_reference_id: "gore.png",
         has_updates: true,
-        last_comment: new Date(Date.UTC(2020, 4, 23, 12, 52)),
-        last_post: new Date(Date.UTC(2020, 4, 3, 16, 47)),
+        last_comment: new Date(Date.UTC(2020, 9, 2, 12, 43)),
+        last_post: new Date(Date.UTC(2020, 8, 25, 12, 42)),
         last_visit: null,
+        muted: false,
         settings: {
           accentColor: "#f96680",
         },
         slug: "gore",
         tagline: "Blood! Blood! Blood!",
-        threads_count: "2",
+        threads_count: "3",
       },
       {
         avatar_reference_id: "anime.png",
@@ -192,6 +237,7 @@ describe("Tests boards queries", () => {
         last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
         last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
         last_visit: new Date(Date.UTC(2020, 3, 26, 7, 0)),
+        muted: false,
         settings: {
           accentColor: "#24d282",
         },
@@ -205,6 +251,7 @@ describe("Tests boards queries", () => {
         last_comment: null,
         last_post: new Date(Date.UTC(2020, 3, 25, 12, 42)),
         last_visit: new Date(Date.UTC(2020, 3, 24, 7, 0)),
+        muted: false,
         settings: {
           accentColor: "#00b8ff",
         },
@@ -213,12 +260,27 @@ describe("Tests boards queries", () => {
         threads_count: "26",
       },
       {
+        avatar_reference_id: "kink-meme.png",
+        has_updates: true,
+        last_comment: null,
+        last_post: new Date(Date.UTC(2020, 7, 22, 10, 36, 55, 850)),
+        last_visit: null,
+        muted: false,
+        settings: {
+          accentColor: "#7b00ff",
+        },
+        slug: "memes",
+        tagline: "A board to test collections view.",
+        threads_count: "1",
+      },
+      {
         avatar_reference_id:
           "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2Feded338a-e0e5-4a97-a368-5ae525c0eec4?alt=media&token=914f84b7-a581-430e-bb09-695f653e8e02",
         has_updates: false,
         last_comment: null,
         last_post: new Date(Date.UTC(2020, 0, 14, 8, 42)),
         last_visit: null,
+        muted: false,
         settings: {
           accentColor: "#9b433b",
         },
@@ -230,21 +292,44 @@ describe("Tests boards queries", () => {
   });
 
   it("fetches board by slug when slug present", async () => {
-    const board = await getBoardBySlug("gore");
+    const board = await getBoardBySlug({ slug: "gore", firebaseId: undefined });
 
     expect(board).to.eql({
       settings: {
         accentColor: "#f96680",
       },
+      descriptions: [
+        {
+          categories: ["blood", "bruises"],
+          description: null,
+          id: "id1",
+          index: 2,
+          title: "Gore Categories",
+          type: "category_filter",
+        },
+        {
+          categories: null,
+          description: '[{"insert": "pls b nice"}]',
+          id: "id2",
+          index: 1,
+          title: "Gore description",
+          type: "text",
+        },
+      ],
       slug: "gore",
       tagline: "Blood! Blood! Blood!",
-      threads_count: "2",
       avatar_reference_id: "gore.png",
+      muted: false,
+      permissions: [],
+      posting_identities: [],
     });
   });
 
   it("returns empty board when slugs not found", async () => {
-    const board = await getBoardBySlug("this_will_not_be_in_the_db");
+    const board = await getBoardBySlug({
+      slug: "this_will_not_be_in_the_db",
+      firebaseId: undefined,
+    });
 
     expect(board).to.be.null;
   });
@@ -263,13 +348,44 @@ describe("Tests boards queries", () => {
 
     expect(board.activity).to.eql([
       {
+        author: "1",
+        category_tags: [],
+        comments_amount: 2,
+        content:
+          '[{"insert":"Remember to be excellent to each other and only be mean to fictional characters!"}]',
+        content_warnings: [],
+        created: "2020-09-25T05:42:00",
+        friend: true,
+        hidden: false,
+        index_tags: [],
+        is_new: true,
+        default_view: "thread",
+        muted: false,
+        new_comments_amount: 2,
+        new_posts_amount: 1,
+        options: {},
+        parent_post_id: null,
+        post_id: "ff9f2ae2-a254-4069-9791-3ac5e6dff5bb",
+        posts_amount: 1,
+        secret_identity_avatar:
+          "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F6518df53-2031-4ac5-8d75-57a0051ed924?alt=media&token=23df54b7-297c-42ff-a0ea-b9862c9814f8",
+        secret_identity_name: "GoreMaster5000",
+        self: false,
+        thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
+        thread_last_activity: "2020-10-02T05:43:00.000000",
+        threads_amount: 0,
+        user_avatar: "bobatan.png",
+        username: "bobatan",
+        whisper_tags: ["An announcement from your headmaster!"],
+      },
+      {
         comments_amount: 2,
         content: '[{"insert":"Favorite character to maim?"}]',
         created: "2020-04-30T03:23:00",
         friend: false,
         is_new: false,
         thread_last_activity: "2020-05-23T05:52:00.000000",
-        last_comment: "2020-05-23T05:52:00",
+        default_view: "thread",
         parent_post_id: null,
         new_comments_amount: 2,
         new_posts_amount: 0,
@@ -299,7 +415,7 @@ describe("Tests boards queries", () => {
         friend: true,
         is_new: false,
         thread_last_activity: "2020-05-03T09:47:00.000000",
-        last_comment: null,
+        default_view: "thread",
         new_comments_amount: 0,
         new_posts_amount: 1,
         post_id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
@@ -338,13 +454,44 @@ describe("Tests boards queries", () => {
 
     expect(board.activity).to.eql([
       {
+        author: "1",
+        category_tags: [],
+        comments_amount: 2,
+        content:
+          '[{"insert":"Remember to be excellent to each other and only be mean to fictional characters!"}]',
+        content_warnings: [],
+        created: "2020-09-25T05:42:00",
+        friend: false,
+        hidden: false,
+        index_tags: [],
+        is_new: false,
+        default_view: "thread",
+        muted: false,
+        new_comments_amount: 0,
+        new_posts_amount: 0,
+        options: {},
+        parent_post_id: null,
+        post_id: "ff9f2ae2-a254-4069-9791-3ac5e6dff5bb",
+        posts_amount: 1,
+        secret_identity_avatar:
+          "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F6518df53-2031-4ac5-8d75-57a0051ed924?alt=media&token=23df54b7-297c-42ff-a0ea-b9862c9814f8",
+        secret_identity_name: "GoreMaster5000",
+        self: false,
+        thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
+        thread_last_activity: "2020-10-02T05:43:00.000000",
+        threads_amount: 0,
+        user_avatar: "bobatan.png",
+        username: "bobatan",
+        whisper_tags: ["An announcement from your headmaster!"],
+      },
+      {
         comments_amount: 2,
         content: '[{"insert":"Favorite character to maim?"}]',
         created: "2020-04-30T03:23:00",
         friend: false,
         is_new: false,
         thread_last_activity: "2020-05-23T05:52:00.000000",
-        last_comment: "2020-05-23T05:52:00",
+        default_view: "thread",
         new_comments_amount: 0,
         new_posts_amount: 0,
         post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
@@ -374,7 +521,7 @@ describe("Tests boards queries", () => {
         friend: false,
         is_new: false,
         thread_last_activity: "2020-05-03T09:47:00.000000",
-        last_comment: null,
+        default_view: "thread",
         new_comments_amount: 0,
         new_posts_amount: 0,
         post_id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",

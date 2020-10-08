@@ -18,6 +18,7 @@ describe("threads queries", () => {
       thread_total_posts_amount: 3,
       thread_new_posts_amount: 0,
       thread_direct_threads_amount: 2,
+      default_view: "thread",
       posts: [
         {
           anonymity_type: "strangers",
@@ -245,6 +246,7 @@ describe("threads queries", () => {
       thread_total_posts_amount: 3,
       thread_new_posts_amount: 1,
       thread_direct_threads_amount: 2,
+      default_view: "thread",
     });
   });
 

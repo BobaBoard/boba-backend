@@ -5,31 +5,84 @@ import {
   getBoardActivityBySlug,
   getBoards,
   markBoardVisit,
+  updateBoardMetadata,
+  muteBoard,
+  unmuteBoard,
+  dismissBoardNotifications,
 } from "./queries";
 import { isLoggedIn } from "../auth-handler";
 import {
   transformImageUrls,
   mergeObjectIdentity,
   ensureNoIdentityLeakage,
+  processBoardMetadata,
 } from "../response-utils";
+import { canEditBoard } from "../permissions-utils";
 import { DbActivityThreadType, ServerThreadType } from "../../Types";
 
+const info = debug("bobaserver:board:routes-info");
 const log = debug("bobaserver:board:routes");
 
 const router = express.Router();
 
-router.get("/:slug", async (req, res) => {
+router.get("/:slug", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
   log(`Fetching data for board with slug ${slug}`);
 
-  const board = await getBoardBySlug(slug);
+  const board = await getBoardBySlug({
+    // @ts-ignore
+    firebaseId: req.currentUser?.uid,
+    slug,
+  });
   log(`Found board`, board);
 
   if (!board) {
     res.sendStatus(404);
     return;
   }
-  res.status(200).json(transformImageUrls(board));
+
+  res.status(200).json(processBoardMetadata(board));
+});
+
+router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
+  const { slug } = req.params;
+  const { descriptions, accentColor, tagline } = req.body;
+
+  // @ts-ignore
+  if (!req.currentUser) {
+    return res.sendStatus(401);
+  }
+
+  const board = await getBoardBySlug({
+    // @ts-ignore
+    firebaseId: req.currentUser?.uid,
+    slug,
+  });
+  log(`Found board`, board);
+
+  if (!board) {
+    // TOOD: add error log
+    return res.sendStatus(404);
+  }
+
+  if (!canEditBoard(board.permissions)) {
+    // TOOD: add error log
+    return res.sendStatus(403);
+  }
+
+  const newMetadata = await updateBoardMetadata({
+    slug,
+    // @ts-ignore
+    firebaseId: req.currentUser?.uid,
+    oldMetadata: board,
+    newMetadata: { descriptions, settings: { accentColor }, tagline },
+  });
+
+  if (!newMetadata) {
+    res.sendStatus(500);
+    return;
+  }
+  res.status(200).json(processBoardMetadata(newMetadata));
 });
 
 router.get("/:slug/visit", isLoggedIn, async (req, res) => {
@@ -56,17 +109,91 @@ router.get("/:slug/visit", isLoggedIn, async (req, res) => {
   res.status(200).json();
 });
 
+router.post("/:slug/mute", isLoggedIn, async (req, res) => {
+  const { slug } = req.params;
+  // @ts-ignore
+  if (!req.currentUser) {
+    return res.sendStatus(401);
+  }
+  log(`Setting board muted: ${slug}`);
+
+  if (
+    !(await muteBoard({
+      // @ts-ignore
+      firebaseId: req.currentUser.uid,
+      slug,
+    }))
+  ) {
+    res.sendStatus(500);
+    return;
+  }
+
+  // @ts-ignore
+  info(`Muted board: ${slug} for user ${req.currentUser.uid}.`);
+  res.status(200).json();
+});
+
+router.post("/:slug/unmute", isLoggedIn, async (req, res) => {
+  const { slug } = req.params;
+  // @ts-ignore
+  if (!req.currentUser) {
+    return res.sendStatus(401);
+  }
+  log(`Setting board unmuted: ${slug}`);
+
+  if (
+    !(await unmuteBoard({
+      // @ts-ignore
+      firebaseId: req.currentUser.uid,
+      slug,
+    }))
+  ) {
+    res.sendStatus(500);
+    return;
+  }
+
+  // @ts-ignore
+  info(`Unmuted board: ${slug} for user ${req.currentUser.uid}.`);
+  res.status(200).json();
+});
+
+0;
+router.post("/:slug/notifications/dismiss", isLoggedIn, async (req, res) => {
+  const { slug } = req.params;
+  // @ts-ignore
+  let currentUserId: string = req.currentUser?.uid;
+  if (!currentUserId) {
+    res.sendStatus(401);
+    return;
+  }
+  log(`Dismissing ${slug} notifications for firebase id: ${currentUserId}`);
+  const dismissSuccessful = await dismissBoardNotifications({
+    slug,
+    firebaseId: currentUserId,
+  });
+
+  if (!dismissSuccessful) {
+    log(`Dismiss failed`);
+    return res.sendStatus(500);
+  }
+
+  info(`Dismiss successful`);
+
+  res.sendStatus(204);
+});
+
 router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
-  const { cursor } = req.query;
+  const { cursor, categoryFilter } = req.query;
   log(
-    `Fetching activity data for board with slug ${slug} with cursor ${cursor}`
+    `Fetching activity data for board with slug ${slug} with cursor ${cursor} and filtered category "${categoryFilter}"`
   );
 
   const result = await getBoardActivityBySlug({
     slug,
     // @ts-ignore
     firebaseId: req.currentUser?.uid,
+    filterCategory: (categoryFilter as string) || null,
     cursor: (cursor as string) || null,
   });
   log(`Found activity for board ${slug}:`, result);
@@ -113,6 +240,7 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
             is_new: threadWithIdentity.is_new,
           },
         ],
+        default_view: threadWithIdentity.default_view,
         thread_id: threadWithIdentity.thread_id,
         thread_new_posts_amount: threadWithIdentity.new_posts_amount,
         thread_new_comments_amount: threadWithIdentity.new_comments_amount,
@@ -144,11 +272,6 @@ router.get("/", isLoggedIn, async (req, res) => {
   }
 
   res.status(200).json(boards.map((board: any) => transformImageUrls(board)));
-});
-
-router.get("/activity/latest", async (req, res) => {
-  // TODO: implement. Gets latest active boards.
-  res.status(501);
 });
 
 export default router;

@@ -16,8 +16,8 @@ WITH
             uti.user_id as user_id,
             users.username as username,
             users.avatar_reference_id as user_avatar,
-            secret_identities.display_name as secret_identity_name,
-            secret_identities.avatar_reference_id as secret_identity_avatar,
+            COALESCE(secret_identities.display_name, roles.name) as secret_identity_name,
+            COALESCE(secret_identities.avatar_reference_id, roles.avatar_reference_id) as secret_identity_avatar,
             COALESCE(is_friend.friend, FALSE) as friend,
             COALESCE(users.firebase_id = ${firebase_id}, FALSE) as self
          FROM user_thread_identities AS uti 
@@ -25,8 +25,10 @@ WITH
             ON uti.thread_id = threads.id
          INNER JOIN users 
             ON uti.user_id = users.id 
-         INNER JOIN secret_identities 
-            ON secret_identities.id = uti.identity_id    
+         LEFT JOIN secret_identities 
+            ON secret_identities.id = uti.identity_id
+         LEFT JOIN roles 
+            ON roles.id = uti.role_id 
          LEFT JOIN LATERAL (
             SELECT true as friend 
             FROM friends 
@@ -130,6 +132,7 @@ WITH
 SELECT 
     threads.string_id as thread_id, 
     json_agg(row_to_json(thread_posts) ORDER BY thread_posts.created ASC) as posts,
+    COALESCE(threads.OPTIONS ->> 'default_view', 'thread')::view_types AS default_view,
     COALESCE(SUM(thread_posts.new_comments_amount)::int, 0) as thread_new_comments_amount,
     COALESCE(SUM(thread_posts.total_comments_amount)::int, 0) as thread_total_comments_amount, 
     -- Get all the posts that are direct answers to the first one

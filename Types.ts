@@ -55,6 +55,7 @@ export interface ServerThreadType {
   thread_total_posts_amount: number;
   thread_last_activity: string;
   muted: boolean;
+  default_view: "thread" | "gallery" | "timeline";
   hidden: boolean;
 }
 
@@ -125,6 +126,7 @@ export interface DbThreadType {
   thread_total_posts_amount: number;
   thread_total_comments_amount: number;
   thread_last_activity: string;
+  default_view: "thread" | "gallery" | "timeline";
   muted: boolean;
   hidden: boolean;
 }
@@ -155,8 +157,43 @@ export interface DbActivityThreadType {
   self: boolean;
   new_posts_amount: number;
   new_comments_amount: number;
-  last_comment: string;
   is_new: boolean;
   comments_amount: number;
   thread_last_activity: string;
+  default_view: "thread" | "gallery" | "timeline";
+}
+
+export enum DbRolePermissions {
+  all,
+  edit_board_details,
+  post_as_role,
+}
+
+export interface BoardPermissions {
+  canEditBoardData: boolean;
+}
+
+export interface BoardDescription {
+  id?: string;
+  index: number;
+  title: string;
+  type: "text" | "category_filter";
+  description?: string;
+  categories?: string[];
+}
+
+export interface DbBoardMetadata {
+  slug: string;
+  avatarUrl: string;
+  tagline: string;
+  settings: {
+    accentColor: string;
+  };
+  descriptions: BoardDescription[];
+  posting_identities: {
+    id: string;
+    avatar_reference_id: string;
+    name: string;
+  }[];
+  permissions: string[];
 }
