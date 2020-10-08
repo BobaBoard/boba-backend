@@ -245,6 +245,12 @@ describe("Tests notifications", async () => {
       }))
     ).to.eql([
       {
+        thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
+        is_new: false,
+        new_comments_amount: 0,
+        new_posts_amount: 0,
+      },
+      {
         thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
         is_new: false,
         new_comments_amount: 0,
@@ -280,6 +286,12 @@ describe("Tests notifications", async () => {
         is_new: activity.is_new,
       }))
     ).to.eql([
+      {
+        thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
+        is_new: true,
+        new_comments_amount: 1,
+        new_posts_amount: 1,
+      },
       {
         thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
         is_new: false,

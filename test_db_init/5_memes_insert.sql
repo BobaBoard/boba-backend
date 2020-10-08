@@ -1,6 +1,6 @@
 
-INSERT INTO threads (string_id,parent_board,parent_collection) VALUES 
-('2765f36a-b4f9-4efe-96f2-cb34f055d032',5,NULL);
+INSERT INTO threads (string_id,parent_board,options) VALUES 
+('2765f36a-b4f9-4efe-96f2-cb34f055d032',5,'{"default_view": "gallery"}');
 INSERT INTO posts (string_id,parent_thread,parent_post,author,created,"content","type",whisper_tags,"options",is_deleted,anonymity_type) VALUES 
 ('b2c57275-512e-4821-8cf8-b3ac76e1e044',31,NULL,1,'2020-08-22 03:34:39.806','[{"insert":"Somnium Files Funny Memes"},{"attributes":{"header":2},"insert":""}]','text','{}','{"wide": false}',false,'everyone')
 ,('d14e311a-a22a-4673-8b8a-cd0423e38a3c',31,35,1,'2020-08-22 03:35:03.191','[{"insert":{"block-image":{"src":"https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fmemes%2F2765f36a-b4f9-4efe-96f2-cb34f055d032%2F45c75c3e-1086-4e72-8742-549335cdfbff?alt=media&token=97efd46b-f464-4620-a1d1-a97f61e96d91","spoilers":false,"width":1280,"height":720}}},{"insert":""}]','text','{}','{"wide": false}',false,'strangers')

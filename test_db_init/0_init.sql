@@ -135,26 +135,16 @@ CREATE TABLE IF NOT EXISTS collection_tags (
     tag_id BIGINT REFERENCES tags(id) ON DELETE RESTRICT NOT NULL
 );
 
+CREATE TYPE view_types AS ENUM ('thread', 'gallery', 'timeline');
 CREATE TABLE IF NOT EXISTS threads
 (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     string_id TEXT NOT NULL,
     parent_board BIGINT REFERENCES boards(id) ON DELETE RESTRICT NOT NULL,
-    parent_collection BIGINT REFERENCES collections(id) ON DELETE RESTRICT DEFAULT NULL
+    options JSONB NOT NULL DEFAULT '{}'::jsonb
     /* TODO: decide what to do with threads with deleted posts */
 );
 CREATE INDEX threads_string_id on threads(string_id);
-
-/*
- * A mapping of which identity has been assigned to a user in each thread.
- */
-CREATE TABLE IF NOT EXISTS user_thread_identities
-(
-    thread_id BIGINT REFERENCES threads(id) NOT NULL,
-    user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
-    identity_id BIGINT REFERENCES secret_identities(id) ON DELETE RESTRICT NOT NULL
-);
-CREATE INDEX user_thread_identities_thread_id on user_thread_identities(thread_id);
 
 CREATE TABLE IF NOT EXISTS thread_watchers (
     thread_id BIGINT REFERENCES threads(id) ON DELETE RESTRICT NOT NULL,
@@ -271,14 +261,83 @@ CREATE TABLE IF NOT EXISTS dismiss_notifications_requests(
 );
 CREATE UNIQUE INDEX dismiss_notifications_request_user on dismiss_notifications_requests(user_id);
 
+CREATE TABLE IF NOT EXISTS dismiss_board_notifications_requests(
+    user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
+    board_id BIGINT REFERENCES boards(id) ON DELETE RESTRICT NOT NULL,
+    dismiss_request_time timestamp NOT NULL DEFAULT now()
+);
+CREATE UNIQUE INDEX dismiss_board_notifications_requests_entry on dismiss_board_notifications_requests(user_id, board_id);
+
 CREATE TABLE IF NOT EXISTS user_muted_threads(
     user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
     thread_id BIGINT REFERENCES threads(id) ON DELETE RESTRICT NOT NULL
 );
 CREATE UNIQUE INDEX user_muted_thread_entry on user_muted_threads(user_id, thread_id);
 
+CREATE TABLE IF NOT EXISTS user_muted_boards(
+    user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
+    board_id BIGINT REFERENCES boards(id) ON DELETE RESTRICT NOT NULL
+);
+CREATE UNIQUE INDEX user_muted_boards_entry on user_muted_boards(user_id, board_id);
+
 CREATE TABLE IF NOT EXISTS user_hidden_threads(
     user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
     thread_id BIGINT REFERENCES threads(id) ON DELETE RESTRICT NOT NULL
 );
 CREATE UNIQUE INDEX user_hidden_thread_entry on user_hidden_threads(user_id, thread_id);
+
+CREATE TYPE board_description_section_type AS ENUM ('text', 'category_filter');
+CREATE TABLE IF NOT EXISTS board_description_sections(
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    string_id TEXT NOT NULL,
+    board_id BIGINT REFERENCES boards(id) ON DELETE RESTRICT NOT NULL,
+    title TEXT,
+    description TEXT,
+    type board_description_section_type NOT NULL,
+    index BIGINT NOT NULL
+);
+CREATE INDEX board_description_sections_board_id on board_description_sections(board_id);
+CREATE INDEX board_description_sections_string_id on board_description_sections(string_id);
+
+CREATE TABLE IF NOT EXISTS board_description_section_categories(
+    section_id BIGINT REFERENCES board_description_sections(id) ON DELETE RESTRICT NOT NULL,
+    category_id BIGINT REFERENCES categories(id) ON DELETE RESTRICT NOT NULL
+);
+CREATE UNIQUE INDEX board_description_section_categories_entry on board_description_section_categories(section_id, category_id);
+
+/**
+ * Roles tables.
+ */
+CREATE TYPE role_permissions AS ENUM ('all', 'edit_board_details', 'post_as_role');
+
+CREATE TABLE IF NOT EXISTS roles
+(
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    string_id TEXT NOT NULL,
+    name TEXT NOT NULL,
+    avatar_reference_id TEXT,
+    color TEXT,
+    description TEXT,
+    permissions role_permissions[] NOT NULL DEFAULT '{}'
+);
+CREATE UNIQUE INDEX roles_string_id on roles(string_id);
+
+CREATE TABLE IF NOT EXISTS board_user_roles(
+    user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
+    board_id BIGINT REFERENCES boards(id) ON DELETE RESTRICT NOT NULL,
+    role_id BIGINT REFERENCES roles(id) ON DELETE RESTRICT NOT NULL
+);
+CREATE UNIQUE INDEX board_user_roles_entry on board_user_roles(user_id, board_id);
+
+/*
+ * A mapping of which identity has been assigned to a user in each thread.
+ */
+CREATE TABLE IF NOT EXISTS user_thread_identities
+(
+    thread_id BIGINT REFERENCES threads(id) NOT NULL,
+    user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
+    identity_id BIGINT REFERENCES secret_identities(id) ON DELETE RESTRICT,
+    role_id BIGINT REFERENCES roles(id) ON DELETE RESTRICT,
+    CHECK (identity_id is not null or role_id is not null)
+);
+CREATE INDEX user_thread_identities_thread_id on user_thread_identities(thread_id);

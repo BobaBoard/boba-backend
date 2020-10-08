@@ -2,10 +2,11 @@ import { QueryFile } from "pg-promise";
 import path from "path";
 
 const createThread = `
-    INSERT INTO threads(string_id, parent_board)
+    INSERT INTO threads(string_id, parent_board, options)
     VALUES (
       $/thread_string_id/,
-      (SELECT id FROM boards WHERE slug = $/board_slug/))
+      (SELECT id FROM boards WHERE slug = $/board_slug/),
+      $/thread_options/)
     RETURNING id`;
 
 const createPost = `
@@ -27,12 +28,32 @@ const createPost = `
 const getRandomIdentityId = `
     SELECT id FROM secret_identities ORDER BY RANDOM() LIMIT 1`;
 
+/**
+ * Returns role data given the string id iff such a role is present for the given board & user.
+ */
+const getRoleByStringId = `
+    SELECT 
+      roles.id,
+      roles.name,
+      roles.avatar_reference_id,
+      to_json(roles.permissions) as permissions
+    FROM roles
+    LEFT JOIN board_user_roles bur
+      ON roles.id = bur.role_id
+    INNER JOIN users 
+      ON users.id = bur.user_id 
+    WHERE
+      roles.string_id = $/role_id/
+      AND bur.board_id  = (SELECT id FROM boards WHERE boards.slug = $/board_slug/)
+      AND bur.user_id  = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)`;
+
 const insertNewIdentity = `
-    INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
+    INSERT INTO user_thread_identities(thread_id, user_id, identity_id, role_id)
     VALUES(
       $/thread_id/,
-      (SELECT id FROM users WHERE firebase_id = $/firebase_id/), 
-      $/secret_identity_id/)`;
+      (SELECT id FROM users WHERE firebase_id = $/firebase_id/),
+      $/secret_identity_id/,
+      $/role_id/)`;
 
 const muteThreadByStringId = `
     INSERT INTO user_muted_threads(user_id, thread_id) VALUES (
@@ -76,4 +97,5 @@ export default {
   unmuteThreadByStringId,
   hideThreadByStringId,
   unhideThreadByStringId,
+  getRoleByStringId,
 };

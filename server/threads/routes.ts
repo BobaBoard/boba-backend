@@ -46,11 +46,10 @@ router.get("/:id", isLoggedIn, async (req, res) => {
   res.status(200).json(serverThread);
 });
 
-router.get("/:threadId/mute", isLoggedIn, async (req, res) => {
+router.post("/:threadId/mute", isLoggedIn, async (req, res) => {
   const { threadId } = req.params;
   // @ts-ignore
   if (!req.currentUser) {
-    // TODO: fix wrong status
     return res.sendStatus(401);
   }
   log(`Setting thread muted: ${threadId}`);
@@ -70,11 +69,10 @@ router.get("/:threadId/mute", isLoggedIn, async (req, res) => {
   res.status(200).json();
 });
 
-router.get("/:threadId/unmute", isLoggedIn, async (req, res) => {
+router.post("/:threadId/unmute", isLoggedIn, async (req, res) => {
   const { threadId } = req.params;
   // @ts-ignore
   if (!req.currentUser) {
-    // TODO: fix wrong status
     return res.sendStatus(401);
   }
   log(`Setting thread unmuted: ${threadId}`);
@@ -94,11 +92,10 @@ router.get("/:threadId/unmute", isLoggedIn, async (req, res) => {
   res.status(200).json();
 });
 
-router.get("/:threadId/hide", isLoggedIn, async (req, res) => {
+router.post("/:threadId/hide", isLoggedIn, async (req, res) => {
   const { threadId } = req.params;
   // @ts-ignore
   if (!req.currentUser) {
-    // TODO: fix wrong status
     return res.sendStatus(401);
   }
   log(`Setting thread hidden: ${threadId}`);
@@ -118,11 +115,10 @@ router.get("/:threadId/hide", isLoggedIn, async (req, res) => {
   res.status(200).json();
 });
 
-router.get("/:threadId/unhide", isLoggedIn, async (req, res) => {
+router.post("/:threadId/unhide", isLoggedIn, async (req, res) => {
   const { threadId } = req.params;
   // @ts-ignore
   if (!req.currentUser) {
-    // TODO: fix wrong status
     return res.sendStatus(401);
   }
   log(`Setting thread visible: ${threadId}`);
@@ -146,7 +142,6 @@ router.get("/:threadId/visit", isLoggedIn, async (req, res) => {
   const { threadId } = req.params;
   // @ts-ignore
   if (!req.currentUser) {
-    // TODO: fix wrong status
     return res.sendStatus(401);
   }
   log(`Setting last visited time for thread: ${threadId}`);
@@ -181,17 +176,20 @@ router.post("/:boardSlug/create", isLoggedIn, async (req, res, next) => {
   const {
     content,
     forceAnonymous,
+    defaultView,
     large,
     whisperTags,
     indexTags,
     categoryTags,
     contentWarnings,
+    identityId,
   } = req.body;
 
   const threadStringId = await createThread({
     // @ts-ignore
     firebaseId: req.currentUser.uid,
     content,
+    defaultView,
     anonymityType: "everyone",
     isLarge: !!large,
     boardSlug: boardSlug,
@@ -199,6 +197,7 @@ router.post("/:boardSlug/create", isLoggedIn, async (req, res, next) => {
     indexTags,
     categoryTags,
     contentWarnings,
+    identityId,
   });
   info(`Created new thread`, threadStringId);
 
