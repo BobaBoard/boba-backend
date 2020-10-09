@@ -16,8 +16,12 @@ DROP INDEX tags_tag;
 CREATE UNIQUE INDEX tags_tag on tags(tag);
 
 --- ADD COLUMN TO TABLE ---
-ALTER TABLE comments
-ADD COLUMN chain_parent_comment BIGINT REFERENCES comments(id) ON DELETE RESTRICT;
+ALTER TABLE threads
+ADD COLUMN options JSONB NOT NULL DEFAULT '{}'::jsonb;
+
+--- REMOVE COLUMN FROM TABLE ---
+ALTER TABLE threads
+DROP COLUMN parent_collection;
 
 --- ADD CHECK TO TABLE ---
 ALTER TABLE user_thread_identities
