@@ -36,3 +36,11 @@ DELETE FROM posts WHERE id IN (SELECT id FROM posts WHERE posts.parent_thread IN
 DELETE FROM user_thread_identities WHERE thread_id IN (SELECT id FROM threads WHERE string_id = 'acaee816-6bfa-4d41-be01-d35325d3ef33');
 DELETE FROM user_thread_last_visits WHERE thread_id IN (SELECT id FROM threads WHERE string_id = 'acaee816-6bfa-4d41-be01-d35325d3ef33');
 DELETE FROM threads WHERE string_id = 'acaee816-6bfa-4d41-be01-d35325d3ef33';
+
+--- TOTAL ACTIVITY ---
+select count(*) from threads;
+select count(*) from posts;
+select count(*) from comments;
+
+--- TOP POSTS BY USERS COUNT ---
+SELECT slug, threads.string_id, thread_id, COUNT(user_id) as c FROM user_thread_identities JOIN threads on thread_id = threads.id LEFT JOIN boards on parent_board = boards.id GROUP BY thread_id, string_id, slug ORDER BY c DESC;
