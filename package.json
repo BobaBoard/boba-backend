@@ -49,9 +49,11 @@
   },
   "devDependencies": {
     "@types/chai": "^4.2.11",
+    "@types/deep-equal-in-any-order": "^1.0.1",
     "@types/mocha": "^7.0.2",
     "@types/node": "^13.11.1",
     "chai": "^4.2.0",
+    "deep-equal-in-any-order": "^1.0.28",
     "mocha": "^7.1.1",
     "nodemon": "^2.0.3",
     "supertest": "^4.0.2",
