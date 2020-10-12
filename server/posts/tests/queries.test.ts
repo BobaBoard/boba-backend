@@ -1,39 +1,39 @@
 import "mocha";
-import { expect } from "chai";
+import deepEqualInAnyOrder from "deep-equal-in-any-order";
+import chai, { expect } from "chai";
+chai.use(deepEqualInAnyOrder);
 
-import { postNewContribution, postNewComment } from "../queries";
+import { runWithinTransaction } from "../../test-utils";
 
-// TODO: figure out how to do this without impacting other tests
-// describe("Tests posts queries", () => {
-//   it("adds a new reply to a thread", async () => {
-//     const newReply = await postNewContribution({
-//       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
-//       parentPostId: "987f795b-d60d-4016-af82-8684411f7785",
-//       content: "this is the content",
-//       anonymityType: "everyone",
-//     });
+import { maybeAddIndexTags, postNewComment } from "../queries";
 
-//     expect(newReply.content).to.eql("this is the content");
-//     expect(newReply.author).to.eql("1");
-//     expect(newReply.parent_thread).to.eql("3");
-//     expect(newReply.parent_post).to.eql("7");
-//     expect(newReply.type).to.eql("text");
-//     expect(newReply.anonymity_type).to.eql("everyone");
-//     expect(newReply.whisper_tags).to.eql(null);
-//   });
+import debug from "debug";
+const log = debug("bobaserver:posts:queries-test-log");
 
-//   it("adds a new comment to a thread", async () => {
-//     const newReply = await postNewComment({
-//       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
-//       parentPostId: "987f795b-d60d-4016-af82-8684411f7785",
-//       content: "this is the content",
-//       anonymityType: "everyone",
-//     });
+describe("Tests posts queries", () => {
+  it("adds index tags to post (and database)", async () => {
+    await runWithinTransaction(async (transaction) => {
+      // Himbo & zombies post
+      const postId = 6;
+      const addedTags = await maybeAddIndexTags(transaction, {
+        postId,
+        indexTags: ["Resident Evil", "Leon Kennedy"],
+      });
 
-//     expect(newReply.content).to.eql("this is the content");
-//     expect(newReply.author).to.eql("1");
-//     expect(newReply.parent_thread).to.eql("3");
-//     expect(newReply.parent_post).to.eql("7");
-//     expect(newReply.anonymity_type).to.eql("everyone");
-//   });
-// });
+      // TODO: turn this into its own method
+      const result = await transaction.one(
+        `SELECT posts.*, array_to_json(array_agg(tags.tag)) as index_tags FROM posts LEFT JOIN post_tags ON post_id = posts.id LEFT JOIN tags ON tag_id = tags.id WHERE posts.id = $/post_id/ GROUP BY posts.id`,
+        { post_id: postId }
+      );
+
+      expect(result.index_tags).to.deep.equalInAnyOrder([
+        "leon kennedy",
+        "resident evil",
+      ]);
+      expect(addedTags).to.deep.equalInAnyOrder([
+        "resident evil",
+        "leon kennedy",
+      ]);
+    });
+  });
+});

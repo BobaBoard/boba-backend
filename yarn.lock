@@ -273,6 +273,11 @@
   resolved "https://registry.yarnpkg.com/@types/debug/-/debug-4.1.5.tgz#b14efa8852b7768d898906613c23f688713e02cd"
   integrity sha512-Q1y515GcOdTHgagaVFhHnIFQ38ygs/kmxdNpvpou+raI9UO3YZcHDngBSYKQklcKlvA7iuQlmIKbzvmxcOE9CQ==
 
+"@types/deep-equal-in-any-order@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@types/deep-equal-in-any-order/-/deep-equal-in-any-order-1.0.1.tgz#0559d855797a5034e187f248b23a4490e5444f2e"
+  integrity sha512-hUWUUE53WjKfcCncSmWmNXVNNT+0Iz7gYFnov3zdCXrX3Thxp1Cnmfd5LwWOeCVUV5LhpiFgS05vaAG72doo9w==
+
 "@types/express-serve-static-core@*":
   version "4.17.7"
   resolved "https://registry.yarnpkg.com/@types/express-serve-static-core/-/express-serve-static-core-4.17.7.tgz#dfe61f870eb549dc6d7e12050901847c7d7e915b"
@@ -910,6 +915,14 @@ deep-eql@^3.0.1:
   integrity sha512-+QeIQyN5ZuO+3Uk5DYh6/1eKO0m0YmJFGNmFHGACpf1ClL1nmlV/p4gNgbl2pJGxgXb4faqo6UE+M5ACEMyVcw==
   dependencies:
     type-detect "^4.0.0"
+
+deep-equal-in-any-order@^1.0.28:
+  version "1.0.28"
+  resolved "https://registry.yarnpkg.com/deep-equal-in-any-order/-/deep-equal-in-any-order-1.0.28.tgz#2b002827e03b9e6b048692baf7faa0a07d3dd1d8"
+  integrity sha512-qq3jffpGmAG9kGpZGKusjRwoGxmFgIqNW076HQmV9rNdrFsgTcpuCyp6dBhzdVCWgQDkgRmvZLYAilV4u2BsfQ==
+  dependencies:
+    lodash.mapvalues "^4.6.0"
+    sort-any "^1.1.21"
 
 deep-equal@^2.0.0:
   version "2.0.3"
@@ -1982,6 +1995,11 @@ lodash.isstring@^4.0.1:
   resolved "https://registry.yarnpkg.com/lodash.isstring/-/lodash.isstring-4.0.1.tgz#d527dfb5456eca7cc9bb95d5daeaf88ba54a5451"
   integrity sha1-1SfftUVuynzJu5XV2ur4i6VKVFE=
 
+lodash.mapvalues@^4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/lodash.mapvalues/-/lodash.mapvalues-4.6.0.tgz#1bafa5005de9dd6f4f26668c30ca37230cc9689c"
+  integrity sha1-G6+lAF3p3W9PJmaMMMo3IwzJaJw=
+
 lodash.once@^4.0.0:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/lodash.once/-/lodash.once-4.1.1.tgz#0dd3971213c7c56df880977d504c88fb471a97ac"
@@ -2731,6 +2749,13 @@ snakeize@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/snakeize/-/snakeize-0.1.0.tgz#10c088d8b58eb076b3229bb5a04e232ce126422d"
   integrity sha1-EMCI2LWOsHazIpu1oE4jLOEmQi0=
+
+sort-any@^1.1.21:
+  version "1.1.23"
+  resolved "https://registry.yarnpkg.com/sort-any/-/sort-any-1.1.23.tgz#d16c0e6d69de03a1ef6a9d4064d14ee1c42ac210"
+  integrity sha512-aY92w1RkjIyJd1l+O4btCwfAIfZm2r+zA6+cfKbKUO5D5MEZlqY27B7QyHHIsEShBsvx+Ur1Oq3v/gfR6wxD/w==
+  dependencies:
+    lodash "^4.17.15"
 
 source-map-support@^0.5.17:
   version "0.5.19"

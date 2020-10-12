@@ -79,6 +79,7 @@ export const maybeAddContentWarningTags = async (
   return tags.map((tag) => tag.toLowerCase());
 };
 
+// TODO: rename this method since there's a mutation within it.
 const getThreadDetails = async (
   transaction: ITask<any>,
   {
