@@ -5,6 +5,7 @@ import {
   createBoardsIfNotExist,
   createIdentitiesIfNotExist,
   createInvite,
+  updateIdentities,
 } from "./queries";
 import { isLoggedIn } from "../auth-handler";
 import firebaseAuth from "firebase-admin";
@@ -20,6 +21,7 @@ const router = express.Router();
 const ADMIN_ID = "c6HimTlg2RhVH3fC1psXZORdLcx2";
 const BOARDS_SHEET_ID = "1ikA8dgtKAHuf-3FVrCfwWZ-0hL-1fMd7u1mGvLz4_no";
 const IDENTITIES_SHEET_ID = "1I3xXEQTDrp_XVpYWCTtTj106F2ad-PW__474NeqAHvs";
+const EVENT_SHEET_ID = "175LkjNRPFfNkPQqLZwma_EIJedBdB12exl8qcoVns8Q";
 const API_KEY = "AIzaSyA2KQh1wqrLwsrWvKQvFWeWoWMR8KOyTD4";
 const getSheetUrl = (url: string) =>
   `https://sheets.googleapis.com/v4/spreadsheets/${url}/?key=${API_KEY}&includeGridData=true`;
@@ -61,6 +63,64 @@ router.post("/generate/identities", isLoggedIn, async (req, res) => {
 
   res.status(200).json({ added: recordsAdded });
 });
+
+router.post("/generate/identities/event", isLoggedIn, async (req, res) => {
+  // @ts-ignore
+  if (req.currentUser?.uid !== ADMIN_ID) {
+    return res.sendStatus(403);
+  }
+
+  const data = await getSpreadsheetData(
+    getSheetUrl(EVENT_SHEET_ID),
+    (rowData, i) => ({
+      oldName: rowData[i].values?.[0]?.formattedValue,
+      oldAvatar: rowData[i].values?.[1]?.formattedValue,
+      eventName: rowData[i].values?.[2]?.formattedValue,
+      eventAvatar: rowData[i].values?.[3]?.formattedValue,
+    })
+  );
+  const recordsChanged = updateIdentities(
+    data.map((data) => ({
+      oldName: data.oldName,
+      oldAvatar: data.oldAvatar,
+      newName: data.eventName,
+      newAvatar: data.eventAvatar,
+    }))
+  );
+
+  res.status(200).json({ added: recordsChanged });
+});
+
+router.post(
+  "/generate/identities/event/revert",
+  isLoggedIn,
+  async (req, res) => {
+    // @ts-ignore
+    if (req.currentUser?.uid !== ADMIN_ID) {
+      return res.sendStatus(403);
+    }
+
+    const data = await getSpreadsheetData(
+      getSheetUrl(EVENT_SHEET_ID),
+      (rowData, i) => ({
+        oldName: rowData[i].values?.[0]?.formattedValue,
+        oldAvatar: rowData[i].values?.[1]?.formattedValue,
+        eventName: rowData[i].values?.[2]?.formattedValue,
+        eventAvatar: rowData[i].values?.[3]?.formattedValue,
+      })
+    );
+    const recordsChanged = updateIdentities(
+      data.map((data) => ({
+        oldName: data.eventName,
+        oldAvatar: data.eventAvatar,
+        newName: data.oldName,
+        newAvatar: data.oldAvatar,
+      }))
+    );
+
+    res.status(200).json({ added: recordsChanged });
+  }
+);
 
 router.post("/invite/generate", isLoggedIn, async (req, res) => {
   // @ts-ignore

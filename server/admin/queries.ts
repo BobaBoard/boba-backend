@@ -4,6 +4,45 @@ import pool from "../pool";
 const log = debug("bobaserver:admin:queries-log");
 const error = debug("bobaserver:admin:queries-error");
 
+export const updateIdentities = async (
+  identities: {
+    oldName: string;
+    oldAvatar: string;
+    newName: string;
+    newAvatar: string;
+  }[]
+) => {
+  const query = `
+      UPDATE secret_identities
+      SET 
+        display_name = $/new_name/,
+        avatar_reference_id = $/new_avatar/
+      WHERE
+        display_name = $/old_name/ AND
+        avatar_reference_id = $/old_avatar/
+      RETURNING *`;
+
+  return pool
+    .tx("update-identities", async (transaction) => {
+      const results = await Promise.all(
+        identities.map((id) => {
+          return transaction.one(query, {
+            old_name: id.oldName,
+            old_avatar: id.oldAvatar,
+            new_name: id.newName,
+            new_avatar: id.newAvatar,
+          });
+        })
+      );
+      return results;
+    })
+    .catch((e) => {
+      error("Could not update identities.");
+      error(e);
+      return false;
+    });
+};
+
 export const createIdentitiesIfNotExist = async (
   identities: {
     avatar?: string;
