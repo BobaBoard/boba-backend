@@ -21,8 +21,12 @@
             threads.id as thread_id,
             GREATEST(last_visit_time, dnr.dismiss_request_time, dbnr.dismiss_request_time) as cutoff_time
          FROM threads
-         INNER JOIN boards
-            ON boards.id = threads.parent_board AND boards.slug = ${board_slug}
+         INNER JOIN user_thread_identities uti
+            ON uti.thread_id = threads.id
+         INNER JOIN logged_in_user 
+            ON uti.user_id = logged_in_user.id
+         LEFT JOIN boards
+            ON boards.id = threads.parent_board
          JOIN users
             ON users.firebase_id = ${firebase_id}
          LEFT JOIN user_thread_last_visits
@@ -70,10 +74,13 @@
                 WHEN cutoff_time IS NULL OR cutoff_time < first_post.created THEN TRUE 
                 ELSE FALSE
             END as is_new
-         FROM boards 
-         LEFT JOIN threads
+         FROM threads
+         INNER JOIN user_thread_identities uti
+            ON uti.thread_id = threads.id
+         INNER JOIN logged_in_user 
+            ON uti.user_id = logged_in_user.id
+         LEFT JOIN boards
             ON boards.id = threads.parent_board
-         LEFT JOIN logged_in_user ON 1 = 1
          LEFT JOIN user_muted_threads
             ON user_muted_threads.user_id = logged_in_user.id
                 AND user_muted_threads.thread_id = threads.id
@@ -88,7 +95,6 @@
             ON last_visited_or_dismissed.thread_id = threads.id OR last_visited_or_dismissed.thread_id is NULL
          LEFT JOIN friends
             ON first_post.author = friends.user_id AND logged_in_user.id IS NOT NULL AND friends.friend_id = logged_in_user.id
-         WHERE boards.slug = ${board_slug}
          GROUP BY
             threads.id, boards.id, boards.slug, cutoff_time, user_muted_threads.thread_id, user_hidden_threads.thread_id, 
             first_post.id, logged_in_user.id, friends.user_id),
@@ -164,6 +170,5 @@ LEFT JOIN thread_comments_updates
 LEFT JOIN thread_identities
     ON thread_identities.user_id = (thread_posts_updates.first_post_author)::int AND thread_identities.thread_id = thread_posts_updates.threads_id
 WHERE GREATEST(thread_posts_updates.first_post_timestamp, thread_posts_updates.last_post_timestamp, thread_comments_updates.last_comment_timestamp) <= COALESCE(${last_activity_cursor}, NOW())
-    AND ${filtered_category} IS NULL OR (SELECT id FROM categories WHERE categories.category = ${filtered_category}) IN (SELECT category_id FROM post_categories WHERE post_categories.post_id = first_post_id)
 ORDER BY thread_last_activity DESC
 LIMIT ${page_size} + 1 

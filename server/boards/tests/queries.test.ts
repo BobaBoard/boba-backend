@@ -377,6 +377,7 @@ describe("Tests boards queries", () => {
         user_avatar: "bobatan.png",
         username: "bobatan",
         whisper_tags: ["An announcement from your headmaster!"],
+        board_slug: "gore",
       },
       {
         comments_amount: 2,
@@ -407,6 +408,7 @@ describe("Tests boards queries", () => {
         content_warnings: [],
         muted: false,
         hidden: false,
+        board_slug: "gore",
       },
       {
         comments_amount: 0,
@@ -437,6 +439,7 @@ describe("Tests boards queries", () => {
         content_warnings: [],
         muted: false,
         hidden: false,
+        board_slug: "gore",
       },
     ]);
   });
@@ -483,6 +486,7 @@ describe("Tests boards queries", () => {
         user_avatar: "bobatan.png",
         username: "bobatan",
         whisper_tags: ["An announcement from your headmaster!"],
+        board_slug: "gore",
       },
       {
         comments_amount: 2,
@@ -513,6 +517,7 @@ describe("Tests boards queries", () => {
         content_warnings: [],
         muted: false,
         hidden: false,
+        board_slug: "gore",
       },
       {
         comments_amount: 0,
@@ -543,6 +548,7 @@ describe("Tests boards queries", () => {
         content_warnings: [],
         muted: false,
         hidden: false,
+        board_slug: "gore",
       },
     ]);
   });

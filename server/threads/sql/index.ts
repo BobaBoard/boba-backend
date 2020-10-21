@@ -80,7 +80,7 @@ const unhideThreadByStringId = `
         thread_id = (SELECT id from threads WHERE threads.string_id = $/thread_string_id/)`;
 
 export default {
-  threadIdByString: new QueryFile(
+  threadByStringId: new QueryFile(
     path.join(__dirname, "thread-by-string-id.sql")
   ),
   threadIdentitiesByStringId: new QueryFile(

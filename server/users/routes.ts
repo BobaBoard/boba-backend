@@ -8,10 +8,16 @@ import {
   markInviteUsed,
   createNewUser,
   getBobadexIdentities,
+  getUserActivity,
 } from "./queries";
 import { isLoggedIn } from "../auth-handler";
-import { transformImageUrls } from "../response-utils";
+import {
+  ensureNoIdentityLeakage,
+  mergeObjectIdentity,
+  transformImageUrls,
+} from "../response-utils";
 import firebaseAuth from "firebase-admin";
+import { ServerThreadType, DbActivityThreadType } from "../../Types";
 
 const info = debug("bobaserver:users:routes-info");
 const log = debug("bobaserver:users:routes-log");
@@ -174,6 +180,80 @@ router.post("/notifications/dismiss", isLoggedIn, async (req, res) => {
   info(`Dismiss successful`);
 
   res.sendStatus(204);
+});
+
+router.get("/me/feed", isLoggedIn, async (req, res) => {
+  const { cursor } = req.query;
+  // @ts-ignore
+  let currentUserId: string = req.currentUser?.uid;
+  if (!currentUserId) {
+    res.sendStatus(401);
+    return;
+  }
+  const userActivity = await getUserActivity({
+    firebaseId: currentUserId,
+    cursor: (cursor as string) || null,
+  });
+
+  if (!userActivity) {
+    res.sendStatus(404);
+    return;
+  }
+  if (!userActivity.activity.length) {
+    res.sendStatus(204);
+    return;
+  }
+
+  const threadsWithIdentity = userActivity.activity.map(
+    (thread): ServerThreadType => {
+      const threadWithIdentity = mergeObjectIdentity<DbActivityThreadType>(
+        thread
+      );
+      return {
+        posts: [
+          {
+            post_id: threadWithIdentity.post_id,
+            parent_thread_id: threadWithIdentity.thread_id,
+            parent_post_id: threadWithIdentity.parent_post_id,
+            secret_identity: threadWithIdentity.secret_identity,
+            user_identity: threadWithIdentity.user_identity,
+            self: threadWithIdentity.self,
+            friend: threadWithIdentity.friend,
+            created: threadWithIdentity.created,
+            content: threadWithIdentity.content,
+            options: threadWithIdentity.options,
+            tags: {
+              whisper_tags: threadWithIdentity.whisper_tags,
+              index_tags: threadWithIdentity.index_tags,
+              category_tags: threadWithIdentity.category_tags,
+              content_warnings: threadWithIdentity.content_warnings,
+            },
+            total_comments_amount: threadWithIdentity.comments_amount,
+            new_comments_amount: threadWithIdentity.new_comments_amount,
+            is_new: threadWithIdentity.is_new,
+          },
+        ],
+        default_view: threadWithIdentity.default_view,
+        thread_id: threadWithIdentity.thread_id,
+        thread_new_posts_amount: threadWithIdentity.new_posts_amount,
+        thread_new_comments_amount: threadWithIdentity.new_comments_amount,
+        thread_total_comments_amount: threadWithIdentity.comments_amount,
+        thread_total_posts_amount: threadWithIdentity.posts_amount,
+        thread_last_activity: threadWithIdentity.thread_last_activity,
+        thread_direct_threads_amount: threadWithIdentity.threads_amount,
+        board_slug: threadWithIdentity.board_slug,
+        muted: threadWithIdentity.muted,
+        hidden: threadWithIdentity.hidden,
+      };
+    }
+  );
+  const response: {
+    next_page_cursor: string;
+    activity: ServerThreadType[];
+  } = { next_page_cursor: userActivity.cursor, activity: threadsWithIdentity };
+
+  response.activity.map((post) => ensureNoIdentityLeakage(post));
+  res.status(200).json(response);
 });
 
 export default router;

@@ -2,7 +2,8 @@ import "mocha";
 import { expect } from "chai";
 
 // TODO: make tests more legible by using encodeCursor
-import { encodeCursor, getBoardActivityBySlug } from "../queries";
+import { getBoardActivityBySlug } from "../queries";
+import { encodeCursor } from "../../queries-utils";
 
 describe("Tests boards queries", () => {
   it("fetches first page, gets cursor back", async () => {

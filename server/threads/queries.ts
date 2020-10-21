@@ -21,7 +21,7 @@ export const getThreadByStringId = async ({
   firebaseId?: string;
 }): Promise<DbThreadType | false> => {
   try {
-    const thread = await pool.oneOrNone(sql.threadIdByString, {
+    const thread = await pool.oneOrNone(sql.threadByStringId, {
       thread_string_id: threadId,
       firebase_id: firebaseId,
     });
