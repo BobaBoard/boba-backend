@@ -79,6 +79,7 @@ describe("Tests boards REST API", () => {
           ],
           thread_direct_threads_amount: 0,
           thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
+          board_slug: "gore",
           thread_last_activity: "2020-10-02T05:43:00.000000",
           thread_new_comments_amount: 0,
           thread_new_posts_amount: 0,
@@ -116,6 +117,7 @@ describe("Tests boards REST API", () => {
             },
           ],
           thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+          board_slug: "gore",
           thread_new_posts_amount: 0,
           thread_new_comments_amount: 0,
           thread_total_comments_amount: 2,
@@ -154,6 +156,7 @@ describe("Tests boards REST API", () => {
             },
           ],
           thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+          board_slug: "gore",
           thread_new_posts_amount: 0,
           thread_new_comments_amount: 0,
           thread_total_comments_amount: 0,
@@ -178,6 +181,7 @@ describe("Tests threads REST API", () => {
     expect(res.status).to.equal(200);
     expect(res.body).to.eql({
       thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      board_slug: "gore",
       thread_new_comments_amount: 0,
       thread_total_posts_amount: 3,
       thread_new_posts_amount: 0,

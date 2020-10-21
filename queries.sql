@@ -31,11 +31,12 @@ ADD CHECK (identity_id is not null or role_id is not null);
 alter table user_thread_identities alter column identity_id drop not null;
 
 --- DELETE THREAD ---
-DELETE FROM comments WHERE id IN (SELECT id FROM comments WHERE comments.parent_thread IN (SELECT id FROM threads WHERE string_id = 'acaee816-6bfa-4d41-be01-d35325d3ef33'));
-DELETE FROM posts WHERE id IN (SELECT id FROM posts WHERE posts.parent_thread IN (SELECT id FROM threads WHERE string_id = 'acaee816-6bfa-4d41-be01-d35325d3ef33'));
-DELETE FROM user_thread_identities WHERE thread_id IN (SELECT id FROM threads WHERE string_id = 'acaee816-6bfa-4d41-be01-d35325d3ef33');
-DELETE FROM user_thread_last_visits WHERE thread_id IN (SELECT id FROM threads WHERE string_id = 'acaee816-6bfa-4d41-be01-d35325d3ef33');
-DELETE FROM threads WHERE string_id = 'acaee816-6bfa-4d41-be01-d35325d3ef33';
+DELETE FROM post_categories WHERE post_id IN (SELECT id FROM posts WHERE posts.parent_thread IN (SELECT id FROM threads WHERE string_id = '0a1b42a5-f17f-4c3e-86df-6ca9302b4133'));
+DELETE FROM comments WHERE id IN (SELECT id FROM comments WHERE comments.parent_thread IN (SELECT id FROM threads WHERE string_id = '0a1b42a5-f17f-4c3e-86df-6ca9302b4133'));
+DELETE FROM posts WHERE id IN (SELECT id FROM posts WHERE posts.parent_thread IN (SELECT id FROM threads WHERE string_id = '0a1b42a5-f17f-4c3e-86df-6ca9302b4133'));
+DELETE FROM user_thread_identities WHERE thread_id IN (SELECT id FROM threads WHERE string_id = '0a1b42a5-f17f-4c3e-86df-6ca9302b4133');
+DELETE FROM user_thread_last_visits WHERE thread_id IN (SELECT id FROM threads WHERE string_id = '0a1b42a5-f17f-4c3e-86df-6ca9302b4133');
+DELETE FROM threads WHERE string_id = '0a1b42a5-f17f-4c3e-86df-6ca9302b4133';
 
 --- TOTAL ACTIVITY ---
 select count(*) from threads;

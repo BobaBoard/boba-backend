@@ -131,6 +131,7 @@ WITH
          WHERE threads.string_id = ${thread_string_id})
 SELECT 
     threads.string_id as thread_id, 
+    boards.slug as board_slug,
     json_agg(row_to_json(thread_posts) ORDER BY thread_posts.created ASC) as posts,
     COALESCE(threads.OPTIONS ->> 'default_view', 'thread')::view_types AS default_view,
     COALESCE(SUM(thread_posts.new_comments_amount)::int, 0) as thread_new_comments_amount,
@@ -143,5 +144,7 @@ SELECT
 FROM threads
 LEFT JOIN thread_posts
     ON threads.string_id = thread_posts.parent_thread_id
+LEFT JOIN boards
+    ON threads.parent_board = boards.id
 WHERE threads.string_id = ${thread_string_id}
-GROUP BY threads.id
+GROUP BY threads.id, boards.slug
