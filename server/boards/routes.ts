@@ -1,5 +1,6 @@
 import debug from "debug";
 import express from "express";
+import cache, { CacheKeys } from "../cache";
 import {
   getBoardBySlug,
   getBoardActivityBySlug,
@@ -29,6 +30,12 @@ router.get("/:slug", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
   log(`Fetching data for board with slug ${slug}`);
 
+  const cachedBoard = await cache.hget(CacheKeys.BOARD, slug);
+  if (cachedBoard) {
+    log(`Returning cached data for board ${slug}`);
+    return res.status(200).json(JSON.parse(cachedBoard));
+  }
+
   const board = await getBoardBySlug({
     // @ts-ignore
     firebaseId: req.currentUser?.uid,
@@ -41,7 +48,9 @@ router.get("/:slug", isLoggedIn, async (req, res) => {
     return;
   }
 
-  res.status(200).json(processBoardMetadata(board));
+  const boardMetadata = processBoardMetadata(board);
+  res.status(200).json(boardMetadata);
+  cache.hset(CacheKeys.BOARD, slug, JSON.stringify(boardMetadata));
 });
 
 router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
@@ -82,6 +91,8 @@ router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
     res.sendStatus(500);
     return;
   }
+
+  await cache.hdel(CacheKeys.BOARD, slug);
   res.status(200).json(processBoardMetadata(newMetadata));
 });
 
@@ -264,6 +275,18 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
 });
 
 router.get("/", isLoggedIn, async (req, res) => {
+  // @ts-ignore
+  if (!req.currentUser?.uid) {
+    // Only get cache for non-logged in users, because for logged in users this
+    // method also returns updates.
+    const cachedBoards = await cache.get(CacheKeys.BOARDS);
+    if (cachedBoards) {
+      info(`Returning cached result for boards`);
+      res.status(200).json(JSON.parse(cachedBoards));
+      return;
+    }
+  }
+
   const boards = await getBoards({
     // @ts-ignore
     firebaseId: req.currentUser?.uid,
@@ -272,7 +295,13 @@ router.get("/", isLoggedIn, async (req, res) => {
     res.status(500);
   }
 
-  res.status(200).json(boards.map((board: any) => transformImageUrls(board)));
+  const boardsResponse = boards.map((board: any) => transformImageUrls(board));
+  res.status(200).json(boardsResponse);
+
+  // @ts-ignore
+  if (!req.currentUser?.uid) {
+    cache.set(CacheKeys.BOARDS, JSON.stringify(boardsResponse));
+  }
 });
 
 export default router;
