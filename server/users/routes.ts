@@ -18,6 +18,7 @@ import {
 } from "../response-utils";
 import firebaseAuth from "firebase-admin";
 import { ServerThreadType, DbActivityThreadType } from "../../Types";
+import cache, { CacheKeys } from "../cache";
 
 const info = debug("bobaserver:users:routes-info");
 const log = debug("bobaserver:users:routes-log");
@@ -32,6 +33,13 @@ router.get("/me", isLoggedIn, async (req, res) => {
     res.sendStatus(401);
     return;
   }
+
+  const cachedData = await cache.hget(CacheKeys.USER, currentUserId);
+  if (cachedData) {
+    log(`Returning cached data for user ${currentUserId}`);
+    return res.status(200).json(JSON.parse(cachedData));
+  }
+
   log(`Fetching user data for firebase id: ${currentUserId}`);
   const userData = transformImageUrls(
     await getUserFromFirebaseId({
@@ -40,10 +48,12 @@ router.get("/me", isLoggedIn, async (req, res) => {
   );
   info(`Found user data : `, userData);
 
-  res.status(200).json({
+  const userDataResponse = {
     username: userData.username,
     avatarUrl: userData.avatarUrl,
-  });
+  };
+  res.status(200).json(userDataResponse);
+  cache.hset(CacheKeys.USER, currentUserId, JSON.stringify(userDataResponse));
 });
 
 router.post("/me/update", isLoggedIn, async (req, res) => {
@@ -73,6 +83,7 @@ router.post("/me/update", isLoggedIn, async (req, res) => {
     return;
   }
 
+  await cache.hdel(CacheKeys.USER, currentUserId);
   res.status(200).json({
     username: userData.username,
     avatarUrl: userData.avatarUrl,

@@ -5,3 +5,4 @@ node_modules/
 dist/
 .dblogs
 firebase-sdk.json
+dump.rdb
