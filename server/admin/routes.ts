@@ -11,7 +11,7 @@ import { isLoggedIn } from "../auth-handler";
 import firebaseAuth from "firebase-admin";
 import { randomBytes } from "crypto";
 import { getUserFromFirebaseId } from "../users/queries";
-import cache, { CacheKeys } from "../cache";
+import { cache, CacheKeys } from "../cache";
 
 // import { transformImageUrls, mergeActivityIdentities } from "../response-utils";
 
@@ -46,7 +46,7 @@ router.post("/generate/boards", isLoggedIn, async (req, res) => {
 
   res.status(200).json({ added: recordsAdded });
 
-  cache.del(CacheKeys.BOARDS);
+  cache().del(CacheKeys.BOARDS);
 });
 
 router.post("/generate/identities", isLoggedIn, async (req, res) => {

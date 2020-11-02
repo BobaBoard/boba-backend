@@ -18,7 +18,7 @@ import {
 } from "../response-utils";
 import firebaseAuth from "firebase-admin";
 import { ServerThreadType, DbActivityThreadType } from "../../Types";
-import cache, { CacheKeys } from "../cache";
+import { cache, CacheKeys } from "../cache";
 
 const info = debug("bobaserver:users:routes-info");
 const log = debug("bobaserver:users:routes-log");
@@ -34,7 +34,7 @@ router.get("/me", isLoggedIn, async (req, res) => {
     return;
   }
 
-  const cachedData = await cache.hget(CacheKeys.USER, currentUserId);
+  const cachedData = await cache().hget(CacheKeys.USER, currentUserId);
   if (cachedData) {
     log(`Returning cached data for user ${currentUserId}`);
     return res.status(200).json(JSON.parse(cachedData));
@@ -53,7 +53,7 @@ router.get("/me", isLoggedIn, async (req, res) => {
     avatarUrl: userData.avatarUrl,
   };
   res.status(200).json(userDataResponse);
-  cache.hset(CacheKeys.USER, currentUserId, JSON.stringify(userDataResponse));
+  cache().hset(CacheKeys.USER, currentUserId, JSON.stringify(userDataResponse));
 });
 
 router.post("/me/update", isLoggedIn, async (req, res) => {
@@ -83,7 +83,7 @@ router.post("/me/update", isLoggedIn, async (req, res) => {
     return;
   }
 
-  await cache.hdel(CacheKeys.USER, currentUserId);
+  await cache().hdel(CacheKeys.USER, currentUserId);
   res.status(200).json({
     username: userData.username,
     avatarUrl: userData.avatarUrl,

@@ -1,0 +1,6 @@
+{
+  "require": "./test/globalSetup.ts",
+  "timeout": 2000,
+  "exit": true,
+  "exclude": "./**/*.js"
+}

@@ -1,42 +1,56 @@
 import debug from "debug";
 
-import redis from "redis";
+import { createClient, RedisClient } from "redis";
 import { promisify } from "util";
 
-const error = debug("bobaserver:pool-error");
-const log = debug("bobaserver:pool-log");
-const info = debug("bobaserver:pool-info");
+const error = debug("bobaserver:cache-error");
+const log = debug("bobaserver:cache-log");
+const info = debug("bobaserver:cache-info");
 
-let client: redis.RedisClient;
-
-log(`Attempting cache connection...`);
-if (process.env.NODE_ENV == "production") {
-  log(`Connecting to remote cache host: ${process.env.POSTGRES_HOST}`);
-} else {
-  log(
-    `Attempting connection to redis client on port ${process.env.REDIS_PORT}`
-  );
-  client = redis.createClient(process.env.REDIS_PORT);
-}
-
-client.on("connect", function () {
-  log("You are now connected to the cache");
-});
-client.on("error", (err) => {
-  log(err);
-});
-client.on("monitor", (time, args) => {
-  log(`Received command: ${args}`);
-});
-
-export default {
-  set: promisify(client.set).bind(client),
-  get: promisify(client.get).bind(client),
-  del: promisify(client.del).bind(client),
-  hset: promisify(client.hset).bind(client),
-  hget: promisify(client.hget).bind(client),
-  hdel: promisify(client.hdel).bind(client),
+let client: {
+  set: (key: CacheKeys, value: string) => Promise<void>;
+  get: (key: CacheKeys) => Promise<string>;
+  del: (key: CacheKeys) => Promise<void>;
+  hset: (key: CacheKeys, objectKey: string, value: string) => Promise<void>;
+  hget: (key: CacheKeys, objectKey: string) => Promise<string>;
+  hdel: (key: CacheKeys, objectKey: string) => Promise<void>;
 };
+
+export const initCache = (createClientMethod?: any) => {
+  if (client) {
+    return;
+  }
+  let innerClient: RedisClient;
+  log(`Attempting cache connection...`);
+  if (process.env.NODE_ENV == "production") {
+    log(`Connecting to remote cache host: ${process.env.POSTGRES_HOST}`);
+  } else {
+    log(
+      `Attempting connection to redis client on port ${process.env.REDIS_PORT}`
+    );
+    innerClient = createClientMethod
+      ? createClientMethod()
+      : createClient(process.env.REDIS_PORT);
+  }
+
+  innerClient.on("connect", () => {
+    log("You are now connected to the cache");
+  });
+  innerClient.on("error", (err) => {
+    error("Redis connection failed");
+  });
+
+  client = {
+    set: promisify(innerClient.set).bind(innerClient),
+    get: promisify(innerClient.get).bind(innerClient),
+    del: promisify(innerClient.del).bind(innerClient),
+    hset: promisify(innerClient.hset).bind(innerClient),
+    hget: promisify(innerClient.hget).bind(innerClient),
+    hdel: promisify(innerClient.hdel).bind(innerClient),
+  };
+};
+
+export const cache = () => client;
 
 export enum CacheKeys {
   // All boards data.

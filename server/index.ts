@@ -5,7 +5,7 @@ import cors from "cors";
 import firebaseAuth from "firebase-admin";
 import dotenv from "dotenv";
 import dotenvExpand from "dotenv-expand";
-import redis from "redis";
+import { initCache } from "./cache";
 
 dotenvExpand(dotenv.config());
 
@@ -16,11 +16,7 @@ if (!firebaseAuth.apps.length) {
     credential: firebaseAuth.credential.cert(serviceAccount),
   });
 }
-
-const redisClient = redis.createClient(process.env.REDIS_PORT);
-redisClient.on("connect", function () {
-  log("You are now connected");
-});
+initCache();
 
 import { applyRoutes } from "./all-routes";
 

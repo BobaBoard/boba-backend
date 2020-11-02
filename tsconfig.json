@@ -12,5 +12,5 @@
       "*": ["node_modules/*"]
     }
   },
-  "include": ["server/**/*", "test"]
+  "include": ["server/**/*", "test", "extra-types.d.ts"]
 }
