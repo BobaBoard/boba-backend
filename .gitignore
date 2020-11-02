@@ -7,3 +7,4 @@ dist/
 firebase-sdk.json
 dump.rdb
 .DS_Store
+.vscode/
