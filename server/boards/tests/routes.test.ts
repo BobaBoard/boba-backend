@@ -1,14 +1,28 @@
 import "mocha";
 import { expect } from "chai";
 import request from "supertest";
+import express, { Express } from "express";
+import router from "../routes";
+import { Server } from "http";
 
-import app from "../server";
 import debug from "debug";
 const log = debug("bobaserver:board:routes");
 
 describe("Tests boards REST API", () => {
+  let app: Express;
+  let listener: Server;
+  beforeEach(function (done) {
+    app = express();
+    app.use(router);
+    listener = app.listen(4000, (err) => {
+      done();
+    });
+  });
+  afterEach(function (done) {
+    listener.close(done);
+  });
   it("should return board data", async () => {
-    const res = await request(app).get("/boards/gore");
+    const res = await request(app).get("/gore");
 
     expect(res.status).to.equal(200);
     expect(res.body).to.eql({
@@ -45,17 +59,7 @@ describe("Tests boards REST API", () => {
   });
 
   it("should return activity data", async () => {
-    log("*************");
-    log("*************");
-    log("*************");
-    log("*************");
-    log("*************");
-    log("*************");
-    log("*************");
-    log("*************");
-    log("*************");
-    log("*************");
-    const res = await request(app).get("/boards/gore/activity/latest");
+    const res = await request(app).get("/gore/activity/latest");
 
     expect(res.status).to.equal(200);
     expect(res.body).to.eql({
