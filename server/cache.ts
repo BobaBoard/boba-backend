@@ -22,16 +22,12 @@ export const initCache = (createClientMethod?: any) => {
   }
   let innerClient: RedisClient;
   log(`Attempting cache connection...`);
-  if (process.env.NODE_ENV == "production") {
-    log(`Connecting to remote cache host: ${process.env.POSTGRES_HOST}`);
-  } else {
-    log(
-      `Attempting connection to redis client on port ${process.env.REDIS_PORT}`
-    );
-    innerClient = createClientMethod
-      ? createClientMethod()
-      : createClient(process.env.REDIS_PORT);
-  }
+  log(
+    `Attempting connection to redis client on host ${process.env.REDIS_HOST} and port ${process.env.REDIS_PORT}`
+  );
+  innerClient = createClientMethod
+    ? createClientMethod()
+    : createClient(parseInt(process.env.REDIS_PORT), process.env.REDIS_HOST);
 
   innerClient.on("connect", () => {
     log("You are now connected to the cache");
