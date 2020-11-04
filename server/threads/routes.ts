@@ -8,6 +8,7 @@ import {
   unmuteThread,
   hideThread,
   unhideThread,
+  updateThreadView,
 } from "./queries";
 import { isLoggedIn } from "../auth-handler";
 import { makeServerThread, ensureNoIdentityLeakage } from "../response-utils";
@@ -227,6 +228,42 @@ router.post("/:boardSlug/create", isLoggedIn, async (req, res, next) => {
 
   info(`sending back data for thread ${threadStringId}.`);
   res.status(200).json(serverThread);
+});
+
+router.post("/:id/update/view", isLoggedIn, async (req, res) => {
+  const { id } = req.params;
+  const { view } = req.body;
+  log(`Fetching data for thread with id ${id}`);
+
+  // Count it as not implemented for now
+  res.sendStatus(501);
+  return;
+  // TODO: CHECK PERMISSIONS
+  // NOTE: if updating this (and it makes sense) also update
+  // the method for thread creation + retrieval.
+  const thread = await getThreadByStringId({
+    threadId: id,
+    // @ts-ignore
+    firebaseId: req.currentUser?.uid,
+  });
+  info(`Found thread: `, thread);
+
+  if (thread === false) {
+    res.sendStatus(500);
+    return;
+  }
+  if (!thread) {
+    res.sendStatus(404);
+    return;
+  }
+
+  await updateThreadView({
+    threadId: id,
+    defaultView: view,
+  });
+
+  info(`sending back data for thread ${id}.`);
+  res.sendStatus(200);
 });
 
 export default router;

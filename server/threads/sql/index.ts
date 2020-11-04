@@ -79,6 +79,13 @@ const unhideThreadByStringId = `
         AND
         thread_id = (SELECT id from threads WHERE threads.string_id = $/thread_string_id/)`;
 
+const updateThreadViewByStringId = `
+    UPDATE threads 
+      SET options = jsonb_set(options, '{default_view}', to_jsonb($/thread_default_view/::text))
+      WHERE threads.string_id = $/thread_string_id/
+    RETURNING *;
+`;
+
 export default {
   threadByStringId: new QueryFile(
     path.join(__dirname, "thread-by-string-id.sql")
@@ -97,5 +104,6 @@ export default {
   unmuteThreadByStringId,
   hideThreadByStringId,
   unhideThreadByStringId,
+  updateThreadViewByStringId,
   getRoleByStringId,
 };

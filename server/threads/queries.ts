@@ -62,6 +62,21 @@ export const getThreadIdentitiesByStringId = async ({
   }
 };
 
+export const updateThreadView = async ({
+  threadId,
+  defaultView,
+}: {
+  threadId: string;
+  defaultView: string;
+}) => {
+  const update = await pool.one(sql.updateThreadViewByStringId, {
+    thread_string_id: threadId,
+    thread_default_view: defaultView,
+  });
+
+  return;
+};
+
 export const createThread = async ({
   firebaseId,
   content,
