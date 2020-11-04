@@ -10,12 +10,16 @@ SELECT
     MAX(comments.last_activity) as last_comment,
     MAX(GREATEST(user_board_last_visits.last_visit_time, posts.last_thread_visit)) as last_visit,
     user_muted_boards.board_id IS NOT NULL as muted,
+    user_pinned_boards.board_id IS NOT NULL as pinned,
     BOOL_OR(user_muted_boards.board_id IS NULL AND (posts.has_new OR comments.has_new)) as has_updates
 FROM boards
 LEFT JOIN logged_in_user ON 1 = 1
 LEFT JOIN user_muted_boards 
     ON boards.id = user_muted_boards.board_id
         AND user_muted_boards.user_id = logged_in_user.id
+LEFT JOIN user_pinned_boards 
+    ON boards.id = user_pinned_boards.board_id
+        AND user_pinned_boards.user_id = logged_in_user.id
 LEFT JOIN threads 
     ON boards.id = threads.parent_board
 LEFT JOIN user_muted_threads
@@ -74,4 +78,4 @@ LEFT JOIN LATERAL (
             AND user_hidden_threads.thread_id IS NULL 
             AND comments.parent_thread = threads.id) as comments
     ON 1=1
-GROUP BY boards.id, user_muted_boards.board_id
+GROUP BY boards.id, user_muted_boards.board_id, user_pinned_boards.board_id

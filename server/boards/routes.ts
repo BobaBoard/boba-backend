@@ -10,6 +10,8 @@ import {
   muteBoard,
   unmuteBoard,
   dismissBoardNotifications,
+  pinBoard,
+  unpinBoard,
 } from "./queries";
 import { isLoggedIn } from "../auth-handler";
 import {
@@ -176,7 +178,54 @@ router.post("/:slug/unmute", isLoggedIn, async (req, res) => {
   res.status(200).json();
 });
 
-0;
+router.post("/:slug/pin", isLoggedIn, async (req, res) => {
+  const { slug } = req.params;
+  // @ts-ignore
+  if (!req.currentUser) {
+    return res.sendStatus(401);
+  }
+  log(`Setting board pinned: ${slug}`);
+
+  if (
+    !(await pinBoard({
+      // @ts-ignore
+      firebaseId: req.currentUser.uid,
+      slug,
+    }))
+  ) {
+    res.sendStatus(500);
+    return;
+  }
+
+  // @ts-ignore
+  info(`Pinned board: ${slug} for user ${req.currentUser.uid}.`);
+  res.status(200).json();
+});
+
+router.post("/:slug/unpin", isLoggedIn, async (req, res) => {
+  const { slug } = req.params;
+  // @ts-ignore
+  if (!req.currentUser) {
+    return res.sendStatus(401);
+  }
+  log(`Setting board unmuted: ${slug}`);
+
+  if (
+    !(await unpinBoard({
+      // @ts-ignore
+      firebaseId: req.currentUser.uid,
+      slug,
+    }))
+  ) {
+    res.sendStatus(500);
+    return;
+  }
+
+  // @ts-ignore
+  info(`unpinned board: ${slug} for user ${req.currentUser.uid}.`);
+  res.status(200).json();
+});
+
 router.post("/:slug/notifications/dismiss", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
   // @ts-ignore

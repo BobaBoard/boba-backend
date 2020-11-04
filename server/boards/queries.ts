@@ -332,6 +332,46 @@ export const unmuteBoard = async ({
   }
 };
 
+export const pinBoard = async ({
+  slug,
+  firebaseId,
+}: {
+  slug: string;
+  firebaseId: string;
+}) => {
+  try {
+    await pool.none(sql.pinBoardBySlug, {
+      firebase_id: firebaseId,
+      board_slug: slug,
+    });
+    return true;
+  } catch (e) {
+    error(`Error while pinning board.`);
+    error(e);
+    return false;
+  }
+};
+
+export const unpinBoard = async ({
+  slug,
+  firebaseId,
+}: {
+  slug: string;
+  firebaseId: string;
+}) => {
+  try {
+    await pool.none(sql.unpinBoardBySlug, {
+      firebase_id: firebaseId,
+      board_slug: slug,
+    });
+    return true;
+  } catch (e) {
+    error(`Error while unpinning board.`);
+    error(e);
+    return false;
+  }
+};
+
 export const dismissBoardNotifications = async ({
   slug,
   firebaseId,
