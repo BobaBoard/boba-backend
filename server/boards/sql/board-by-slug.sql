@@ -1,6 +1,8 @@
-WITH logged_in_user AS (
-        SELECT id FROM users WHERE firebase_id  = ${firebase_id}
-    )
+WITH 
+  logged_in_user AS
+    (SELECT id FROM users WHERE users.firebase_id = ${firebase_id}),
+  ordered_pinned_boards AS
+    (SELECT row_number() OVER(ORDER BY id) AS index, board_id, user_id FROM user_pinned_boards)
 SELECT 
     boards.slug,
     boards.tagline,
@@ -20,7 +22,7 @@ SELECT
             WHERE board_description_sections.id = bds.id
             GROUP BY bds.id ))) FILTER (WHERE bds.id IS NOT NULL) as descriptions,
     umb.user_id IS NOT NULL as muted,
-    upb.user_id IS NOT NULL as pinned,
+    COALESCE(opb.index, NULL) as pinned_order,
     COALESCE(
         json_agg(DISTINCT jsonb_build_object(
             'id', p.role_id,
@@ -35,8 +37,8 @@ FROM boards
         ON boards.id = threads.parent_board
     LEFT JOIN user_muted_boards umb 
         ON boards.id = umb.board_id AND umb.user_id = (SELECT id FROM users WHERE users.firebase_id = ${firebase_id})
-    LEFT JOIN user_pinned_boards upb 
-        ON boards.id = upb.board_id AND upb.user_id = (SELECT id FROM users WHERE users.firebase_id = ${firebase_id})
+    LEFT JOIN ordered_pinned_boards opb 
+        ON boards.id = opb.board_id AND opb.user_id = (SELECT id FROM users WHERE users.firebase_id = ${firebase_id})
     LEFT JOIN board_user_roles bur 
         ON boards.id = bur.board_id AND bur.user_id = (SELECT id FROM logged_in_user LIMIT 1)
     LEFT JOIN LATERAL (
@@ -50,4 +52,4 @@ FROM boards
     LEFT JOIN board_description_sections bds 
         ON bds.board_id = boards.id 
 WHERE boards.slug=${board_slug}
-GROUP BY boards.id, umb.user_id, upb.user_id
+GROUP BY boards.id, umb.user_id, opb.index

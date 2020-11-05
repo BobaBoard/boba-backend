@@ -281,6 +281,7 @@ CREATE TABLE IF NOT EXISTS user_muted_boards(
 CREATE UNIQUE INDEX user_muted_boards_entry on user_muted_boards(user_id, board_id);
 
 CREATE TABLE IF NOT EXISTS user_pinned_boards(
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
     board_id BIGINT REFERENCES boards(id) ON DELETE RESTRICT NOT NULL
 );
