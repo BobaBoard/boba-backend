@@ -2,6 +2,7 @@ import debug from "debug";
 import { Router } from "express";
 import BoardsRoutes from "./boards/routes";
 import ThreadsRoutes from "./threads/routes";
+import TagsRoutes from "./tags/routes";
 import PostsRoutes from "./posts/routes";
 import UsersRoutes from "./users/routes";
 import AdminRoutes from "./admin/routes";
@@ -16,6 +17,7 @@ const ROUTES: { [key: string]: Router } = {
   users: UsersRoutes,
   admin: AdminRoutes,
   collections: CollectionRoutes,
+  tags: TagsRoutes
 };
 
 export const applyRoutes = (router: Router) => {
