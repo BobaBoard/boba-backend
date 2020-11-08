@@ -22,9 +22,11 @@ describe("Tests tags REST API", () => {
     listener.close(done);
   });
   it("should implement the new tag api I added", async () => {
-    const res = await request(app).get("/search?tags=tagone,tagtwo,tagthree&exclude=notone,nottwo");
+    //const res = await request(app).get("/search?tags=tagone,tagtwo,tagthree&exclude=notone,nottwo");
+    //const res = await request(app).get("/search?tags=tagone&tags=tagtwo&tags=tagthree&exclude=notone&exclude=nottwo");
+    const res = await request(app).get("/search?tags=evil&tags=evil&exclude=notevil&exclude=notevil");
     expect(res.status).to.equal(200);
-    expect(res.body).to.eql({
+    expect(res.body[1]).to.eql({
       tags : "tagone,tagtwo,tagthree",
       exclude : "notone,nottwo"
     });
