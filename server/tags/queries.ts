@@ -5,6 +5,10 @@ import sql from "./sql";
 const log = debug("bobaserver:tags:queries-log");
 const error = debug("bobaserver:tags:queries-error");
 
+function jsStringArrayToPsStringArray(jsStringArray: string[]): string {
+  return 
+}
+
 export const getPostsWithTags = async ({
   includeTags,
   excludeTags
@@ -13,9 +17,7 @@ export const getPostsWithTags = async ({
   excludeTags: string[]
 }): Promise<any> => {
   try {
-    return await pool.many(sql.getPostsWithTags, { 
-      includeTags: includeTags,
-      excludeTags: excludeTags});
+    return await pool.many(sql.getPostsWithTags, { includeTags, excludeTags });
 
   } catch (e) {
     error(`Error while fetching posts by tags. includeTags: (${includeTags}) excludeTags:(${excludeTags})`);

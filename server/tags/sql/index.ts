@@ -11,7 +11,7 @@ const getPostsWithTags = `
       ) posts_with_tags
     WHERE
       all_tags @> $/includeTags/ AND
-      NOT all_tags @> $/excludeTags/
+      NOT all_tags && $/excludeTags/
 `
 
 

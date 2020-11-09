@@ -24,12 +24,12 @@ router.get("/search", async (req, res) => {
   const includeTags = querystringParamToArray(req.query.tags);
   const excludeTags = querystringParamToArray(req.query.exclude);
 
-  const postsWithTags = await getPostsWithTags({includeTags, excludeTags});
-
-  if (!postsWithTags) {
-    res.sendStatus(500);
+  if (includeTags.length === 0) {
+    res.sendStatus(400);
     return;
   }
+
+  const postsWithTags = await getPostsWithTags({includeTags, excludeTags});
 
   return res.status(200).json(postsWithTags);
 });
