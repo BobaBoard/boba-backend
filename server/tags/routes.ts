@@ -7,7 +7,7 @@ import {
 const router = express.Router();
 const log = debug("bobaserver:tags:routes-log");
 
-function querystringParamToArray(param: any) {
+function querystringParamToArray(param: any): string[] {
   switch(typeof param) {
     case 'string':
       return [param];
@@ -21,8 +21,8 @@ function querystringParamToArray(param: any) {
 }
 
 router.get("/search", async (req, res) => {
-  const includeTags = req.query.tags as string;
-  const excludeTags = req.query.exclude as string;
+  const includeTags = querystringParamToArray(req.query.tags);
+  const excludeTags = querystringParamToArray(req.query.exclude);
 
   const postsWithTags = await getPostsWithTags({includeTags, excludeTags});
 

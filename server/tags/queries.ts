@@ -9,8 +9,8 @@ export const getPostsWithTags = async ({
   includeTags,
   excludeTags
 }: {
-  includeTags: string,
-  excludeTags: string
+  includeTags: string[],
+  excludeTags: string[]
 }): Promise<any> => {
   try {
     return await pool.many(sql.getPostsWithTags, { 
