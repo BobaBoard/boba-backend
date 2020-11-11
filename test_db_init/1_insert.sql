@@ -209,3 +209,23 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
       (SELECT id FROM secret_identities WHERE display_name = 'DragonFucker'));
 
 INSERT INTO friends(user_id,friend_id) VALUES (1,3),(3,1);
+
+INSERT INTO tags(tag)  VALUES
+  ('good'),
+  ('evil'),
+  ('oddly specific'),
+  ('metal gear'),
+  ('bobapost');
+
+INSERT INTO post_tags(post_id, tag_id) VALUES
+ (1,2), -- 'Favorite character to maim?' is `evil` 
+ (2,2), -- 'Revolver Ocelot?' is `evil` 
+ (2,3), -- 'Revolver Ocelot?' is `oddly specific` 
+ (2,4), -- 'Revolver Ocelot?' is `metal gear` 
+ (3,1), -- 'Kermit the Frog?' is `good` 
+ (3,3), -- 'Kermit the Frog?' is `oddly specific` 
+ 
+ (1,5), -- 'Favorite Character to maim' is `bobapost`
+ (2,5), -- 'Revolver Ocelot?' is `bobapost`
+ (3,5); -- 'Kermit the Frog?' is `bobapost`
+ 

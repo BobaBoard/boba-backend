@@ -123,7 +123,7 @@ describe("Tests boards REST API", () => {
               content: '[{"insert":"Favorite character to maim?"}]',
               options: {},
               tags: {
-                index_tags: [],
+                index_tags: ["evil", "bobapost"],
                 whisper_tags: [],
                 category_tags: [],
                 content_warnings: [],

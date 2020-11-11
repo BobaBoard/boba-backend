@@ -54,7 +54,7 @@ describe("Tests threads REST API", () => {
           total_comments_amount: 0,
           type: "text",
           tags: {
-            index_tags: [],
+            index_tags: ["evil", "bobapost"],
             whisper_tags: [],
             category_tags: [],
             content_warnings: [],
@@ -82,7 +82,7 @@ describe("Tests threads REST API", () => {
           total_comments_amount: 0,
           type: "text",
           tags: {
-            index_tags: [],
+            index_tags: ["evil", "oddly specific", "metal gear", "bobapost"],
             whisper_tags: ["fight me on this"],
             category_tags: [],
             content_warnings: [],
@@ -147,7 +147,7 @@ describe("Tests threads REST API", () => {
           total_comments_amount: 2,
           type: "text",
           tags: {
-            index_tags: [],
+            index_tags: ["good", "oddly specific", "bobapost"],
             whisper_tags: [
               "Im too ashamed to admit this ok",
               "sorry mom",
