@@ -10,7 +10,9 @@
     "baseUrl": ".",
     "paths": {
       "*": ["node_modules/*"]
-    }
+    },
+    "skipLibCheck": true
   },
-  "include": ["server/**/*", "test", "extra-types.d.ts"]
+  "include": ["server/**/*", "extra-types.d.ts"],
+  "exclude": ["node_modules"]
 }
