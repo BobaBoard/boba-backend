@@ -24,7 +24,7 @@ services:
         "-t",
         "120",
         "--",
-        "npm",
+        "yarn",
         "run",
         "test",
       ]
