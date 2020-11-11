@@ -45,3 +45,14 @@ select count(*) from comments;
 
 --- TOP POSTS BY USERS COUNT ---
 SELECT slug, threads.string_id, thread_id, COUNT(user_id) as c FROM user_thread_identities JOIN threads on thread_id = threads.id LEFT JOIN boards on parent_board = boards.id GROUP BY thread_id, string_id, slug ORDER BY c DESC;
+
+--- ADD NEW ROLE ---
+INSERT INTO roles(string_id, name, avatar_reference_id, color, description, permissions)
+VALUES
+    ('roleID', 
+     'roleName', 
+     'roleAvatar',
+     'roleColor',
+     'roleDescription.',
+     ARRAY['post_as_role'::role_permissions, 'edit_board_details'::role_permissions]);
+insert into board_user_roles(user_id, board_id, role_id) VALUES(userId, boardId, roleId);
