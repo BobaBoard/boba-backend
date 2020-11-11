@@ -14,7 +14,7 @@ describe("Tests boards REST API", () => {
   beforeEach(function (done) {
     app = express();
     app.use(router);
-    listener = app.listen(4000, (err) => {
+    listener = app.listen(4000, () => {
       done();
     });
   });
@@ -51,6 +51,7 @@ describe("Tests boards REST API", () => {
       slug: "gore",
       tagline: "Blood! Blood! Blood!",
       postingIdentities: [],
+      pinned_order: null,
       permissions: {
         canEditBoardData: false,
       },
