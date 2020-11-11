@@ -20,14 +20,19 @@ export const initCache = (createClientMethod?: any) => {
   if (client) {
     return;
   }
-  let innerClient: RedisClient;
+  // This is mostly used for testing so we can pass stubbed instances
+  if (createClientMethod) {
+    client = createClientMethod();
+    return;
+  }
+  let innerClient: RedisClient = createClient(
+    parseInt(process.env.REDIS_PORT),
+    process.env.REDIS_HOST
+  );
   log(`Attempting cache connection...`);
   log(
     `Attempting connection to redis client on host ${process.env.REDIS_HOST} and port ${process.env.REDIS_PORT}`
   );
-  innerClient = createClientMethod
-    ? createClientMethod()
-    : createClient(parseInt(process.env.REDIS_PORT), process.env.REDIS_HOST);
 
   innerClient.on("connect", () => {
     log("You are now connected to the cache");
