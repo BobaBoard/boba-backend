@@ -1,6 +1,11 @@
 import debug from "debug";
 
-import { DbRolePermissions, BoardPermissions } from "../Types";
+import {
+  DbRolePermissions,
+  BoardPermissions,
+  DbPostType,
+  QueryTagsType,
+} from "../Types";
 
 const log = debug("bobaserver::permissions-utils-log");
 
@@ -30,4 +35,45 @@ export const transformPermissions = (
   return {
     canEditBoardData: canEditBoard(permissions),
   };
+};
+
+export enum ThreadPermissions {
+  editViewType,
+}
+
+export enum PostPermissions {
+  editContent,
+  editWhisperTags,
+  editCategoryTags,
+  editIndexTags,
+  editContentNotices,
+}
+
+export const canDoTagsEdit = (
+  tagsDelta: { added: QueryTagsType; removed: QueryTagsType },
+  permissions: PostPermissions[]
+) => {
+  const isEditingContentWarnings =
+    tagsDelta.added.contentWarnings.length > 0 ||
+    tagsDelta.removed.contentWarnings.length > 0;
+  const isEditingIndexTags =
+    tagsDelta.added.indexTags.length > 0 ||
+    tagsDelta.removed.indexTags.length > 0;
+  const isEditingCategoryTags =
+    tagsDelta.added.categoryTags.length > 0 ||
+    tagsDelta.removed.categoryTags.length > 0;
+  const isEditingWhisperTags =
+    tagsDelta.added.whisperTags.length > 0 ||
+    tagsDelta.removed.whisperTags.length > 0;
+
+  return !(
+    (isEditingContentWarnings &&
+      !permissions.includes(PostPermissions.editContentNotices)) ||
+    (isEditingIndexTags &&
+      !permissions.includes(PostPermissions.editIndexTags)) ||
+    (isEditingCategoryTags &&
+      !permissions.includes(PostPermissions.editCategoryTags)) ||
+    (isEditingWhisperTags &&
+      !permissions.includes(PostPermissions.editWhisperTags))
+  );
 };
