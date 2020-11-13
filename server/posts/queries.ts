@@ -3,9 +3,9 @@ import pool from "../pool";
 import { v4 as uuidv4 } from "uuid";
 import sql from "./sql";
 import threadsSql from "../threads/sql";
-import { DbPostType, DbCommentType } from "../../Types";
+import { DbPostType, DbCommentType, QueryTagsType } from "../../Types";
 import { ITask } from "pg-promise";
-import { canPostAs } from "../permissions-utils";
+import { canPostAs, PostPermissions } from "../permissions-utils";
 
 const log = debug("bobaserver:posts:queries-log");
 const error = debug("bobaserver:posts:queries-error");
@@ -33,6 +33,29 @@ export const maybeAddIndexTags = async (
   return tags.map((tag) => tag.toLowerCase());
 };
 
+export const removeIndexTags = async (
+  transaction: ITask<any>,
+  {
+    indexTags,
+    postId,
+  }: {
+    indexTags: string[];
+    postId: number;
+  }
+): Promise<void> => {
+  if (!indexTags?.length) {
+    return;
+  }
+  const tags = indexTags
+    .filter((tag) => !!tag.trim().length)
+    .map((tag) => tag.trim().toLowerCase());
+
+  return await transaction.none(sql.deleteTagsFromPost, {
+    post_id: postId,
+    tags,
+  });
+};
+
 export const maybeAddCategoryTags = async (
   transaction: ITask<any>,
   {
@@ -56,6 +79,29 @@ export const maybeAddCategoryTags = async (
   return tags.map((tag) => tag.toLowerCase());
 };
 
+export const removeCategoryTags = async (
+  transaction: ITask<any>,
+  {
+    categoryTags,
+    postId,
+  }: {
+    categoryTags: string[];
+    postId: number;
+  }
+): Promise<void> => {
+  if (!categoryTags?.length) {
+    return;
+  }
+  const tags = categoryTags
+    .filter((tag) => !!tag.trim().length)
+    .map((tag) => tag.trim().toLowerCase());
+
+  return await transaction.none(sql.deleteTagsFromPost, {
+    post_id: postId,
+    tags,
+  });
+};
+
 export const maybeAddContentWarningTags = async (
   transaction: ITask<any>,
   {
@@ -77,6 +123,45 @@ export const maybeAddContentWarningTags = async (
   await transaction.many(sql.createAddContentWarningsToPostQuery(postId, tags));
 
   return tags.map((tag) => tag.toLowerCase());
+};
+
+export const removeContentWarningTags = async (
+  transaction: ITask<any>,
+  {
+    contentWarnings,
+    postId,
+  }: {
+    contentWarnings: string[];
+    postId: number;
+  }
+): Promise<void> => {
+  if (!contentWarnings?.length) {
+    return;
+  }
+  const tags = contentWarnings
+    .filter((tag) => !!tag.trim().length)
+    .map((tag) => tag.trim().toLowerCase());
+
+  return await transaction.none(sql.deleteTagsFromPost, {
+    post_id: postId,
+    tags,
+  });
+};
+
+export const updateWhisperTags = async (
+  transaction: ITask<any>,
+  {
+    postId,
+    whisperTags,
+  }: {
+    postId: number;
+    whisperTags: string[];
+  }
+): Promise<void> => {
+  return await transaction.none(sql.updatePostWhisperTags, {
+    whisper_tags: whisperTags,
+    post_id: postId,
+  });
 };
 
 // TODO: rename this method since there's a mutation within it.
@@ -487,4 +572,104 @@ const addNewIdentityToThread = async (
     secret_identity_avatar,
     role_identity_id,
   };
+};
+
+export const getUserPermissionsForPost = async ({
+  firebaseId,
+  postId,
+}: {
+  firebaseId: string;
+  postId: string;
+}) => {
+  const isPostOwner = await pool.one(sql.isPostOwner, {
+    firebaseId,
+    postId,
+  });
+  if (isPostOwner.is_post_owner) {
+    return [
+      PostPermissions.editCategoryTags,
+      PostPermissions.editContentNotices,
+      PostPermissions.editIndexTags,
+      PostPermissions.editWhisperTags,
+    ];
+  }
+  return [];
+};
+
+export const getPostFromStringId = async (
+  transaction: ITask<any> | null,
+  {
+    firebaseId,
+    postId,
+  }: {
+    firebaseId: string | undefined;
+    postId: string;
+  }
+): Promise<DbPostType> => {
+  return await (transaction ?? pool).one(sql.postByStringId, {
+    firebase_id: firebaseId,
+    post_string_id: postId,
+  });
+};
+
+export const updatePostTags = async (
+  transaction: ITask<any> | null,
+  {
+    firebaseId,
+    postId,
+    tagsDelta,
+  }: {
+    firebaseId: string;
+    postId: string;
+    tagsDelta: {
+      added: QueryTagsType;
+      removed: QueryTagsType;
+    };
+  }
+): Promise<boolean> => {
+  const updateTagsMethod = async (transaction: ITask<any>) => {
+    const post = await getPostFromStringId(transaction, { firebaseId, postId });
+    const numericId = await transaction.one(sql.getPostIdFromStringId, {
+      post_string_id: postId,
+    });
+    await maybeAddIndexTags(transaction, {
+      indexTags: tagsDelta.added.indexTags,
+      postId: numericId,
+    });
+    await removeIndexTags(transaction, {
+      indexTags: tagsDelta.removed.indexTags,
+      postId: numericId,
+    });
+    await maybeAddCategoryTags(transaction, {
+      categoryTags: tagsDelta.added.categoryTags,
+      postId: numericId,
+    });
+    await removeCategoryTags(transaction, {
+      categoryTags: tagsDelta.removed.categoryTags,
+      postId: numericId,
+    });
+    await maybeAddContentWarningTags(transaction, {
+      contentWarnings: tagsDelta.added.contentWarnings,
+      postId: numericId,
+    });
+    await removeContentWarningTags(transaction, {
+      contentWarnings: tagsDelta.removed.contentWarnings,
+      postId: numericId,
+    });
+    await updateWhisperTags(transaction, {
+      postId: numericId,
+      whisperTags: post.whisper_tags
+        .filter((tag) => tagsDelta.removed.whisperTags.includes(tag))
+        .concat(tagsDelta.added.whisperTags),
+    });
+  };
+
+  try {
+    await (transaction
+      ? pool.tx("update-tags", updateTagsMethod)
+      : updateTagsMethod(transaction));
+    return true;
+  } catch (e) {
+    return false;
+  }
 };

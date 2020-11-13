@@ -78,6 +78,30 @@ const createAddTagsToPostQuery = (postId: number, tags: string[]) => {
   );
 };
 
+const deleteTagsFromPost = `
+  DELETE FROM post_tags
+  WHERE post_tags.post_id = $/post_id/
+    AND post_tags.tag_id IN (SELECT id FROM tags WHERE tag = ANY($/tags/))
+`;
+
+const deleteCategoriesFromPost = `
+  DELETE FROM post_categories
+  WHERE post_categories.post_id = (SELECT id FROM posts WHERE id = $/post_id/)
+    AND post_categories.category_id IN (SELECT id FROM categories WHERE category = ANY($/categories/))
+`;
+
+const deleteContentWarningsFromPost = `
+  DELETE FROM post_warnings
+  WHERE post_warnings.post_id = (SELECT id FROM posts WHERE id = $/post_id/)
+    AND post_warnings.warning_id IN (SELECT id FROM content_warnings WHERE warning = ANY($/warnings/))
+`;
+
+const updatePostWhisperTags = `
+  UPDATE posts
+    SET whisper_tags = $/whisper_tags/
+  WHERE posts.id = $/post_id/
+`;
+
 const createAddCategoriesQuery = (categories: string[]) => {
   const categoriesColumn = new pgInstance.helpers.ColumnSet(["category"], {
     table: "categories",
@@ -148,7 +172,20 @@ const createAddContentWarningsToPostQuery = (
   );
 };
 
+export const getPostIdFromStringId = `
+  SELECT id FROM posts WHERE string_id = $/post_string_id/;
+`;
+
+export const isPostOwner = `
+    SELECT
+      users.firebase_id = $/firebase_id/ as is_post_owner
+    FROM posts
+      LEFT JOIN users ON posts.author = users.id
+    WHERE posts.string_id = $/post_string_id/
+`;
+
 export default {
+  postByStringId: new QueryFile(path.join(__dirname, "post-by-string-id.sql")),
   getThreadDetails: new QueryFile(
     path.join(__dirname, "get-thread-details.sql")
   ),
@@ -162,4 +199,10 @@ export default {
   createAddCategoriesToPostQuery,
   createAddContentWarningsQuery,
   createAddContentWarningsToPostQuery,
+  deleteTagsFromPost,
+  deleteCategoriesFromPost,
+  deleteContentWarningsFromPost,
+  updatePostWhisperTags,
+  getPostIdFromStringId,
+  isPostOwner,
 };

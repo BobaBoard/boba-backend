@@ -4,6 +4,9 @@ import {
   postNewContribution,
   postNewComment,
   postNewCommentChain,
+  getUserPermissionsForPost,
+  getPostFromStringId,
+  updatePostTags,
 } from "./queries";
 import { isLoggedIn } from "../auth-handler";
 import axios from "axios";
@@ -12,6 +15,8 @@ import {
   makeServerComment,
   ensureNoIdentityLeakage,
 } from "../response-utils";
+import { getTagsDelta } from "./utils";
+import { canDoTagsEdit } from "../permissions-utils";
 
 const info = debug("bobaserver:posts:routes-info");
 const log = debug("bobaserver:posts:routes-log");
@@ -110,7 +115,6 @@ router.post("/:postId/comment/chain", isLoggedIn, async (req, res) => {
   const { postId } = req.params;
   const { contentArray, forceAnonymous, replyToCommentId } = req.body;
 
-  // @ts-ignore
   if (!req.currentUser) {
     res.sendStatus(401);
     return;
@@ -123,7 +127,6 @@ router.post("/:postId/comment/chain", isLoggedIn, async (req, res) => {
   log(`Anonymous: `, forceAnonymous);
 
   const comments = await postNewCommentChain({
-    // @ts-ignore
     firebaseId: req.currentUser.uid,
     parentPostId: postId,
     parentCommentId: replyToCommentId,
@@ -165,6 +168,55 @@ router.get("/embed/tumblr", isLoggedIn, async (req, res) => {
       error(e);
       res.sendStatus(500);
     });
+});
+
+router.post("/:postId/edit", isLoggedIn, async (req, res) => {
+  const { postId } = req.params;
+  const { whisperTags, indexTags, categoryTags, contentWarnings } = req.body;
+
+  if (!req.currentUser) {
+    res.sendStatus(401);
+    return;
+  }
+  const firebaseId = req.currentUser.uid;
+
+  const permissions = await getUserPermissionsForPost({
+    firebaseId,
+    postId,
+  });
+
+  if (!permissions.length) {
+    res.sendStatus(401);
+    return;
+  }
+
+  const postDetails = await getPostFromStringId(null, {
+    firebaseId,
+    postId,
+  });
+
+  const postTags = {
+    contentWarnings: postDetails.content_warnings,
+    indexTags: postDetails.index_tags,
+    categoryTags: postDetails.category_tags,
+    whisperTags: postDetails.whisper_tags,
+  };
+
+  const newTags = { whisperTags, indexTags, categoryTags, contentWarnings };
+
+  const tagsDelta = getTagsDelta(newTags, postTags);
+  if (!canDoTagsEdit(tagsDelta, permissions)) {
+    res.sendStatus(401);
+    return;
+  }
+  log(`Editing post with id ${postId}}`);
+
+  const success = await updatePostTags({ firebaseId, postId, tagsDelta });
+  if (!success) {
+    res.sendStatus(500);
+    return;
+  }
+  res.sendStatus(220);
 });
 
 export default router;
