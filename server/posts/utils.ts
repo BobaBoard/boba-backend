@@ -1,9 +1,12 @@
 import { QueryTagsType } from "../../Types";
 
-export const getTagsDelta = (
-  oldTags: QueryTagsType,
-  newTags: QueryTagsType
-): {
+export const getTagsDelta = ({
+  oldTags,
+  newTags,
+}: {
+  oldTags: QueryTagsType;
+  newTags: QueryTagsType;
+}): {
   added: QueryTagsType;
   removed: QueryTagsType;
 } => {

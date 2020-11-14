@@ -6,11 +6,3 @@ declare module "mocha" {
     hgetStub: any;
   }
 }
-
-declare global {
-  namespace Express {
-    export interface Request {
-      currentUser?: auth.DecodedIdToken;
-    }
-  }
-}

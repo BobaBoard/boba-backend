@@ -86,13 +86,13 @@ const deleteTagsFromPost = `
 
 const deleteCategoriesFromPost = `
   DELETE FROM post_categories
-  WHERE post_categories.post_id = (SELECT id FROM posts WHERE id = $/post_id/)
+  WHERE post_categories.post_id = $/post_id/
     AND post_categories.category_id IN (SELECT id FROM categories WHERE category = ANY($/categories/))
 `;
 
 const deleteContentWarningsFromPost = `
   DELETE FROM post_warnings
-  WHERE post_warnings.post_id = (SELECT id FROM posts WHERE id = $/post_id/)
+  WHERE post_warnings.post_id = $/post_id/
     AND post_warnings.warning_id IN (SELECT id FROM content_warnings WHERE warning = ANY($/warnings/))
 `;
 
