@@ -1,9 +1,17 @@
-import firebaseAuth from "firebase-admin";
+import firebaseAuth, { auth } from "firebase-admin";
 import { Request, Response, NextFunction } from "express";
 import debug from "debug";
 
 const log = debug("bobaserver:auth-log");
 const error = debug("bobaserver:auth-error");
+
+declare global {
+  namespace Express {
+    export interface Request {
+      currentUser?: auth.DecodedIdToken;
+    }
+  }
+}
 
 export const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
   const idToken = req.headers?.authorization;

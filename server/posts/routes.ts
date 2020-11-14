@@ -179,17 +179,25 @@ router.post("/:postId/edit", isLoggedIn, async (req, res) => {
     return;
   }
   const firebaseId = req.currentUser.uid;
+  log(`Getting permissions for user ${firebaseId}`);
 
   const permissions = await getUserPermissionsForPost({
     firebaseId,
     postId,
   });
 
+  if (!permissions) {
+    log(`Error while fetching permissions for post ${postId}`);
+    res.sendStatus(500);
+    return;
+  }
+
   if (!permissions.length) {
     res.sendStatus(401);
     return;
   }
 
+  log(`Getting details from post ${postId}`);
   const postDetails = await getPostFromStringId(null, {
     firebaseId,
     postId,
@@ -204,19 +212,27 @@ router.post("/:postId/edit", isLoggedIn, async (req, res) => {
 
   const newTags = { whisperTags, indexTags, categoryTags, contentWarnings };
 
-  const tagsDelta = getTagsDelta(newTags, postTags);
+  const tagsDelta = getTagsDelta({ oldTags: postTags, newTags });
   if (!canDoTagsEdit(tagsDelta, permissions)) {
     res.sendStatus(401);
     return;
   }
   log(`Editing post with id ${postId}}`);
 
-  const success = await updatePostTags({ firebaseId, postId, tagsDelta });
-  if (!success) {
+  const updatedDetails = await updatePostTags(null, {
+    firebaseId,
+    postId,
+    tagsDelta,
+  });
+  if (!updatedDetails) {
+    log(`Error while updating post ${postId}`);
     res.sendStatus(500);
     return;
   }
-  res.sendStatus(220);
+  const responsePost = makeServerPost(updatedDetails);
+
+  ensureNoIdentityLeakage(responsePost);
+  res.status(220).json(responsePost);
 });
 
 export default router;
