@@ -86,6 +86,15 @@ const updateThreadViewByStringId = `
     RETURNING *;
 `;
 
+const isThreadOwner = `
+    SELECT
+      users.firebase_id = $/firebase_id/ as is_thread_owner
+    FROM threads
+      LEFT JOIN posts ON threads.id = posts.parent_thread AND posts.parent_post IS NULL
+      LEFT JOIN users ON posts.author = users.id
+    WHERE threads.string_id = $/thread_string_id/
+`;
+
 export default {
   threadByStringId: new QueryFile(
     path.join(__dirname, "thread-by-string-id.sql")
@@ -106,4 +115,5 @@ export default {
   unhideThreadByStringId,
   updateThreadViewByStringId,
   getRoleByStringId,
+  isThreadOwner,
 };

@@ -38,7 +38,7 @@ export const transformPermissions = (
 };
 
 export enum ThreadPermissions {
-  editViewType,
+  editDefaultView,
 }
 
 export enum PostPermissions {

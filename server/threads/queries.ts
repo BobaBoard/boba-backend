@@ -8,7 +8,7 @@ import {
   maybeAddContentWarningTags,
 } from "../posts/queries";
 import { DbThreadType, DbIdentityType } from "../../Types";
-import { canPostAs } from "../permissions-utils";
+import { canPostAs, ThreadPermissions } from "../permissions-utils";
 
 const log = debug("bobaserver:threads:queries-log");
 const error = debug("bobaserver:threads:queries-error");
@@ -69,12 +69,17 @@ export const updateThreadView = async ({
   threadId: string;
   defaultView: string;
 }) => {
-  const update = await pool.one(sql.updateThreadViewByStringId, {
-    thread_string_id: threadId,
-    thread_default_view: defaultView,
-  });
-
-  return;
+  try {
+    await pool.one(sql.updateThreadViewByStringId, {
+      thread_string_id: threadId,
+      thread_default_view: defaultView,
+    });
+    return true;
+  } catch (e) {
+    error(`Error while updating thread view.`);
+    error(e);
+    return false;
+  }
 };
 
 export const createThread = async ({
@@ -269,6 +274,32 @@ export const unhideThread = async ({
     return true;
   } catch (e) {
     error(`Error while unhiding thread.`);
+    error(e);
+    return false;
+  }
+};
+
+export const getUserPermissionsForThread = async ({
+  threadId,
+  firebaseId,
+}: {
+  threadId: string;
+  firebaseId: string;
+}) => {
+  try {
+    const isOwner = (
+      await pool.one(sql.isThreadOwner, {
+        firebase_id: firebaseId,
+        thread_string_id: threadId,
+      })
+    ).is_thread_owner;
+
+    if (isOwner) {
+      return [ThreadPermissions.editDefaultView];
+    }
+    return [];
+  } catch (e) {
+    error(`Error while getting user permissions for the thread.`);
     error(e);
     return false;
   }

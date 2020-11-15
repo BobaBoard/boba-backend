@@ -172,11 +172,11 @@ const createAddContentWarningsToPostQuery = (
   );
 };
 
-export const getPostIdFromStringId = `
+const getPostIdFromStringId = `
   SELECT id FROM posts WHERE string_id = $/post_string_id/;
 `;
 
-export const isPostOwner = `
+const isPostOwner = `
     SELECT
       users.firebase_id = $/firebase_id/ as is_post_owner
     FROM posts

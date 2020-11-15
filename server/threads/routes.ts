@@ -9,9 +9,11 @@ import {
   hideThread,
   unhideThread,
   updateThreadView,
+  getUserPermissionsForThread,
 } from "./queries";
 import { isLoggedIn } from "../auth-handler";
 import { makeServerThread, ensureNoIdentityLeakage } from "../response-utils";
+import { ThreadPermissions } from "../permissions-utils";
 
 const info = debug("bobaserver:threads:routes-info");
 const log = debug("bobaserver:threads:routes-log");
@@ -230,39 +232,41 @@ router.post("/:boardSlug/create", isLoggedIn, async (req, res, next) => {
   res.status(200).json(serverThread);
 });
 
-router.post("/:id/update/view", isLoggedIn, async (req, res) => {
-  const { id } = req.params;
-  const { view } = req.body;
-  log(`Fetching data for thread with id ${id}`);
+router.post("/:threadId/update/view", isLoggedIn, async (req, res) => {
+  const { threadId } = req.params;
+  const { defaultView } = req.body;
 
-  // Count it as not implemented for now
-  res.sendStatus(501);
-  return;
   // TODO: CHECK PERMISSIONS
   // NOTE: if updating this (and it makes sense) also update
   // the method for thread creation + retrieval.
-  const thread = await getThreadByStringId({
-    threadId: id,
-    // @ts-ignore
-    firebaseId: req.currentUser?.uid,
+  const permissions = await getUserPermissionsForThread({
+    firebaseId: req.currentUser.uid,
+    threadId,
   });
-  info(`Found thread: `, thread);
 
-  if (thread === false) {
+  if (!permissions) {
+    log(`Error while fetching permissions for post ${threadId}`);
     res.sendStatus(500);
     return;
   }
-  if (!thread) {
-    res.sendStatus(404);
+
+  if (
+    !permissions.length ||
+    !permissions.includes(ThreadPermissions.editDefaultView)
+  ) {
+    res.sendStatus(401);
     return;
   }
 
-  await updateThreadView({
-    threadId: id,
-    defaultView: view,
-  });
+  if (
+    !(await updateThreadView({
+      threadId,
+      defaultView,
+    }))
+  ) {
+    return res.sendStatus(500);
+  }
 
-  info(`sending back data for thread ${id}.`);
   res.sendStatus(200);
 });
 
