@@ -10,14 +10,16 @@ function jsStringArrayToPsStringArray(jsStringArray: string[]): string {
 }
 
 export const getPostsWithTags = async ({
+  firebase_id,
   includeTags,
   excludeTags
 }: {
+  firebase_id: string,
   includeTags: string[],
   excludeTags: string[]
 }): Promise<any> => {
   try {
-    return await pool.many(sql.getPostsWithTags, { includeTags, excludeTags });
+    return await pool.many(sql.getPostsWithTags, {firebase_id, includeTags, excludeTags});
 
   } catch (e) {
     error(`Error while fetching posts by tags. includeTags: (${includeTags}) excludeTags:(${excludeTags})`);

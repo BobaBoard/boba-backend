@@ -10,6 +10,7 @@
     "start:watch": "nodemon --exec node -r ts-node/register server/index.ts",
     "start-db": "docker-compose down && docker-compose up",
     "test": "cross-env DEBUG=bobaserver:* mocha --exclude './node_modules/**' -r ts-node/register -r dotenv/config './**/*.test.ts'",
+    "testtags": "cross-env DEBUG=bobaserver:* mocha --exclude './node_modules/**' -r ts-node/register -r dotenv/config './server/tags/**/*.test.ts'",
     "test:watch": "yarn run test  -- --watch --watch-extensions ts --watch-files . ",
     "test:file": "cross-env DEBUG=bobaserver:* mocha --watch --watch-extensions ts --watch-files . --exclude './node_modules/**' -r ts-node/register -r dotenv/config",
     "test:docker": "docker-compose -f docker-compose.test.yml run --rm test",
