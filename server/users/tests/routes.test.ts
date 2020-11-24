@@ -1,3 +1,4 @@
+// @ts-nocheck
 import "mocha";
 import { expect } from "chai";
 import debug from "debug";
@@ -6,15 +7,18 @@ import request from "supertest";
 import * as authHandler from "../../auth-handler";
 import sinon from "sinon";
 
-const authStub = sinon.stub(authHandler, "isLoggedIn");
 import router from "../routes";
 import { CacheKeys } from "../../cache";
 import { Server } from "http";
 const log = debug("bobaserver:test:users:routes-log");
 
+let authStub;
 describe("Test users routes", function () {
   let app: Express;
   let listener: Server;
+  before(function (done) {
+    authStub = sinon.stub(authHandler, "isLoggedIn");
+  });
   beforeEach(function (done) {
     authStub.callsFake((req, res, next) => {
       next();

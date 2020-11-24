@@ -1,3 +1,4 @@
+// @ts-nocheck
 import "mocha";
 import { expect } from "chai";
 import request from "supertest";
@@ -9,7 +10,7 @@ import { Server } from "http";
 
 import debug from "debug";
 const log = debug("bobaserver:tags:routes");
-const authStub = sinon.stub(authHandler, "isLoggedIn");
+let authStub;
 import router from "../routes";
 
 const FAVE_TO_MAIM_POST_ID = "11b85dac-e122-40e0-b09a-8829c5e0250e";
@@ -19,6 +20,9 @@ const KERMIT_THE_FROG_POST_ID = "b95bb260-eae0-456c-a5d0-8ae9e52608d8";
 describe("Tests tags REST API", () => {
   let app: Express;
   let listener: Server;
+  before(function (done) {
+    authStub = sinon.stub(authHandler, "isLoggedIn");
+  });
   beforeEach(function (done) {
     authStub.callsFake((req, res, next) => {
       next();
@@ -37,6 +41,9 @@ describe("Tests tags REST API", () => {
   afterEach(function (done) {
     authStub.restore();
     listener.close(done);
+  });
+  after(function() {
+    authStub.restore();
   });
 
   it("should get fields correctly for user fb3 ", async() => {
