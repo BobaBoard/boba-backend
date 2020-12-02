@@ -31,12 +31,12 @@ ADD CHECK (identity_id is not null or role_id is not null);
 alter table user_thread_identities alter column identity_id drop not null;
 
 --- DELETE THREAD ---
-DELETE FROM post_categories WHERE post_id IN (SELECT id FROM posts WHERE posts.parent_thread IN (SELECT id FROM threads WHERE string_id = '0a1b42a5-f17f-4c3e-86df-6ca9302b4133'));
-DELETE FROM comments WHERE id IN (SELECT id FROM comments WHERE comments.parent_thread IN (SELECT id FROM threads WHERE string_id = '0a1b42a5-f17f-4c3e-86df-6ca9302b4133'));
-DELETE FROM posts WHERE id IN (SELECT id FROM posts WHERE posts.parent_thread IN (SELECT id FROM threads WHERE string_id = '0a1b42a5-f17f-4c3e-86df-6ca9302b4133'));
-DELETE FROM user_thread_identities WHERE thread_id IN (SELECT id FROM threads WHERE string_id = '0a1b42a5-f17f-4c3e-86df-6ca9302b4133');
-DELETE FROM user_thread_last_visits WHERE thread_id IN (SELECT id FROM threads WHERE string_id = '0a1b42a5-f17f-4c3e-86df-6ca9302b4133');
-DELETE FROM threads WHERE string_id = '0a1b42a5-f17f-4c3e-86df-6ca9302b4133';
+DELETE FROM post_categories WHERE post_id IN (SELECT id FROM posts WHERE posts.parent_thread IN (SELECT id FROM threads WHERE string_id = '157b0460-6cfe-416a-9c65-bb35ce2c7521'));
+DELETE FROM comments WHERE id IN (SELECT id FROM comments WHERE comments.parent_thread IN (SELECT id FROM threads WHERE string_id = '157b0460-6cfe-416a-9c65-bb35ce2c7521'));
+DELETE FROM posts WHERE id IN (SELECT id FROM posts WHERE posts.parent_thread IN (SELECT id FROM threads WHERE string_id = '157b0460-6cfe-416a-9c65-bb35ce2c7521'));
+DELETE FROM user_thread_identities WHERE thread_id IN (SELECT id FROM threads WHERE string_id = '157b0460-6cfe-416a-9c65-bb35ce2c7521');
+DELETE FROM user_thread_last_visits WHERE thread_id IN (SELECT id FROM threads WHERE string_id = '157b0460-6cfe-416a-9c65-bb35ce2c7521');
+DELETE FROM threads WHERE string_id = '157b0460-6cfe-416a-9c65-bb35ce2c7521';
 
 --- TOTAL ACTIVITY ---
 select count(*) from threads;
@@ -56,3 +56,6 @@ VALUES
      'roleDescription.',
      ARRAY['post_as_role'::role_permissions, 'edit_board_details'::role_permissions]);
 insert into board_user_roles(user_id, board_id, role_id) VALUES(userId, boardId, roleId);
+
+--UPDATE BOARD AVATAR--
+UPDATE Boards SET avatar_reference_id = 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fmain_street%2F7d5ff8d8-2ab4-44d2-8d75-7ecb1275f5d7.png?alt=media&token=675745a9-d9fb-45a8-b8fb-c7ec0ab9debf' WHERE slug = 'queerpub';
