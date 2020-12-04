@@ -72,9 +72,15 @@ describe("Tests boards queries", () => {
       tagline: "Blood! Blood! Blood!",
       avatar_reference_id: "gore.png",
       muted: false,
-      permissions: ["edit_board_details"],
+      permissions: ["all", "edit_board_details"],
       pinned_order: "1",
       posting_identities: [
+        {
+          avatar_reference_id:
+            "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F2df7dfb4-4c64-4370-8e74-9ee30948f05d?alt=media&token=26b16bef-0fd2-47b5-b6df-6cf2799010ca",
+          id: "3df1d417-c36a-43dd-aaba-9590316ffc32",
+          name: "The Owner",
+        },
         {
           avatar_reference_id:
             "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F6518df53-2031-4ac5-8d75-57a0051ed924?alt=media&token=23df54b7-297c-42ff-a0ea-b9862c9814f8",
