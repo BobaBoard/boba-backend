@@ -6,6 +6,9 @@ VALUES
             'post_as_role'::role_permissions]),
     ('70485a1e-4ce9-4064-bd87-440e16b2f219', 'The Memester', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F01af97fa-e240-4002-81fb-7abec9ee984b?alt=media&token=ac14effe-a788-47ae-b3b8-cbb3d8ad8f94', 
         'blue', 'A role for the real memers.', 
+        ARRAY['all'::role_permissions]),
+    ('3df1d417-c36a-43dd-aaba-9590316ffc32', 'The Owner', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F2df7dfb4-4c64-4370-8e74-9ee30948f05d?alt=media&token=26b16bef-0fd2-47b5-b6df-6cf2799010ca', 
+        'pink', 'A role for the everyone.', 
         ARRAY['all'::role_permissions]);
 
 INSERT INTO board_user_roles(user_id, board_id, role_id)
@@ -17,6 +20,10 @@ VALUES
      (SELECT id FROM boards WHERE slug = 'memes'),
      (SELECT id FROM roles WHERE name = 'The Memester'));
 
+INSERT INTO realm_user_roles(user_id, role_id)
+VALUES
+    ((SELECT id FROM users WHERE username = 'bobatan'),
+     (SELECT id FROM roles WHERE name = 'The Owner'));
 
 WITH
   new_thread_id AS

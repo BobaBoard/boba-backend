@@ -30,6 +30,9 @@ const getRandomIdentityId = `
 
 /**
  * Returns role data given the string id iff such a role is present for the given board & user.
+ *
+ * We add limit 1 cause the role might be associated to the user in more than one board/realm,
+ * but we're only interested in whether it's associated to them at all.
  */
 const getRoleByStringId = `
     SELECT 
@@ -40,12 +43,15 @@ const getRoleByStringId = `
     FROM roles
     LEFT JOIN board_user_roles bur
       ON roles.id = bur.role_id
+    LEFT JOIN realm_user_roles rur
+      ON roles.id = rur.role_id
     INNER JOIN users 
-      ON users.id = bur.user_id 
+      ON users.id = bur.user_id  OR users.id = rur.user_id
     WHERE
       roles.string_id = $/role_id/
-      AND bur.board_id  = (SELECT id FROM boards WHERE boards.slug = $/board_slug/)
-      AND bur.user_id  = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)`;
+      AND (rur.role_id IS NOT NULL OR bur.board_id  = (SELECT id FROM boards WHERE boards.slug = $/board_slug/))
+      AND users.firebase_id = $/firebase_id/
+    LIMIT 1`;
 
 const insertNewIdentity = `
     INSERT INTO user_thread_identities(thread_id, user_id, identity_id, role_id)

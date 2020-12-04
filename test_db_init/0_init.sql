@@ -336,6 +336,13 @@ CREATE TABLE IF NOT EXISTS board_user_roles(
 );
 CREATE UNIQUE INDEX board_user_roles_entry on board_user_roles(user_id, board_id);
 
+CREATE TABLE IF NOT EXISTS realm_user_roles(
+    -- Add realm id when realms *actually* exist.
+    user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
+    role_id BIGINT REFERENCES roles(id) ON DELETE RESTRICT NOT NULL
+);
+CREATE UNIQUE INDEX realm_user_roles_entry on realm_user_roles(user_id);
+
 /*
  * A mapping of which identity has been assigned to a user in each thread.
  */

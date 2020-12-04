@@ -36,18 +36,20 @@ FROM boards
     LEFT JOIN threads 
         ON boards.id = threads.parent_board
     LEFT JOIN user_muted_boards umb 
-        ON boards.id = umb.board_id AND umb.user_id = (SELECT id FROM users WHERE users.firebase_id = ${firebase_id})
+        ON boards.id = umb.board_id AND umb.user_id = (SELECT id FROM logged_in_user LIMIT 1)
     LEFT JOIN ordered_pinned_boards opb 
-        ON boards.id = opb.board_id AND opb.user_id = (SELECT id FROM users WHERE users.firebase_id = ${firebase_id})
+        ON boards.id = opb.board_id AND opb.user_id = (SELECT id FROM logged_in_user LIMIT 1)
     LEFT JOIN board_user_roles bur 
         ON boards.id = bur.board_id AND bur.user_id = (SELECT id FROM logged_in_user LIMIT 1)
+    LEFT JOIN realm_user_roles rur
+        ON rur.user_id = (SELECT id FROM logged_in_user LIMIT 1)
     LEFT JOIN LATERAL (
             SELECT 
                 string_id AS role_id, 
                 avatar_reference_id AS avatar_reference_id, 
                 name AS role_name, 
                 UNNEST(roles.permissions) AS permissions 
-            FROM roles WHERE bur.role_id = roles.id) AS p 
+            FROM roles WHERE bur.role_id = roles.id OR rur.role_id = roles.id) AS p 
         ON 1=1
     LEFT JOIN board_description_sections bds 
         ON bds.board_id = boards.id 

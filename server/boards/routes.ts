@@ -32,7 +32,6 @@ router.get("/:slug", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
   log(`Fetching data for board with slug ${slug}`);
 
-  // @ts-ignore
   if (!req.currentUser?.uid) {
     const cachedBoard = await cache().hget(CacheKeys.BOARD, slug);
     if (cachedBoard) {
@@ -57,8 +56,7 @@ router.get("/:slug", isLoggedIn, async (req, res) => {
   log(boardMetadata);
   res.status(200).json(boardMetadata);
   log(boardMetadata);
-  // @ts-ignore
-  if (!req.currentUser?.uid) {
+  if (!req.currentUser.uid) {
     cache().hset(CacheKeys.BOARD, slug, JSON.stringify(boardMetadata));
   }
 });
