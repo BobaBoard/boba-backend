@@ -56,6 +56,8 @@ VALUES
      'roleDescription.',
      ARRAY['post_as_role'::role_permissions, 'edit_board_details'::role_permissions]);
 insert into board_user_roles(user_id, board_id, role_id) VALUES(userId, boardId, roleId);
+INSERT INTO realm_user_roles(user_id, role_id) VALUES(user_id, 'role_id');
+
 
 --UPDATE BOARD AVATAR--
 UPDATE Boards SET avatar_reference_id = 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fmain_street%2F7d5ff8d8-2ab4-44d2-8d75-7ecb1275f5d7.png?alt=media&token=675745a9-d9fb-45a8-b8fb-c7ec0ab9debf' WHERE slug = 'queerpub';

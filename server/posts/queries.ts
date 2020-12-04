@@ -360,6 +360,7 @@ const postNewCommentWithTransaction = async ({
   content,
   anonymityType,
   transaction,
+  identityId,
 }: {
   transaction?: ITask<any>;
   firebaseId: string;
@@ -368,6 +369,7 @@ const postNewCommentWithTransaction = async ({
   chainParentId: number | null;
   content: string;
   anonymityType: string;
+  identityId?: string;
 }): Promise<{ id: number; comment: DbCommentType }> => {
   let {
     user_id,
@@ -382,6 +384,7 @@ const postNewCommentWithTransaction = async ({
     parentPostId,
     firebaseId,
     parentCommentId,
+    identityId,
   });
 
   log(`Retrieved details for thread ${parentPostId}:`);
@@ -436,12 +439,14 @@ export const postNewComment = async ({
   parentCommentId,
   content,
   anonymityType,
+  identityId,
 }: {
   firebaseId: string;
   parentPostId: string;
   parentCommentId: string;
   content: string;
   anonymityType: string;
+  identityId?: string;
 }): Promise<DbCommentType | false> => {
   return pool
     .tx("create-comment", async (transaction) => {
@@ -453,6 +458,7 @@ export const postNewComment = async ({
         content,
         anonymityType,
         transaction,
+        identityId,
       });
       return result.comment;
     })
@@ -469,12 +475,14 @@ export const postNewCommentChain = async ({
   parentCommentId,
   contentArray,
   anonymityType,
+  identityId,
 }: {
   firebaseId: string;
   parentPostId: string;
   parentCommentId: string;
   contentArray: string[];
   anonymityType: string;
+  identityId?: string;
 }): Promise<DbCommentType[] | false> => {
   return pool
     .tx("create-comment-chaim", async (transaction) => {
@@ -490,6 +498,7 @@ export const postNewCommentChain = async ({
           content,
           anonymityType,
           transaction,
+          identityId,
         });
         newComment.comment.chain_parent_id = prevStringId;
         prevId = newComment.id;
