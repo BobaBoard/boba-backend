@@ -27,7 +27,6 @@ const error = debug("bobaserver:users:routes-error");
 const router = express.Router();
 
 router.get("/me", isLoggedIn, async (req, res) => {
-  // @ts-ignore
   let currentUserId: string = req.currentUser?.uid;
   if (!currentUserId) {
     res.sendStatus(401);
@@ -57,7 +56,6 @@ router.get("/me", isLoggedIn, async (req, res) => {
 });
 
 router.post("/me/update", isLoggedIn, async (req, res) => {
-  // @ts-ignore
   let currentUserId: string = req.currentUser?.uid;
   if (!currentUserId) {
     res.sendStatus(401);
@@ -160,7 +158,6 @@ router.post("/invite/accept", async (req, res) => {
 });
 
 router.get("/me/bobadex", isLoggedIn, async (req, res) => {
-  // @ts-ignore
   let currentUserId: string = req.currentUser?.uid;
   if (!currentUserId) {
     res.sendStatus(401);
@@ -171,7 +168,6 @@ router.get("/me/bobadex", isLoggedIn, async (req, res) => {
 });
 
 router.post("/notifications/dismiss", isLoggedIn, async (req, res) => {
-  // @ts-ignore
   let currentUserId: string = req.currentUser?.uid;
   if (!currentUserId) {
     res.sendStatus(401);
@@ -194,8 +190,7 @@ router.post("/notifications/dismiss", isLoggedIn, async (req, res) => {
 });
 
 router.get("/me/feed", isLoggedIn, async (req, res) => {
-  const { cursor } = req.query;
-  // @ts-ignore
+  const { cursor, updatedOnly, ownOnly } = req.query;
   let currentUserId: string = req.currentUser?.uid;
   if (!currentUserId) {
     res.sendStatus(401);
@@ -204,6 +199,8 @@ router.get("/me/feed", isLoggedIn, async (req, res) => {
   const userActivity = await getUserActivity({
     firebaseId: currentUserId,
     cursor: (cursor as string) || null,
+    updatedOnly: updatedOnly === "true",
+    ownOnly: ownOnly === "true",
   });
 
   if (!userActivity) {
