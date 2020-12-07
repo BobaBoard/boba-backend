@@ -204,8 +204,12 @@ export const getUserActivity = async ({
   firebaseId,
   cursor,
   pageSize,
+  updatedOnly,
+  ownOnly,
 }: {
   firebaseId: string;
+  updatedOnly: boolean;
+  ownOnly: boolean;
   cursor: string;
   pageSize?: number;
 }): Promise<
@@ -224,6 +228,8 @@ export const getUserActivity = async ({
       firebase_id: firebaseId,
       last_activity_cursor: decodedCursor?.last_activity_cursor || null,
       page_size: finalPageSize,
+      updated_only: updatedOnly,
+      own_only: ownOnly,
     });
 
     if (rows.length == 1 && rows[0].thread_id == null) {
