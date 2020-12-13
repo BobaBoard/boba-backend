@@ -11,19 +11,24 @@ const createThread = `
 
 const createPost = `
     INSERT INTO posts(
-      string_id, parent_post, parent_thread, 
+      string_id, 
+      parent_post, 
+      parent_thread, 
       author, 
       content, type, 
       whisper_tags, 
       anonymity_type, options)
-    VALUES
-      ($/post_string_id/, NULL, $/parent_thread/,
-       (SELECT id FROM users WHERE firebase_id = $/firebase_id/),
-      $/content/, 'text', 
+    VALUES (
+      $/post_string_id/, 
+      NULL, 
+      $/parent_thread/,
+      (SELECT id FROM users WHERE firebase_id = $/firebase_id/),
+      $/content/, 
+      'text', 
       $/whisper_tags/, 
       $/anonymity_type/,
       $/options/) 
-    RETURNING id`;
+    RETURNING id, author`;
 
 const getRandomIdentityId = `
     SELECT id FROM secret_identities ORDER BY RANDOM() LIMIT 1`;

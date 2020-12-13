@@ -6,6 +6,7 @@ import {
   maybeAddIndexTags,
   maybeAddCategoryTags,
   maybeAddContentWarningTags,
+  addNewIdentityToThread,
 } from "../posts/queries";
 import { DbThreadType, DbIdentityType } from "../../Types";
 import { canPostAs, ThreadPermissions } from "../permissions-utils";
@@ -133,43 +134,27 @@ export const createThread = async ({
       });
       log(`Created post entry for thread ${postStringId}`);
 
-      maybeAddIndexTags(t, {
+      await maybeAddIndexTags(t, {
         indexTags,
         postId: postResult.id,
       });
-      maybeAddCategoryTags(t, {
+      await maybeAddCategoryTags(t, {
         categoryTags,
         postId: postResult.id,
       });
-      maybeAddContentWarningTags(t, {
+      await maybeAddContentWarningTags(t, {
         contentWarnings,
         postId: postResult.id,
       });
 
-      let identityRes: { id: string } | undefined;
-      let roleRes;
-      if (!identityId) {
-        identityRes = await t.one(sql.getRandomIdentityId);
-        log(`Got new identity for thread ${threadStringId}:`);
-        log(identityRes);
-      } else {
-        roleRes = await t.one(sql.getRoleByStringId, {
-          board_slug: boardSlug,
-          firebase_id: firebaseId,
-          role_id: identityId,
-        });
-        log(typeof roleRes.permissions);
-        if (!canPostAs(roleRes.permissions)) {
-          throw new Error("Tried to post as role without permissions");
-        }
-      }
-
-      await t.none(sql.insertNewIdentity, {
+      await addNewIdentityToThread(t, {
+        user_id: postResult.author,
+        identityId,
         thread_id: createThreadResult.id,
-        firebase_id: firebaseId,
-        secret_identity_id: identityRes?.id || null,
-        role_id: roleRes?.id || null,
+        firebaseId,
+        board_slug: boardSlug,
       });
+
       log(`Added identity for ${threadStringId}.`);
       return threadStringId;
     })

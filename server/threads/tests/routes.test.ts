@@ -51,6 +51,8 @@ describe("Tests threads REST API", () => {
               "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
             name: "DragonFucker",
           },
+          accessory_avatar:
+            "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F989f4b40-c1b8-4793-93dd-57e93df3e7ec.png?alt=media&token=cabdd8d5-b6a9-4914-bb59-eda4629f151b",
           total_comments_amount: 0,
           type: "text",
           tags: {
@@ -79,6 +81,8 @@ describe("Tests threads REST API", () => {
               "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
             name: "Old Time-y Anon",
           },
+          accessory_avatar:
+            "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",
           total_comments_amount: 0,
           type: "text",
           tags: {
@@ -109,6 +113,8 @@ describe("Tests threads REST API", () => {
                   "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
                 name: "Old Time-y Anon",
               },
+              accessory_avatar:
+                "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",
             },
             {
               anonymity_type: "strangers",
@@ -127,6 +133,8 @@ describe("Tests threads REST API", () => {
                   "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
                 name: "Old Time-y Anon",
               },
+              accessory_avatar:
+                "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",
             },
           ],
           content: '[{"insert":"Kermit the Frog"}]',
@@ -144,6 +152,8 @@ describe("Tests threads REST API", () => {
               "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
             name: "DragonFucker",
           },
+          accessory_avatar:
+            "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F989f4b40-c1b8-4793-93dd-57e93df3e7ec.png?alt=media&token=cabdd8d5-b6a9-4914-bb59-eda4629f151b",
           total_comments_amount: 2,
           type: "text",
           tags: {
