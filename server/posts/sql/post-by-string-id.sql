@@ -20,6 +20,7 @@ WITH
             users.avatar_reference_id as user_avatar,
             COALESCE(secret_identities.display_name, roles.name) as secret_identity_name,
             COALESCE(secret_identities.avatar_reference_id, roles.avatar_reference_id) as secret_identity_avatar,
+            accessories.image_reference_id as accessory_avatar,
             COALESCE(is_friend.friend, FALSE) as friend,
             COALESCE(users.firebase_id = ${firebase_id}, FALSE) as self
          FROM user_thread_identities AS uti 
@@ -33,6 +34,12 @@ WITH
             ON secret_identities.id = uti.identity_id
          LEFT JOIN roles 
             ON roles.id = uti.role_id 
+         LEFT JOIN identity_thread_accessories ita
+            ON ita.thread_id = uti.thread_id AND (
+               (secret_identities.id IS NOT NULL AND secret_identities.id = ita.identity_id) OR 
+               (roles.id IS NOT NULL AND roles.id = ita.role_id))
+         LEFT JOIN accessories
+            ON ita.accessory_id = accessories.id
          LEFT JOIN LATERAL (
             SELECT true as friend 
             FROM friends 
@@ -56,6 +63,7 @@ WITH
                 'user_avatar', thread_comments.user_avatar,
                 'secret_identity_name', thread_comments.secret_identity_name,
                 'secret_identity_avatar', thread_comments.secret_identity_avatar,
+                'accessory_avatar', thread_comments.accessory_avatar,
                 'content', thread_comments.content,
                 'created',  TO_CHAR(thread_comments.created, 'YYYY-MM-DD"T"HH24:MI:SS'),
                 'anonymity_type', thread_comments.anonymity_type,
@@ -91,6 +99,7 @@ SELECT
     thread_identities.user_avatar,
     thread_identities.secret_identity_name,
     thread_identities.secret_identity_avatar,
+    thread_identities.accessory_avatar,
     thread_identities.self,
     thread_identities.friend,
     TO_CHAR(posts.created, 'YYYY-MM-DD"T"HH24:MI:SS') as created,

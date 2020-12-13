@@ -355,3 +355,22 @@ CREATE TABLE IF NOT EXISTS user_thread_identities
     CHECK (identity_id is not null or role_id is not null)
 );
 CREATE INDEX user_thread_identities_thread_id on user_thread_identities(thread_id);
+
+CREATE TABLE IF NOT EXISTS accessories
+(
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    image_reference_id TEXT NOT NULL
+);
+
+/*
+ * A mapping of which accessory has been assigned to an identity in each thread.
+ */
+CREATE TABLE IF NOT EXISTS identity_thread_accessories
+(
+    thread_id BIGINT REFERENCES threads(id) NOT NULL,
+    identity_id BIGINT REFERENCES secret_identities(id) ON DELETE RESTRICT NOT NULL,
+    role_id BIGINT REFERENCES roles(id) ON DELETE RESTRICT,
+    accessory_id BIGINT REFERENCES accessories(id) ON DELETE RESTRICT NOT NULL,
+    CHECK (identity_id is not null or role_id is not null)
+);
+CREATE INDEX identity_thread_accessories_thread_id on identity_thread_accessories(thread_id);

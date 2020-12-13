@@ -290,6 +290,7 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
             parent_post_id: threadWithIdentity.parent_post_id,
             secret_identity: threadWithIdentity.secret_identity,
             user_identity: threadWithIdentity.user_identity,
+            accessory_avatar: threadWithIdentity.accessory_avatar,
             self: threadWithIdentity.self,
             friend: threadWithIdentity.friend,
             created: threadWithIdentity.created,

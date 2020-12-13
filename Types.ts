@@ -9,6 +9,7 @@ export interface ServerCommentType {
     name: string;
     avatar: string;
   };
+  accessory_avatar?: string;
   content: string;
   created: string;
   chain_parent_id: string | null;
@@ -26,6 +27,7 @@ export interface ServerPostType {
     name: string;
     avatar: string;
   };
+  accessory_avatar?: string;
   self: boolean;
   friend: boolean;
   created: string;
@@ -79,6 +81,7 @@ export interface DbPostType {
   user_avatar: string;
   secret_identity_name: string;
   secret_identity_avatar: string;
+  accessory_avatar?: string;
   friend: boolean;
   self: boolean;
   created: string;
@@ -108,6 +111,7 @@ export interface DbCommentType {
   user_avatar: string;
   secret_identity_name: string;
   secret_identity_avatar: string;
+  accessory_avatar?: string;
   chain_parent_id: string | null;
   friend: boolean;
   self: boolean;
@@ -143,6 +147,7 @@ export interface DbActivityThreadType {
   user_avatar: string;
   secret_identity_name: string;
   secret_identity_avatar: string;
+  accessory_avatar?: string;
   created: string;
   content: string;
   index_tags: string[];
