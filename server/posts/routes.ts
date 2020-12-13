@@ -168,6 +168,7 @@ router.get("/embed/tumblr", isLoggedIn, async (req, res) => {
         did: tumblrRes.data.html.match(EXTRACT_DID_REGEX)?.[1],
         href: tumblrRes.data.html.match(EXTRACT_HREF_REGEX)?.[1],
         url,
+        embedWidth: tumblrRes.data.width,
       });
     })
     .catch((e) => {
