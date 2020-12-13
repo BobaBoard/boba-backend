@@ -7,6 +7,7 @@
             uti.user_id as user_id,
             users.username as username,
             users.avatar_reference_id as user_avatar,
+            accessories.image_reference_id as accessory_avatar,
             COALESCE(secret_identities.display_name, roles.name) as secret_identity,
             COALESCE(secret_identities.avatar_reference_id, roles.avatar_reference_id) as secret_avatar
          FROM user_thread_identities AS uti 
@@ -15,7 +16,13 @@
          LEFT JOIN secret_identities 
             ON secret_identities.id = uti.identity_id
          LEFT JOIN roles
-          ON roles.id = uti.role_id),
+          ON roles.id = uti.role_id
+         LEFT JOIN identity_thread_accessories ita
+            ON ita.thread_id = uti.thread_id AND (
+               (secret_identities.id IS NOT NULL AND secret_identities.id = ita.identity_id) OR 
+               (roles.id IS NOT NULL AND roles.id = ita.role_id))
+         LEFT JOIN accessories
+            ON ita.accessory_id = accessories.id),
     last_visited_or_dismissed AS
         (SELECT
             threads.id as thread_id,
@@ -129,6 +136,7 @@ SELECT
     user_avatar,
     secret_identity as secret_identity_name,
     secret_avatar as secret_identity_avatar,
+    accessory_avatar,
     friend,
     self,    
     -- Generic details

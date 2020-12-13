@@ -535,14 +535,10 @@ const addNewIdentityToThread = async (
   let secret_identity_name;
   let secret_identity_avatar;
 
-  if (!identityId) {
-    const randomIdentityResult = await transaction.one(sql.getRandomIdentity, {
-      thread_id,
-    });
-    secret_identity_id = randomIdentityResult.secret_identity_id;
-    secret_identity_name = randomIdentityResult.secret_identity_name;
-    secret_identity_avatar = randomIdentityResult.secret_identity_avatar;
-  } else {
+  if (identityId) {
+    // An identity was passed to this method, which means we don't need to randomize it.
+    // The only thing we need to check is whether the user is *actually able* to post
+    // as that identity.
     const roleResult = await transaction.one(threadsSql.getRoleByStringId, {
       role_id: identityId,
       firebase_id: firebaseId,
@@ -556,6 +552,13 @@ const addNewIdentityToThread = async (
     role_identity_id = roleResult.id;
     secret_identity_name = roleResult.name;
     secret_identity_avatar = roleResult.avatar_reference_id;
+  } else {
+    const randomIdentityResult = await transaction.one(sql.getRandomIdentity, {
+      thread_id,
+    });
+    secret_identity_id = randomIdentityResult.secret_identity_id;
+    secret_identity_name = randomIdentityResult.secret_identity_name;
+    secret_identity_avatar = randomIdentityResult.secret_identity_avatar;
   }
 
   // The secret identity id is not currently in the thread data.

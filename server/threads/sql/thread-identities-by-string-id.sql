@@ -4,6 +4,7 @@ SELECT
     users.avatar_reference_id as user_avatar_reference_id,
     COALESCE(display_name, roles.name) as display_name,
     COALESCE(secret_identities.avatar_reference_id, roles.avatar_reference_id) as secret_identity_avatar_reference_id,
+    accessories.image_reference_id as accessory_avatar,
     is_friend.friend,
     users.firebase_id = ${firebase_id} as self
 FROM user_thread_identities AS uti 
@@ -11,6 +12,12 @@ FROM user_thread_identities AS uti
     LEFT JOIN secret_identities ON secret_identities.id = uti.identity_id
     LEFT JOIN roles ON roles.id = uti.role_id 
     LEFT JOIN threads ON threads.id = uti.thread_id
+    LEFT JOIN identity_thread_accessories ita
+    ON ita.thread_id = threads.id AND (
+        (secret_identities.id IS NOT NULL AND secret_identities.id = ita.identity_id) OR 
+        (roles.id IS NOT NULL AND roles.id = ita.role_id))
+    LEFT JOIN accessories
+    ON ita.accessory_id = accessories.id
     LEFT JOIN LATERAL (
         SELECT true as friend 
         FROM friends 
