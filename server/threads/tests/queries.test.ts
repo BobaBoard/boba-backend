@@ -33,6 +33,8 @@ describe("threads queries", () => {
             "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
           comments: null,
           content: '[{"insert":"Favorite character to maim?"}]',
+          accessory_avatar:
+            "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F989f4b40-c1b8-4793-93dd-57e93df3e7ec.png?alt=media&token=cabdd8d5-b6a9-4914-bb59-eda4629f151b",
           created: "2020-04-30T03:23:00",
           post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
           is_new: false,
@@ -56,6 +58,8 @@ describe("threads queries", () => {
           secret_identity_name: "Old Time-y Anon",
           secret_identity_avatar:
             "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
+          accessory_avatar:
+            "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",
           friend: false,
           self: true,
           comments: null,
@@ -85,6 +89,8 @@ describe("threads queries", () => {
           secret_identity_name: "DragonFucker",
           secret_identity_avatar:
             "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
+          accessory_avatar:
+            "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F989f4b40-c1b8-4793-93dd-57e93df3e7ec.png?alt=media&token=cabdd8d5-b6a9-4914-bb59-eda4629f151b",
           comments: [
             {
               anonymity_type: "strangers",
@@ -94,6 +100,8 @@ describe("threads queries", () => {
               secret_identity_name: "Old Time-y Anon",
               secret_identity_avatar:
                 "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
+              accessory_avatar:
+                "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",
               friend: false,
               self: true,
               content: '[{"insert":"OMG ME TOO"}]',
@@ -113,6 +121,8 @@ describe("threads queries", () => {
               secret_identity_name: "Old Time-y Anon",
               secret_identity_avatar:
                 "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
+              accessory_avatar:
+                "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",
               friend: false,
               self: true,
               content: '[{"insert":"friends!!!!!"}]',
@@ -165,6 +175,7 @@ describe("threads queries", () => {
           secret_identity_name: "DragonFucker",
           secret_identity_avatar:
             "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
+          accessory_avatar: null,
           friend: true,
           self: false,
           comments: null,
@@ -193,6 +204,7 @@ describe("threads queries", () => {
           user_avatar: "greedler.jpg",
           secret_identity_avatar: "outdated-meme.png",
           secret_identity_name: "Outdated Meme",
+          accessory_avatar: null,
           comments: null,
           content: '[{"insert":"Everything in The Evil Within tbh"}]',
           created: "2020-04-30T08:22:00",
@@ -218,6 +230,7 @@ describe("threads queries", () => {
           secret_identity_name: "Old Time-y Anon",
           secret_identity_avatar:
             "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
+          accessory_avatar: null,
           friend: false,
           self: false,
           comments: null,
@@ -284,6 +297,8 @@ describe("threads queries", () => {
       secret_identity_avatar_reference_id:
         "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
       user_avatar_reference_id: "bobatan.png",
+      accessory_avatar:
+        "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",
       username: "bobatan",
     });
     expect(identities[1]).to.eql({
@@ -293,6 +308,8 @@ describe("threads queries", () => {
       secret_identity_avatar_reference_id:
         "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
       self: false,
+      accessory_avatar:
+        "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F989f4b40-c1b8-4793-93dd-57e93df3e7ec.png?alt=media&token=cabdd8d5-b6a9-4914-bb59-eda4629f151b",
       user_avatar_reference_id: "greedler.jpg",
       username: "oncest5evah",
     });

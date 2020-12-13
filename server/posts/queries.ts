@@ -184,6 +184,7 @@ const getThreadDetails = async (
   user_avatar: string;
   secret_identity_name: string;
   secret_identity_avatar: string;
+  accessory_avatar?: string;
   thread_id: number;
   thread_string_id: string;
   post_id: number;
@@ -197,6 +198,7 @@ const getThreadDetails = async (
     role_identity_id,
     secret_identity_name,
     secret_identity_avatar,
+    accessory_avatar,
     thread_id,
     thread_string_id,
     post_id,
@@ -228,6 +230,7 @@ const getThreadDetails = async (
       secret_identity_name,
       secret_identity_avatar,
       role_identity_id,
+      accessory_avatar,
     } = await addNewIdentityToThread(transaction, {
       user_id,
       identityId,
@@ -243,6 +246,7 @@ const getThreadDetails = async (
     user_avatar,
     secret_identity_name,
     secret_identity_avatar,
+    accessory_avatar,
     thread_id,
     thread_string_id,
     post_id,
@@ -281,6 +285,7 @@ export const postNewContribution = async ({
         user_avatar,
         secret_identity_name,
         secret_identity_avatar,
+        accessory_avatar,
         thread_id,
         thread_string_id,
         post_id,
@@ -327,6 +332,7 @@ export const postNewContribution = async ({
         user_avatar,
         secret_identity_name,
         secret_identity_avatar,
+        accessory_avatar,
         created: result.created_string,
         content: result.content,
         options: result.options,
@@ -377,6 +383,7 @@ const postNewCommentWithTransaction = async ({
     user_avatar,
     secret_identity_name,
     secret_identity_avatar,
+    accessory_avatar,
     thread_id,
     post_id,
     comment_id,
@@ -425,6 +432,7 @@ const postNewCommentWithTransaction = async ({
       user_avatar,
       secret_identity_name,
       secret_identity_avatar,
+      accessory_avatar,
       is_new: true,
       is_own: true,
       friend: false,
@@ -514,7 +522,36 @@ export const postNewCommentChain = async ({
     });
 };
 
-const addNewIdentityToThread = async (
+const addAccessoryToIdentity = async (
+  transaction: ITask<any>,
+  {
+    identity_id,
+    role_identity_id,
+    thread_id,
+  }: {
+    identity_id: string;
+    role_identity_id: string;
+    thread_id: string;
+  }
+) => {
+  if (!identity_id && !role_identity_id) {
+    throw "Accessory must be added to either identity or role identity";
+  }
+  const accessory = await transaction.one(sql.getRandomAccessory);
+
+  await transaction.one(sql.addAccessoryToIdentity, {
+    thread_id,
+    identity_id,
+    role_id: role_identity_id,
+    accessory_id: accessory.accessory_id,
+  });
+
+  return {
+    accessory_avatar: accessory.accessory_avatar,
+  };
+};
+
+export const addNewIdentityToThread = async (
   transaction: ITask<any>,
   {
     user_id,
@@ -578,11 +615,21 @@ const addNewIdentityToThread = async (
     role_identity_id,
   });
 
+  // Right now we add it to all posts for the christmas event. With time we'll
+  // allow more fine-grained decisions.
+  // TODO: remove this when Christmas is over.
+  const { accessory_avatar } = await addAccessoryToIdentity(transaction, {
+    identity_id: secret_identity_id,
+    role_identity_id,
+    thread_id,
+  });
+
   return {
     secret_identity_id,
     secret_identity_name,
     secret_identity_avatar,
     role_identity_id,
+    accessory_avatar,
   };
 };
 

@@ -13,6 +13,14 @@ const getRandomIdentity = `
     ORDER BY RANDOM()
     LIMIT 1`;
 
+const getRandomAccessory = `
+    SELECT 
+        id as accessory_id ,
+        image_reference_id as accessory_avatar
+    FROM accessories
+    ORDER BY RANDOM()
+    LIMIT 1`;
+
 const addIdentityToThread = `
     INSERT INTO user_thread_identities(thread_id, user_id, identity_id, role_id)
     VALUES(
@@ -20,6 +28,15 @@ const addIdentityToThread = `
         $/user_id/, 
         $/secret_identity_id/,
         $/role_identity_id/
+    ) RETURNING *`;
+
+const addAccessoryToIdentity = `
+    INSERT INTO identity_thread_accessories(thread_id, role_id, identity_id, accessory_id)
+    VALUES(
+        $/thread_id/,
+        $/role_id/, 
+        $/identity_id/,
+        $/accessory_id/
     ) RETURNING *`;
 
 const makePost = `
@@ -190,9 +207,11 @@ export default {
     path.join(__dirname, "get-thread-details.sql")
   ),
   getRandomIdentity,
+  getRandomAccessory,
   makePost,
   makeComment,
   addIdentityToThread,
+  addAccessoryToIdentity,
   createAddTagsQuery,
   createAddCategoriesQuery,
   createAddTagsToPostQuery,
