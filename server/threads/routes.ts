@@ -10,10 +10,12 @@ import {
   unhideThread,
   updateThreadView,
   getUserPermissionsForThread,
+  getTriggeredWebhooks,
 } from "./queries";
 import { isLoggedIn } from "../auth-handler";
 import { makeServerThread, ensureNoIdentityLeakage } from "../response-utils";
 import { ThreadPermissions } from "../permissions-utils";
+import axios from "axios";
 
 const info = debug("bobaserver:threads:routes-info");
 const log = debug("bobaserver:threads:routes-log");
@@ -230,6 +232,24 @@ router.post("/:boardSlug/create", isLoggedIn, async (req, res, next) => {
 
   info(`sending back data for thread ${threadStringId}.`);
   res.status(200).json(serverThread);
+
+  const webhooks = await getTriggeredWebhooks({
+    slug: boardSlug,
+    categories: serverThread.posts[0].tags?.category_tags,
+  });
+  if (webhooks && webhooks.length > 0) {
+    const threadUrl = `https://v0.boba.social/!${boardSlug}/thread/${threadStringId}`;
+    webhooks.forEach(({ webhook, subscriptionNames }) => {
+      const message = `Your "${subscriptionNames.join(
+        ", "
+      )}" subscription has updated!\n ${threadUrl}`;
+      axios.post(webhook, {
+        content: message,
+        username: serverThread.posts[0].secret_identity.name,
+        avatar_url: serverThread.posts[0].secret_identity.avatar,
+      });
+    });
+  }
 });
 
 router.post("/:threadId/update/view", isLoggedIn, async (req, res) => {

@@ -15,6 +15,9 @@ UPDATE threads SET parent_board=6 WHERE string_id = '9fd12dfb-3f56-48e0-b000-58f
 DROP INDEX tags_tag;
 CREATE UNIQUE INDEX tags_tag on tags(tag);
 
+-- REMOVE NOT NULL CONSTRAINT --
+ALTER TABLE identity_thread_accessories ALTER COLUMN identity_id DROP NOT NULL;
+
 --- ADD COLUMN TO TABLE ---
 ALTER TABLE threads
 ADD COLUMN options JSONB NOT NULL DEFAULT '{}'::jsonb;
@@ -58,6 +61,27 @@ VALUES
 insert into board_user_roles(user_id, board_id, role_id) VALUES(userId, boardId, roleId);
 INSERT INTO realm_user_roles(user_id, role_id) VALUES(user_id, 'role_id');
 
-
 --UPDATE BOARD AVATAR--
 UPDATE Boards SET avatar_reference_id = 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fmain_street%2F7d5ff8d8-2ab4-44d2-8d75-7ecb1275f5d7.png?alt=media&token=675745a9-d9fb-45a8-b8fb-c7ec0ab9debf' WHERE slug = 'queerpub';
+
+-- CREATE WEBHOOK SUBSCRIPTION --
+INSERT INTO board_category_mappings(board_id, category_id) VALUES
+    ((SELECT id FROM boards WHERE slug = 'bobaland'), 
+     (SELECT id FROM categories WHERE category = 'announcements'));
+
+INSERT INTO subscriptions(name) VALUES
+    ('Announcements');
+
+INSERT INTO board_category_subscriptions(board_category_mapping_id, subscription_id) VALUES
+    ((SELECT id from board_category_mappings WHERE board_id = (SELECT id FROM boards WHERE slug = 'bobaland') AND category_id = (SELECT id FROM categories WHERE category = 'announcements')),
+     (SELECT id FROM subscriptions WHERE name = 'Announcements'));
+
+INSERT INTO webhooks(name, webhook) VALUES
+    ('v0 channel', 'https://discord.com/api/webhooks/788892785373216798/aTLIboZRtxajOfR3lbW5k6aKXyS7Lp19sH6gIg9PSnbXIcI7H-3YgOAeCEhL8CpQR2UZ'),
+    ('volunteers', 'https://discord.com/api/webhooks/788877360681189416/UAZQH6Xhz9qQAG51yWEIGmPba1p5yfR6Cet4yyQizUx5jL_r0_Qj3QA92PyRY7qEZCtK');
+
+INSERT INTO subscription_webhooks (subscription_id, webhook_id) VALUES
+    ((SELECT id FROM subscriptions WHERE name = 'Announcements'),
+     (SELECT id FROM webhooks WHERE name = 'v0 channel')),
+    ((SELECT id FROM subscriptions WHERE name = 'Announcements'),
+     (SELECT id FROM webhooks WHERE name = 'volunteers'));
