@@ -85,3 +85,10 @@ INSERT INTO subscription_webhooks (subscription_id, webhook_id) VALUES
      (SELECT id FROM webhooks WHERE name = 'v0 channel')),
     ((SELECT id FROM subscriptions WHERE name = 'Announcements'),
      (SELECT id FROM webhooks WHERE name = 'volunteers'));
+
+-- ADD NEW BOARD --
+INSERT INTO boards(slug, tagline, avatar_reference_id, settings) VALUES
+    ('volunteers',
+     'It''s fun to stay at the YBVA (Young Boobies Volunteers Association)',
+     'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2Fe4e263cf-ee98-4902-9c14-c10299210e01.png?alt=media&token=7c170411-9401-4d4e-9f66-5d6dfee2fccd',
+     '{ "accentColor": "#7b00ff"}');

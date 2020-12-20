@@ -179,6 +179,8 @@ LEFT JOIN thread_identities
     ON thread_identities.user_id = (thread_posts_updates.first_post_author)::int AND thread_identities.thread_id = thread_posts_updates.threads_id
 WHERE GREATEST(thread_posts_updates.first_post_timestamp, thread_posts_updates.last_post_timestamp, thread_comments_updates.last_comment_timestamp) <= COALESCE(${last_activity_cursor}, NOW())
    AND (${updated_only} IS FALSE OR new_posts_amount > 0 or new_comments_amount > 0 or is_new)
-   AND (${own_only} IS FALSE OR self IS TRUE) 
+   AND (${own_only} IS FALSE OR self IS TRUE)
+   AND muted IS FALSE
+   AND hidden IS FALSE
 ORDER BY thread_last_activity DESC
 LIMIT ${page_size} + 1 
