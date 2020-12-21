@@ -190,6 +190,11 @@ export interface BoardDescription {
   categories?: string[];
 }
 
+export enum restriction_types {
+  LOCK_ACCESS = "lock_access",
+  DELIST = "delist",
+}
+
 export interface DbBoardMetadata {
   slug: string;
   avatarUrl: string;
@@ -204,6 +209,8 @@ export interface DbBoardMetadata {
     name: string;
   }[];
   permissions: string[];
+  logged_out_restrictions: restriction_types[];
+  logged_in_base_restrictions: restriction_types[];
 }
 
 export interface QueryTagsType {

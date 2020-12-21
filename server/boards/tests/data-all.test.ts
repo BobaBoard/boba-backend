@@ -88,6 +88,24 @@ describe("Tests boards queries", () => {
           slug: "muted",
           tagline: "A board to test for muting.",
         },
+        {
+          avatar_reference_id:
+            "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2Fe4e263cf-ee98-4902-9c14-c10299210e01.png?alt=media&token=7c170411-9401-4d4e-9f66-5d6dfee2fccd",
+          settings: {
+            accentColor: "#234a69",
+          },
+          slug: "restricted",
+          tagline: "A board to test for logged-in only view",
+        },
+        {
+          avatar_reference_id:
+            "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2Fc3b86805-4df7-4b1a-9fa2-b96b5165a636?alt=media&token=7652d44a-38cb-40cc-82ef-908cd4265840",
+          settings: {
+            accentColor: "#fa8628",
+          },
+          slug: "delisted",
+          tagline: "A board to test for link-only view",
+        },
       ]);
     });
   });
@@ -142,6 +160,20 @@ describe("Tests boards queries", () => {
           last_post: null,
           last_visit: null,
         },
+        {
+          slug: "restricted",
+          has_updates: false,
+          last_comment: null,
+          last_post: null,
+          last_visit: null,
+        },
+        {
+          slug: "delisted",
+          has_updates: false,
+          last_comment: null,
+          last_post: null,
+          last_visit: null,
+        },
       ]);
     });
     it("fetches all boards updates (no user)", async () => {
@@ -188,6 +220,20 @@ describe("Tests boards queries", () => {
           has_updates: false,
           last_comment: null,
           last_post: new Date(Date.UTC(2020, 0, 14, 8, 42)),
+          last_visit: null,
+        },
+        {
+          slug: "restricted",
+          has_updates: false,
+          last_comment: null,
+          last_post: null,
+          last_visit: null,
+        },
+        {
+          slug: "delisted",
+          has_updates: false,
+          last_comment: null,
+          last_post: null,
           last_visit: null,
         },
       ]);
@@ -242,6 +288,20 @@ describe("Tests boards queries", () => {
           last_post: new Date(Date.UTC(2020, 0, 14, 8, 42)),
           last_visit: null,
         },
+        {
+          slug: "restricted",
+          has_updates: false,
+          last_comment: null,
+          last_post: null,
+          last_visit: null,
+        },
+        {
+          slug: "delisted",
+          has_updates: false,
+          last_comment: null,
+          last_post: null,
+          last_visit: null,
+        },
       ]);
     });
   });
@@ -264,6 +324,8 @@ describe("Tests boards queries", () => {
         { slug: "long", muted: false, pinned_order: null },
         { slug: "memes", muted: false, pinned_order: null },
         { slug: "muted", muted: false, pinned_order: null },
+        { slug: "restricted", muted: false, pinned_order: null },
+        { slug: "delisted", muted: false, pinned_order: null },
       ]);
     });
     it("fetches all boards user settings (no user)", async () => {
@@ -280,6 +342,8 @@ describe("Tests boards queries", () => {
         { slug: "long", muted: false, pinned_order: null },
         { slug: "memes", muted: false, pinned_order: null },
         { slug: "muted", muted: false, pinned_order: null },
+        { slug: "restricted", muted: false, pinned_order: null },
+        { slug: "delisted", muted: false, pinned_order: null },
       ]);
     });
   });
@@ -305,6 +369,8 @@ describe("Tests boards queries", () => {
         slug: "main_street",
         tagline: "For BobaBoard-related discussions.",
         threads_count: "0",
+        logged_in_base_restrictions: [],
+        logged_out_restrictions: [],
       });
     });
   });

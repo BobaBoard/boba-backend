@@ -31,7 +31,9 @@ SELECT
         )) FILTER (WHERE p.permissions = 'post_as_role' OR p.permissions = 'all'), '[]') AS posting_identities,
     COALESCE(
         json_agg(DISTINCT p.permissions) 
-            FILTER (WHERE p.permissions IS NOT NULL AND p.permissions != 'post_as_role'), '[]') AS permissions
+            FILTER (WHERE p.permissions IS NOT NULL AND p.permissions != 'post_as_role'), '[]') AS permissions,
+    to_jsonb(COALESCE(logged_out_restrictions, ARRAY[]::restriction_type[])) as logged_out_restrictions,
+    to_jsonb(COALESCE(CASE WHEN logged_in_user.id IS NOT NULL THEN logged_in_base_restrictions ELSE NULL END, ARRAY[]::restriction_type[])) as logged_in_base_restrictions
 FROM boards 
     LEFT JOIN threads 
         ON boards.id = threads.parent_board
@@ -52,6 +54,10 @@ FROM boards
             FROM roles WHERE bur.role_id = roles.id OR rur.role_id = roles.id) AS p 
         ON 1=1
     LEFT JOIN board_description_sections bds 
-        ON bds.board_id = boards.id 
+        ON bds.board_id = boards.id     
+    LEFT JOIN board_restrictions br
+        ON boards.id = br.board_id
+    LEFT JOIN logged_in_user
+        ON 1=1
 WHERE boards.slug=${board_slug}
-GROUP BY boards.id, umb.user_id, opb.index
+GROUP BY boards.id, umb.user_id, opb.index, br.logged_out_restrictions, br.logged_in_base_restrictions, logged_in_user.id

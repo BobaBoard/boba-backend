@@ -15,13 +15,14 @@ import {
 } from "./queries";
 import { isLoggedIn } from "../auth-handler";
 import {
-  transformImageUrls,
   mergeObjectIdentity,
   ensureNoIdentityLeakage,
   processBoardMetadata,
+  processBoardsMetadata,
 } from "../response-utils";
 import { canEditBoard } from "../permissions-utils";
 import { DbActivityThreadType, ServerThreadType } from "../../Types";
+import { canAccessBoard, getBoardMetadata } from "./utils";
 
 const info = debug("bobaserver:board:routes-info");
 const log = debug("bobaserver:board:routes");
@@ -40,25 +41,17 @@ router.get("/:slug", isLoggedIn, async (req, res) => {
     }
   }
 
-  const board = await getBoardBySlug({
-    // @ts-ignore
+  const boardMetadata = await getBoardMetadata({
     firebaseId: req.currentUser?.uid,
     slug,
   });
-  log(`Found board`, board);
 
-  if (!board) {
+  if (!boardMetadata) {
     res.sendStatus(404);
     return;
   }
 
-  const boardMetadata = processBoardMetadata(board);
-  log(boardMetadata);
   res.status(200).json(boardMetadata);
-  log(boardMetadata);
-  if (!req.currentUser.uid) {
-    cache().hset(CacheKeys.BOARD, slug, JSON.stringify(boardMetadata));
-  }
 });
 
 router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
@@ -101,7 +94,12 @@ router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
   }
 
   await cache().hdel(CacheKeys.BOARD, slug);
-  res.status(200).json(processBoardMetadata(newMetadata));
+  res.status(200).json(
+    processBoardMetadata({
+      metadata: newMetadata,
+      isLoggedIn: !!req.currentUser?.uid,
+    })
+  );
 });
 
 router.get("/:slug/visit", isLoggedIn, async (req, res) => {
@@ -255,9 +253,13 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
     `Fetching activity data for board with slug ${slug} with cursor ${cursor} and filtered category "${categoryFilter}"`
   );
 
+  if (!(await canAccessBoard({ slug, firebaseId: req.currentUser?.uid }))) {
+    // TOOD: add error log
+    return res.sendStatus(403);
+  }
+
   const result = await getBoardActivityBySlug({
     slug,
-    // @ts-ignore
     firebaseId: req.currentUser?.uid,
     filterCategory: (categoryFilter as string) || null,
     cursor: (cursor as string) || null,
@@ -331,7 +333,6 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
 });
 
 router.get("/", isLoggedIn, async (req, res) => {
-  // @ts-ignore
   if (!req.currentUser?.uid) {
     // Only get cache for non-logged in users, because for logged in users this
     // method also returns updates.
@@ -351,7 +352,10 @@ router.get("/", isLoggedIn, async (req, res) => {
     res.status(500);
   }
 
-  const boardsResponse = boards.map((board: any) => transformImageUrls(board));
+  const boardsResponse = processBoardsMetadata({
+    boards,
+    isLoggedIn: !!req.currentUser?.uid,
+  });
   res.status(200).json(boardsResponse);
 
   // @ts-ignore

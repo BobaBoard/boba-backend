@@ -55,9 +55,9 @@ export const cache = () => client;
 
 export enum CacheKeys {
   // All boards data.
-  BOARDS,
+  BOARDS = "BOARDS",
   // Data pertaining to a single board, keyed by the board slug.
-  BOARD,
+  BOARD = "BOARD",
   // Data pertaining to the user, keyed by the user's firebase id.
-  USER,
+  USER = "USER",
 }

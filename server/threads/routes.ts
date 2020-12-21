@@ -16,6 +16,7 @@ import { isLoggedIn } from "../auth-handler";
 import { makeServerThread, ensureNoIdentityLeakage } from "../response-utils";
 import { ThreadPermissions } from "../permissions-utils";
 import axios from "axios";
+import { canAccessBoard } from "../boards/utils";
 
 const info = debug("bobaserver:threads:routes-info");
 const log = debug("bobaserver:threads:routes-log");
@@ -28,12 +29,23 @@ router.get("/:id", isLoggedIn, async (req, res) => {
 
   // NOTE: if updating this (and it makes sense) also update
   // the method for thread creation + retrieval.
+  // TODO: check if this has already been unified
   const thread = await getThreadByStringId({
     threadId: id,
-    // @ts-ignore
     firebaseId: req.currentUser?.uid,
   });
   info(`Found thread: `, thread);
+
+  if (
+    thread &&
+    !(await canAccessBoard({
+      slug: thread.board_slug,
+      firebaseId: req.currentUser?.uid,
+    }))
+  ) {
+    // TOOD: add error log
+    return res.sendStatus(403);
+  }
 
   if (thread === false) {
     res.sendStatus(500);

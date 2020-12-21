@@ -36,6 +36,8 @@ describe("Tests boards queries", () => {
       pinned_order: null,
       permissions: [],
       posting_identities: [],
+      logged_in_base_restrictions: [],
+      logged_out_restrictions: [],
     });
   });
 
@@ -88,6 +90,8 @@ describe("Tests boards queries", () => {
           name: "GoreMaster5000",
         },
       ],
+      logged_in_base_restrictions: [],
+      logged_out_restrictions: [],
     });
   });
 
