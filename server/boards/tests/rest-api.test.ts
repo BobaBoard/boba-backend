@@ -17,9 +17,11 @@ describe("Tests boards REST API", () => {
     listener = app.listen(4000, () => {
       done();
     });
+    process.env.FORCED_USER = undefined;
   });
   afterEach(function (done) {
     listener.close(done);
+    process.env.FORCED_USER = undefined;
   });
   it("should return board data", async () => {
     const res = await request(app).get("/gore");
@@ -56,6 +58,8 @@ describe("Tests boards REST API", () => {
         canEditBoardData: false,
       },
       avatarUrl: "/gore.png",
+      delisted: false,
+      loggedInOnly: false,
     });
   });
 

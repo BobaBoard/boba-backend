@@ -418,3 +418,11 @@ CREATE TABLE IF NOT EXISTS subscription_webhooks
     webhook_id BIGINT REFERENCES webhooks(id) ON DELETE RESTRICT NOT NULL
 );
 CREATE UNIQUE INDEX subscription_webhook on subscription_webhooks(subscription_id, webhook_id);
+
+CREATE TYPE restriction_type AS ENUM ('lock_access', 'delist');
+CREATE TABLE IF NOT EXISTS board_restrictions(
+    board_id BIGINT REFERENCES boards(id) ON DELETE RESTRICT NOT NULL,
+    logged_out_restrictions restriction_type[] NOT NULL DEFAULT ARRAY[]::restriction_type[],
+    logged_in_base_restrictions restriction_type[] NOT NULL DEFAULT ARRAY[]::restriction_type[]
+);
+CREATE UNIQUE INDEX board_restrictions_entry on board_restrictions(board_id);

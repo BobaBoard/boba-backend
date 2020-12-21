@@ -14,7 +14,9 @@ SELECT
     MAX(GREATEST(user_board_last_visits.last_visit_time, posts.last_thread_visit)) as last_visit,
     user_muted_boards.board_id IS NOT NULL as muted,
     COALESCE(ordered_pinned_boards.index, NULL) as pinned_order,
-    BOOL_OR(user_muted_boards.board_id IS NULL AND (posts.has_new OR comments.has_new)) as has_updates
+    BOOL_OR(user_muted_boards.board_id IS NULL AND (posts.has_new OR comments.has_new)) as has_updates,
+    to_jsonb(COALESCE(logged_out_restrictions, ARRAY[]::restriction_type[])) as logged_out_restrictions,
+    to_jsonb(COALESCE(CASE WHEN logged_in_user.id IS NOT NULL THEN logged_in_base_restrictions ELSE NULL END, ARRAY[]::restriction_type[])) as logged_in_base_restrictions
 FROM boards
 LEFT JOIN logged_in_user ON 1 = 1
 LEFT JOIN user_muted_boards 
@@ -34,6 +36,8 @@ LEFT JOIN user_hidden_threads
 LEFT JOIN user_board_last_visits
     ON user_board_last_visits.board_id = boards.id 
         AND user_board_last_visits.user_id = logged_in_user.id
+LEFT JOIN board_restrictions
+    ON boards.id = board_restrictions.board_id
 LEFT JOIN LATERAL (
         SELECT 
             MAX(created) as last_activity,
@@ -81,4 +85,4 @@ LEFT JOIN LATERAL (
             AND user_hidden_threads.thread_id IS NULL 
             AND comments.parent_thread = threads.id) as comments
     ON 1=1
-GROUP BY boards.id, user_muted_boards.board_id, ordered_pinned_boards.index
+GROUP BY boards.id, user_muted_boards.board_id, ordered_pinned_boards.INDEX, logged_out_restrictions, logged_in_base_restrictions, logged_in_user.id

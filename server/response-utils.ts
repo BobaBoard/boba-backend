@@ -7,6 +7,7 @@ import {
   ServerPostType,
   DbCommentType,
   DbBoardMetadata,
+  restriction_types,
 } from "../Types";
 import { transformPermissions } from "./permissions-utils";
 
@@ -132,15 +133,84 @@ export const ensureNoIdentityLeakage = (post: any) => {
   post.comments?.forEach((comment: any) => ensureNoIdentityLeakage(comment));
 };
 
-export const processBoardMetadata = (metadata: DbBoardMetadata) => {
-  const finalMetadata = {
+const extractLockedBoardMetadata = (metadata: any) => {
+  return {
+    slug: metadata.slug,
+    avatar_reference_id: metadata.avatar_reference_id,
+    tagline: metadata.tagline,
+    settings: metadata.settings,
+    loggedInOnly: metadata.loggedInOnly,
+  };
+};
+
+export const processBoardMetadata = ({
+  metadata,
+  isLoggedIn,
+}: {
+  metadata: DbBoardMetadata;
+  isLoggedIn: boolean;
+}) => {
+  let finalMetadata = {
     ...metadata,
     permissions: transformPermissions(metadata.permissions),
     postingIdentities: metadata.posting_identities.map((identity: any) =>
       transformImageUrls(identity)
     ),
-  };
+    delisted:
+      metadata.logged_out_restrictions.includes(restriction_types.DELIST) ||
+      metadata.logged_in_base_restrictions.includes(restriction_types.DELIST),
+    loggedInOnly: metadata.logged_out_restrictions.includes(
+      restriction_types.LOCK_ACCESS
+    ),
+    // TODO: remove this cast
+  } as any;
+  // Remove details from list if the board is locked and the user doesn't have access
+  // (right now we keep only avatar, color & description)
+  if (!isLoggedIn && finalMetadata.loggedInOnly) {
+    finalMetadata = extractLockedBoardMetadata(finalMetadata);
+  }
+
+  delete finalMetadata.logged_out_restrictions;
+  delete finalMetadata.logged_in_base_restrictions;
   delete finalMetadata.posting_identities;
 
   return transformImageUrls(finalMetadata);
+};
+
+export const processBoardsMetadata = ({
+  boards,
+  isLoggedIn,
+}: {
+  boards: any[];
+  isLoggedIn: boolean;
+}) => {
+  const result = boards.map((board: any) => {
+    let boardResult = board;
+
+    // Remove from list if the board shouldn't be visible in the sidebar
+    boardResult.delisted =
+      (!isLoggedIn &&
+        board.logged_out_restrictions.includes(restriction_types.DELIST)) ||
+      (isLoggedIn &&
+        board.logged_in_base_restrictions.includes(restriction_types.DELIST));
+    if (boardResult.delisted && !board.pinned_order) {
+      return null;
+    }
+
+    boardResult.loggedInOnly = board.logged_out_restrictions.includes(
+      restriction_types.LOCK_ACCESS
+    );
+
+    // Remove details from list if the board is locked and the user doesn't have access
+    // (right now we keep only avatar, color & description)
+    if (!isLoggedIn && boardResult.loggedInOnly) {
+      boardResult = extractLockedBoardMetadata(board);
+    }
+
+    delete board.logged_out_restrictions;
+    delete board.logged_in_base_restrictions;
+    return transformImageUrls(boardResult);
+  });
+
+  return result.filter((board) => board != null);
 };
