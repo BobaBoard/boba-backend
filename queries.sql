@@ -92,3 +92,9 @@ INSERT INTO boards(slug, tagline, avatar_reference_id, settings) VALUES
      'It''s fun to stay at the YBVA (Young Boobies Volunteers Association)',
      'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2Fe4e263cf-ee98-4902-9c14-c10299210e01.png?alt=media&token=7c170411-9401-4d4e-9f66-5d6dfee2fccd',
      '{ "accentColor": "#7b00ff"}');
+
+-- LOCK BOARD --
+INSERT INTO board_restrictions(board_id, logged_out_restrictions) VALUES 
+((SELECT id FROM boards WHERE slug='volunteers'),
+     ARRAY['lock_access'::restriction_type],
+     DEFAULT);

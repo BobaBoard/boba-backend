@@ -146,7 +146,7 @@ export const createInvite = async (inviteData: {
       $/invite_code/,
       $/inviter_id/,
       $/email/,
-      INTERVAL '1 DAY')`;
+      INTERVAL '1 WEEK')`;
   try {
     await pool.none(query, {
       invite_code: inviteData.inviteCode,

@@ -193,6 +193,9 @@ export const processBoardsMetadata = ({
         board.logged_out_restrictions.includes(restriction_types.DELIST)) ||
       (isLoggedIn &&
         board.logged_in_base_restrictions.includes(restriction_types.DELIST));
+    // Pinned boards should still return their value here, even if delisted.
+    // Note that the existence of a pinned order implies that the user is
+    // logged in.
     if (boardResult.delisted && !board.pinned_order) {
       return null;
     }
