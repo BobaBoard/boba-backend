@@ -228,3 +228,8 @@ INSERT INTO post_tags(post_id, tag_id) VALUES
  (2,5), -- 'Revolver Ocelot?' is `bobapost`
  (3,5); -- 'Kermit the Frog?' is `bobapost`
  
+INSERT INTO post_categories(post_id, category_id) VALUES
+ ((SELECT id FROM posts WHERE string_id = '11b85dac-e122-40e0-b09a-8829c5e0250e'),2), -- 'Favorite character to maim?' is `bruises` 
+ ((SELECT id FROM posts WHERE string_id = '3db477e0-57ed-491d-ba11-b3a0110b59b0'),1),
+ ((SELECT id FROM posts WHERE string_id = '3db477e0-57ed-491d-ba11-b3a0110b59b0'),2); -- 'Favorite murder scene' is `blood` AND `bruises`
+ 

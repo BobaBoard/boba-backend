@@ -8,3 +8,11 @@ INSERT INTO posts (string_id,parent_thread,parent_post,author,created,"content",
 ,('41b1ed49-2235-431d-bbf5-d7bd304a2d60',31,35,1,'2020-08-22 03:35:44.507','[{"insert":{"block-image":{"src":"https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fmemes%2F2765f36a-b4f9-4efe-96f2-cb34f055d032%2F0c9c7e0e-2bc0-4a71-9c6e-201890f8bbf8?alt=media&token=caa232a5-9cb6-46c7-8968-c979364d255d","spoilers":false,"width":3840,"height":2160}}},{"insert":""}]','text','{}','{"wide": false}',false,'strangers')
 ,('7f76ddaf-06f0-44fa-85d5-2e5ad5d447aa',31,35,1,'2020-08-22 03:36:18.729','[{"insert":{"block-image":{"src":"https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fmemes%2F2765f36a-b4f9-4efe-96f2-cb34f055d032%2F7707f104-044c-4111-b422-74e11ccef4a2?alt=media&token=7cdf3edb-0d63-467e-ade6-05447cc602c3","spoilers":false,"width":1920,"height":1080}}},{"insert":""}]','text','{}','{"wide": false}',false,'strangers')
 ,('03a71721-12a6-488d-ab25-3b6b7c947a67',31,35,1,'2020-08-22 03:36:55.850','[{"insert":{"block-image":{"src":"https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fmemes%2F2765f36a-b4f9-4efe-96f2-cb34f055d032%2F894374bd-fed2-42af-a21e-18ed9c5040fc?alt=media&token=f5afda1f-2a14-43a3-9717-7cdc0aeddc2d","spoilers":false,"width":3840,"height":2160}}},{"insert":""}]','text','{}','{"wide": false}',false,'strangers');
+
+INSERT INTO categories(category) VALUES 
+  ('aiba');
+INSERT INTO post_categories(post_id, category_id) VALUES
+ ((SELECT id FROM posts WHERE string_id = 'd14e311a-a22a-4673-8b8a-cd0423e38a3c'),
+  (SELECT id FROM categories WHERE category = 'aiba')),
+ ((SELECT id FROM posts WHERE string_id = '7f76ddaf-06f0-44fa-85d5-2e5ad5d447aa'),
+  (SELECT id FROM categories WHERE category = 'aiba'));

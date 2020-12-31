@@ -20,6 +20,7 @@ export const mochaHooks = {
     info("Mocking RedisClient for use in test.");
     this.hsetStub = cacheObj.hset;
     this.hgetStub = cacheObj.hget;
+    this.hdelStub = cacheObj.hdel;
     this.setStub = cacheObj.set;
     this.getStub = cacheObj.get;
     const cache = require("../server/cache");

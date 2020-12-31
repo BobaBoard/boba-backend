@@ -17,6 +17,7 @@ import {
 } from "../response-utils";
 import { getTagsDelta } from "./utils";
 import { canDoTagsEdit } from "../permissions-utils";
+import { maybeUpdateSubscriptionsOnThreadChange } from "../subscriptions/utils";
 
 const info = debug("bobaserver:posts:routes-info");
 const log = debug("bobaserver:posts:routes-log");
@@ -48,8 +49,7 @@ router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
   log(`Anonymous: `, forceAnonymous);
   log(`Whisper Tags: `, whisperTags);
 
-  const post = await postNewContribution({
-    // @ts-ignore
+  const result = await postNewContribution({
     firebaseId: req.currentUser.uid,
     identityId,
     parentPostId: postId,
@@ -61,17 +61,26 @@ router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
     categoryTags,
     contentWarnings,
   });
-  log(`Contribution posted: `, post);
+  log(`Contribution posted: `, result);
 
-  if (!post) {
+  if (!result) {
     res.sendStatus(500);
     return;
   }
 
-  const responsePost = makeServerPost(post);
+  const { contribution, boardSlug } = result;
+  const responsePost = makeServerPost(contribution);
 
   ensureNoIdentityLeakage(responsePost);
   res.status(200).json({ contribution: responsePost });
+
+  maybeUpdateSubscriptionsOnThreadChange({
+    threadId: responsePost.parent_thread_id,
+    postId: responsePost.post_id,
+    boardSlug,
+    secretIdentity: responsePost.secret_identity,
+    categoryNames: responsePost.tags?.category_tags,
+  });
 });
 
 router.post("/:postId/comment", isLoggedIn, async (req, res) => {

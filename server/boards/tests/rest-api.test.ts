@@ -132,7 +132,7 @@ describe("Tests boards REST API", () => {
               tags: {
                 index_tags: ["evil", "bobapost"],
                 whisper_tags: [],
-                category_tags: [],
+                category_tags: ["bruises"],
                 content_warnings: [],
               },
               total_comments_amount: 2,
@@ -172,7 +172,7 @@ describe("Tests boards REST API", () => {
               tags: {
                 index_tags: [],
                 whisper_tags: ["mwehehehehe"],
-                category_tags: [],
+                category_tags: ["blood", "bruises"],
                 content_warnings: [],
               },
               total_comments_amount: 0,
