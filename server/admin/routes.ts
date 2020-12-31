@@ -153,7 +153,7 @@ router.post("/invite/generate", isLoggedIn, async (req, res) => {
 
 router.post("/migrate_fb_data", isLoggedIn, async (req, res) => {
   // @ts-ignore
-  const user = req.currentUser?.uid;
+  const user = req6ty7.currentUser?.uid;
   if (user !== ADMIN_ID) {
     return res.sendStatus(403);
   }
@@ -200,4 +200,10 @@ const getSpreadsheetData = (
   });
 };
 
+// router.get("/latest_release", async (req, res) => {
+//   if (!process.env.LATEST_RELEASE_THREAD_STRING_ID) {
+//     res.sendStatus(404);
+//   }
+//   if ()
+// });
 export default router;

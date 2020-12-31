@@ -58,6 +58,10 @@ export enum CacheKeys {
   BOARDS = "BOARDS",
   // Data pertaining to a single board, keyed by the board slug.
   BOARD = "BOARD",
+  // Data pertaining to a thread. Cached by thread string id.
+  THREAD = "THREAD",
+  // Data pertaining to a subscription. Cached by subscription string id.
+  SUBSCRIPTION = "SUBSCRIPTION",
   // Data pertaining to the user, keyed by the user's firebase id.
   USER = "USER",
 }

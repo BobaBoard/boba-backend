@@ -189,6 +189,7 @@ const getThreadDetails = async (
   thread_string_id: string;
   post_id: number;
   comment_id: number;
+  board_slug: string;
 }> => {
   let {
     user_id,
@@ -251,6 +252,7 @@ const getThreadDetails = async (
     thread_string_id,
     post_id,
     comment_id,
+    board_slug,
   };
 };
 
@@ -276,10 +278,11 @@ export const postNewContribution = async ({
   indexTags: string[];
   categoryTags: string[];
   contentWarnings: string[];
-}): Promise<DbPostType | false> => {
+}): Promise<{ contribution: DbPostType; boardSlug: string } | false> => {
   return pool
     .tx("create-contribution", async (t) => {
       let {
+        board_slug,
         user_id,
         username,
         user_avatar,
@@ -324,31 +327,34 @@ export const postNewContribution = async ({
       });
 
       return {
-        post_id: result.string_id,
-        parent_thread_id: thread_string_id,
-        parent_post_id: parentPostId,
-        author: user_id,
-        username,
-        user_avatar,
-        secret_identity_name,
-        secret_identity_avatar,
-        accessory_avatar,
-        created: result.created_string,
-        content: result.content,
-        options: result.options,
-        type: result.type,
-        whisper_tags: result.whisper_tags,
-        index_tags: indexedTags,
-        category_tags: categoryTagsResult,
-        content_warnings: contentWarningsResult,
-        anonymity_type: result.anonymity_type,
-        total_comments_amount: 0,
-        new_comments_amount: 0,
-        comments: null,
-        friend: false,
-        self: true,
-        is_new: true,
-        is_own: true,
+        contribution: {
+          post_id: result.string_id,
+          parent_thread_id: thread_string_id,
+          parent_post_id: parentPostId,
+          author: user_id,
+          username,
+          user_avatar,
+          secret_identity_name,
+          secret_identity_avatar,
+          accessory_avatar,
+          created: result.created_string,
+          content: result.content,
+          options: result.options,
+          type: result.type,
+          whisper_tags: result.whisper_tags,
+          index_tags: indexedTags,
+          category_tags: categoryTagsResult,
+          content_warnings: contentWarningsResult,
+          anonymity_type: result.anonymity_type,
+          total_comments_amount: 0,
+          new_comments_amount: 0,
+          comments: null,
+          friend: false,
+          self: true,
+          is_new: true,
+          is_own: true,
+        },
+        boardSlug: board_slug,
       };
     })
     .catch((e) => {

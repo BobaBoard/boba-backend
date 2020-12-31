@@ -58,7 +58,7 @@ describe("Tests threads REST API", () => {
           tags: {
             index_tags: ["evil", "bobapost"],
             whisper_tags: [],
-            category_tags: [],
+            category_tags: ["bruises"],
             content_warnings: [],
           },
           options: {},
