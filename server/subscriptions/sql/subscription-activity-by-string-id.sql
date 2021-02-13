@@ -33,7 +33,8 @@ board_subscription_threads AS (
     thread_identities.secret_identity as secret_identity_name,
     thread_identities.secret_avatar as secret_identity_avatar,
     top_posts."content" AS post_content,
-    threads.string_id AS thread_string_id
+    threads.string_id AS thread_string_id,
+    NULL AS latest_post_string_id
   FROM subscriptions
     INNER JOIN board_category_subscriptions bcs ON bcs.subscription_id = subscriptions.id
     INNER JOIN board_category_mappings bcm ON bcs.board_category_mapping_id = bcm.id
@@ -59,6 +60,7 @@ thread_subscription_threads AS (
     thread_identities.secret_identity as secret_identity_name,
     thread_identities.secret_avatar as secret_identity_avatar,
     posts."content" AS post_content,
+    posts.string_id AS latest_post_string_id,
     threads.string_id AS thread_string_id
   FROM subscriptions
   INNER JOIN thread_category_subscriptions tcs ON tcs.subscription_id = subscriptions.id
