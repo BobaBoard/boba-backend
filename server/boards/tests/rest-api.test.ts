@@ -102,7 +102,7 @@ describe("Tests boards REST API", () => {
           thread_direct_threads_amount: 0,
           thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
           board_slug: "gore",
-          thread_last_activity: "2020-10-02T05:43:00.000000",
+          thread_last_activity: "2020-10-04T05:44:00.000000",
           thread_new_comments_amount: 0,
           thread_new_posts_amount: 0,
           thread_total_comments_amount: 2,

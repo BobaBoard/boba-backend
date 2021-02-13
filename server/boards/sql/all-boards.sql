@@ -11,6 +11,7 @@ SELECT
     COUNT(threads.id) as threads_count,
     MAX(posts.last_activity) as last_post,
     MAX(comments.last_activity) as last_comment,
+    GREATEST(MAX(COMMENTS.last_activity_from_others), MAX(posts.last_activity_from_others)) AS last_activity_from_others,
     MAX(GREATEST(user_board_last_visits.last_visit_time, posts.last_thread_visit)) as last_visit,
     user_muted_boards.board_id IS NOT NULL as muted,
     COALESCE(ordered_pinned_boards.index, NULL) as pinned_order,
@@ -41,6 +42,11 @@ LEFT JOIN board_restrictions
 LEFT JOIN LATERAL (
         SELECT 
             MAX(created) as last_activity,
+            MAX(CASE WHEN logged_in_user.id IS NOT NULL AND 
+                          posts.author != logged_in_user.id AND 
+                          (utlv.last_visit_time IS NULL OR utlv.last_visit_time < posts.created) AND
+                          (dnr.dismiss_request_time IS NULL OR dnr.dismiss_request_time < posts.created) AND
+                          (dbnr.dismiss_request_time IS NULL OR dbnr.dismiss_request_time < posts.created) THEN created ELSE NULL END) AS last_activity_from_others,
             COALESCE(BOOL_OR(logged_in_user.id IS NOT NULL AND 
                              posts.author != logged_in_user.id AND 
                              (utlv.last_visit_time IS NULL OR utlv.last_visit_time < posts.created) AND
@@ -65,6 +71,12 @@ LEFT JOIN LATERAL (
 LEFT JOIN LATERAL (
         SELECT 
             MAX(created) as last_activity,
+            MAX(CASE WHEN logged_in_user.id IS NOT NULL AND 
+                          comments.author != logged_in_user.id AND
+                          (utlv.last_visit_time IS NULL OR utlv.last_visit_time < comments.created) AND
+                          (dnr.dismiss_request_time IS NULL OR dnr.dismiss_request_time < comments.created) AND
+                          (dbnr.dismiss_request_time IS NULL OR dbnr.dismiss_request_time < comments.created)
+                THEN created ELSE NULL END) AS last_activity_from_others,
             COALESCE(BOOL_OR(logged_in_user.id IS NOT NULL AND 
                              comments.author != logged_in_user.id AND
                              (utlv.last_visit_time IS NULL OR utlv.last_visit_time < comments.created) AND

@@ -289,7 +289,7 @@ describe("Tests notifications", async () => {
       {
         thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
         is_new: true,
-        new_comments_amount: 1,
+        new_comments_amount: 2,
         new_posts_amount: 1,
       },
       {
