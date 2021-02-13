@@ -19,6 +19,7 @@ const extractBoardUpdates = (boardData: any) => {
     last_comment: boardData.last_comment,
     last_post: boardData.last_post,
     last_visit: boardData.last_visit,
+    last_activity_from_others: boardData.last_activity_from_others,
   };
 };
 
@@ -123,13 +124,16 @@ describe("Tests boards queries", () => {
           has_updates: false,
           last_comment: null,
           last_post: null,
+          last_activity_from_others: null,
           last_visit: null,
         },
         {
           slug: "gore",
           has_updates: true,
-          last_comment: new Date(Date.UTC(2020, 9, 2, 12, 43)),
+          last_comment: new Date(Date.UTC(2020, 9, 4, 12, 44)),
           last_post: new Date(Date.UTC(2020, 8, 25, 12, 42)),
+          // Note: this will NOT be the same as last_comment, since that is from Bobatan
+          last_activity_from_others: new Date(Date.UTC(2020, 9, 2, 12, 43)),
           last_visit: new Date(Date.UTC(2020, 4, 25, 16, 42)),
         },
         {
@@ -137,6 +141,7 @@ describe("Tests boards queries", () => {
           has_updates: true,
           last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
           last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
+          last_activity_from_others: new Date(Date.UTC(2020, 3, 24, 12, 44)),
           last_visit: null,
         },
         {
@@ -144,6 +149,7 @@ describe("Tests boards queries", () => {
           has_updates: true,
           last_comment: null,
           last_post: new Date(Date.UTC(2020, 3, 25, 12, 42)),
+          last_activity_from_others: new Date(Date.UTC(2020, 3, 25, 12, 42)),
           last_visit: null,
         },
         {
@@ -151,6 +157,7 @@ describe("Tests boards queries", () => {
           has_updates: false,
           last_comment: null,
           last_post: new Date(Date.UTC(2020, 7, 22, 10, 36, 55, 850)),
+          last_activity_from_others: null,
           last_visit: null,
         },
         {
@@ -158,6 +165,7 @@ describe("Tests boards queries", () => {
           has_updates: false,
           last_comment: null,
           last_post: null,
+          last_activity_from_others: null,
           last_visit: null,
         },
         {
@@ -165,6 +173,7 @@ describe("Tests boards queries", () => {
           has_updates: false,
           last_comment: null,
           last_post: null,
+          last_activity_from_others: null,
           last_visit: null,
         },
         {
@@ -172,6 +181,7 @@ describe("Tests boards queries", () => {
           has_updates: false,
           last_comment: null,
           last_post: null,
+          last_activity_from_others: null,
           last_visit: null,
         },
       ]);
@@ -185,13 +195,15 @@ describe("Tests boards queries", () => {
           has_updates: false,
           last_comment: null,
           last_post: null,
+          last_activity_from_others: null,
           last_visit: null,
         },
         {
           slug: "gore",
           has_updates: false,
-          last_comment: new Date(Date.UTC(2020, 9, 2, 12, 43)),
+          last_comment: new Date(Date.UTC(2020, 9, 4, 12, 44)),
           last_post: new Date(Date.UTC(2020, 8, 25, 12, 42)),
+          last_activity_from_others: null,
           last_visit: null,
         },
         {
@@ -199,6 +211,7 @@ describe("Tests boards queries", () => {
           has_updates: false,
           last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
           last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
+          last_activity_from_others: null,
           last_visit: null,
         },
         {
@@ -206,6 +219,7 @@ describe("Tests boards queries", () => {
           has_updates: false,
           last_comment: null,
           last_post: new Date(Date.UTC(2020, 3, 25, 12, 42)),
+          last_activity_from_others: null,
           last_visit: null,
         },
         {
@@ -213,6 +227,7 @@ describe("Tests boards queries", () => {
           has_updates: false,
           last_comment: null,
           last_post: new Date(Date.UTC(2020, 7, 22, 10, 36, 55, 850)),
+          last_activity_from_others: null,
           last_visit: null,
         },
         {
@@ -220,6 +235,7 @@ describe("Tests boards queries", () => {
           has_updates: false,
           last_comment: null,
           last_post: new Date(Date.UTC(2020, 0, 14, 8, 42)),
+          last_activity_from_others: null,
           last_visit: null,
         },
         {
@@ -227,6 +243,7 @@ describe("Tests boards queries", () => {
           has_updates: false,
           last_comment: null,
           last_post: null,
+          last_activity_from_others: null,
           last_visit: null,
         },
         {
@@ -234,6 +251,7 @@ describe("Tests boards queries", () => {
           has_updates: false,
           last_comment: null,
           last_post: null,
+          last_activity_from_others: null,
           last_visit: null,
         },
       ]);
@@ -251,13 +269,16 @@ describe("Tests boards queries", () => {
           has_updates: false,
           last_comment: null,
           last_post: null,
+          last_activity_from_others: null,
           last_visit: null,
         },
         {
           slug: "gore",
           has_updates: true,
-          last_comment: new Date(Date.UTC(2020, 9, 2, 12, 43)),
+          last_comment: new Date(Date.UTC(2020, 9, 4, 12, 44)),
           last_post: new Date(Date.UTC(2020, 8, 25, 12, 42)),
+          // Note: this will be the same as last_comment, since that is from Bobatan
+          last_activity_from_others: new Date(Date.UTC(2020, 9, 4, 12, 44)),
           last_visit: null,
         },
         {
@@ -265,6 +286,7 @@ describe("Tests boards queries", () => {
           has_updates: false,
           last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
           last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
+          last_activity_from_others: null,
           last_visit: new Date(Date.UTC(2020, 3, 26, 7, 0)),
         },
         {
@@ -272,6 +294,7 @@ describe("Tests boards queries", () => {
           has_updates: true,
           last_comment: null,
           last_post: new Date(Date.UTC(2020, 3, 25, 12, 42)),
+          last_activity_from_others: new Date(Date.UTC(2020, 3, 25, 12, 42)),
           last_visit: new Date(Date.UTC(2020, 3, 24, 7, 0)),
         },
         {
@@ -279,6 +302,9 @@ describe("Tests boards queries", () => {
           has_updates: true,
           last_comment: null,
           last_post: new Date(Date.UTC(2020, 7, 22, 10, 36, 55, 850)),
+          last_activity_from_others: new Date(
+            Date.UTC(2020, 7, 22, 10, 36, 55, 850)
+          ),
           last_visit: null,
         },
         {
@@ -286,6 +312,7 @@ describe("Tests boards queries", () => {
           has_updates: false,
           last_comment: null,
           last_post: new Date(Date.UTC(2020, 0, 14, 8, 42)),
+          last_activity_from_others: null,
           last_visit: null,
         },
         {
@@ -293,6 +320,7 @@ describe("Tests boards queries", () => {
           has_updates: false,
           last_comment: null,
           last_post: null,
+          last_activity_from_others: null,
           last_visit: null,
         },
         {
@@ -300,6 +328,7 @@ describe("Tests boards queries", () => {
           has_updates: false,
           last_comment: null,
           last_post: null,
+          last_activity_from_others: null,
           last_visit: null,
         },
       ]);
@@ -349,6 +378,9 @@ describe("Tests boards queries", () => {
   });
 
   describe("When this fails, please update the tests above too", () => {
+    // If this test fails it's because new fields have likely been added
+    // that aren't tested by the above methods. Add the new field to the
+    // appropriate "extration" method so it can be captured by the other tests.
     it("fetches all boards (with user)", async () => {
       const boards = await getBoards({
         // Bobatan
@@ -361,6 +393,7 @@ describe("Tests boards queries", () => {
         last_comment: null,
         last_post: null,
         last_visit: null,
+        last_activity_from_others: null,
         pinned_order: null,
         muted: false,
         settings: {

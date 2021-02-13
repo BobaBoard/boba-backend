@@ -71,7 +71,7 @@ describe("Tests boards activity queries", () => {
           post_id: "ff9f2ae2-a254-4069-9791-3ac5e6dff5bb",
           posts_amount: 1,
           thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
-          thread_last_activity: "2020-10-02T05:43:00.000000",
+          thread_last_activity: "2020-10-04T05:44:00.000000",
           threads_amount: 0,
         },
         {
@@ -122,7 +122,7 @@ describe("Tests boards activity queries", () => {
           post_id: "ff9f2ae2-a254-4069-9791-3ac5e6dff5bb",
           posts_amount: 1,
           thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
-          thread_last_activity: "2020-10-02T05:43:00.000000",
+          thread_last_activity: "2020-10-04T05:44:00.000000",
           threads_amount: 0,
         },
         {

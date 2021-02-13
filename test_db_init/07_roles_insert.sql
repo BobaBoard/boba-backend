@@ -63,7 +63,7 @@ WITH
         (SELECT id FROM posts_insert ORDER BY id DESC LIMIT 1),
         (SELECT id FROM new_thread_id),
         (SELECT id FROM Users WHERE username = 'bobatan'),
-        to_timestamp('2020-04-24 05:44:00', 'YYYY-MM-DD HH:MI:SS'),
+        to_timestamp('2020-10-04 05:44:00', 'YYYY-MM-DD HH:MI:SS'),
         '[{"insert":"BobaNitro users can be mean to the webmaster once a month."}]', 
         'strangers',
         (SELECT id FROM comments_insert1 LIMIT 1)
