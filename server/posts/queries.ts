@@ -624,18 +624,18 @@ export const addNewIdentityToThread = async (
   // Right now we add it to all posts for the christmas event. With time we'll
   // allow more fine-grained decisions.
   // TODO: remove this when Christmas is over.
-  const { accessory_avatar } = await addAccessoryToIdentity(transaction, {
-    identity_id: secret_identity_id,
-    role_identity_id,
-    thread_id,
-  });
+  // const { accessory_avatar } = await addAccessoryToIdentity(transaction, {
+  //   identity_id: secret_identity_id,
+  //   role_identity_id,
+  //   thread_id,
+  // });
 
   return {
     secret_identity_id,
     secret_identity_name,
     secret_identity_avatar,
     role_identity_id,
-    accessory_avatar,
+    accessory_avatar: null as any,
   };
 };
 

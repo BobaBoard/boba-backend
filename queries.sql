@@ -77,8 +77,8 @@ INSERT INTO board_category_subscriptions(board_category_mapping_id, subscription
      (SELECT id FROM subscriptions WHERE name = 'Announcements'));
 
 INSERT INTO webhooks(name, webhook) VALUES
-    ('v0 channel', 'https://discord.com/api/webhooks/788892785373216798/aTLIboZRtxajOfR3lbW5k6aKXyS7Lp19sH6gIg9PSnbXIcI7H-3YgOAeCEhL8CpQR2UZ'),
-    ('volunteers', 'https://discord.com/api/webhooks/788877360681189416/UAZQH6Xhz9qQAG51yWEIGmPba1p5yfR6Cet4yyQizUx5jL_r0_Qj3QA92PyRY7qEZCtK');
+    ('v0 releases', 'https://discord.com/api/webhooks/794432141470859284/bNmHORaoQkC7S322gCFrg582dOvpmKy-e-78Ng6X_ug7gay6kr5p7M9x8T36lkpX_SOR'),
+    ('volunteers releases', 'https://discord.com/api/webhooks/794432615893303337/g9_9r02sDzgFYnuEB4xX6IU7FrL-lO8wYF5YqUHlniMok_fqhiRR_Ne9uQBSdFr2kDBP');
 
 INSERT INTO subscription_webhooks (subscription_id, webhook_id) VALUES
     ((SELECT id FROM subscriptions WHERE name = 'Announcements'),
@@ -96,5 +96,12 @@ INSERT INTO boards(slug, tagline, avatar_reference_id, settings) VALUES
 -- LOCK BOARD --
 INSERT INTO board_restrictions(board_id, logged_out_restrictions) VALUES 
 ((SELECT id FROM boards WHERE slug='volunteers'),
-     ARRAY['lock_access'::restriction_type],
-     DEFAULT);
+     ARRAY['lock_access'::restriction_type]);
+
+
+ALTER TABLE subscriptions
+ADD COLUMN string_id TEXT;
+ALTER TABLE subscriptions ALTER COLUMN string_id SET NOT NULL;
+
+INSERT INTO subscriptions(string_id, name) VALUES
+    ('fe4ec427-4aed-4506-943f-61ef137fc8e0', 'releases');

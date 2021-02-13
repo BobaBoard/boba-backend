@@ -153,7 +153,7 @@ router.post("/invite/generate", isLoggedIn, async (req, res) => {
 
 router.post("/migrate_fb_data", isLoggedIn, async (req, res) => {
   // @ts-ignore
-  const user = req6ty7.currentUser?.uid;
+  const user = req.currentUser?.uid;
   if (user !== ADMIN_ID) {
     return res.sendStatus(403);
   }
