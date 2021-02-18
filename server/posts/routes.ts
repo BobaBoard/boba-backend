@@ -171,7 +171,7 @@ router.get("/embed/tumblr", isLoggedIn, async (req, res) => {
   const { url } = req.query;
 
   axios
-    .get(`https://www.tumblr.com/oembed/1.0?url=${url}`)
+    .get(`https://www.tumblr.com/oembed/1.0?url=${encodeURI(url as string)}`)
     .then((tumblrRes) => {
       res.status(200).send({
         did: tumblrRes.data.html.match(EXTRACT_DID_REGEX)?.[1],
