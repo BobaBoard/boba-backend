@@ -203,6 +203,7 @@ router.post("/:postId/edit", isLoggedIn, async (req, res) => {
     postId,
   });
 
+  log(`Permissions: ${permissions}`);
   if (!permissions) {
     log(`Error while fetching permissions for post ${postId}`);
     res.sendStatus(500);
@@ -230,6 +231,11 @@ router.post("/:postId/edit", isLoggedIn, async (req, res) => {
   const newTags = { whisperTags, indexTags, categoryTags, contentWarnings };
 
   const tagsDelta = getTagsDelta({ oldTags: postTags, newTags });
+  info(
+    "Attempting tags edit of delta %O with permissions %O",
+    tagsDelta,
+    permissions
+  );
   if (!canDoTagsEdit(tagsDelta, permissions)) {
     res.sendStatus(401);
     return;

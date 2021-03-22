@@ -3,9 +3,15 @@ import pool from "../pool";
 import { v4 as uuidv4 } from "uuid";
 import sql from "./sql";
 import threadsSql from "../threads/sql";
-import { DbPostType, DbCommentType, QueryTagsType } from "../../Types";
+import {
+  DbPostType,
+  DbCommentType,
+  QueryTagsType,
+  PostPermissions,
+} from "../../Types";
 import { ITask } from "pg-promise";
-import { canPostAs, PostPermissions } from "../permissions-utils";
+import { canPostAs, transformPostPermissions } from "../permissions-utils";
+import { getBoardBySlug } from "../boards/queries";
 
 const log = debug("bobaserver:posts:queries-log");
 const error = debug("bobaserver:posts:queries-error");
@@ -331,6 +337,7 @@ export const postNewContribution = async ({
           post_id: result.string_id,
           parent_thread_id: thread_string_id,
           parent_post_id: parentPostId,
+          parent_board_slug: board_slug,
           author: user_id,
           username,
           user_avatar,
@@ -647,11 +654,14 @@ export const getUserPermissionsForPost = async ({
   postId: string;
 }) => {
   try {
-    const isPostOwner = await pool.one(sql.isPostOwner, {
-      firebase_id: firebaseId,
-      post_string_id: postId,
+    const post = await getPostFromStringId(null, {
+      firebaseId,
+      postId,
     });
-    if (isPostOwner.is_post_owner) {
+    if (!post) {
+      return [];
+    }
+    if (post.is_own) {
       return [
         PostPermissions.editCategoryTags,
         PostPermissions.editContentNotices,
@@ -659,7 +669,11 @@ export const getUserPermissionsForPost = async ({
         PostPermissions.editWhisperTags,
       ];
     }
-    return [];
+    const board = await getBoardBySlug({
+      firebaseId,
+      slug: post.parent_board_slug,
+    });
+    return transformPostPermissions(board.permissions);
   } catch (e) {
     return false;
   }

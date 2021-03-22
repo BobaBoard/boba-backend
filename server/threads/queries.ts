@@ -8,8 +8,7 @@ import {
   maybeAddContentWarningTags,
   addNewIdentityToThread,
 } from "../posts/queries";
-import { DbThreadType, DbIdentityType } from "../../Types";
-import { canPostAs, ThreadPermissions } from "../permissions-utils";
+import { DbThreadType, DbIdentityType, ThreadPermissions } from "../../Types";
 
 const log = debug("bobaserver:threads:queries-log");
 const error = debug("bobaserver:threads:queries-error");

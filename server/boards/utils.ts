@@ -3,7 +3,8 @@ import { cache, CacheKeys } from "../cache";
 import { getBoardBySlug } from "./queries";
 import debug from "debug";
 import { processBoardMetadata } from "../response-utils";
-const log = debug("bobaserver:board:utils");
+const info = debug("bobaserver:board:utils-info");
+const log = debug("bobaserver:board:utils-log");
 
 /**
  * Returns a delta between the old metadata of a Board and the new one.
@@ -132,7 +133,7 @@ export const getBoardMetadata = async ({
   if (!firebaseId) {
     const cachedBoard = await cache().hget(CacheKeys.BOARD, slug);
     if (cachedBoard) {
-      log(`Returning cached data for board ${slug}`);
+      log(`Found cached metadata for board ${slug}`);
       return JSON.parse(cachedBoard);
     }
   }
@@ -141,7 +142,7 @@ export const getBoardMetadata = async ({
     firebaseId,
     slug,
   });
-  log(`Found board`, board);
+  info(`Found board`, board);
 
   if (!board) {
     return;
@@ -154,6 +155,7 @@ export const getBoardMetadata = async ({
   if (!firebaseId) {
     cache().hset(CacheKeys.BOARD, slug, JSON.stringify(boardMetadata));
   }
+  log(`Processed board metadata (${slug}) for user ${firebaseId}`);
   return boardMetadata;
 };
 
@@ -166,7 +168,7 @@ export const canAccessBoard = async ({
 }) => {
   // We use the logged out one because it hits cache.
   const boardMetadata = await getBoardMetadata({ slug });
-  log(boardMetadata);
+  info(boardMetadata);
   if (boardMetadata.loggedInOnly) {
     return !!firebaseId;
   }

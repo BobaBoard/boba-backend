@@ -94,6 +94,7 @@ SELECT
     posts.string_id as post_id,
     threads.string_id as parent_thread_id,
     parent.string_id as parent_post_id,
+    boards.slug as parent_board_slug,
     posts.author,
     thread_identities.username,
     thread_identities.user_avatar,
@@ -137,6 +138,8 @@ LEFT JOIN posts as parent
     ON posts.parent_post = parent.id
 LEFT JOIN threads
     ON posts.parent_thread = threads.id
+LEFT JOIN boards
+    ON boards.id= threads.parent_board 
 LEFT JOIN thread_identities
     ON thread_identities.user_id = posts.author
 LEFT JOIN thread_comments 
