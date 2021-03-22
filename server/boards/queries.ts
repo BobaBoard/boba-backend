@@ -6,6 +6,7 @@ import { DbBoardMetadata, DbActivityThreadType } from "../../Types";
 import { getMetadataDelta } from "./utils";
 import { encodeCursor, decodeCursor } from "../queries-utils";
 
+const info = debug("bobaserver:board:queries-info");
 const log = debug("bobaserver:board:queries-log");
 const error = debug("bobaserver:board:queries-error");
 
@@ -41,7 +42,8 @@ export const getBoardBySlug = async ({
       return null;
     }
 
-    log(`Got getBoardBySlug query result:`, rows);
+    info(`Got getBoardBySlug query result:`, rows);
+    log(`Fetched board ${slug} for user ${firebaseId}`);
     return rows;
   } catch (e) {
     error(`Error while fetching board by slug (${slug}).`);
@@ -254,7 +256,7 @@ export const getBoardActivityBySlug = async ({
 
     let result = rows;
     let nextCursor = null;
-    log(`Got getBoardActivityBySlug query result`, result);
+    info(`Got getBoardActivityBySlug query result`, result);
     if (result.length > finalPageSize) {
       nextCursor = encodeCursor({
         last_activity_cursor: result[result.length - 1].thread_last_activity,
@@ -264,6 +266,7 @@ export const getBoardActivityBySlug = async ({
       result.pop();
     }
 
+    log(`Fetched board ${slug} activity data for user ${firebaseId}`);
     return { cursor: nextCursor, activity: rows };
   } catch (e) {
     error(`Error while fetching board by slug (${slug}).`);

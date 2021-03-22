@@ -31,7 +31,7 @@ const router = express.Router();
 
 router.get("/:slug", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
-  log(`Fetching data for board with slug ${slug}`);
+  log(`Fetching data for board with slug ${slug}.`);
 
   if (!req.currentUser?.uid) {
     const cachedBoard = await cache().hget(CacheKeys.BOARD, slug);
@@ -51,6 +51,7 @@ router.get("/:slug", isLoggedIn, async (req, res) => {
     return;
   }
 
+  log(`Returning data for board ${slug} for user ${req.currentUser?.uid}.`);
   res.status(200).json(boardMetadata);
 });
 
@@ -200,7 +201,6 @@ router.post("/:slug/pin", isLoggedIn, async (req, res) => {
 
 router.post("/:slug/unpin", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
-  // @ts-ignore
   if (!req.currentUser) {
     return res.sendStatus(401);
   }
@@ -208,8 +208,7 @@ router.post("/:slug/unpin", isLoggedIn, async (req, res) => {
 
   if (
     !(await unpinBoard({
-      // @ts-ignore
-      firebaseId: req.currentUser.uid,
+      firebaseId: req.currentUser?.uid,
       slug,
     }))
   ) {
@@ -217,8 +216,7 @@ router.post("/:slug/unpin", isLoggedIn, async (req, res) => {
     return;
   }
 
-  // @ts-ignore
-  info(`unpinned board: ${slug} for user ${req.currentUser.uid}.`);
+  info(`Unpinned board: ${slug} for user ${req.currentUser?.uid}.`);
   res.status(200).json();
 });
 
@@ -264,7 +262,7 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
     filterCategory: (categoryFilter as string) || null,
     cursor: (cursor as string) || null,
   });
-  log(`Found activity for board ${slug}:`, result);
+  info(`Found activity for board ${slug}:`, result);
 
   if (result === false) {
     res.sendStatus(500);
@@ -329,6 +327,9 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
   } = { next_page_cursor: result.cursor, activity: threadsWithIdentity };
 
   response.activity.map((post) => ensureNoIdentityLeakage(post));
+  log(
+    `Returning board activity data for board ${slug} for user ${req.currentUser?.uid}.`
+  );
   res.status(200).json(response);
 });
 
@@ -338,7 +339,7 @@ router.get("/", isLoggedIn, async (req, res) => {
     // method also returns updates.
     const cachedBoards = await cache().get(CacheKeys.BOARDS);
     if (cachedBoards) {
-      info(`Returning cached result for boards`);
+      info(`Returning cached result for all boards.`);
       res.status(200).json(JSON.parse(cachedBoards));
       return;
     }
@@ -356,9 +357,9 @@ router.get("/", isLoggedIn, async (req, res) => {
     boards,
     isLoggedIn: !!req.currentUser?.uid,
   });
+  log(`Returning all boards for user ${req.currentUser?.uid}`);
   res.status(200).json(boardsResponse);
 
-  // @ts-ignore
   if (!req.currentUser?.uid) {
     cache().set(CacheKeys.BOARDS, JSON.stringify(boardsResponse));
   }

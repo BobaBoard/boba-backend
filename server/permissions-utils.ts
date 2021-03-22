@@ -3,11 +3,22 @@ import debug from "debug";
 import {
   DbRolePermissions,
   BoardPermissions,
-  DbPostType,
   QueryTagsType,
+  PostPermissions,
 } from "../Types";
 
 const log = debug("bobaserver::permissions-utils-log");
+
+export const hasPermission = (
+  permission: DbRolePermissions,
+  permissions?: string[]
+) => {
+  return permissions.some(
+    (p) =>
+      (<any>DbRolePermissions)[p] == permission.toString() ||
+      (<any>DbRolePermissions)[p] == DbRolePermissions.all.toString()
+  );
+};
 
 export const canEditBoard = (permissions?: string[]) => {
   return permissions.some(
@@ -27,6 +38,17 @@ export const canPostAs = (permissions?: string[]) => {
   );
 };
 
+export const transformPostPermissions = (permissions?: string[]) => {
+  const postsPermissions = [];
+  if (hasPermission(DbRolePermissions.edit_category_tags, permissions)) {
+    postsPermissions.push(PostPermissions.editCategoryTags);
+  }
+  if (hasPermission(DbRolePermissions.edit_content_notices, permissions)) {
+    postsPermissions.push(PostPermissions.editContentNotices);
+  }
+  return postsPermissions;
+};
+
 export const transformPermissions = (
   permissions?: string[]
 ): BoardPermissions => {
@@ -34,20 +56,9 @@ export const transformPermissions = (
 
   return {
     canEditBoardData: canEditBoard(permissions),
+    postsPermissions: transformPostPermissions(permissions),
   };
 };
-
-export enum ThreadPermissions {
-  editDefaultView,
-}
-
-export enum PostPermissions {
-  editContent,
-  editWhisperTags,
-  editCategoryTags,
-  editIndexTags,
-  editContentNotices,
-}
 
 export const canDoTagsEdit = (
   tagsDelta: { added: QueryTagsType; removed: QueryTagsType },

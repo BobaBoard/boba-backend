@@ -14,7 +14,7 @@ import {
 } from "./queries";
 import { isLoggedIn } from "../auth-handler";
 import { makeServerThread, ensureNoIdentityLeakage } from "../response-utils";
-import { ThreadPermissions } from "../permissions-utils";
+import { ThreadPermissions } from "../../Types";
 import axios from "axios";
 import { canAccessBoard } from "../boards/utils";
 

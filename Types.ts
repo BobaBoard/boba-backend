@@ -76,6 +76,7 @@ export interface DbPostType {
   post_id: string;
   parent_thread_id: string;
   parent_post_id: string;
+  parent_board_slug: string;
   author: number;
   username: string;
   user_avatar: string;
@@ -175,10 +176,25 @@ export enum DbRolePermissions {
   all,
   edit_board_details,
   post_as_role,
+  edit_category_tags,
+  edit_content_notices,
 }
 
 export interface BoardPermissions {
   canEditBoardData: boolean;
+  postsPermissions: PostPermissions[];
+}
+
+export enum ThreadPermissions {
+  editDefaultView,
+}
+
+export enum PostPermissions {
+  editContent = "edit_content",
+  editWhisperTags = "edit_whisper_tags",
+  editCategoryTags = "edit_category_tags",
+  editIndexTags = "edit_index_tags",
+  editContentNotices = "edit_content_notices",
 }
 
 export interface BoardDescription {

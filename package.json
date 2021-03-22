@@ -7,7 +7,7 @@
     "dev:watch": "cross-env DEBUG=bobaserver:*,-*info DEBUG_DEPTH=10 yarn run start:watch",
     "dev:debug": "nodemon --exec node --inspect -r ts-node/register server/index.ts",
     "typecheck": "tsc",
-    "start": "cross-env DEBUG=bobaserver:* node -r dotenv/config -r ts-node/register server/index.ts dotenv_config_path=./.env.prod",
+    "start": "cross-env DEBUG=bobaserver:*,-*info node -r dotenv/config -r ts-node/register server/index.ts dotenv_config_path=./.env.prod",
     "start:watch": "nodemon --exec node -r ts-node/register server/index.ts",
     "start-db": "docker-compose down && docker-compose up",
     "test": "cross-env DEBUG=bobaserver:* mocha --exclude './node_modules/**' -r ts-node/register -r dotenv/config './**/*.test.ts'",
