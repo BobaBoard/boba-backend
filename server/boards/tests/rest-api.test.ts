@@ -56,6 +56,7 @@ describe("Tests boards REST API", () => {
       pinned_order: null,
       permissions: {
         canEditBoardData: false,
+        postsPermissions: [],
       },
       avatarUrl: "/gore.png",
       delisted: false,

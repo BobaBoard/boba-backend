@@ -74,7 +74,11 @@ describe("Tests boards queries", () => {
       tagline: "Blood! Blood! Blood!",
       avatar_reference_id: "gore.png",
       muted: false,
-      permissions: ["all", "edit_board_details"],
+      permissions: [
+        "edit_board_details",
+        "edit_category_tags",
+        "edit_content_notices",
+      ],
       pinned_order: "1",
       posting_identities: [
         {
