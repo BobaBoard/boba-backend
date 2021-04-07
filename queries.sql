@@ -61,6 +61,14 @@ VALUES
 insert into board_user_roles(user_id, board_id, role_id) VALUES(userId, boardId, roleId);
 INSERT INTO realm_user_roles(user_id, role_id) VALUES(user_id, 'role_id');
 
+--- ADD NEW PERMISSIONS (+ TYPES) --
+ALTER TYPE role_permissions ADD VALUE 'edit_category_tags';
+ALTER TYPE role_permissions ADD VALUE 'edit_content_notices';
+
+UPDATE roles
+    SET permissions = array_cat(permissions, ARRAY['edit_category_tags'::role_permissions, 'edit_content_notices'::role_permissions])
+    WHERE roles.id = 3;
+
 --UPDATE BOARD AVATAR--
 UPDATE Boards SET avatar_reference_id = 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fmain_street%2F7d5ff8d8-2ab4-44d2-8d75-7ecb1275f5d7.png?alt=media&token=675745a9-d9fb-45a8-b8fb-c7ec0ab9debf' WHERE slug = 'queerpub';
 
@@ -97,11 +105,3 @@ INSERT INTO boards(slug, tagline, avatar_reference_id, settings) VALUES
 INSERT INTO board_restrictions(board_id, logged_out_restrictions) VALUES 
 ((SELECT id FROM boards WHERE slug='volunteers'),
      ARRAY['lock_access'::restriction_type]);
-
-
-ALTER TABLE subscriptions
-ADD COLUMN string_id TEXT;
-ALTER TABLE subscriptions ALTER COLUMN string_id SET NOT NULL;
-
-INSERT INTO subscriptions(string_id, name) VALUES
-    ('fe4ec427-4aed-4506-943f-61ef137fc8e0', 'releases');
