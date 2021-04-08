@@ -114,6 +114,7 @@ export interface DbCommentType {
   user_avatar: string;
   secret_identity_name: string;
   secret_identity_avatar: string;
+  secret_identity_color: string | null;
   accessory_avatar?: string;
   chain_parent_id: string | null;
   friend: boolean;

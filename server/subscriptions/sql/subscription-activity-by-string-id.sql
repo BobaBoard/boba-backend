@@ -22,8 +22,11 @@ thread_identities AS
         ON ita.thread_id = uti.thread_id AND (
             (secret_identities.id IS NOT NULL AND secret_identities.id = ita.identity_id) OR 
             (roles.id IS NOT NULL AND roles.id = ita.role_id))
-      LEFT JOIN accessories
-        ON ita.accessory_id = accessories.id OR ra.accessory_id = accessories.id),
+      LEFT JOIN LATERAL (
+              SELECT * FROM accessories
+              WHERE ita.accessory_id = accessories.id OR ra.accessory_id = accessories.id
+              LIMIT 1) accessories 
+      ON 1 = 1),
 board_subscription_threads AS (
   SELECT
     subscriptions.id AS subscription_id,

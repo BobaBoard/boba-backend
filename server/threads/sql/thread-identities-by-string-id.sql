@@ -17,8 +17,11 @@ FROM user_thread_identities AS uti
         ON ita.thread_id = threads.id AND (
             (secret_identities.id IS NOT NULL AND secret_identities.id = ita.identity_id) OR 
             (roles.id IS NOT NULL AND roles.id = ita.role_id))
-    LEFT JOIN accessories
-        ON ita.accessory_id = accessories.id OR ra.accessory_id = accessories.id
+    LEFT JOIN LATERAL (
+            SELECT * FROM accessories
+            WHERE ita.accessory_id = accessories.id OR ra.accessory_id = accessories.id
+            LIMIT 1) accessories 
+        ON 1 = 1
     LEFT JOIN LATERAL (
         SELECT true as friend 
         FROM friends 
