@@ -9,7 +9,8 @@
             users.avatar_reference_id as user_avatar,
             accessories.image_reference_id as accessory_avatar,
             COALESCE(secret_identities.display_name, roles.name) as secret_identity,
-            COALESCE(secret_identities.avatar_reference_id, roles.avatar_reference_id) as secret_avatar
+            COALESCE(secret_identities.avatar_reference_id, roles.avatar_reference_id) as secret_avatar,
+            roles.color as secret_color
          FROM user_thread_identities AS uti 
          INNER JOIN users 
             ON uti.user_id = users.id 
@@ -136,6 +137,7 @@ SELECT
     user_avatar,
     secret_identity as secret_identity_name,
     secret_avatar as secret_identity_avatar,
+    secret_color as secret_identity_color,
     accessory_avatar,
     friend,
     self,    

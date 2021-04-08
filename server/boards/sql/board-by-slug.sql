@@ -27,6 +27,7 @@ SELECT
         json_agg(DISTINCT jsonb_build_object(
             'id', p.role_id,
             'avatar_reference_id', p.avatar_reference_id,
+            'color', p.role_color,
             'name', p.role_name
         )) FILTER (WHERE p.permissions = 'post_as_role' OR p.permissions = 'all'), '[]') AS posting_identities,
     COALESCE(
@@ -48,7 +49,8 @@ FROM boards
     LEFT JOIN LATERAL (
             SELECT 
                 string_id AS role_id, 
-                avatar_reference_id AS avatar_reference_id, 
+                avatar_reference_id AS avatar_reference_id,
+                color AS role_color,
                 name AS role_name, 
                 UNNEST(roles.permissions) AS permissions 
             FROM roles WHERE bur.role_id = roles.id OR rur.role_id = roles.id) AS p 

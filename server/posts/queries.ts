@@ -190,6 +190,7 @@ const getThreadDetails = async (
   user_avatar: string;
   secret_identity_name: string;
   secret_identity_avatar: string;
+  secret_identity_color: string;
   accessory_avatar?: string;
   thread_id: number;
   thread_string_id: string;
@@ -205,6 +206,7 @@ const getThreadDetails = async (
     role_identity_id,
     secret_identity_name,
     secret_identity_avatar,
+    secret_identity_color,
     accessory_avatar,
     thread_id,
     thread_string_id,
@@ -236,6 +238,7 @@ const getThreadDetails = async (
       secret_identity_id,
       secret_identity_name,
       secret_identity_avatar,
+      secret_identity_color,
       role_identity_id,
       accessory_avatar,
     } = await addNewIdentityToThread(transaction, {
@@ -254,6 +257,7 @@ const getThreadDetails = async (
     secret_identity_name,
     secret_identity_avatar,
     accessory_avatar,
+    secret_identity_color,
     thread_id,
     thread_string_id,
     post_id,
@@ -584,6 +588,7 @@ export const addNewIdentityToThread = async (
   let role_identity_id = null;
   let secret_identity_name;
   let secret_identity_avatar;
+  let secret_identity_color;
 
   if (identityId) {
     // An identity was passed to this method, which means we don't need to randomize it.
@@ -602,6 +607,7 @@ export const addNewIdentityToThread = async (
     role_identity_id = roleResult.id;
     secret_identity_name = roleResult.name;
     secret_identity_avatar = roleResult.avatar_reference_id;
+    secret_identity_color = roleResult.color;
   } else {
     const randomIdentityResult = await transaction.one(sql.getRandomIdentity, {
       thread_id,
@@ -619,6 +625,7 @@ export const addNewIdentityToThread = async (
     secret_identity_id,
     secret_identity_name,
     secret_identity_avatar,
+    secret_identity_color,
   });
 
   await transaction.one(sql.addIdentityToThread, {
@@ -643,6 +650,7 @@ export const addNewIdentityToThread = async (
     secret_identity_avatar,
     role_identity_id,
     accessory_avatar: null as any,
+    secret_identity_color,
   };
 };
 

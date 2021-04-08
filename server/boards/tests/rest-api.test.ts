@@ -88,8 +88,9 @@ describe("Tests boards REST API", () => {
                 avatar:
                   "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F6518df53-2031-4ac5-8d75-57a0051ed924?alt=media&token=23df54b7-297c-42ff-a0ea-b9862c9814f8",
                 name: "GoreMaster5000",
+                accessory: null,
+                color: "red",
               },
-              accessory_avatar: null,
               self: false,
               tags: {
                 category_tags: [],
@@ -122,9 +123,10 @@ describe("Tests boards REST API", () => {
                 name: "DragonFucker",
                 avatar:
                   "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
+                accessory:
+                  "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F989f4b40-c1b8-4793-93dd-57e93df3e7ec.png?alt=media&token=cabdd8d5-b6a9-4914-bb59-eda4629f151b",
+                color: null,
               },
-              accessory_avatar:
-                "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F989f4b40-c1b8-4793-93dd-57e93df3e7ec.png?alt=media&token=cabdd8d5-b6a9-4914-bb59-eda4629f151b",
               self: false,
               friend: false,
               created: "2020-04-30T03:23:00",
@@ -163,8 +165,9 @@ describe("Tests boards REST API", () => {
                 name: "DragonFucker",
                 avatar:
                   "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
+                accessory: null,
+                color: null,
               },
-              accessory_avatar: null,
               self: false,
               friend: false,
               created: "2020-04-24T05:42:00",

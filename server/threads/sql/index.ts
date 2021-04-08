@@ -44,6 +44,7 @@ const getRoleByStringId = `
       roles.id,
       roles.name,
       roles.avatar_reference_id,
+      roles.color,
       to_json(roles.permissions) as permissions
     FROM roles
     LEFT JOIN board_user_roles bur
