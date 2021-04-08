@@ -31,6 +31,7 @@ describe("threads queries", () => {
           secret_identity_name: "DragonFucker",
           secret_identity_avatar:
             "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
+          secret_identity_color: null,
           comments: null,
           content: '[{"insert":"Favorite character to maim?"}]',
           accessory_avatar:
@@ -58,6 +59,7 @@ describe("threads queries", () => {
           secret_identity_name: "Old Time-y Anon",
           secret_identity_avatar:
             "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
+          secret_identity_color: null,
           accessory_avatar:
             "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",
           friend: false,
@@ -89,6 +91,7 @@ describe("threads queries", () => {
           secret_identity_name: "DragonFucker",
           secret_identity_avatar:
             "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
+          secret_identity_color: null,
           accessory_avatar:
             "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F989f4b40-c1b8-4793-93dd-57e93df3e7ec.png?alt=media&token=cabdd8d5-b6a9-4914-bb59-eda4629f151b",
           comments: [
@@ -100,6 +103,7 @@ describe("threads queries", () => {
               secret_identity_name: "Old Time-y Anon",
               secret_identity_avatar:
                 "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
+              secret_identity_color: null,
               accessory_avatar:
                 "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",
               friend: false,
@@ -121,6 +125,7 @@ describe("threads queries", () => {
               secret_identity_name: "Old Time-y Anon",
               secret_identity_avatar:
                 "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
+              secret_identity_color: null,
               accessory_avatar:
                 "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",
               friend: false,
@@ -175,6 +180,7 @@ describe("threads queries", () => {
           secret_identity_name: "DragonFucker",
           secret_identity_avatar:
             "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
+          secret_identity_color: null,
           accessory_avatar: null,
           friend: true,
           self: false,
@@ -204,6 +210,7 @@ describe("threads queries", () => {
           user_avatar: "greedler.jpg",
           secret_identity_avatar: "outdated-meme.png",
           secret_identity_name: "Outdated Meme",
+          secret_identity_color: null,
           accessory_avatar: null,
           comments: null,
           content: '[{"insert":"Everything in The Evil Within tbh"}]',
@@ -230,6 +237,7 @@ describe("threads queries", () => {
           secret_identity_name: "Old Time-y Anon",
           secret_identity_avatar:
             "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
+          secret_identity_color: null,
           accessory_avatar: null,
           friend: false,
           self: false,

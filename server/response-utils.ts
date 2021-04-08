@@ -48,6 +48,8 @@ export const mergeObjectIdentity = <T>(
     user_avatar: string;
     secret_identity_name: string;
     secret_identity_avatar: string;
+    secret_identity_color?: string;
+    accessory_avatar?: string;
     friend: boolean;
     self: boolean;
   }
@@ -55,6 +57,7 @@ export const mergeObjectIdentity = <T>(
   secret_identity: {
     name: string;
     avatar: string;
+    accessory?: string;
   };
   user_identity?: {
     name: string;
@@ -70,6 +73,8 @@ export const mergeObjectIdentity = <T>(
     user_avatar,
     secret_identity_name,
     secret_identity_avatar,
+    secret_identity_color,
+    accessory_avatar,
     ...rest
   } = object;
   let user_identity;
@@ -82,6 +87,8 @@ export const mergeObjectIdentity = <T>(
   let secret_identity = transformImageUrls({
     name: secret_identity_name,
     avatar: secret_identity_avatar,
+    color: secret_identity_color,
+    accessory: accessory_avatar,
   });
 
   return {

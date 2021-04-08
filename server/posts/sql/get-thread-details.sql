@@ -6,6 +6,7 @@ SELECT
     uti.role_id as role_identity_id,
     COALESCE(secret_identities.display_name, roles.name) as secret_identity_name,
     COALESCE(secret_identities.avatar_reference_id, roles.avatar_reference_id) as secret_identity_avatar,
+    roles.color as secret_identity_color,
     accessories.image_reference_id as accessory_avatar,
     threads.id as thread_id,
     threads.string_id as thread_string_id,

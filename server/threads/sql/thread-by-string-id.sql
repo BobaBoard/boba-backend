@@ -19,6 +19,7 @@ WITH
             accessories.image_reference_id as accessory_avatar,
             COALESCE(secret_identities.display_name, roles.name) as secret_identity_name,
             COALESCE(secret_identities.avatar_reference_id, roles.avatar_reference_id) as secret_identity_avatar,
+            roles.color as secret_identity_color,
             COALESCE(is_friend.friend, FALSE) as friend,
             COALESCE(users.firebase_id = ${firebase_id}, FALSE) as self
          FROM user_thread_identities AS uti 
@@ -59,6 +60,7 @@ WITH
                 'user_avatar', thread_comments.user_avatar,
                 'secret_identity_name', thread_comments.secret_identity_name,
                 'secret_identity_avatar', thread_comments.secret_identity_avatar,
+                'secret_identity_color', thread_comments.secret_identity_color,
                 'accessory_avatar', thread_comments.accessory_avatar,
                 'content', thread_comments.content,
                 'created',  TO_CHAR(thread_comments.created, 'YYYY-MM-DD"T"HH24:MI:SS'),
@@ -94,6 +96,7 @@ WITH
             thread_identities.user_avatar,
             thread_identities.secret_identity_name,
             thread_identities.secret_identity_avatar,
+            thread_identities.secret_identity_color,
             thread_identities.accessory_avatar,
             thread_identities.self,
             thread_identities.friend,

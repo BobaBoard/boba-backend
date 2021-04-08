@@ -222,6 +222,8 @@ export interface DbBoardMetadata {
   posting_identities: {
     id: string;
     avatar_reference_id: string;
+    color: string | undefined;
+    accessory: string | undefined;
     name: string;
   }[];
   permissions: string[];
