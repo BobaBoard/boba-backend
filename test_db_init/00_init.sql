@@ -375,6 +375,13 @@ CREATE TABLE IF NOT EXISTS identity_thread_accessories
 );
 CREATE INDEX identity_thread_accessories_thread_id on identity_thread_accessories(thread_id);
 
+CREATE TABLE IF NOT EXISTS role_accessories
+(
+    role_id BIGINT REFERENCES roles(id) ON DELETE RESTRICT NOT NULL,
+    accessory_id BIGINT REFERENCES accessories(id) ON DELETE RESTRICT NOT NULL
+);
+CREATE INDEX role_accessories_role_id on role_accessories(role_id);
+
 /*
  * A mapping of a category in a board, used for subscriptions.
  *

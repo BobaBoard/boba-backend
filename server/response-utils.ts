@@ -57,6 +57,7 @@ export const mergeObjectIdentity = <T>(
   secret_identity: {
     name: string;
     avatar: string;
+    color?: string;
     accessory?: string;
   };
   user_identity?: {

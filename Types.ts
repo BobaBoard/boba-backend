@@ -22,6 +22,8 @@ export interface ServerPostType {
   secret_identity: {
     name: string;
     avatar: string;
+    color?: string;
+    accessory?: string;
   };
   user_identity?: {
     name: string;

@@ -31,12 +31,14 @@ WITH
             ON secret_identities.id = uti.identity_id
          LEFT JOIN roles 
             ON roles.id = uti.role_id
+         LEFT JOIN role_accessories ra
+            ON roles.id = ra.role_id
          LEFT JOIN identity_thread_accessories ita
             ON ita.thread_id = threads.id AND (
                (secret_identities.id IS NOT NULL AND secret_identities.id = ita.identity_id) OR 
                (roles.id IS NOT NULL AND roles.id = ita.role_id))
          LEFT JOIN accessories
-            ON ita.accessory_id = accessories.id
+            ON ita.accessory_id = accessories.id OR ra.accessory_id = accessories.id
          LEFT JOIN LATERAL (
             SELECT true as friend 
             FROM friends 

@@ -23,6 +23,8 @@ export const maybeUpdateSubscriptionsOnThreadChange = async ({
   secretIdentity: {
     name: string;
     avatar: string;
+    color?: string;
+    accessory?: string;
   };
 }) => {
   const triggeredSubscriptions = await getTriggeredThreadsSubscriptions({

@@ -19,7 +19,12 @@ describe("Tests subscriptions updates", function () {
       threadId: "2765f36a-b4f9-4efe-96f2-cb34f055d032",
       postId: "this_is_a_test_post",
       boardSlug: "memes",
-      secretIdentity: { name: "webmaster", avatar: "webmaster_url" },
+      secretIdentity: {
+        name: "webmaster",
+        avatar: "webmaster_url",
+        color: "purple",
+        accessory: "accessory_url.png",
+      },
       categoryNames: ["aiba"],
     });
 

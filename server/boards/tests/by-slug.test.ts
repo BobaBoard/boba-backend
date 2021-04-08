@@ -87,6 +87,8 @@ describe("Tests boards queries", () => {
           id: "3df1d417-c36a-43dd-aaba-9590316ffc32",
           name: "The Owner",
           color: "pink",
+          accessory:
+            "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F7c6c9459-7fa1-4d06-8dc0-ebb5b1bd76a8.png?alt=media&token=78d812a5-b217-4afb-99f3-41b9ed7b7ed5",
         },
         {
           avatar_reference_id:
@@ -94,6 +96,7 @@ describe("Tests boards queries", () => {
           id: "e5f86f53-6dcd-4f15-b6ea-6ca1f088e62d",
           name: "GoreMaster5000",
           color: "red",
+          accessory: null,
         },
       ],
       logged_in_base_restrictions: [],
