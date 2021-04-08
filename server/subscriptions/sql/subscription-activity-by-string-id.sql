@@ -15,13 +15,15 @@ thread_identities AS
       LEFT JOIN secret_identities 
         ON secret_identities.id = uti.identity_id
       LEFT JOIN roles
-      ON roles.id = uti.role_id
+        ON roles.id = uti.role_id
+      LEFT JOIN role_accessories ra
+        ON roles.id = ra.role_id
       LEFT JOIN identity_thread_accessories ita
         ON ita.thread_id = uti.thread_id AND (
             (secret_identities.id IS NOT NULL AND secret_identities.id = ita.identity_id) OR 
             (roles.id IS NOT NULL AND roles.id = ita.role_id))
       LEFT JOIN accessories
-        ON ita.accessory_id = accessories.id),
+        ON ita.accessory_id = accessories.id OR ra.accessory_id = accessories.id),
 board_subscription_threads AS (
   SELECT
     subscriptions.id AS subscription_id,
@@ -34,6 +36,7 @@ board_subscription_threads AS (
     thread_identities.secret_identity as secret_identity_name,
     thread_identities.secret_avatar as secret_identity_avatar,
     thread_identities.secret_color as secret_identity_color,
+    thread_identities.accessory_avatar as secret_identity_accessory,
     top_posts."content" AS post_content,
     threads.string_id AS thread_string_id,
     NULL AS latest_post_string_id
@@ -62,6 +65,7 @@ thread_subscription_threads AS (
     thread_identities.secret_identity as secret_identity_name,
     thread_identities.secret_avatar as secret_identity_avatar,
     thread_identities.secret_color as secret_identity_color,
+    thread_identities.accessory_avatar as secret_identity_accessory,
     posts."content" AS post_content,
     posts.string_id AS latest_post_string_id,
     threads.string_id AS thread_string_id
