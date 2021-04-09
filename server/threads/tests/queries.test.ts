@@ -1,7 +1,7 @@
 import "mocha";
 import { expect } from "chai";
 
-import { getThreadByStringId, getThreadIdentitiesByStringId } from "../queries";
+import { getThreadByStringId } from "../queries";
 
 describe("threads queries", () => {
   it("fetches threads by string id (with comments)", async () => {
@@ -284,51 +284,5 @@ describe("threads queries", () => {
     });
 
     expect(thread).to.be.null;
-  });
-
-  it("fetches thread identities by string id", async () => {
-    const identities = await getThreadIdentitiesByStringId({
-      threadId: "29d1b2da-3289-454a-9089-2ed47db4967b",
-      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
-    });
-
-    if (identities === false) {
-      throw Error("Thread identities fetching encountered an Error.");
-    }
-
-    expect(identities.length).to.eql(2);
-    expect(identities[0]).to.eql({
-      display_name: "Old Time-y Anon",
-      friend: null,
-      id: "1",
-      self: true,
-      secret_identity_avatar_reference_id:
-        "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
-      user_avatar_reference_id: "bobatan.png",
-      accessory_avatar:
-        "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",
-      username: "bobatan",
-    });
-    expect(identities[1]).to.eql({
-      display_name: "DragonFucker",
-      friend: true,
-      id: "3",
-      secret_identity_avatar_reference_id:
-        "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
-      self: false,
-      accessory_avatar:
-        "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F989f4b40-c1b8-4793-93dd-57e93df3e7ec.png?alt=media&token=cabdd8d5-b6a9-4914-bb59-eda4629f151b",
-      user_avatar_reference_id: "greedler.jpg",
-      username: "oncest5evah",
-    });
-  });
-
-  it("return false for thread identities when thread not found", async () => {
-    const thread = await getThreadIdentitiesByStringId({
-      threadId: "this_will_not_be_in_the_db",
-      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
-    });
-
-    expect(thread).to.be.false;
   });
 });

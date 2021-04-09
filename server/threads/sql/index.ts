@@ -127,9 +127,6 @@ export default {
   threadByStringId: new QueryFile(
     path.join(__dirname, "thread-by-string-id.sql")
   ),
-  threadIdentitiesByStringId: new QueryFile(
-    path.join(__dirname, "thread-identities-by-string-id.sql")
-  ),
   visitThreadByStringId: new QueryFile(
     path.join(__dirname, "visit-thread-by-string-id.sql")
   ),
