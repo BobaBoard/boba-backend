@@ -1,27 +1,12 @@
  WITH
     logged_in_user AS
         (SELECT id FROM users WHERE users.firebase_id = ${firebase_id}),
-    last_visited_or_dismissed AS
-        (SELECT
-            threads.id as thread_id,
-            GREATEST(last_visit_time, dnr.dismiss_request_time, dbnr.dismiss_request_time) as cutoff_time
-         FROM threads
-         INNER JOIN boards
-            ON boards.id = threads.parent_board AND boards.slug = ${board_slug}
-         JOIN users
-            ON users.firebase_id = ${firebase_id}
-         LEFT JOIN user_thread_last_visits
-            ON threads.id = user_thread_last_visits.thread_id AND user_thread_last_visits.user_id = users.id
-         LEFT JOIN dismiss_notifications_requests dnr
-            ON dnr.user_id = users.id
-         LEFT JOIN dismiss_board_notifications_requests dbnr
-            ON dbnr.user_id = users.id AND dbnr.board_id = threads.parent_board),
     thread_posts_updates AS
         (SELECT
             threads.string_id as threads_string_id,
             threads.id as threads_id,
             slug as board_slug,
-            cutoff_time,
+            board_cutoff_time,
             first_post.id as first_post_id,
             first_post.string_id AS first_post_string_id,
             first_post.content AS first_post_content,
@@ -43,7 +28,7 @@
                     -- Firebase id is not null here, but make sure not to count our posts
                     WHEN posts.author = (SELECT id FROM users WHERE firebase_id = ${firebase_id}) THEN 0
                     -- Firebase id is not null and the post is not ours
-                    WHEN cutoff_time IS NULL OR cutoff_time < posts.created THEN 1 
+                    WHEN board_cutoff_time IS NULL OR board_cutoff_time < posts.created THEN 1 
                     ELSE 0
                 END)::int as new_posts_amount,
             CASE
@@ -52,7 +37,7 @@
                 -- Firebase id is not null here, but make sure not to count our posts
                 WHEN first_post.author = logged_in_user.id THEN FALSE
                 -- Firebase id is not null and the post is not ours
-                WHEN cutoff_time IS NULL OR cutoff_time < first_post.created THEN TRUE 
+                WHEN board_cutoff_time IS NULL OR board_cutoff_time < first_post.created THEN TRUE 
                 ELSE FALSE
             END as is_new
          FROM boards 
@@ -69,13 +54,13 @@
             ON posts.parent_thread = threads.id
          LEFT JOIN posts AS first_post
             ON first_post.parent_thread = threads.id AND first_post.parent_post IS NULL
-         LEFT JOIN last_visited_or_dismissed
-            ON last_visited_or_dismissed.thread_id = threads.id OR last_visited_or_dismissed.thread_id is NULL
+         LEFT JOIN thread_notification_dismissals tnd
+            ON tnd.thread_id = threads.id AND logged_in_user.id IS NOT NULL AND tnd.user_id = logged_in_user.id
          LEFT JOIN friends
             ON first_post.author = friends.user_id AND logged_in_user.id IS NOT NULL AND friends.friend_id = logged_in_user.id
          WHERE boards.slug = ${board_slug}
          GROUP BY
-            threads.id, boards.id, boards.slug, cutoff_time, user_muted_threads.thread_id, user_hidden_threads.thread_id, 
+            threads.id, boards.id, boards.slug, board_cutoff_time, user_muted_threads.thread_id, user_hidden_threads.thread_id, 
             first_post.id, logged_in_user.id, friends.user_id),
     thread_comments_updates AS 
         (SELECT
@@ -88,7 +73,7 @@
                     -- Firebase id is not null here, but make sure not to count our posts
                     WHEN comments.author = (SELECT id FROM users WHERE firebase_id = ${firebase_id}) THEN 0
                     -- Firebase id is not null and the post is not ours
-                    WHEN cutoff_time IS NULL OR cutoff_time < comments.created THEN 1 
+                    WHEN board_cutoff_time IS NULL OR board_cutoff_time < comments.created THEN 1 
                     ELSE 0
                 END)::int as  new_comments_amount
          FROM thread_posts_updates 

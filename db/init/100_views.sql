@@ -27,3 +27,20 @@ CREATE VIEW thread_identities AS (
             LIMIT 1) accessories 
         ON 1 = 1
 );
+
+CREATE VIEW thread_notification_dismissals AS (
+    SELECT
+        users.id as user_id,
+        threads.id as thread_id,
+        threads.string_id as thread_string_id,
+        GREATEST(last_visit_time, dnr.dismiss_request_time, dbnr.dismiss_request_time) as board_cutoff_time,
+        GREATEST(last_visit_time, dnr.dismiss_request_time) as thread_cutoff_time
+    FROM threads
+    CROSS JOIN users
+    LEFT JOIN user_thread_last_visits
+        ON threads.id = user_thread_last_visits.thread_id AND user_thread_last_visits.user_id = users.id
+    LEFT JOIN dismiss_notifications_requests dnr
+        ON dnr.user_id = users.id
+    LEFT JOIN dismiss_board_notifications_requests dbnr
+        ON dbnr.user_id = users.id AND dbnr.board_id = threads.parent_board
+);
