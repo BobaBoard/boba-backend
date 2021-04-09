@@ -8,7 +8,7 @@ import {
   maybeAddContentWarningTags,
   addNewIdentityToThread,
 } from "../posts/queries";
-import { DbThreadType, DbIdentityType, ThreadPermissions } from "../../Types";
+import { DbThreadType, ThreadPermissions } from "../../Types";
 
 const log = debug("bobaserver:threads:queries-log");
 const error = debug("bobaserver:threads:queries-error");
@@ -34,29 +34,6 @@ export const getThreadByStringId = async ({
     return thread;
   } catch (e) {
     error(`Error while fetching thread: ${threadId}.`);
-    error(e);
-    return false;
-  }
-};
-
-export const getThreadIdentitiesByStringId = async ({
-  threadId,
-  firebaseId,
-}: {
-  threadId: string;
-  firebaseId?: string;
-}): Promise<DbIdentityType[] | false> => {
-  try {
-    const rows = await pool.many(sql.threadIdentitiesByStringId, {
-      firebase_id: firebaseId,
-      thread_string_id: threadId,
-    });
-
-    log(`Found thread identities: `, rows);
-
-    return rows;
-  } catch (e) {
-    error(`Error while fetching thread identities.`);
     error(e);
     return false;
   }
