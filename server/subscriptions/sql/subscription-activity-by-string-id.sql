@@ -1,33 +1,4 @@
-WITH 
-thread_identities AS
-    (SELECT
-        uti.thread_id as thread_id,
-        uti.user_id as user_id,
-        users.username as username,
-        users.avatar_reference_id as user_avatar,
-        COALESCE(secret_identities.display_name, roles.name) as secret_identity,
-        COALESCE(secret_identities.avatar_reference_id, roles.avatar_reference_id) as secret_avatar,
-        roles.color as secret_color,
-        accessories.image_reference_id as accessory_avatar
-      FROM user_thread_identities AS uti 
-      INNER JOIN users 
-        ON uti.user_id = users.id 
-      LEFT JOIN secret_identities 
-        ON secret_identities.id = uti.identity_id
-      LEFT JOIN roles
-        ON roles.id = uti.role_id
-      LEFT JOIN role_accessories ra
-        ON roles.id = ra.role_id
-      LEFT JOIN identity_thread_accessories ita
-        ON ita.thread_id = uti.thread_id AND (
-            (secret_identities.id IS NOT NULL AND secret_identities.id = ita.identity_id) OR 
-            (roles.id IS NOT NULL AND roles.id = ita.role_id))
-      LEFT JOIN LATERAL (
-              SELECT * FROM accessories
-              WHERE ita.accessory_id = accessories.id OR ra.accessory_id = accessories.id
-              LIMIT 1) accessories 
-      ON 1 = 1),
-board_subscription_threads AS (
+WITH board_subscription_threads AS (
   SELECT
     subscriptions.id AS subscription_id,
     subscriptions.name AS subscription_name,
@@ -36,9 +7,9 @@ board_subscription_threads AS (
     (CASE WHEN GREATEST(last_post.update_time, last_comment.update_time) IS NULL 
      THEN NULL 
      ELSE TO_CHAR(GREATEST(last_post.update_time, last_comment.update_time), 'YYYY-MM-DD"T"HH24:MI:SS') END)  AS last_updated,
-    thread_identities.secret_identity as secret_identity_name,
-    thread_identities.secret_avatar as secret_identity_avatar,
-    thread_identities.secret_color as secret_identity_color,
+    thread_identities.secret_identity_name,
+    thread_identities.secret_identity_avatar,
+    thread_identities.secret_identity_color,
     thread_identities.accessory_avatar as secret_identity_accessory,
     top_posts."content" AS post_content,
     threads.string_id AS thread_string_id,
@@ -65,9 +36,9 @@ thread_subscription_threads AS (
     subscriptions.string_id AS subscription_string_id,
   -- TODO: this should also consider the tree for the last update rather than just the post and its comments
     TO_CHAR(posts.created, 'YYYY-MM-DD"T"HH24:MI:SS') AS last_updated,
-    thread_identities.secret_identity as secret_identity_name,
-    thread_identities.secret_avatar as secret_identity_avatar,
-    thread_identities.secret_color as secret_identity_color,
+    thread_identities.secret_identity_name,
+    thread_identities.secret_identity_avatar,
+    thread_identities.secret_identity_color,
     thread_identities.accessory_avatar as secret_identity_accessory,
     posts."content" AS post_content,
     posts.string_id AS latest_post_string_id,
