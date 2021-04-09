@@ -210,7 +210,7 @@ export const getUserActivity = async ({
   firebaseId: string;
   updatedOnly: boolean;
   ownOnly: boolean;
-  cursor: string;
+  cursor: string | null;
   pageSize?: number;
 }): Promise<
   | {
