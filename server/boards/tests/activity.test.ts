@@ -3,7 +3,7 @@ import { expect } from "chai";
 
 import { getBoardActivityBySlug } from "../queries";
 
-const extractActivity = (thread: any) => {
+export const extractActivity = (thread: any) => {
   return {
     thread_id: thread.thread_id,
     created: thread.created,
