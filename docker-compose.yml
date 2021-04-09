@@ -8,4 +8,4 @@ services:
       - "35432:5432"
     volumes:
       #  - database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
-      - ./db/test_db_init:/docker-entrypoint-initdb.d
+      - ./db:/docker-entrypoint-initdb.d
