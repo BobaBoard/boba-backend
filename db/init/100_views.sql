@@ -1,46 +1,117 @@
 CREATE VIEW thread_identities AS (
-    SELECT
-        uti.thread_id as thread_id,
-        uti.user_id as user_id,
-        users.username as username,
-        users.avatar_reference_id as user_avatar,
-        COALESCE(secret_identities.display_name, roles.name) as secret_identity_name,
-        COALESCE(secret_identities.avatar_reference_id, roles.avatar_reference_id) as secret_identity_avatar,
-        roles.color as secret_identity_color,
-        accessories.image_reference_id as accessory_avatar
-        FROM user_thread_identities AS uti 
-    INNER JOIN users 
-        ON uti.user_id = users.id 
-    LEFT JOIN secret_identities 
-        ON secret_identities.id = uti.identity_id
-    LEFT JOIN roles
-        ON roles.id = uti.role_id
-    LEFT JOIN role_accessories ra
-        ON roles.id = ra.role_id
-    LEFT JOIN identity_thread_accessories ita
-        ON ita.thread_id = uti.thread_id AND (
-            (secret_identities.id IS NOT NULL AND secret_identities.id = ita.identity_id) OR 
-            (roles.id IS NOT NULL AND roles.id = ita.role_id))
-    LEFT JOIN LATERAL (
-            SELECT * FROM accessories
-            WHERE ita.accessory_id = accessories.id OR ra.accessory_id = accessories.id
-            LIMIT 1) accessories 
-        ON 1 = 1
+SELECT
+    uti.thread_id as thread_id,
+    uti.user_id as user_id,
+    users.username as username,
+    users.avatar_reference_id as user_avatar,
+    COALESCE(secret_identities.display_name, roles.name) as secret_identity_name,
+    COALESCE(secret_identities.avatar_reference_id, roles.avatar_reference_id) as secret_identity_avatar,
+    roles.color as secret_identity_color,
+    accessories.image_reference_id as accessory_avatar
+    FROM user_thread_identities AS uti 
+INNER JOIN users 
+    ON uti.user_id = users.id 
+LEFT JOIN secret_identities 
+    ON secret_identities.id = uti.identity_id
+LEFT JOIN roles
+    ON roles.id = uti.role_id
+LEFT JOIN role_accessories ra
+    ON roles.id = ra.role_id
+LEFT JOIN identity_thread_accessories ita
+    ON ita.thread_id = uti.thread_id AND (
+        (secret_identities.id IS NOT NULL AND secret_identities.id = ita.identity_id) OR 
+        (roles.id IS NOT NULL AND roles.id = ita.role_id))
+LEFT JOIN LATERAL (
+        SELECT * FROM accessories
+        WHERE ita.accessory_id = accessories.id OR ra.accessory_id = accessories.id
+        LIMIT 1) accessories 
+    ON 1 = 1
 );
 
 CREATE VIEW thread_notification_dismissals AS (
-    SELECT
-        users.id as user_id,
-        threads.id as thread_id,
-        threads.string_id as thread_string_id,
-        GREATEST(last_visit_time, dnr.dismiss_request_time, dbnr.dismiss_request_time) as board_cutoff_time,
-        GREATEST(last_visit_time, dnr.dismiss_request_time) as thread_cutoff_time
-    FROM threads
-    CROSS JOIN users
-    LEFT JOIN user_thread_last_visits
-        ON threads.id = user_thread_last_visits.thread_id AND user_thread_last_visits.user_id = users.id
-    LEFT JOIN dismiss_notifications_requests dnr
-        ON dnr.user_id = users.id
-    LEFT JOIN dismiss_board_notifications_requests dbnr
-        ON dbnr.user_id = users.id AND dbnr.board_id = threads.parent_board
+SELECT
+    users.id as user_id,
+    threads.id as thread_id,
+    threads.string_id as thread_string_id,
+    GREATEST(last_visit_time, dnr.dismiss_request_time, dbnr.dismiss_request_time) as board_cutoff_time,
+    GREATEST(last_visit_time, dnr.dismiss_request_time) as thread_cutoff_time
+FROM threads
+CROSS JOIN users
+LEFT JOIN user_thread_last_visits
+    ON threads.id = user_thread_last_visits.thread_id AND user_thread_last_visits.user_id = users.id
+LEFT JOIN dismiss_notifications_requests dnr
+    ON dnr.user_id = users.id
+LEFT JOIN dismiss_board_notifications_requests dbnr
+    ON dbnr.user_id = users.id AND dbnr.board_id = threads.parent_board
+);
+
+CREATE VIEW thread_details AS (
+SELECT
+    threads.id as thread_id,
+    threads.string_id as thread_string_id,
+    slug as board_slug,
+    first_post.id as first_post_id,
+    first_post.string_id AS first_post_string_id,
+    first_post.content AS content,
+    first_post.author AS author,
+    first_post.options AS options,
+    COALESCE(threads.OPTIONS ->> 'default_view', 'thread')::view_types AS default_view,
+    COALESCE(first_post.whisper_tags, '{}') AS whisper_tags,
+    array(
+        SELECT tag FROM post_tags 
+        LEFT JOIN tags
+        ON post_tags.tag_id = tags.id WHERE post_tags.post_id = first_post.id) as index_tags,
+    array(
+        SELECT category FROM post_categories 
+        LEFT JOIN categories
+        ON post_categories.category_id = categories.id WHERE post_categories.post_id = first_post.id) as category_tags,
+    array(
+        SELECT warning FROM post_warnings 
+        LEFT JOIN content_warnings
+        ON post_warnings.warning_id = content_warnings.id WHERE post_warnings.post_id = first_post.id) as content_warnings,
+    MIN(posts.created) as first_post_timestamp,
+    MAX(posts.created) as last_post_timestamp,
+    MAX(comments.created) as last_comment_timestamp,
+    GREATEST(MIN(posts.created) , MAX(posts.created), MAX(comments.created)) AS last_update_timestamp,
+    COUNT(DISTINCT CASE WHEN posts.parent_post = first_post.id THEN posts.id END)::int as threads_amount,
+    COUNT(DISTINCT posts.id)::int as posts_amount,
+    COUNT(DISTINCT comments.id)::int as comments_amount
+FROM threads
+LEFT JOIN boards
+    ON boards.id = threads.parent_board
+LEFT JOIN posts
+    ON posts.parent_thread = threads.id
+LEFT JOIN posts AS first_post
+    ON first_post.parent_thread = threads.id AND first_post.parent_post IS NULL
+LEFT JOIN comments
+    ON threads.id = comments.parent_thread AND comments.parent_post = posts.id
+GROUP BY
+    threads.id, boards.id, boards.slug, first_post.id
+);
+
+CREATE VIEW thread_user_details AS (
+SELECT
+    threads.id as thread_id,
+    users.id as user_id,
+    first_post.author = users.id as own_thread,
+    friends.friend_id IS NOT NULL as friend_thread,
+    umt.thread_id IS NOT NULL as muted,
+    uht.thread_id IS NOT NULL as hidden,
+    COALESCE(first_post.created > tnd.thread_cutoff_time, TRUE) AS is_new,
+    (SELECT COUNT(*) FROM posts WHERE users.id != posts.author AND posts.parent_thread = threads.id AND (tnd.thread_cutoff_time IS NULL OR posts.created > tnd.thread_cutoff_time))::int as new_posts_amount,
+    (SELECT COUNT(*) FROM posts WHERE users.id != posts.author AND posts.parent_thread = threads.id AND (tnd.board_cutoff_time IS NULL OR posts.created > tnd.board_cutoff_time))::int as new_posts_board_amount,
+    (SELECT COUNT(*) FROM comments WHERE users.id != comments.author AND comments.parent_thread = threads.id AND (tnd.thread_cutoff_time IS NULL OR comments.created > tnd.thread_cutoff_time))::int as new_comments_amount,
+    (SELECT COUNT(*) FROM comments WHERE users.id != comments.author AND comments.parent_thread = threads.id AND (tnd.board_cutoff_time IS NULL OR comments.created > tnd.board_cutoff_time))::int as new_comments_board_amount
+FROM threads
+CROSS JOIN users
+LEFT JOIN posts AS first_post
+    ON threads.id = first_post.parent_thread AND first_post.parent_post IS NULL
+LEFT JOIN user_muted_threads umt
+    ON umt.user_id = users.id AND umt.thread_id = threads.id
+LEFT JOIN user_hidden_threads uht
+    ON uht.user_id = users.id AND uht.thread_id = threads.id
+ LEFT JOIN thread_notification_dismissals tnd
+    ON tnd.thread_id = threads.id AND tnd.user_id = users.id
+LEFT JOIN friends
+    ON first_post.author = friends.user_id AND friends.friend_id = users.id
 );
