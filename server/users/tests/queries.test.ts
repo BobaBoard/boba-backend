@@ -172,4 +172,69 @@ describe("feed activity queries", () => {
       },
     ]);
   });
+
+  it("updated: FALSE, own: FALSE WITH CURSOR", async () => {
+    const feed = (await getUserActivity({
+      // Bobatan
+      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      cursor: null,
+      updatedOnly: false,
+      ownOnly: false,
+      pageSize: 1,
+    })) as {
+      // TODO: turn this into a type.
+      cursor: string | null;
+      activity: DbActivityThreadType[];
+    };
+
+    expect(feed.cursor).to.equal(
+      "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDUtMjNUMDU6NTI6MDAuMDAwMDAwIiwicGFnZV9zaXplIjoxfQ=="
+    );
+    expect(feed.activity.map(extractActivity)).to.eql([
+      {
+        comments_amount: 2,
+        created: "2020-09-25T05:42:00",
+        is_new: false,
+        new_comments_amount: 1,
+        new_posts_amount: 0,
+        post_id: "ff9f2ae2-a254-4069-9791-3ac5e6dff5bb",
+        posts_amount: 1,
+        thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
+        thread_last_activity: "2020-10-04T05:44:00.000000",
+        threads_amount: 0,
+      },
+    ]);
+  });
+
+  it("updated: FALSE, own: FALSE WITH CURSOR (PAGE 2)", async () => {
+    const feed = (await getUserActivity({
+      // Bobatan
+      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      cursor:
+        "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDUtMjNUMDU6NTI6MDAuMDAwMDAwIiwicGFnZV9zaXplIjoxfQ==",
+      updatedOnly: false,
+      ownOnly: false,
+      pageSize: 1,
+    })) as {
+      // TODO: turn this into a type.
+      cursor: string | null;
+      activity: DbActivityThreadType[];
+    };
+
+    console.log(feed.cursor);
+    expect(feed.activity.map(extractActivity)).to.eql([
+      {
+        comments_amount: 2,
+        created: "2020-04-30T03:23:00",
+        is_new: false,
+        new_comments_amount: 0,
+        new_posts_amount: 0,
+        post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
+        posts_amount: 3,
+        thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+        thread_last_activity: "2020-05-23T05:52:00.000000",
+        threads_amount: 2,
+      },
+    ]);
+  });
 });
