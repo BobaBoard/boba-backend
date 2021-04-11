@@ -4,27 +4,37 @@ SELECT
     uti.user_id as user_id,
     users.username as username,
     users.avatar_reference_id as user_avatar,
-    COALESCE(secret_identities.display_name, roles.name) as secret_identity_name,
-    COALESCE(secret_identities.avatar_reference_id, roles.avatar_reference_id) as secret_identity_avatar,
-    roles.color as secret_identity_color,
-    accessories.image_reference_id as accessory_avatar
+    COALESCE(secret_identity.display_name, role_identity.display_name) as secret_identity_name,
+    COALESCE(secret_identity.avatar_reference_id, role_identity.avatar_reference_id) as secret_identity_avatar,
+    role_identity.color as secret_identity_color,
+    COALESCE(secret_identity.accessory_avatar, role_identity.accessory_avatar) as accessory_avatar
 FROM user_thread_identities AS uti 
 INNER JOIN users 
-    ON uti.user_id = users.id 
-LEFT JOIN secret_identities 
-    ON secret_identities.id = uti.identity_id
-LEFT JOIN roles
-    ON roles.id = uti.role_id
+    ON uti.user_id = users.id
 LEFT JOIN LATERAL (
-        SELECT * 
-        FROM accessories
-        LEFT JOIN identity_thread_accessories ita
-            ON ita.accessory_id = accessories.id AND ita.thread_id  = uti.thread_id AND ita.identity_id = uti.identity_id
-        LEFT JOIN role_accessories ra
-          ON ra.accessory_id = accessories.id AND roles.id = ra.role_id
-        WHERE ita.accessory_id IS NOT NULL OR ra.accessory_id IS NOT NULL
-        LIMIT 1) accessories 
-ON TRUE
+    SELECT 
+      display_name,
+      avatar_reference_id,
+      (SELECT image_reference_id FROM accessories WHERE ita.accessory_id = accessories.id LIMIT 1) as accessory_avatar
+    FROM secret_identities
+    LEFT JOIN identity_thread_accessories ita
+      ON ita.thread_id = uti.thread_id AND ita.identity_id = uti.identity_id
+    WHERE secret_identities.id = uti.identity_id) secret_identity 
+ON uti.identity_id IS NOT NULL
+LEFT JOIN LATERAL (
+  SELECT 
+      name AS display_name,
+      avatar_reference_id,
+      color,
+      (SELECT image_reference_id FROM accessories WHERE accessories.id = COALESCE (ita.accessory_id, ra.accessory_id ) LIMIT 1) as accessory_avatar
+  FROM roles
+  LEFT JOIN identity_thread_accessories ita
+    ON ita.thread_id = uti.thread_id AND ita.role_id = roles.id
+  LEFT JOIN role_accessories ra
+    ON ita.accessory_id IS NULL AND roles.id = ra.role_id
+  WHERE roles.id = uti.role_id 
+) role_identity
+ON uti.role_id IS NOT NULL
 );
 
 CREATE VIEW thread_notification_dismissals AS (
