@@ -21,6 +21,14 @@ const getRandomAccessory = `
     ORDER BY RANDOM()
     LIMIT 1`;
 
+const getUserAccessories = `
+    SELECT 
+        id as accessory_id ,
+        image_reference_id as accessory_avatar
+    FROM realm_accessories
+    INNER JOIN accessories
+      ON realm_accessories.accessory_id = accessories.id`;
+
 const addIdentityToThread = `
     INSERT INTO user_thread_identities(thread_id, user_id, identity_id, role_id)
     VALUES(
@@ -208,6 +216,7 @@ export default {
   ),
   getRandomIdentity,
   getRandomAccessory,
+  getUserAccessories,
   makePost,
   makeComment,
   addIdentityToThread,

@@ -178,11 +178,13 @@ const getThreadDetails = async (
     firebaseId,
     parentCommentId,
     identityId,
+    accessoryId,
   }: {
     firebaseId: string;
     parentPostId: string;
     parentCommentId?: string;
     identityId?: string;
+    accessoryId?: string;
   }
 ): Promise<{
   user_id: number;
@@ -244,6 +246,7 @@ const getThreadDetails = async (
     } = await addNewIdentityToThread(transaction, {
       user_id,
       identityId,
+      accessory_id: accessoryId,
       thread_id,
       firebaseId,
       board_slug,
@@ -269,6 +272,7 @@ const getThreadDetails = async (
 export const postNewContribution = async ({
   firebaseId,
   identityId,
+  accessoryId,
   parentPostId,
   content,
   isLarge,
@@ -280,6 +284,7 @@ export const postNewContribution = async ({
 }: {
   firebaseId: string;
   identityId?: string;
+  accessoryId?: string;
   parentPostId: string;
   content: string;
   isLarge: boolean;
@@ -305,6 +310,7 @@ export const postNewContribution = async ({
         post_id,
       } = await getThreadDetails(t, {
         identityId,
+        accessoryId,
         parentPostId,
         firebaseId,
       });
@@ -386,6 +392,7 @@ const postNewCommentWithTransaction = async ({
   anonymityType,
   transaction,
   identityId,
+  accessoryId,
 }: {
   transaction?: ITask<any>;
   firebaseId: string;
@@ -395,6 +402,7 @@ const postNewCommentWithTransaction = async ({
   content: string;
   anonymityType: string;
   identityId?: string;
+  accessoryId?: string;
 }): Promise<{ id: number; comment: DbCommentType }> => {
   let {
     user_id,
@@ -412,6 +420,7 @@ const postNewCommentWithTransaction = async ({
     firebaseId,
     parentCommentId,
     identityId,
+    accessoryId,
   });
 
   log(`Retrieved details for thread ${parentPostId}:`);
@@ -469,6 +478,7 @@ export const postNewComment = async ({
   content,
   anonymityType,
   identityId,
+  accessoryId,
 }: {
   firebaseId: string;
   parentPostId: string;
@@ -476,6 +486,7 @@ export const postNewComment = async ({
   content: string;
   anonymityType: string;
   identityId?: string;
+  accessoryId?: string;
 }): Promise<DbCommentType | false> => {
   return pool
     .tx("create-comment", async (transaction) => {
@@ -488,6 +499,7 @@ export const postNewComment = async ({
         anonymityType,
         transaction,
         identityId,
+        accessoryId,
       });
       return result.comment;
     })
@@ -548,27 +560,43 @@ const addAccessoryToIdentity = async (
   {
     identity_id,
     role_identity_id,
+    accessory_id,
     thread_id,
   }: {
     identity_id: string;
     role_identity_id: string;
+    accessory_id: string;
     thread_id: string;
   }
 ) => {
   if (!identity_id && !role_identity_id) {
-    throw "Accessory must be added to either identity or role identity";
+    throw new Error(
+      "Accessory must be added to either identity or role identity"
+    );
   }
-  const accessory = await transaction.one(sql.getRandomAccessory);
+  // TODO: this is to get a random accessory for events.
+  // Right now we only support actually choosing one.
+  // const accessory = await transaction.one(sql.getRandomAccessory);
+
+  const allowed_accessories =
+    (await transaction.manyOrNone(sql.getUserAccessories)) || [];
+
+  const selectedAccessory = allowed_accessories.find(
+    (accessory) => accessory.accessory_id == accessory_id
+  );
+  if (!selectedAccessory) {
+    throw new Error("Selected accessory was not found for this user.");
+  }
 
   await transaction.one(sql.addAccessoryToIdentity, {
     thread_id,
     identity_id,
     role_id: role_identity_id,
-    accessory_id: accessory.accessory_id,
+    accessory_id,
   });
 
   return {
-    accessory_avatar: accessory.accessory_avatar,
+    accessory_avatar: selectedAccessory.accessory_avatar,
   };
 };
 
@@ -576,6 +604,7 @@ export const addNewIdentityToThread = async (
   transaction: ITask<any>,
   {
     user_id,
+    accessory_id,
     identityId,
     thread_id,
     firebaseId,
@@ -584,6 +613,7 @@ export const addNewIdentityToThread = async (
     identityId: string;
     firebaseId: string;
     user_id: any;
+    accessory_id?: string;
     board_slug: any;
     thread_id: any;
   }
@@ -630,6 +660,7 @@ export const addNewIdentityToThread = async (
     secret_identity_name,
     secret_identity_avatar,
     secret_identity_color,
+    accessory_id,
   });
 
   await transaction.one(sql.addIdentityToThread, {
@@ -639,21 +670,22 @@ export const addNewIdentityToThread = async (
     role_identity_id,
   });
 
-  // Right now we add it to all posts for the christmas event. With time we'll
-  // allow more fine-grained decisions.
-  // TODO: remove this when Christmas is over.
-  // const { accessory_avatar } = await addAccessoryToIdentity(transaction, {
-  //   identity_id: secret_identity_id,
-  //   role_identity_id,
-  //   thread_id,
-  // });
+  let accessory_avatar = null;
+  if (accessory_id) {
+    ({ accessory_avatar } = await addAccessoryToIdentity(transaction, {
+      identity_id: secret_identity_id,
+      role_identity_id,
+      thread_id,
+      accessory_id,
+    }));
+  }
 
   return {
     secret_identity_id,
     secret_identity_name,
     secret_identity_avatar,
     role_identity_id,
-    accessory_avatar: null as any,
+    accessory_avatar,
     secret_identity_color,
   };
 };
