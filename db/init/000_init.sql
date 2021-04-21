@@ -359,7 +359,14 @@ CREATE INDEX user_thread_identities_thread_id on user_thread_identities(thread_i
 CREATE TABLE IF NOT EXISTS accessories
 (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    name TEXT,
     image_reference_id TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS realm_accessories
+(
+    -- Add realm id when realms *actually* exist.
+    accessory_id BIGINT REFERENCES accessories(id) NOT NULL
 );
 
 /*

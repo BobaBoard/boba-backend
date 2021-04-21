@@ -32,6 +32,12 @@ SELECT
             'name', p.role_name
         )) FILTER (WHERE p.permissions = 'post_as_role' OR p.permissions = 'all'), '[]') AS posting_identities,
     COALESCE(
+        json_agg(DISTINCT jsonb_build_object(
+            'id', accessories.id,
+            'name', COALESCE(accessories.name, 'Uknown'),
+            'accessory', accessories.image_reference_id
+        )), '[]') as accessories,
+    COALESCE(
         json_agg(DISTINCT p.permissions) 
             FILTER (WHERE p.permissions IS NOT NULL AND p.permissions != 'post_as_role'), '[]') AS permissions,
     to_jsonb(COALESCE(logged_out_restrictions, ARRAY[]::restriction_type[])) as logged_out_restrictions,
@@ -47,13 +53,17 @@ FROM boards
         ON boards.id = bur.board_id AND bur.user_id = (SELECT id FROM logged_in_user LIMIT 1)
     LEFT JOIN realm_user_roles rur
         ON rur.user_id = (SELECT id FROM logged_in_user LIMIT 1)
+    LEFT JOIN realm_accessories
+        ON TRUE 
+    LEFT JOIN accessories
+        ON realm_accessories.accessory_id = accessories.id
     LEFT JOIN LATERAL (
             SELECT 
                 string_id AS role_id, 
                 avatar_reference_id AS avatar_reference_id,
                 color AS role_color,
                 accessories.image_reference_id AS role_accessory,
-                name AS role_name, 
+                roles.name AS role_name, 
                 UNNEST(roles.permissions) AS permissions 
             FROM roles 
             LEFT JOIN role_accessories ra

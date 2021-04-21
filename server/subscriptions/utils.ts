@@ -32,7 +32,7 @@ export const maybeUpdateSubscriptionsOnThreadChange = async ({
     categoryNames,
   });
 
-  if (!triggeredSubscriptions) {
+  if (!triggeredSubscriptions || triggeredSubscriptions.length == 0) {
     return;
   }
 

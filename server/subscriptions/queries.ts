@@ -37,7 +37,7 @@ export const getTriggeredThreadsSubscriptions = async ({
     }[]
 > => {
   try {
-    return await pool.many(sql.getTriggeredThreadSubscriptions, {
+    return await pool.manyOrNone(sql.getTriggeredThreadSubscriptions, {
       thread_string_id: threadId,
       category_names: categoryNames,
     });
@@ -61,7 +61,7 @@ export const getWebhooksForSubscriptions = async ({
 > => {
   try {
     return (
-      await pool.many(sql.getSubscriptionsWebhooks, {
+      await pool.manyOrNone(sql.getSubscriptionsWebhooks, {
         subscriptions_string_ids: subscriptions,
       })
     )?.filter((result: any) => result.webhook != null);

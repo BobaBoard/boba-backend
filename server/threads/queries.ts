@@ -70,6 +70,7 @@ export const createThread = async ({
   categoryTags,
   contentWarnings,
   identityId,
+  accessoryId,
   defaultView,
 }: {
   firebaseId: string;
@@ -83,6 +84,7 @@ export const createThread = async ({
   categoryTags: string[];
   contentWarnings: string[];
   identityId?: string;
+  accessoryId?: string;
 }) => {
   return pool
     .tx("create-thread", async (t) => {
@@ -126,6 +128,7 @@ export const createThread = async ({
       await addNewIdentityToThread(t, {
         user_id: postResult.author,
         identityId,
+        accessory_id: accessoryId,
         thread_id: createThreadResult.id,
         firebaseId,
         board_slug: boardSlug,

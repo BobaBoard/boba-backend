@@ -35,10 +35,10 @@ router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
     indexTags,
     categoryTags,
     contentWarnings,
+    accessoryId,
     identityId,
   } = req.body;
 
-  // @ts-ignore
   if (!req.currentUser) {
     res.sendStatus(403);
     return;
@@ -52,6 +52,7 @@ router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
   const result = await postNewContribution({
     firebaseId: req.currentUser.uid,
     identityId,
+    accessoryId,
     parentPostId: postId,
     content,
     isLarge: !!large,
@@ -85,9 +86,14 @@ router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
 
 router.post("/:postId/comment", isLoggedIn, async (req, res) => {
   const { postId } = req.params;
-  const { content, forceAnonymous, replyToCommentId, identityId } = req.body;
+  const {
+    content,
+    forceAnonymous,
+    replyToCommentId,
+    identityId,
+    accessoryId,
+  } = req.body;
 
-  // @ts-ignore
   if (!req.currentUser) {
     res.sendStatus(401);
     return;
@@ -100,13 +106,13 @@ router.post("/:postId/comment", isLoggedIn, async (req, res) => {
   log(`Anonymous: `, forceAnonymous);
 
   const comment = await postNewComment({
-    // @ts-ignore
     firebaseId: req.currentUser.uid,
     parentPostId: postId,
     parentCommentId: replyToCommentId,
     content,
     anonymityType: forceAnonymous ? "everyone" : "strangers",
     identityId,
+    accessoryId,
   });
   log(`Comment posted: `, comment);
 
