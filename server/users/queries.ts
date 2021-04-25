@@ -1,5 +1,6 @@
 import debug from "debug";
 import { DbActivityThreadType } from "../../Types";
+import { DbSettingType, SettingValueTypes } from "../../types/settings";
 import pool from "../pool";
 import sql from "./sql";
 import { encodeCursor, decodeCursor } from "../queries-utils";
@@ -13,10 +14,10 @@ export const getUserFromFirebaseId = async ({
 }: {
   firebaseId: string;
 }): Promise<any> => {
-  const query = "SELECT * FROM users WHERE firebase_id = $1 LIMIT 1";
-
   try {
-    const user = await pool.one(query, [firebaseId]);
+    const user = await pool.one(sql.getUserDetails, {
+      firebase_id: firebaseId,
+    });
     info(`Fetched user data: `, user);
     return user;
   } catch (e) {
@@ -31,16 +32,8 @@ export const dismissAllNotifications = async ({
 }: {
   firebaseId: string;
 }): Promise<any> => {
-  const dismissNotifications = `
-    INSERT INTO dismiss_notifications_requests(user_id, dismiss_request_time) VALUES (
-        (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
-         DEFAULT)
-    ON CONFLICT(user_id) DO UPDATE 
-        SET dismiss_request_time = DEFAULT
-        WHERE dismiss_notifications_requests.user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)`;
-
   try {
-    await pool.none(dismissNotifications, { firebase_id: firebaseId });
+    await pool.none(sql.dismissNotifications, { firebase_id: firebaseId });
     info(`Dismissed all notifications for user with firebaseId: `, firebaseId);
     return true;
   } catch (e) {
@@ -62,14 +55,8 @@ export const updateUserData = async ({
   username: string;
   avatarUrl: string;
 } | null> => {
-  const updateUserDataQuery = `
-    UPDATE users
-    SET username = $/username/,
-        avatar_reference_id = $/avatar_url/
-    WHERE firebase_id = $/firebase_id/`;
-
   try {
-    await pool.none(updateUserDataQuery, {
+    await pool.none(sql.updateUserData, {
       firebase_id: firebaseId,
       username,
       avatar_url: avatarUrl,
@@ -86,6 +73,59 @@ export const updateUserData = async ({
   }
 };
 
+export const getUserSettings = async ({
+  firebaseId,
+}: {
+  firebaseId: string;
+}): Promise<DbSettingType[]> => {
+  try {
+    const settings = await pool.many(sql.getUserSettings, {
+      firebase_id: firebaseId,
+    });
+    log(`Fetched settings for user ${firebaseId}:`);
+    log(settings);
+    return settings;
+  } catch (e) {
+    error(`Error while getting user settings.`);
+    error(e);
+    return null;
+  }
+};
+
+export const updateUserSettings = async ({
+  firebaseId,
+  settingName,
+  settingValue,
+}: {
+  firebaseId: string;
+  settingName: string;
+  settingValue: string;
+}): Promise<void> => {
+  try {
+    const type = await pool.one(sql.getSettingType, {
+      setting_name: settingName,
+    });
+    log(typeof settingValue === "string");
+    switch (type) {
+      case SettingValueTypes.BOOLEAN:
+        log(typeof settingValue);
+        if (typeof settingValue !== "boolean") {
+          throw new Error(
+            `Found invalid setting value for setting ${settingName} (${type}).`
+          );
+        }
+    }
+    await pool.none(sql.updateUserSettings, {
+      firebase_id: firebaseId,
+      setting_name: settingName,
+      setting_value: settingValue,
+    });
+  } catch (e) {
+    error(e);
+    throw Error(`Error while getting user settings.`);
+  }
+};
+
 export const getInviteDetails = async ({
   nonce,
 }: {
@@ -96,16 +136,8 @@ export const getInviteDetails = async ({
   expired: boolean;
   inviter: number;
 } | null> => {
-  const query = `
-    SELECT 
-      inviter,
-      invitee_email,
-      created + duration < NOW() as expired,
-      used 
-    FROM account_invites WHERE nonce = $/nonce/ 
-    ORDER BY created LIMIT 1`;
   try {
-    const inviteDetails = await pool.one(query, {
+    const inviteDetails = await pool.one(sql.getInviteDetails, {
       nonce,
     });
     log(`Fetched details for invite ${nonce}:`);
@@ -173,23 +205,9 @@ export const getBobadexIdentities = async ({
 }: {
   firebaseId: string;
 }) => {
-  const query = `      
-      SELECT 
-        COUNT(*) AS identities_count,
-        jsonb_agg(identities.IDENTITY) FILTER (WHERE (identities.identity->'caught')::boolean = TRUE) AS user_identities
-      FROM (
-        SELECT
-          jsonb_build_object(
-            'index', ROW_NUMBER() OVER (ORDER BY si .id),
-            'name', si.display_name,
-            'avatarUrl', si.avatar_reference_id,
-            'caught', bool_or(uti.user_id IS NOT NULL)) AS identity
-        FROM secret_identities si
-        LEFT JOIN user_thread_identities uti ON uti.identity_id = si.id AND uti.user_id = (SELECT id FROM users WHERE firebase_id = $/firebase_id/)
-        GROUP BY si.id) AS identities`;
   try {
     log(`Getting boba identities firebase ID ${firebaseId}`);
-    return await pool.one(query, {
+    return await pool.one(sql.getBobadexIdentities, {
       firebase_id: firebaseId,
     });
   } catch (e) {

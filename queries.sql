@@ -19,8 +19,8 @@ CREATE UNIQUE INDEX tags_tag on tags(tag);
 ALTER TABLE identity_thread_accessories ALTER COLUMN identity_id DROP NOT NULL;
 
 --- ADD COLUMN TO TABLE ---
-ALTER TABLE threads
-ADD COLUMN options JSONB NOT NULL DEFAULT '{}'::jsonb;
+ALTER TABLE accessories
+ADD COLUMN name JSONB NOT NULL DEFAULT '{}'::jsonb;
 
 --- REMOVE COLUMN FROM TABLE ---
 ALTER TABLE threads

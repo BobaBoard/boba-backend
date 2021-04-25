@@ -15,16 +15,12 @@ INSERT INTO role_accessories(role_id, accessory_id) VALUES (
     3
 );
 
-INSERT INTO realm_accessories(accessory_id) VALUES 
-    (1), 
-    (2);
-
-INSERT INTO accessories(image_reference_id, name) VALUES 
-    ('/420accessories/weed_hands.png', 'Rolling'),
-    ('/420accessories/joint.png', 'Joint'),
-    ('/420accessories/hat.png', 'Hat'),
-    ('/420accessories/eyes.png', 'Weed Eyes'),
-    ('/420accessories/bong.png', 'Bong');
+INSERT INTO accessories(id, image_reference_id, name) OVERRIDING SYSTEM VALUE VALUES  
+    (4, '/420accessories/weed_hands.png', 'Rolling'),
+    (5, '/420accessories/joint.png', 'Joint'),
+    (6, '/420accessories/hat.png', 'Hat'),
+    (7, '/420accessories/eyes.png', 'Weed Eyes'),
+    (8, '/420accessories/bong.png', 'Bong');
 
 INSERT INTO realm_accessories(accessory_id) VALUES 
     (4), 

@@ -9,6 +9,8 @@ import {
   createNewUser,
   getBobadexIdentities,
   getUserActivity,
+  getUserSettings,
+  updateUserSettings,
 } from "./queries";
 import { isLoggedIn } from "../auth-handler";
 import {
@@ -19,6 +21,7 @@ import {
 import firebaseAuth from "firebase-admin";
 import { ServerThreadType, DbActivityThreadType } from "../../Types";
 import { cache, CacheKeys } from "../cache";
+import { aggregateByType, parseSettings } from "../utils/settings";
 
 const info = debug("bobaserver:users:routes-info");
 const log = debug("bobaserver:users:routes-log");
@@ -263,6 +266,46 @@ router.get("/me/feed", isLoggedIn, async (req, res) => {
 
   response.activity.map((post) => ensureNoIdentityLeakage(post));
   res.status(200).json(response);
+});
+
+router.post("/settings/update", isLoggedIn, async (req, res) => {
+  const { name, value } = req.body;
+
+  log(name, value);
+  log(typeof value);
+  const firebaseId = req.currentUser?.uid;
+  if (!firebaseId) {
+    res.sendStatus(401);
+    return;
+  }
+  try {
+    await updateUserSettings({
+      firebaseId,
+      settingName: name,
+      settingValue: value,
+    });
+
+    const settings = parseSettings(await getUserSettings({ firebaseId }));
+    res.status(200).json(aggregateByType(settings));
+  } catch (e) {
+    error(e);
+    res.status(500).send("Error while updating settings.");
+  }
+});
+
+router.get("/settings", isLoggedIn, async (req, res) => {
+  const firebaseId = req.currentUser?.uid;
+  if (!firebaseId) {
+    res.sendStatus(401);
+    return;
+  }
+  try {
+    const settings = parseSettings(await getUserSettings({ firebaseId }));
+    res.status(200).json(aggregateByType(settings));
+  } catch (e) {
+    error(e);
+    res.status(500).send("Error while fetching settings.");
+  }
 });
 
 export default router;
