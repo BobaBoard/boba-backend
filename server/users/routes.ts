@@ -271,8 +271,6 @@ router.get("/me/feed", isLoggedIn, async (req, res) => {
 router.post("/settings/update", isLoggedIn, async (req, res) => {
   const { name, value } = req.body;
 
-  log(name, value);
-  log(typeof value);
   const firebaseId = req.currentUser?.uid;
   if (!firebaseId) {
     res.sendStatus(401);

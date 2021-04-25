@@ -453,6 +453,7 @@ CREATE TABLE IF NOT EXISTS board_restrictions(
 CREATE UNIQUE INDEX board_restrictions_entry on board_restrictions(board_id);
 
 CREATE TYPE setting_name AS ENUM(
+    'FESTIVE_HEADER_BACKGROUND',
     'FESTIVE_BOARD_BACKGROUND',
     'FESTIVE_THREAD_BACKGROUND', 
     'FESTIVE_CURSOR', 

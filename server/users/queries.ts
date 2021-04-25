@@ -105,7 +105,7 @@ export const updateUserSettings = async ({
     const type = await pool.one(sql.getSettingType, {
       setting_name: settingName,
     });
-    log(typeof settingValue === "string");
+
     switch (type) {
       case SettingValueTypes.BOOLEAN:
         log(typeof settingValue);
