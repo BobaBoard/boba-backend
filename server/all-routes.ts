@@ -5,6 +5,7 @@ import ThreadsRoutes from "./threads/routes";
 import PostsRoutes from "./posts/routes";
 import UsersRoutes from "./users/routes";
 import AdminRoutes from "./admin/routes";
+import RealsmRoutes from "./realms/routes";
 import SubscriptionRoutes from "./subscriptions/routes";
 
 const log = debug("bobaserver:all-routes");
@@ -16,6 +17,7 @@ const ROUTES: { [key: string]: Router } = {
   users: UsersRoutes,
   admin: AdminRoutes,
   subscriptions: SubscriptionRoutes,
+  realms: RealsmRoutes,
 };
 
 export const applyRoutes = (router: Router) => {
