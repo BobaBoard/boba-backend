@@ -451,3 +451,27 @@ CREATE TABLE IF NOT EXISTS board_restrictions(
     logged_in_base_restrictions restriction_type[] NOT NULL DEFAULT ARRAY[]::restriction_type[]
 );
 CREATE UNIQUE INDEX board_restrictions_entry on board_restrictions(board_id);
+
+CREATE TYPE setting_name AS ENUM(
+    'FESTIVE_BOARD_BACKGROUND',
+    'FESTIVE_THREAD_BACKGROUND', 
+    'FESTIVE_CURSOR', 
+    'FESTIVE_CURSOR_TRAIL');
+CREATE TYPE setting_type AS ENUM(
+    'BOOLEAN'
+);
+
+CREATE TABLE IF NOT EXISTS setting_types(
+    name setting_name NOT NULL UNIQUE,
+    type setting_type NOT NULL
+);
+CREATE INDEX setting_types_name on setting_types(name);
+
+CREATE TABLE IF NOT EXISTS user_settings(
+    user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
+    setting_name setting_name REFERENCES setting_types(name) ON DELETE RESTRICT NOT NULL,
+    setting_value TEXT
+);
+CREATE INDEX user_settings_user_id on user_settings(user_id);
+CREATE INDEX user_settings_setting_name on user_settings(setting_name);
+CREATE UNIQUE INDEX user_settings_setting_user_id_setting_name on user_settings(user_id, setting_name);
