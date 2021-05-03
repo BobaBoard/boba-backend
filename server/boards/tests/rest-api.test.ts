@@ -58,6 +58,18 @@ describe("Tests boards REST API", () => {
         canEditBoardData: false,
         postsPermissions: [],
       },
+      accessories: [
+        {
+          accessory: "/420accessories/weed_hands.png",
+          id: 4,
+          name: "Rolling",
+        },
+        {
+          accessory: "/420accessories/joint.png",
+          id: 5,
+          name: "Joint",
+        },
+      ],
       avatarUrl: "/gore.png",
       delisted: false,
       loggedInOnly: false,

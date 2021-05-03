@@ -32,6 +32,20 @@ describe("Tests boards queries", () => {
       slug: "gore",
       tagline: "Blood! Blood! Blood!",
       avatar_reference_id: "gore.png",
+      // TODO: do we want to surface accessories for
+      // non-logged in users?
+      accessories: [
+        {
+          accessory: "/420accessories/weed_hands.png",
+          id: 4,
+          name: "Rolling",
+        },
+        {
+          accessory: "/420accessories/joint.png",
+          id: 5,
+          name: "Joint",
+        },
+      ],
       muted: false,
       pinned_order: null,
       permissions: [],
@@ -97,6 +111,18 @@ describe("Tests boards queries", () => {
           name: "GoreMaster5000",
           color: "red",
           accessory: null,
+        },
+      ],
+      accessories: [
+        {
+          accessory: "/420accessories/weed_hands.png",
+          id: 4,
+          name: "Rolling",
+        },
+        {
+          accessory: "/420accessories/joint.png",
+          id: 5,
+          name: "Joint",
         },
       ],
       logged_in_base_restrictions: [],

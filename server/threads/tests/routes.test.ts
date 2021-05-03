@@ -32,6 +32,8 @@ describe("Tests threads REST API", () => {
       thread_total_comments_amount: 2,
       thread_direct_threads_amount: 2,
       default_view: "thread",
+      hidden: false,
+      muted: false,
       posts: [
         {
           anonymity_type: "strangers",
