@@ -20,6 +20,8 @@ describe("threads queries", () => {
       thread_new_posts_amount: 0,
       thread_direct_threads_amount: 2,
       default_view: "thread",
+      hidden: false,
+      muted: false,
       posts: [
         {
           anonymity_type: "strangers",
@@ -171,6 +173,16 @@ describe("threads queries", () => {
       firebaseId: "fb3",
     });
     expect(thread).to.eql({
+      thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+      board_slug: "gore",
+      thread_total_comments_amount: 0,
+      thread_new_comments_amount: 0,
+      thread_total_posts_amount: 3,
+      thread_new_posts_amount: 1,
+      thread_direct_threads_amount: 2,
+      default_view: "thread",
+      hidden: false,
+      muted: false,
       posts: [
         {
           anonymity_type: "strangers",
@@ -262,14 +274,6 @@ describe("threads queries", () => {
           options: {},
         },
       ],
-      thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
-      board_slug: "gore",
-      thread_total_comments_amount: 0,
-      thread_new_comments_amount: 0,
-      thread_total_posts_amount: 3,
-      thread_new_posts_amount: 1,
-      thread_direct_threads_amount: 2,
-      default_view: "thread",
     });
   });
 

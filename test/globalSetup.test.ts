@@ -24,10 +24,18 @@ export const mochaHooks = {
     this.setStub = cacheObj.set;
     this.getStub = cacheObj.get;
     const cache = require("../server/cache");
+    if (this.cacheStub) {
+      info("Restoring cache stub before mocking");
+      // This is necessary because, for some reason, beforeEach is called twice
+      // somewhere. I don't currently have time to figure out where or why.
+      // TODO: figure this out.
+      this.cacheStub.restore();
+    }
     this.cacheStub = sinon.stub(cache, "cache");
     this.cacheStub.returns(cacheObj);
   },
   afterEach() {
+    info("Restoring cache stub after mocking");
     this.cacheStub.restore();
   },
 };
