@@ -8,7 +8,7 @@ import {
   getPostFromStringId,
   updatePostTags,
 } from "./queries";
-import { isLoggedIn } from "../auth-handler";
+import { isLoggedIn } from "../handlers/auth";
 import axios from "axios";
 import {
   makeServerPost,

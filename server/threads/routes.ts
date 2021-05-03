@@ -12,7 +12,7 @@ import {
   getUserPermissionsForThread,
   getTriggeredWebhooks,
 } from "./queries";
-import { isLoggedIn } from "../auth-handler";
+import { isLoggedIn } from "../handlers/auth";
 import { makeServerThread, ensureNoIdentityLeakage } from "../response-utils";
 import { ThreadPermissions } from "../../Types";
 import axios from "axios";

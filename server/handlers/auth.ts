@@ -1,0 +1,108 @@
+import firebaseAuth, { auth } from "firebase-admin";
+import { Request, Response, NextFunction } from "express";
+import debug from "debug";
+import { cache, CacheKeys } from "../cache";
+import { getUserSettings } from "../users/queries";
+import { SettingEntry } from "../../types/settings";
+
+const log = debug("bobaserver:auth-log");
+const error = debug("bobaserver:auth-error");
+
+declare global {
+  namespace Express {
+    export interface Request {
+      currentUser?: auth.DecodedIdToken & { settings?: SettingEntry[] };
+    }
+  }
+}
+
+export const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
+  const idToken = req.headers?.authorization;
+  req.currentUser = null;
+  log(idToken);
+  log(req.originalUrl);
+  log(typeof idToken);
+  if (!idToken) {
+    log("No id token found in request. User is not logged in.");
+    next();
+    return;
+  }
+  log(idToken);
+  log("here");
+  firebaseAuth
+    .auth()
+    .verifyIdToken(idToken)
+    .then((decodedToken) => {
+      log(`Found id token in request: ${decodedToken.uid}`);
+      // @ts-ignore
+      req.currentUser = decodedToken;
+      if (process.env.NODE_ENV != "production" && process.env.FORCED_USER) {
+        log(
+          `Overriding user id with locally configured one (${process.env.FORCED_USER})`
+        );
+        // @ts-ignore
+        req.currentUser.uid = process.env.FORCED_USER;
+      }
+      next();
+    })
+    .catch((e) => {
+      if (e.errorInfo?.code == "auth/id-token-expired") {
+        log("Found expired token.");
+        next();
+        return;
+      }
+      error("Error during verification. No user set.");
+      error(e);
+      next();
+      return;
+    });
+};
+
+export const ensureLoggedIn = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  isLoggedIn(req, res, async () => {
+    const currentUserId = req.currentUser?.uid;
+    if (!currentUserId) {
+      error("Unauthorized request received for ensureLoggedIn route.");
+      res.sendStatus(401);
+      return;
+    }
+    next();
+  });
+};
+
+export const withUserSettings = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  // First ensure that the isLoggedIn middleware is correctly called.
+  isLoggedIn(req, res, async () => {
+    const currentUserId = req.currentUser?.uid;
+    if (!currentUserId) {
+      next();
+      return;
+    }
+    const cachedData = await cache().hget(
+      CacheKeys.USER_SETTINGS,
+      currentUserId
+    );
+    if (cachedData) {
+      log(`Found cached settings data for user ${currentUserId}`);
+      req.currentUser.settings = JSON.parse(cachedData);
+    } else {
+      const userSettings = await getUserSettings({ firebaseId: currentUserId });
+      req.currentUser.settings = userSettings;
+      log(`Retrieved user settings for user ${currentUserId}`);
+      await cache().hset(
+        CacheKeys.USER_SETTINGS,
+        currentUserId,
+        JSON.stringify(userSettings)
+      );
+    }
+    next();
+  });
+};

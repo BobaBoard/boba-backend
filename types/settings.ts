@@ -7,9 +7,9 @@ export enum SettingValueTypes {
 }
 
 export enum GlobalSettings {
-  FESTIVE_HEADER_BACKGROUND = "FESTIVE_HEADER_BACKGROUND",
-  FESTIVE_BACKGROUND_BOARD = "FESTIVE_BOARD_BACKGROUND",
-  FESTIVE_BACKGROUND_THREAD = "FESTIVE_THREAD_BACKGROUND",
+  FESTIVE_BACKGROUND_HEADER = "FESTIVE_BACKGROUND_HEADER",
+  FESTIVE_BACKGROUND_FEED = "FESTIVE_BACKGROUND_FEED",
+  FESTIVE_BACKGROUND_SIDEBAR = "FESTIVE_BACKGROUND_SIDEBAR",
   FESTIVE_CURSOR = "FESTIVE_CURSOR",
   FESTIVE_CURSOR_TRAIL = "FESTIVE_CURSOR_TRAIL",
 }
@@ -32,3 +32,9 @@ export interface BooleanSettingEntry extends BaseSettingEntry {
 }
 
 export type SettingEntry = BooleanSettingEntry | BaseSettingEntry;
+
+export interface CssVariableSetting {
+  name: string;
+  type: "CssVariable";
+  value: string;
+}

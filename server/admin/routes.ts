@@ -7,7 +7,7 @@ import {
   createInvite,
   updateIdentities,
 } from "./queries";
-import { isLoggedIn } from "../auth-handler";
+import { isLoggedIn } from "../handlers/auth";
 import firebaseAuth from "firebase-admin";
 import { randomBytes } from "crypto";
 import { getUserFromFirebaseId } from "../users/queries";

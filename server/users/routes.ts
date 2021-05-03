@@ -12,7 +12,7 @@ import {
   getUserSettings,
   updateUserSettings,
 } from "./queries";
-import { isLoggedIn } from "../auth-handler";
+import { ensureLoggedIn, isLoggedIn, withUserSettings } from "../handlers/auth";
 import {
   ensureNoIdentityLeakage,
   mergeObjectIdentity,
@@ -283,7 +283,12 @@ router.post("/settings/update", isLoggedIn, async (req, res) => {
       settingValue: value,
     });
 
-    const settings = parseSettings(await getUserSettings({ firebaseId }));
+    const settings = await getUserSettings({ firebaseId });
+    await cache().hset(
+      CacheKeys.USER_SETTINGS,
+      firebaseId,
+      JSON.stringify(settings)
+    );
     res.status(200).json(aggregateByType(settings));
   } catch (e) {
     error(e);
@@ -291,15 +296,9 @@ router.post("/settings/update", isLoggedIn, async (req, res) => {
   }
 });
 
-router.get("/settings", isLoggedIn, async (req, res) => {
-  const firebaseId = req.currentUser?.uid;
-  if (!firebaseId) {
-    res.sendStatus(401);
-    return;
-  }
+router.get("/settings", ensureLoggedIn, withUserSettings, async (req, res) => {
   try {
-    const settings = parseSettings(await getUserSettings({ firebaseId }));
-    res.status(200).json(aggregateByType(settings));
+    res.status(200).json(aggregateByType(req.currentUser?.settings));
   } catch (e) {
     error(e);
     res.status(500).send("Error while fetching settings.");

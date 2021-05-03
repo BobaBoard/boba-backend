@@ -122,11 +122,17 @@ SELECT
     COALESCE((SELECT COUNT(post_id) FROM thread_posts WHERE parent_post_id = (SELECT post_id FROM thread_posts WHERE parent_post_id IS null))::int, 0) as thread_direct_threads_amount,
     -- Count all the new posts that aren't ours, unless we aren't logged in.
     COALESCE(SUM((${firebase_id} IS NOT NULL AND thread_posts.is_new AND NOT thread_posts.is_own)::int)::int, 0) as thread_new_posts_amount,
-    COALESCE(COUNT(thread_posts.*)::int, 0) as thread_total_posts_amount
+    COALESCE(COUNT(thread_posts.*)::int, 0) as thread_total_posts_amount,
+    uht.user_id IS NOT NULL as hidden,
+    umt.user_id IS NOT NULL as muted
 FROM threads
 LEFT JOIN thread_posts
     ON threads.string_id = thread_posts.parent_thread_id
 LEFT JOIN boards
     ON threads.parent_board = boards.id
+LEFT JOIN user_muted_threads umt
+    ON  ${firebase_id} IS NOT NULL AND umt.user_id = (SELECT id FROM users WHERE firebase_id = ${firebase_id}) AND umt.thread_id = threads.id
+LEFT JOIN user_hidden_threads uht
+    ON  ${firebase_id} IS NOT NULL AND uht.user_id = (SELECT id FROM users WHERE firebase_id = ${firebase_id}) AND uht.thread_id = threads.id
 WHERE threads.string_id = ${thread_string_id}
-GROUP BY threads.id, boards.slug
+GROUP BY threads.id, boards.slug, uht.user_id, umt.user_id

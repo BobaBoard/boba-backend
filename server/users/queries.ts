@@ -1,9 +1,10 @@
 import debug from "debug";
 import { DbActivityThreadType } from "../../Types";
-import { DbSettingType, SettingValueTypes } from "../../types/settings";
+import { SettingEntry, SettingValueTypes } from "../../types/settings";
 import pool from "../pool";
 import sql from "./sql";
 import { encodeCursor, decodeCursor } from "../queries-utils";
+import { parseSettings } from "../utils/settings";
 
 const log = debug("bobaserver:users:queries-log");
 const error = debug("bobaserver:users:queries-error");
@@ -77,14 +78,14 @@ export const getUserSettings = async ({
   firebaseId,
 }: {
   firebaseId: string;
-}): Promise<DbSettingType[]> => {
+}): Promise<SettingEntry[]> => {
   try {
-    const settings = await pool.many(sql.getUserSettings, {
+    const settings = await pool.manyOrNone(sql.getUserSettings, {
       firebase_id: firebaseId,
     });
     log(`Fetched settings for user ${firebaseId}:`);
-    log(settings);
-    return settings;
+    info(settings);
+    return parseSettings(settings);
   } catch (e) {
     error(`Error while getting user settings.`);
     error(e);
