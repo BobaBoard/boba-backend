@@ -13,7 +13,7 @@ import {
   pinBoard,
   unpinBoard,
 } from "./queries";
-import { isLoggedIn } from "../auth-handler";
+import { isLoggedIn } from "../handlers/auth";
 import {
   mergeObjectIdentity,
   ensureNoIdentityLeakage,

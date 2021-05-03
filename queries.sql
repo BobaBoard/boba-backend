@@ -118,3 +118,15 @@ INSERT INTO board_restrictions(board_id, logged_out_restrictions) VALUES
 
 -- ADD NEW ACCESSORY --
 INSERT INTO accessories(image_reference_id) VALUES ('https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F7c6c9459-7fa1-4d06-8dc0-ebb5b1bd76a8.png?alt=media&token=78d812a5-b217-4afb-99f3-41b9ed7b7ed5') RETURNING id;
+
+
+-- FIND FIREBASE IDS FOR IDENTITIES IN THREAD --
+SELECT 
+    uti.*,
+    secret_identities.*, 
+FROM threads
+LEFT JOIN user_thread_identities uti
+ON threads.id = uti.thread_id
+INNER JOIN secret_identities
+ON uti.identity_id = secret_identities.id
+WHERE threads.string_id = '3365000d-cbdf-47d8-8eb3-0e17cd3609b2';
