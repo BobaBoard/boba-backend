@@ -33,7 +33,7 @@ SELECT
     COALESCE(comments_amount, 0) as comments_amount,
     COALESCE(new_posts_board_amount, 0) as new_posts_amount,
     COALESCE(new_comments_board_amount, 0) as new_comments_amount,
-    COALESCE(is_new, FALSE) as is_new,
+    COALESCE(is_new_board, FALSE) as is_new,
     -- post tags
     whisper_tags,
     index_tags,
