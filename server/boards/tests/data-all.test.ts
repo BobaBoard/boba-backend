@@ -147,7 +147,7 @@ describe("Tests boards queries", () => {
         {
           slug: "long",
           has_updates: true,
-          last_comment: null,
+          last_comment: new Date(Date.UTC(2020, 3, 1, 12, 22)),
           last_post: new Date(Date.UTC(2020, 3, 25, 12, 42)),
           last_activity_from_others: new Date(Date.UTC(2020, 3, 25, 12, 42)),
           last_visit: null,
@@ -217,7 +217,7 @@ describe("Tests boards queries", () => {
         {
           slug: "long",
           has_updates: false,
-          last_comment: null,
+          last_comment: new Date(Date.UTC(2020, 3, 1, 12, 22)),
           last_post: new Date(Date.UTC(2020, 3, 25, 12, 42)),
           last_activity_from_others: null,
           last_visit: null,
@@ -292,7 +292,7 @@ describe("Tests boards queries", () => {
         {
           slug: "long",
           has_updates: true,
-          last_comment: null,
+          last_comment: new Date(Date.UTC(2020, 3, 1, 12, 22)),
           last_post: new Date(Date.UTC(2020, 3, 25, 12, 42)),
           last_activity_from_others: new Date(Date.UTC(2020, 3, 25, 12, 42)),
           last_visit: new Date(Date.UTC(2020, 3, 24, 7, 0)),

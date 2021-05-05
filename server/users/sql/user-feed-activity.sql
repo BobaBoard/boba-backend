@@ -54,7 +54,7 @@ LEFT JOIN thread_user_details
 WHERE
    -- activity cursor condition
    last_update_timestamp <= COALESCE(${last_activity_cursor}, NOW())
-   AND (${updated_only} IS FALSE OR new_posts_amount > 0 or new_comments_amount > 0 or is_new_board)
+   AND (${updated_only} IS FALSE OR new_posts_board_amount > 0 or new_comments_board_amount > 0 or is_new_board)
    AND (${own_only} IS FALSE OR own_thread IS TRUE)
    AND muted IS FALSE
    AND hidden IS FALSE

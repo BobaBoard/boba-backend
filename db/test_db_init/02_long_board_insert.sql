@@ -18,12 +18,42 @@ WITH
         'text', 
         NULL, 
         'strangers',
-        to_timestamp('2020-04-01 05:20:00', 'YYYY-MM-DD HH:MI:SS')))
-INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
-    VALUES
-    ((SELECT id FROM new_thread_id),
+        to_timestamp('2020-04-01 05:20:00', 'YYYY-MM-DD HH:MI:SS')
+        ) RETURNING id),
+  comments_insert1 AS
+    (INSERT INTO comments(string_id, parent_post, parent_thread, author, created, content, anonymity_type, chain_parent_comment)
+      VALUES (
+        '5143e529-4fd7-449a-80f9-843787a5ebde',
+        (SELECT id FROM posts_insert ORDER BY id DESC LIMIT 1),
+        (SELECT id FROM new_thread_id),
+        -- Add activity in the !long board for oncest5evah so we can test whether
+        -- his board dismiss notifications in !long correctly takes care of this
+        -- in his activity feed.
+        (SELECT id FROM Users WHERE username = 'oncest5evah'),
+        to_timestamp('2020-04-01 05:21:00', 'YYYY-MM-DD HH:MI:SS'),
+        '[{"insert":"Go! Go! Go!"}]', 
+        'strangers',
+        NULL
+      ) RETURNING id),
+  comments_insert2 AS
+    (INSERT INTO comments(string_id, parent_post, parent_thread, author, created, content, anonymity_type, chain_parent_comment)
+      VALUES (
+        '4555a632-1808-4abb-97ce-ab09b97ca8c8',
+        (SELECT id FROM posts_insert ORDER BY id DESC LIMIT 1),
+        (SELECT id FROM new_thread_id),
         (SELECT id FROM Users WHERE username = 'jersey_devil_69'),
-        (SELECT id FROM secret_identities WHERE display_name = 'DragonFucker'));
+        to_timestamp('2020-04-01 05:22:00', 'YYYY-MM-DD HH:MI:SS'),
+        '[{"insert":"I''m going!"}]', 
+        'strangers',
+        (SELECT id FROM comments_insert1 LIMIT 1)
+      ))
+INSERT INTO user_thread_identities(thread_id, user_id, identity_id) VALUES
+    ((SELECT id FROM new_thread_id),
+     (SELECT id FROM Users WHERE username = 'jersey_devil_69'),
+     (SELECT id FROM secret_identities WHERE display_name = 'DragonFucker')),
+    ((SELECT id FROM new_thread_id),
+     (SELECT id FROM Users WHERE username = 'oncest5evah'),
+     (SELECT id FROM secret_identities WHERE display_name = 'Outdated Meme'));
 
 WITH
     new_thread_id AS
@@ -643,7 +673,8 @@ WITH
         'text', 
         NULL, 
         'strangers',
-        to_timestamp('2020-04-25 05:42:00', 'YYYY-MM-DD HH:MI:SS')))
+        to_timestamp('2020-04-25 05:42:00', 'YYYY-MM-DD HH:MI:SS')
+        ) RETURNING id)
 INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
     VALUES
     ((SELECT id FROM new_thread_id),
