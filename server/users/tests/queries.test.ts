@@ -237,4 +237,60 @@ describe("feed activity queries", () => {
       },
     ]);
   });
+
+  describe("correctly considers board notifications dismissal", async () => {
+    it("updated: FALSE, own: FALSE", async () => {
+      const feed = (await getUserActivity({
+        // oncest5evah
+        firebaseId: "fb3",
+        cursor: null,
+        updatedOnly: false,
+        ownOnly: false,
+        pageSize: 10,
+      })) as {
+        // TODO: turn this into a type.
+        cursor: string | null;
+        activity: DbActivityThreadType[];
+      };
+
+      expect(feed.cursor).to.equal(null);
+      expect(feed.activity.length).to.eql(3);
+      // Ensure that the post in !long with the dismissed board notifications
+      // is counted when "updatedOnly" is false.
+      expect(extractActivity(feed.activity[2])).to.eql({
+        comments_amount: 2,
+        created: "2020-04-01T05:20:00",
+        is_new: false,
+        new_comments_amount: 0,
+        new_posts_amount: 0,
+        post_id: "f423a2f4-7a8a-4d3d-8858-c1c7602133da",
+        posts_amount: 1,
+        thread_id: "90119d99-359d-4a60-b5ab-9b6077d0dc39",
+        thread_last_activity: "2020-04-01T05:22:00.000000",
+        threads_amount: 0,
+      });
+    });
+  });
+
+  describe("correctly considers board notifications dismissal", async () => {
+    it("updated: true, own: FALSE", async () => {
+      const feed = (await getUserActivity({
+        // oncest5evah
+        firebaseId: "fb3",
+        cursor: null,
+        updatedOnly: true,
+        ownOnly: false,
+        pageSize: 10,
+      })) as {
+        // TODO: turn this into a type.
+        cursor: string | null;
+        activity: DbActivityThreadType[];
+      };
+
+      expect(feed.cursor).to.equal(null);
+      // Ensure that the post in !long with the dismissed board notifications
+      // is not counted in "updatedOnly".
+      expect(feed.activity.length).to.eql(2);
+    });
+  });
 });

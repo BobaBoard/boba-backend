@@ -39,6 +39,14 @@ INSERT INTO dismiss_notifications_requests(user_id, dismiss_request_time) VALUES
     -- be dismissed.
     to_timestamp('2020-04-20 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
 
+INSERT INTO dismiss_board_notifications_requests(user_id, board_id, dismiss_request_time) VALUES
+  ((SELECT id FROM users WHERE username = 'oncest5evah'),
+   (SELECT id FROM boards WHERE slug = 'long'),
+    -- Give oncest5evah a date in-between the new threads in the long board.
+    -- He has dismissed notifications before then, but everything since that date should
+    -- be new.
+    to_timestamp('2020-04-20 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
+
 INSERT INTO user_thread_last_visits(user_id, thread_id, last_visit_time) VALUES
   ((SELECT id FROM users WHERE username = 'The Zodiac Killer'),
    (SELECT id FROM threads WHERE string_id = '32a0174b-091e-4fe6-82f3-bffd6c6026ae'),
