@@ -34,9 +34,9 @@ SELECT
     COALESCE(
         json_agg(DISTINCT jsonb_build_object(
             'id', accessories.id,
-            'name', COALESCE(accessories.name, 'Uknown'),
+            'name', COALESCE(accessories.name, 'Unknown'),
             'accessory', accessories.image_reference_id
-        )), '[]') as accessories,
+        )) FILTER (WHERE accessories.id IS NOT NULL), '[]') as accessories,
     COALESCE(
         json_agg(DISTINCT p.permissions) 
             FILTER (WHERE p.permissions IS NOT NULL AND p.permissions != 'post_as_role'), '[]') AS permissions,

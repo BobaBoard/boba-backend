@@ -20,32 +20,32 @@ const error = debug("bobaserver:users:routes-error");
 const router = express.Router();
 
 const CURSOR_SETTINGS = {
-  image: "https://cur.cursors-4u.net/nature/nat-2/nat120.cur",
-  trail: "/smoke.gif",
+  // image: "https://cur.cursors-4u.net/nature/nat-2/nat120.cur",
+  // trail: "/smoke.gif",
 };
 
 const INDEX_PAGE_SETTINGS: CssVariableSetting[] = [
-  {
-    name: "header-background-image",
-    type: "CssVariable",
-    value: "url(/weed4.png)",
-  },
+  // {
+  //   name: "header-background-image",
+  //   type: "CssVariable",
+  //   value: "url(/weed4.png)",
+  // },
 ];
 
 const BOARD_PAGE_SETTINGS: CssVariableSetting[] = [
-  {
-    name: "feed-background-image",
-    type: "CssVariable",
-    value: "url(/weed4.png)",
-  },
+  // {
+  //   name: "feed-background-image",
+  //   type: "CssVariable",
+  //   value: "url(/weed4.png)",
+  // },
 ];
 
 const THREAD_PAGE_SETTINGS: CssVariableSetting[] = [
-  {
-    name: "sidebar-background-image",
-    type: "CssVariable",
-    value: "url(/weed4.png)",
-  },
+  // {
+  //   name: "sidebar-background-image",
+  //   type: "CssVariable",
+  //   value: "url(/weed4.png)",
+  // },
 ];
 
 router.get("/:id", withUserSettings, async (req, res) => {
