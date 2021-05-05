@@ -114,7 +114,8 @@ SELECT
     (SELECT friend_id FROM friends WHERE first_post.author = friends.user_id AND friends.friend_id = users.id) IS NOT NULL as friend_thread,
     umt.thread_id IS NOT NULL as muted,
     uht.thread_id IS NOT NULL as hidden,
-    COALESCE(users.id != first_post.author AND first_post.created > tnd.thread_cutoff_time, TRUE) AS is_new,
+    COALESCE(users.id != first_post.author AND (tnd.thread_cutoff_time IS NULL OR first_post.created > tnd.thread_cutoff_time), FALSE) AS is_new,
+    COALESCE(users.id != first_post.author AND (tnd.board_cutoff_time IS NULL OR first_post.created > tnd.board_cutoff_time), FALSE) AS is_new_board,
     (SELECT COUNT(*) FROM posts WHERE users.id != posts.author AND posts.parent_thread = threads.id AND (tnd.thread_cutoff_time IS NULL OR posts.created > tnd.thread_cutoff_time))::int as new_posts_amount,
     (SELECT COUNT(*) FROM posts WHERE users.id != posts.author AND posts.parent_thread = threads.id AND (tnd.board_cutoff_time IS NULL OR posts.created > tnd.board_cutoff_time))::int as new_posts_board_amount,
     (SELECT COUNT(*) FROM comments WHERE users.id != comments.author AND comments.parent_thread = threads.id AND (tnd.thread_cutoff_time IS NULL OR comments.created > tnd.thread_cutoff_time))::int as new_comments_amount,
@@ -129,6 +130,6 @@ LEFT JOIN user_muted_threads umt
     ON umt.user_id = users.id AND umt.thread_id = threads.id
 LEFT JOIN user_hidden_threads uht
     ON uht.user_id = users.id AND uht.thread_id = threads.id
- LEFT JOIN thread_notification_dismissals tnd
+LEFT JOIN thread_notification_dismissals tnd
     ON tnd.thread_id = threads.id AND tnd.user_id = users.id
 );
