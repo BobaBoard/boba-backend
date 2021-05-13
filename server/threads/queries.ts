@@ -9,6 +9,8 @@ import {
   addNewIdentityToThread,
 } from "../posts/queries";
 import { DbThreadType, ThreadPermissions } from "../../Types";
+import { getBoardBySlug } from "../boards/queries";
+import { transformThreadPermissions } from "../permissions-utils";
 
 const log = debug("bobaserver:threads:queries-log");
 const error = debug("bobaserver:threads:queries-error");
@@ -251,17 +253,23 @@ export const getUserPermissionsForThread = async ({
   firebaseId: string;
 }) => {
   try {
-    const isOwner = (
-      await pool.one(sql.isThreadOwner, {
-        firebase_id: firebaseId,
-        thread_string_id: threadId,
-      })
-    ).is_thread_owner;
+    const permissions = [];
+    const threadDetails = await pool.one(sql.getThreadDetails, {
+      firebase_id: firebaseId,
+      thread_string_id: threadId,
+    });
 
-    if (isOwner) {
-      return [ThreadPermissions.editDefaultView];
+    if (threadDetails.is_thread_owner) {
+      permissions.push(ThreadPermissions.editDefaultView);
     }
-    return [];
+
+    const board = await getBoardBySlug({
+      firebaseId,
+      slug: threadDetails.parent_board_slug,
+    });
+    const threadPermissions = transformThreadPermissions(board.permissions);
+    permissions.push(...threadPermissions);
+    return permissions;
   } catch (e) {
     error(`Error while getting user permissions for the thread.`);
     error(e);
@@ -295,6 +303,26 @@ export const getTriggeredWebhooks = async ({
       subscriptionNames: result.subscription_names,
       triggeredCategories: result.triggered_categories,
     }));
+  } catch (e) {
+    error(`Error while getting triggered webhooks.`);
+    error(e);
+    return false;
+  }
+};
+
+export const moveThread = async ({
+  threadId,
+  destinationSlug,
+}: {
+  threadId: string;
+  destinationSlug: string;
+}) => {
+  try {
+    const result = await pool.none(sql.moveThread, {
+      board_slug: destinationSlug,
+      thread_string_id: threadId,
+    });
+    return true;
   } catch (e) {
     error(`Error while getting triggered webhooks.`);
     error(e);

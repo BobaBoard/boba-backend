@@ -181,15 +181,18 @@ export enum DbRolePermissions {
   post_as_role,
   edit_category_tags,
   edit_content_notices,
+  move_thread,
 }
 
 export interface BoardPermissions {
   canEditBoardData: boolean;
   postsPermissions: PostPermissions[];
+  threadsPermissions: ThreadPermissions[];
 }
 
 export enum ThreadPermissions {
   editDefaultView,
+  moveThread = "move_thread",
 }
 
 export enum PostPermissions {

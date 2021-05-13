@@ -98,10 +98,12 @@ const updateThreadViewByStringId = `
     RETURNING *;
 `;
 
-const isThreadOwner = `
+const getThreadDetails = `
     SELECT
+      boards.slug as parent_board_slug,
       users.firebase_id = $/firebase_id/ as is_thread_owner
     FROM threads
+      LEFT JOIN boards ON threads.parent_board = boards.id
       LEFT JOIN posts ON threads.id = posts.parent_thread AND posts.parent_post IS NULL
       LEFT JOIN users ON posts.author = users.id
     WHERE threads.string_id = $/thread_string_id/
@@ -123,6 +125,12 @@ const getTriggeredWebhooks = `
     GROUP BY webhook
 `;
 
+const moveThread = `
+    UPDATE threads 
+    SET parent_board = (SELECT id FROM boards WHERE slug = $/board_slug/)
+    WHERE string_id = $/thread_string_id/;
+`;
+
 export default {
   threadByStringId: new QueryFile(
     path.join(__dirname, "thread-by-string-id.sql")
@@ -140,6 +148,7 @@ export default {
   unhideThreadByStringId,
   updateThreadViewByStringId,
   getRoleByStringId,
-  isThreadOwner,
+  getThreadDetails,
   getTriggeredWebhooks,
+  moveThread,
 };

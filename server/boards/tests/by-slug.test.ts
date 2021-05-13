@@ -92,6 +92,7 @@ describe("Tests boards queries", () => {
         "edit_board_details",
         "edit_category_tags",
         "edit_content_notices",
+        "move_thread",
       ],
       pinned_order: "1",
       posting_identities: [
