@@ -5,6 +5,7 @@ import {
   BoardPermissions,
   QueryTagsType,
   PostPermissions,
+  ThreadPermissions,
 } from "../Types";
 
 const log = debug("bobaserver::permissions-utils-log");
@@ -49,6 +50,14 @@ export const transformPostPermissions = (permissions?: string[]) => {
   return postsPermissions;
 };
 
+export const transformThreadPermissions = (permissions?: string[]) => {
+  const threadPermissions = [];
+  if (hasPermission(DbRolePermissions.move_thread, permissions)) {
+    threadPermissions.push(ThreadPermissions.moveThread);
+  }
+  return threadPermissions;
+};
+
 export const transformPermissions = (
   permissions?: string[]
 ): BoardPermissions => {
@@ -57,6 +66,7 @@ export const transformPermissions = (
   return {
     canEditBoardData: canEditBoard(permissions),
     postsPermissions: transformPostPermissions(permissions),
+    threadsPermissions: transformThreadPermissions(permissions),
   };
 };
 

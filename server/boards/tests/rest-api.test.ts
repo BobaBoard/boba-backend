@@ -57,6 +57,7 @@ describe("Tests boards REST API", () => {
       permissions: {
         canEditBoardData: false,
         postsPermissions: [],
+        threadsPermissions: [],
       },
       accessories: [
         {

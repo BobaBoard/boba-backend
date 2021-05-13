@@ -13,7 +13,8 @@ VALUES
     ('3df1d417-c36a-43dd-aaba-9590316ffc32', 'The Owner', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F2df7dfb4-4c64-4370-8e74-9ee30948f05d?alt=media&token=26b16bef-0fd2-47b5-b6df-6cf2799010ca', 
         'pink', 'A role for the owner.', 
         ARRAY['edit_board_details'::role_permissions,
-              'post_as_role'::role_permissions]);
+              'post_as_role'::role_permissions,
+              'move_thread'::role_permissions]);
 
 INSERT INTO board_user_roles(user_id, board_id, role_id)
 VALUES

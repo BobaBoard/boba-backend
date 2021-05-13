@@ -315,7 +315,13 @@ CREATE UNIQUE INDEX board_description_section_categories_entry on board_descript
 /**
  * Roles tables.
  */
-CREATE TYPE role_permissions AS ENUM ('all', 'edit_board_details', 'post_as_role', 'edit_category_tags', 'edit_content_notices');
+CREATE TYPE role_permissions AS ENUM (
+    'all', 
+    'edit_board_details', 
+    'post_as_role', 
+    'edit_category_tags', 
+    'edit_content_notices',
+    'move_thread');
 
 CREATE TABLE IF NOT EXISTS roles
 (

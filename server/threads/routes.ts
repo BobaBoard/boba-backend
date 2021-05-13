@@ -17,6 +17,9 @@ import { makeServerThread, ensureNoIdentityLeakage } from "../response-utils";
 import { ThreadPermissions } from "../../Types";
 import axios from "axios";
 import { canAccessBoard } from "../boards/utils";
+import { getBoardBySlug } from "../boards/queries";
+import { transformThreadPermissions } from "../permissions-utils";
+import { moveThread } from "./queries";
 
 const info = debug("bobaserver:threads:routes-info");
 const log = debug("bobaserver:threads:routes-log");
@@ -65,7 +68,6 @@ router.get("/:id", isLoggedIn, async (req, res) => {
 
 router.post("/:threadId/mute", isLoggedIn, async (req, res) => {
   const { threadId } = req.params;
-  // @ts-ignore
   if (!req.currentUser) {
     return res.sendStatus(401);
   }
@@ -73,7 +75,6 @@ router.post("/:threadId/mute", isLoggedIn, async (req, res) => {
 
   if (
     !(await muteThread({
-      // @ts-ignore
       firebaseId: req.currentUser.uid,
       threadId,
     }))
@@ -296,6 +297,56 @@ router.post("/:threadId/update/view", isLoggedIn, async (req, res) => {
     !(await updateThreadView({
       threadId,
       defaultView,
+    }))
+  ) {
+    return res.sendStatus(500);
+  }
+
+  res.sendStatus(200);
+});
+
+router.post("/:threadId/move", isLoggedIn, async (req, res) => {
+  const { threadId } = req.params;
+  const { destinationSlug } = req.body;
+
+  const permissions = await getUserPermissionsForThread({
+    firebaseId: req.currentUser.uid,
+    threadId,
+  });
+
+  if (!permissions) {
+    log(`Error while fetching permissions for post ${threadId}`);
+    res.sendStatus(500);
+    return;
+  }
+
+  if (
+    !permissions.length ||
+    !permissions.includes(ThreadPermissions.moveThread)
+  ) {
+    res.sendStatus(401);
+    return;
+  }
+
+  // Check that the user has access to the destination
+  const board = await getBoardBySlug({
+    firebaseId: req.currentUser.uid,
+    slug: destinationSlug,
+  });
+  if (
+    !board.permissions ||
+    !transformThreadPermissions(board.permissions).includes(
+      ThreadPermissions.moveThread
+    )
+  ) {
+    res.sendStatus(401);
+    return;
+  }
+
+  if (
+    !(await moveThread({
+      threadId,
+      destinationSlug,
     }))
   ) {
     return res.sendStatus(500);
