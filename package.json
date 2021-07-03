@@ -45,6 +45,7 @@
     "dotenv-expand": "^5.1.0",
     "express": "^4.17.1",
     "firebase-admin": "^8.12.1",
+    "honeycomb-beeline": "^2.7.2",
     "pg-promise": "^10.5.6",
     "redis": "^3.0.2",
     "ts-node": "^8.9.1",
