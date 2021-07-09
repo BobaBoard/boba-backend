@@ -1,0 +1,20 @@
+components:
+  schemas:
+    Contribution:
+      type: object
+      properties:
+        post_id:
+          type: string
+          format: uuid
+        parent_thread_id:
+          type: string
+          format: uuid
+        parent_post_id:
+          type: string
+          format: uuid
+        secret_identity:
+          $ref: "#/components/schemas/Identity"
+      required:
+        - post_id
+        - parent_thread_id
+        - secret_identity

@@ -48,6 +48,8 @@
     "honeycomb-beeline": "^2.7.2",
     "pg-promise": "^10.5.6",
     "redis": "^3.0.2",
+    "redoc-express": "^1.0.0",
+    "swagger-jsdoc": "^6.1.0",
     "ts-node": "^8.9.1",
     "uuid": "^8.1.0"
   },
@@ -57,6 +59,7 @@
     "@types/mocha": "^8.0.3",
     "@types/sinon": "^9.0.8",
     "@types/supertest": "^2.0.8",
+    "@types/swagger-jsdoc": "^6.0.1",
     "chai": "^4.2.0",
     "deep-equal-in-any-order": "^1.0.28",
     "mocha": "^8.2.0",

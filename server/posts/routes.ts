@@ -25,6 +25,36 @@ const error = debug("bobaserver:posts:routes-error");
 
 const router = express.Router();
 
+/**
+ * @openapi
+ * posts/{postId}/contribute:
+ *   post:
+ *     summary: Replies to a contribution
+ *     description: Posts a contribution replying to the one with id {postId}.
+ *     tags:
+ *       - posts
+ *     parameters:
+ *       - name: postId
+ *         in: path
+ *         description: The uuid of the contribution to reply to.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       403:
+ *         description: User is not authorized to perform the action.
+ *       200:
+ *         description: The contribution was successfully created.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 contribution:
+ *                   $ref: "#/components/schemas/Contribution"
+ *                   description: Finalized details of the contributions just posted.
+ */
 router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
   const { postId } = req.params;
   const {
@@ -86,13 +116,8 @@ router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
 
 router.post("/:postId/comment", isLoggedIn, async (req, res) => {
   const { postId } = req.params;
-  const {
-    content,
-    forceAnonymous,
-    replyToCommentId,
-    identityId,
-    accessoryId,
-  } = req.body;
+  const { content, forceAnonymous, replyToCommentId, identityId, accessoryId } =
+    req.body;
 
   if (!req.currentUser) {
     res.sendStatus(401);
@@ -129,12 +154,8 @@ router.post("/:postId/comment", isLoggedIn, async (req, res) => {
 
 router.post("/:postId/comment/chain", isLoggedIn, async (req, res) => {
   const { postId } = req.params;
-  const {
-    contentArray,
-    forceAnonymous,
-    replyToCommentId,
-    identityId,
-  } = req.body;
+  const { contentArray, forceAnonymous, replyToCommentId, identityId } =
+    req.body;
 
   if (!req.currentUser) {
     res.sendStatus(401);
