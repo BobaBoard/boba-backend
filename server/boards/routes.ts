@@ -279,9 +279,8 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
 
   const threadsWithIdentity = result.activity.map(
     (thread): ServerThreadType => {
-      const threadWithIdentity = mergeObjectIdentity<DbActivityThreadType>(
-        thread
-      );
+      const threadWithIdentity =
+        mergeObjectIdentity<DbActivityThreadType>(thread);
       return {
         posts: [
           {

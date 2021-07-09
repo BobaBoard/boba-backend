@@ -1,0 +1,18 @@
+components:
+  schemas:
+    Identity:
+      type: object
+      properties:
+        name:
+          type: string
+        avatar:
+          type: string
+          format: url
+        color:
+          type: string
+        accessory:
+          type: string
+          format: url
+      required:
+        - name
+        - avatar
