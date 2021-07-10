@@ -33,6 +33,7 @@ const router = express.Router();
  *     description: Posts a contribution replying to the one with id {postId}.
  *     tags:
  *       - posts
+ *       - todo
  *     parameters:
  *       - name: postId
  *         in: path
@@ -114,6 +115,16 @@ router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
   });
 });
 
+/**
+ * @openapi
+ * posts/{postId}/comment:
+ *   post:
+ *     summary: Comments on a contribution
+ *     description: Posts a comment replying to the contribution with id {postId}.
+ *     tags:
+ *       - posts
+ *       - todo
+ */
 router.post("/:postId/comment", isLoggedIn, async (req, res) => {
   const { postId } = req.params;
   const { content, forceAnonymous, replyToCommentId, identityId, accessoryId } =
@@ -152,6 +163,16 @@ router.post("/:postId/comment", isLoggedIn, async (req, res) => {
   res.status(200).json({ comment: responseComment });
 });
 
+/**
+ * @openapi
+ * posts/{postId}/comment/chain:
+ *   post:
+ *     summary: Comments on a contribution (with a chain)
+ *     description: Posts a contribution replying to the one with id {postId}.
+ *     tags:
+ *       - posts
+ *       - todo
+ */
 router.post("/:postId/comment/chain", isLoggedIn, async (req, res) => {
   const { postId } = req.params;
   const { contentArray, forceAnonymous, replyToCommentId, identityId } =
@@ -194,6 +215,15 @@ router.post("/:postId/comment/chain", isLoggedIn, async (req, res) => {
 const EXTRACT_HREF_REGEX = /data-href="([^"]+)"/;
 const EXTRACT_DID_REGEX = /data-did="([^"]+)"/;
 
+/**
+ * @openapi
+ * posts/embed/tumblr:
+ *   post:
+ *     summary: Gets the endpoint for a tumblr embed.
+ *     tags:
+ *       - posts
+ *       - todo
+ */
 router.get("/embed/tumblr", isLoggedIn, async (req, res) => {
   const { url } = req.query;
 
@@ -214,6 +244,16 @@ router.get("/embed/tumblr", isLoggedIn, async (req, res) => {
     });
 });
 
+/**
+ * @openapi
+ * posts/{postId}/edit:
+ *   post:
+ *     summary: Edits a contribution
+ *     description: Edits a contribution (for now just tags).
+ *     tags:
+ *       - posts
+ *       - todo
+ */
 router.post("/:postId/edit", isLoggedIn, async (req, res) => {
   const { postId } = req.params;
   const { whisperTags, indexTags, categoryTags, contentWarnings } = req.body;

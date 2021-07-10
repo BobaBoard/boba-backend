@@ -31,6 +31,10 @@ const options = {
         name: "boards",
         description: "All APIs related to the /boards/ endpoints.",
       },
+      {
+        name: "todo",
+        description: "APIs whose documentation still needs work.",
+      },
     ],
   },
   apis: ["./types/open-api/*.yaml", "./server/*/routes.ts"],
