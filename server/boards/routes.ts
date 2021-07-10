@@ -28,7 +28,15 @@ const info = debug("bobaserver:board:routes-info");
 const log = debug("bobaserver:board:routes");
 
 const router = express.Router();
-
+/**
+ * @openapi
+ * boards/{slug}:
+ *   get:
+ *     summary: Fetches board data.
+ *     tags:
+ *       - boards
+ *       - todo
+ */
 router.get("/:slug", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
   log(`Fetching data for board with slug ${slug}.`);
@@ -55,6 +63,15 @@ router.get("/:slug", isLoggedIn, async (req, res) => {
   res.status(200).json(boardMetadata);
 });
 
+/**
+ * @openapi
+ * boards/{slug}/metadata/update:
+ *   post:
+ *     summary: Update boards metadata
+ *     tags:
+ *       - boards
+ *       - todo
+ */
 router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
   const { descriptions, accentColor, tagline } = req.body;
@@ -103,6 +120,15 @@ router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
   );
 });
 
+/**
+ * @openapi
+ * boards/{slug}/visit:
+ *   get:
+ *     summary: Sets last visited time for board
+ *     tags:
+ *       - boards
+ *       - todo
+ */
 router.get("/:slug/visit", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
   // @ts-ignore
@@ -127,6 +153,15 @@ router.get("/:slug/visit", isLoggedIn, async (req, res) => {
   res.status(200).json();
 });
 
+/**
+ * @openapi
+ * boards/{slug}/mute:
+ *   post:
+ *     summary: Mutes board
+ *     tags:
+ *       - boards
+ *       - todo
+ */
 router.post("/:slug/mute", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
   // @ts-ignore
@@ -151,6 +186,15 @@ router.post("/:slug/mute", isLoggedIn, async (req, res) => {
   res.status(200).json();
 });
 
+/**
+ * @openapi
+ * boards/{slug}/unmute:
+ *   post:
+ *     summary: Unmutes board
+ *     tags:
+ *       - boards
+ *       - todo
+ */
 router.post("/:slug/unmute", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
   // @ts-ignore
@@ -175,6 +219,15 @@ router.post("/:slug/unmute", isLoggedIn, async (req, res) => {
   res.status(200).json();
 });
 
+/**
+ * @openapi
+ * boards/{slug}/pin:
+ *   post:
+ *     summary: Pins board
+ *     tags:
+ *       - boards
+ *       - todo
+ */
 router.post("/:slug/pin", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
   // @ts-ignore
@@ -199,6 +252,15 @@ router.post("/:slug/pin", isLoggedIn, async (req, res) => {
   res.status(200).json();
 });
 
+/**
+ * @openapi
+ * boards/{slug}/unmute:
+ *   post:
+ *     summary: Unpins board
+ *     tags:
+ *       - boards
+ *       - todo
+ */
 router.post("/:slug/unpin", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
   if (!req.currentUser) {
@@ -244,6 +306,15 @@ router.post("/:slug/notifications/dismiss", isLoggedIn, async (req, res) => {
   res.sendStatus(204);
 });
 
+/**
+ * @openapi
+ * boards/{slug}/activity/latest:
+ *   get:
+ *     summary: Get latest board activity.
+ *     tags:
+ *       - boards
+ *       - todo
+ */
 router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
   const { cursor, categoryFilter } = req.query;
@@ -332,6 +403,15 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
   res.status(200).json(response);
 });
 
+/**
+ * @openapi
+ * boards/:
+ *   get:
+ *     summary: Get all boards and their metadata.
+ *     tags:
+ *       - boards
+ *       - todo
+ */
 router.get("/", isLoggedIn, async (req, res) => {
   if (!req.currentUser?.uid) {
     // Only get cache for non-logged in users, because for logged in users this
