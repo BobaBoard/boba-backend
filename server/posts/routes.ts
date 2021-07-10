@@ -32,7 +32,7 @@ const router = express.Router();
  *     summary: Replies to a contribution
  *     description: Posts a contribution replying to the one with id {postId}.
  *     tags:
- *       - posts
+ *       - /posts/
  *       - todo
  *     parameters:
  *       - name: postId
@@ -122,7 +122,7 @@ router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
  *     summary: Comments on a contribution
  *     description: Posts a comment replying to the contribution with id {postId}.
  *     tags:
- *       - posts
+ *       - /posts/
  *       - todo
  */
 router.post("/:postId/comment", isLoggedIn, async (req, res) => {
@@ -170,7 +170,7 @@ router.post("/:postId/comment", isLoggedIn, async (req, res) => {
  *     summary: Comments on a contribution (with a chain)
  *     description: Posts a contribution replying to the one with id {postId}.
  *     tags:
- *       - posts
+ *       - /posts/
  *       - todo
  */
 router.post("/:postId/comment/chain", isLoggedIn, async (req, res) => {
@@ -221,7 +221,7 @@ const EXTRACT_DID_REGEX = /data-did="([^"]+)"/;
  *   post:
  *     summary: Gets the endpoint for a tumblr embed.
  *     tags:
- *       - posts
+ *       - /posts/
  *       - todo
  */
 router.get("/embed/tumblr", isLoggedIn, async (req, res) => {
@@ -251,7 +251,7 @@ router.get("/embed/tumblr", isLoggedIn, async (req, res) => {
  *     summary: Edits a contribution
  *     description: Edits a contribution (for now just tags).
  *     tags:
- *       - posts
+ *       - /posts/
  *       - todo
  */
 router.post("/:postId/edit", isLoggedIn, async (req, res) => {
