@@ -8,8 +8,13 @@ const options = {
     info: {
       title: "BobaBoard's API documentation.",
       version: "0.0.1",
-      description:
-        "Welcome to the BobaBoard's backend API. This is still a WIP.",
+      description: `
+# Intro
+Welcome to the BobaBoard's backend API. This is still a WIP.
+
+# Example Section
+This is just to test that sections work. It will be written better later.
+        `,
       contact: {
         name: "Ms. Boba",
         url: "https://www.bobaboard.com",
@@ -24,16 +29,22 @@ const options = {
     ],
     tags: [
       {
-        name: "posts",
+        name: "/posts/",
         description: "All APIs related to the /posts/ endpoints.",
       },
       {
-        name: "boards",
+        name: "/boards/",
         description: "All APIs related to the /boards/ endpoints.",
       },
       {
         name: "todo",
         description: "APIs whose documentation still needs work.",
+      },
+    ],
+    "x-tagGroups": [
+      {
+        name: "general",
+        tags: ["/posts/", "/boards/"],
       },
     ],
   },

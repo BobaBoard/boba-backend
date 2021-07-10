@@ -34,7 +34,7 @@ const router = express.Router();
  *   get:
  *     summary: Fetches board data.
  *     tags:
- *       - boards
+ *       - /boards/
  *       - todo
  */
 router.get("/:slug", isLoggedIn, async (req, res) => {
