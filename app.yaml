@@ -1,4 +1,4 @@
-runtime: nodejs10
+runtime: nodejs12
 service: backend
 vpc_access_connector:
   name: "projects/bobaboard/locations/us-central1/connectors/boba-redis-connector"

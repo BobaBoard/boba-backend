@@ -23,7 +23,7 @@ This is just to test that sections work. It will be written better later.
     },
     servers: [
       {
-        url: "http://localhost:4200",
+        url: "http://localhost:4200/",
         description: "Development server",
       },
     ],
