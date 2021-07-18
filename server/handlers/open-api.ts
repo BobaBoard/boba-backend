@@ -8,6 +8,7 @@ const options = {
     info: {
       title: "BobaBoard's API documentation.",
       version: "0.0.1",
+      // Note: indenting the description will cause the markdown not to format correctly.
       description: `
 # Intro
 Welcome to the BobaBoard's backend API. This is still a WIP.
@@ -27,6 +28,7 @@ This is just to test that sections work. It will be written better later.
         description: "Development server",
       },
     ],
+    // These are used to group endpoints in the sidebar
     tags: [
       {
         name: "/posts/",
@@ -41,6 +43,7 @@ This is just to test that sections work. It will be written better later.
         description: "APIs whose documentation still needs work.",
       },
     ],
+    // Special Redoc section to control how tags display in the sidebar.
     "x-tagGroups": [
       {
         name: "general",
@@ -48,6 +51,7 @@ This is just to test that sections work. It will be written better later.
       },
     ],
   },
+  // Which paths to parse the API specs from.
   apis: ["./types/open-api/*.yaml", "./server/*/routes.ts"],
 };
 
