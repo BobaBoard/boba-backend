@@ -212,38 +212,6 @@ router.post("/:postId/comment/chain", isLoggedIn, async (req, res) => {
   res.status(200).json({ comments: responseComments });
 });
 
-const EXTRACT_HREF_REGEX = /data-href="([^"]+)"/;
-const EXTRACT_DID_REGEX = /data-did="([^"]+)"/;
-
-/**
- * @openapi
- * posts/embed/tumblr:
- *   post:
- *     summary: Gets the endpoint for a tumblr embed.
- *     tags:
- *       - /posts/
- *       - todo
- */
-router.get("/embed/tumblr", isLoggedIn, async (req, res) => {
-  const { url } = req.query;
-
-  axios
-    .get(`https://www.tumblr.com/oembed/1.0?url=${encodeURI(url as string)}`)
-    .then((tumblrRes) => {
-      res.status(200).send({
-        did: tumblrRes.data.html.match(EXTRACT_DID_REGEX)?.[1],
-        href: tumblrRes.data.html.match(EXTRACT_HREF_REGEX)?.[1],
-        url,
-        embedWidth: tumblrRes.data.width,
-      });
-    })
-    .catch((e) => {
-      error(`Error while fetching tumblr embed for ${url}:`);
-      error(e);
-      res.sendStatus(500);
-    });
-});
-
 /**
  * @openapi
  * posts/{postId}/edit:
