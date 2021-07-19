@@ -8,8 +8,7 @@ import {
   getPostFromStringId,
   updatePostTags,
 } from "./queries";
-import { isLoggedIn } from "../handlers/auth";
-import axios from "axios";
+import { ensureLoggedIn, isLoggedIn } from "../handlers/auth";
 import {
   makeServerPost,
   makeServerComment,
@@ -57,6 +56,8 @@ const router = express.Router();
  *               - $ref: "#/components/schemas/Tags"
  *               - $ref: "#/components/params/Identity"
  *     responses:
+ *       401:
+ *         description: User was not found in request that requires authentication.
  *       403:
  *         description: User is not authorized to perform the action.
  *       200:
@@ -70,7 +71,7 @@ const router = express.Router();
  *                   $ref: "#/components/schemas/Contribution"
  *                   description: Finalized details of the contributions just posted.
  */
-router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
+router.post("/:postId/contribute", ensureLoggedIn, async (req, res) => {
   const { postId } = req.params;
   const {
     content,
@@ -85,11 +86,6 @@ router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
     accessory_id,
     identity_id,
   } = req.body;
-
-  if (!req.currentUser) {
-    res.sendStatus(403);
-    return;
-  }
 
   log(`Making countribution to post with id ${postId}`);
 
