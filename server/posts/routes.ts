@@ -71,8 +71,8 @@ const router = express.Router();
  *                   $ref: "#/components/schemas/Contribution"
  *                   description: Finalized details of the contributions just posted.
  */
-router.post("/:postId/contribute", ensureLoggedIn, async (req, res) => {
-  const { postId } = req.params;
+router.post("/:post_id/contribute", ensureLoggedIn, async (req, res) => {
+  const { post_id } = req.params;
   const {
     content,
     // TODO: remove
@@ -87,13 +87,13 @@ router.post("/:postId/contribute", ensureLoggedIn, async (req, res) => {
     identity_id,
   } = req.body;
 
-  log(`Making countribution to post with id ${postId}`);
+  log(`Making countribution to post with id ${post_id}`);
 
   const result = await postNewContribution({
     firebaseId: req.currentUser.uid,
     identityId: identity_id,
     accessoryId: accessory_id,
-    parentPostId: postId,
+    parentPostId: post_id,
     content,
     isLarge: !!large,
     anonymityType: forceAnonymous ? "everyone" : "strangers",
