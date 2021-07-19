@@ -1,0 +1,21 @@
+components:
+  schemas:
+    Tags:
+      type: object
+      properties:
+        whisper_tags:
+          type: array
+          items:
+            type: string
+        index_tags:
+          type: array
+          items:
+            type: string
+        category_tags:
+          type: array
+          items:
+            type: string
+        content_warnings:
+          type: array
+          items:
+            type: string

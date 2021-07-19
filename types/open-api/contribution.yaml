@@ -12,9 +12,62 @@ components:
         parent_post_id:
           type: string
           format: uuid
+        # TODO: change this into parent_board_id
+        parent_board_slug:
+          type: string
+          format: string
+        # TODO: change this into created_at
+        created:
+          type: string
+          # TODO: actually conform returned type to RFC 3339
+          format: date-time
         secret_identity:
+          description: The public-facing identity associated with the contribution.
+          $ref: "#/components/schemas/SecretIdentity"
+        user_identity:
+          description: The identity of the original poster, if visible to the requester.
           $ref: "#/components/schemas/Identity"
+        self:
+          type: boolean
+        is_new:
+          type: boolean
+        is_own:
+          type: boolean
+        total_comments_amount:
+          type: number
+        new_comments_amount:
+          type: number
+        # TODO: change to empty array instead of null
+        comments:
+          nullable: true
+          type: array
+          items:
+            $ref: "#/components/schemas/Comment"
+        tags:
+          type: object
+          $ref: "#/components/schemas/Tags"
+        type:
+          type: string
+          enum: [text]
+          deprecated: true
+        anonymity_type:
+          type: string
+          enum: [everyone, friends_only]
+          deprecated: true
+        friend:
+          type: boolean
+          deprecated: true
       required:
         - post_id
+        - parent_post_id
         - parent_thread_id
+        - parent_board_slug
+        - created
         - secret_identity
+        - self
+        - is_new
+        - is_own
+        - total_comments_amount
+        - new_comments_amount
+        - comments
+        - tags
