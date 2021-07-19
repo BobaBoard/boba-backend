@@ -7,6 +7,17 @@ components:
           type: string
         avatar:
           type: string
+          format: url∂
+      required:
+        - name
+        - avatar
+    SecretIdentity:
+      type: object
+      properties:
+        name:
+          type: string
+        avatar:
+          type: string
           format: url
         color:
           type: string

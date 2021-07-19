@@ -42,6 +42,31 @@ const router = express.Router();
  *         schema:
  *           type: string
  *           format: uuid
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               content:
+ *                 type: string
+ *                 format: quill-delta
+ *               contentWarnings:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               whisperTags:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               indexTags:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *               categoryTags:
+ *                 type: array
+ *                 items:
+ *                   type: string
  *     responses:
  *       403:
  *         description: User is not authorized to perform the action.

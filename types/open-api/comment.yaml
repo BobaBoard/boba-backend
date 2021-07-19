@@ -1,0 +1,8 @@
+components:
+  schemas:
+    Comment:
+      type: object
+      properties:
+        comment_id:
+          type: string
+          format: uuid
