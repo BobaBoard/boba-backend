@@ -8,10 +8,15 @@ import { SettingEntry } from "../../types/settings";
 const log = debug("bobaserver:auth-log");
 const error = debug("bobaserver:auth-error");
 
+const EXPIRED_TOKEN_ERROR = "Authentication token expired.";
+const NO_USER_FOUND_ERROR = "No authenticated user found.";
 declare global {
   namespace Express {
     export interface Request {
+      // Note: these should probably use req.locals, but that is harder to
+      // type so the possible values will be suggested by the editor.
       currentUser?: auth.DecodedIdToken & { settings?: SettingEntry[] };
+      authenticationError?: Error;
     }
   }
 }
@@ -19,16 +24,13 @@ declare global {
 export const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
   const idToken = req.headers?.authorization;
   req.currentUser = null;
-  log(idToken);
-  log(req.originalUrl);
-  log(typeof idToken);
+
   if (!idToken) {
     log("No id token found in request. User is not logged in.");
+    req.authenticationError = new Error(NO_USER_FOUND_ERROR);
     next();
     return;
   }
-  log(idToken);
-  log("here");
   firebaseAuth
     .auth()
     .verifyIdToken(idToken)
@@ -47,12 +49,16 @@ export const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
     })
     .catch((e) => {
       if (e.errorInfo?.code == "auth/id-token-expired") {
-        log("Found expired token.");
+        log("Found expired authentication token.");
+        req.authenticationError = new Error(EXPIRED_TOKEN_ERROR);
         next();
         return;
       }
       error("Error during verification. No user set.");
-      error(e);
+      error(e.errorInfo);
+      req.authenticationError = new Error(
+        `An uncommon authentication error occurred: ${e.errorInfo?.code}`
+      );
       next();
       return;
     });
@@ -66,8 +72,23 @@ export const ensureLoggedIn = (
   isLoggedIn(req, res, async () => {
     const currentUserId = req.currentUser?.uid;
     if (!currentUserId) {
-      error("Unauthorized request received for ensureLoggedIn route.");
-      res.sendStatus(401);
+      error(
+        `Unauthorized request received for ensureLoggedIn route: ${req.originalUrl}.`
+      );
+      error(req.authenticationError);
+      if (req.authenticationError?.message === NO_USER_FOUND_ERROR) {
+        res.status(401).json({
+          message: NO_USER_FOUND_ERROR,
+        });
+      } else if (req.authenticationError?.message === EXPIRED_TOKEN_ERROR) {
+        res.status(403).json({
+          message: EXPIRED_TOKEN_ERROR,
+        });
+      } else {
+        res.status(401).json({
+          message: req.authenticationError?.message,
+        });
+      }
       return;
     }
     next();
