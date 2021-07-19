@@ -27,15 +27,14 @@ const router = express.Router();
 
 /**
  * @openapi
- * posts/{postId}/contribute:
+ * posts/{post_id}/contribute:
  *   post:
- *     summary: Replies to a contribution
+ *     summary: Replies to a contribution.
  *     description: Posts a contribution replying to the one with id {postId}.
  *     tags:
  *       - /posts/
- *       - todo
  *     parameters:
- *       - name: postId
+ *       - name: post_id
  *         in: path
  *         description: The uuid of the contribution to reply to.
  *         required: true
@@ -43,30 +42,20 @@ const router = express.Router();
  *           type: string
  *           format: uuid
  *     requestBody:
+ *       description: The details of the contribution to post.
+ *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               content:
- *                 type: string
- *                 format: quill-delta
- *               contentWarnings:
- *                 type: array
- *                 items:
- *                   type: string
- *               whisperTags:
- *                 type: array
- *                 items:
- *                   type: string
- *               indexTags:
- *                 type: array
- *                 items:
- *                   type: string
- *               categoryTags:
- *                 type: array
- *                 items:
- *                   type: string
+ *             allOf:
+ *               - type: object
+ *                 properties:
+ *                   content:
+ *                     required: true
+ *                     type: string
+ *                     format: quill-delta
+ *               - $ref: "#/components/schemas/Tags"
+ *               - $ref: "#/components/params/Identity"
  *     responses:
  *       403:
  *         description: User is not authorized to perform the action.
@@ -85,14 +74,16 @@ router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
   const { postId } = req.params;
   const {
     content,
+    // TODO: remove
     forceAnonymous,
+    // TODO: remove
     large,
-    whisperTags,
-    indexTags,
-    categoryTags,
-    contentWarnings,
-    accessoryId,
-    identityId,
+    whisper_tags,
+    index_tags,
+    category_tags,
+    content_warnings,
+    accessory_id,
+    identity_id,
   } = req.body;
 
   if (!req.currentUser) {
@@ -101,22 +92,19 @@ router.post("/:postId/contribute", isLoggedIn, async (req, res) => {
   }
 
   log(`Making countribution to post with id ${postId}`);
-  log(`Content: `, content);
-  log(`Anonymous: `, forceAnonymous);
-  log(`Whisper Tags: `, whisperTags);
 
   const result = await postNewContribution({
     firebaseId: req.currentUser.uid,
-    identityId,
-    accessoryId,
+    identityId: identity_id,
+    accessoryId: accessory_id,
     parentPostId: postId,
     content,
     isLarge: !!large,
     anonymityType: forceAnonymous ? "everyone" : "strangers",
-    whisperTags,
-    indexTags,
-    categoryTags,
-    contentWarnings,
+    whisperTags: whisper_tags,
+    indexTags: index_tags,
+    categoryTags: category_tags,
+    contentWarnings: content_warnings,
   });
   log(`Contribution posted: `, result);
 
