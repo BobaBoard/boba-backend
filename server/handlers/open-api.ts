@@ -32,15 +32,25 @@ This is just to test that sections work. It will be written better later.
     tags: [
       {
         name: "/posts/",
-        description: "All APIs related to the /posts/ endpoints.",
+        description: "APIs related to the /posts/ endpoints.",
       },
       {
         name: "/boards/",
-        description: "All APIs related to the /boards/ endpoints.",
+        description: "APIs related to the /boards/ endpoints.",
       },
       {
         name: "todo",
         description: "APIs whose documentation still needs work.",
+      },
+      {
+        name: "models",
+        "x-displayName": "Models",
+        description: `
+## Contribution
+<SchemaDefinition schemaRef="#/components/schemas/Contribution" />
+## Tags
+<SchemaDefinition schemaRef="#/components/schemas/Tags" />
+`,
       },
     ],
     // Special Redoc section to control how tags display in the sidebar.
@@ -48,6 +58,10 @@ This is just to test that sections work. It will be written better later.
       {
         name: "general",
         tags: ["/posts/", "/boards/"],
+      },
+      {
+        name: "models",
+        tags: ["models"],
       },
     ],
   },
