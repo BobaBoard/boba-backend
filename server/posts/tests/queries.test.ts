@@ -3,7 +3,7 @@ import deepEqualInAnyOrder from "deep-equal-in-any-order";
 import chai, { expect } from "chai";
 chai.use(deepEqualInAnyOrder);
 
-import { runWithinTransaction } from "../../test-utils";
+import { runWithinTransaction } from "../../../utils/test-utils";
 
 import { maybeAddIndexTags } from "../queries";
 

@@ -3,8 +3,6 @@ import deepEqualInAnyOrder from "deep-equal-in-any-order";
 import chai, { expect } from "chai";
 chai.use(deepEqualInAnyOrder);
 
-import { runWithinTransaction } from "../../test-utils";
-
 import { getLatestSubscriptionData } from "../queries";
 
 import debug from "debug";

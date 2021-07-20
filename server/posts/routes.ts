@@ -125,7 +125,7 @@ router.post("/:post_id/contribution", ensureLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * posts/{postId}/comment:
+ * posts/{post_id}/comment:
  *   post:
  *     summary: Add comments to a contribution, optionally nested under another comment.
  *     description: Creates a comment nested under the contribution with id {post_id}.
