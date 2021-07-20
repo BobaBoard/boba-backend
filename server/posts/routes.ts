@@ -31,6 +31,8 @@ const router = express.Router();
  *     description: Posts a contribution replying to the one with id {postId}.
  *     tags:
  *       - /posts/
+ *     security:
+ *       - firebase: []
  *     parameters:
  *       - name: post_id
  *         in: path
