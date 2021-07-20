@@ -12,9 +12,9 @@ import {
   makeServerPost,
   makeServerComment,
   ensureNoIdentityLeakage,
-} from "../response-utils";
+} from "../../utils/response-utils";
 import { getTagsDelta } from "./utils";
-import { canDoTagsEdit } from "../permissions-utils";
+import { canDoTagsEdit } from "../../utils/permissions-utils";
 import { maybeUpdateSubscriptionsOnThreadChange } from "../subscriptions/utils";
 
 const info = debug("bobaserver:posts:routes-info");

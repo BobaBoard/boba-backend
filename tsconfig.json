@@ -13,6 +13,6 @@
     },
     "skipLibCheck": true
   },
-  "include": ["server/**/*", "extra-types.d.ts", "handlers"],
+  "include": ["server/**/*", "extra-types.d.ts", "utils", "handlers"],
   "exclude": ["node_modules"]
 }

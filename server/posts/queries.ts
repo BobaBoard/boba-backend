@@ -1,5 +1,5 @@
 import debug from "debug";
-import pool from "../pool";
+import pool from "../db-pool";
 import { v4 as uuidv4 } from "uuid";
 import sql from "./sql";
 import threadsSql from "../threads/sql";
@@ -10,7 +10,10 @@ import {
   PostPermissions,
 } from "../../Types";
 import { ITask } from "pg-promise";
-import { canPostAs, transformPostPermissions } from "../permissions-utils";
+import {
+  canPostAs,
+  transformPostPermissions,
+} from "../../utils/permissions-utils";
 import { getBoardBySlug } from "../boards/queries";
 
 const log = debug("bobaserver:posts:queries-log");

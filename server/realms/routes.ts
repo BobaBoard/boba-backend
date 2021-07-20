@@ -5,11 +5,11 @@ import {
   ensureNoIdentityLeakage,
   mergeObjectIdentity,
   transformImageUrls,
-} from "../response-utils";
+} from "../../utils/response-utils";
 import firebaseAuth from "firebase-admin";
 import { ServerThreadType, DbActivityThreadType } from "../../Types";
 import { cache, CacheKeys } from "../cache";
-import { aggregateByType, parseSettings } from "../utils/settings";
+import { aggregateByType, parseSettings } from "../../utils/settings";
 import { CssVariableSetting, GlobalSettings } from "../../types/settings";
 import { filterOutDisabledSettings, getRealmCursorSetting } from "./utils";
 

@@ -13,12 +13,15 @@ import {
   getTriggeredWebhooks,
 } from "./queries";
 import { isLoggedIn } from "../../handlers/auth";
-import { makeServerThread, ensureNoIdentityLeakage } from "../response-utils";
+import {
+  makeServerThread,
+  ensureNoIdentityLeakage,
+} from "../../utils/response-utils";
 import { ThreadPermissions } from "../../Types";
 import axios from "axios";
 import { canAccessBoard } from "../boards/utils";
 import { getBoardBySlug } from "../boards/queries";
-import { transformThreadPermissions } from "../permissions-utils";
+import { transformThreadPermissions } from "../../utils/permissions-utils";
 import { moveThread } from "./queries";
 
 const info = debug("bobaserver:threads:routes-info");

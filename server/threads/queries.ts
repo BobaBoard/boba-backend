@@ -1,5 +1,5 @@
 import debug from "debug";
-import pool from "../pool";
+import pool from "../db-pool";
 import { v4 as uuidv4 } from "uuid";
 import sql from "./sql";
 import {
@@ -10,7 +10,7 @@ import {
 } from "../posts/queries";
 import { DbThreadType, ThreadPermissions } from "../../Types";
 import { getBoardBySlug } from "../boards/queries";
-import { transformThreadPermissions } from "../permissions-utils";
+import { transformThreadPermissions } from "../../utils/permissions-utils";
 
 const log = debug("bobaserver:threads:queries-log");
 const error = debug("bobaserver:threads:queries-error");

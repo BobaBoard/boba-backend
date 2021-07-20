@@ -1,10 +1,10 @@
 import debug from "debug";
-import pool from "../pool";
+import pool from "../db-pool";
 import sql from "./sql";
 import postsSQL from "../posts/sql";
 import { DbBoardMetadata, DbActivityThreadType } from "../../Types";
 import { getMetadataDelta } from "./utils";
-import { encodeCursor, decodeCursor } from "../queries-utils";
+import { encodeCursor, decodeCursor } from "../../utils/queries-utils";
 
 const info = debug("bobaserver:board:queries-info");
 const log = debug("bobaserver:board:queries-log");
