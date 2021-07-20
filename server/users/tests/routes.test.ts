@@ -3,7 +3,7 @@ import { expect } from "chai";
 import debug from "debug";
 import express, { Express } from "express";
 import request from "supertest";
-import * as authHandler from "../../handlers/auth";
+import * as authHandler from "../../../handlers/auth";
 import sinon from "sinon";
 
 const authStub = sinon.stub(authHandler, "isLoggedIn");
