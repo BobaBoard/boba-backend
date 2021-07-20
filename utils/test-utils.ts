@@ -1,5 +1,5 @@
 import { ITask } from "pg-promise";
-import pool from "./pool";
+import pool from "../server/db-pool";
 
 export const runWithinTransaction = async (
   test: (transaction: ITask<any>) => void
