@@ -21,11 +21,11 @@ import {
   ensureNoIdentityLeakage,
   mergeObjectIdentity,
   transformImageUrls,
-} from "../response-utils";
+} from "../../utils/response-utils";
 import firebaseAuth from "firebase-admin";
 import { ServerThreadType, DbActivityThreadType } from "../../Types";
 import { cache, CacheKeys } from "../cache";
-import { aggregateByType, parseSettings } from "../utils/settings";
+import { aggregateByType, parseSettings } from "../../utils/settings";
 
 const info = debug("bobaserver:users:routes-info");
 const log = debug("bobaserver:users:routes-log");

@@ -2,7 +2,7 @@ import {
   DbSettingType,
   SettingEntry,
   SettingValueTypes,
-} from "../../types/settings";
+} from "../types/settings";
 
 export const parseSettings = (settings: DbSettingType[]): SettingEntry[] => {
   return settings.map((setting) => {

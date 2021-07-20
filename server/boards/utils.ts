@@ -2,7 +2,7 @@ import { BoardDescription, DbBoardMetadata } from "../../Types";
 import { cache, CacheKeys } from "../cache";
 import { getBoardBySlug } from "./queries";
 import debug from "debug";
-import { processBoardMetadata } from "../response-utils";
+import { processBoardMetadata } from "../../utils/response-utils";
 const info = debug("bobaserver:board:utils-info");
 const log = debug("bobaserver:board:utils-log");
 

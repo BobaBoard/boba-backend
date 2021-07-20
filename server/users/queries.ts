@@ -1,10 +1,10 @@
 import debug from "debug";
 import { DbActivityThreadType } from "../../Types";
 import { SettingEntry, SettingValueTypes } from "../../types/settings";
-import pool from "../pool";
+import pool from "../db-pool";
 import sql from "./sql";
-import { encodeCursor, decodeCursor } from "../queries-utils";
-import { parseSettings } from "../utils/settings";
+import { encodeCursor, decodeCursor } from "../../utils/queries-utils";
+import { parseSettings } from "../../utils/settings";
 
 const log = debug("bobaserver:users:queries-log");
 const error = debug("bobaserver:users:queries-error");

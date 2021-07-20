@@ -1,5 +1,5 @@
 import debug from "debug";
-import pool from "../pool";
+import pool from "../db-pool";
 import sql from "./sql";
 
 const error = debug("bobaserver:subscriptions:queries-error");

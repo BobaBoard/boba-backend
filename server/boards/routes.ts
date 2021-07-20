@@ -19,8 +19,8 @@ import {
   ensureNoIdentityLeakage,
   processBoardMetadata,
   processBoardsMetadata,
-} from "../response-utils";
-import { canEditBoard } from "../permissions-utils";
+} from "../../utils/response-utils";
+import { canEditBoard } from "../../utils/permissions-utils";
 import { DbActivityThreadType, ServerThreadType } from "../../Types";
 import { canAccessBoard, getBoardMetadata } from "./utils";
 
