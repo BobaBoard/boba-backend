@@ -5,7 +5,7 @@ chai.use(deepEqualInAnyOrder);
 
 import { runWithinTransaction } from "../../test-utils";
 
-import { maybeAddIndexTags, postNewComment } from "../queries";
+import { maybeAddIndexTags } from "../queries";
 
 import debug from "debug";
 const log = debug("bobaserver:posts:queries-test-log");
