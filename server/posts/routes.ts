@@ -25,7 +25,7 @@ const router = express.Router();
 
 /**
  * @openapi
- * posts/{post_id}/contribute:
+ * posts/{post_id}/contribution:
  *   post:
  *     summary: Replies to a contribution.
  *     description: Posts a contribution replying to the one with id {postId}.
@@ -70,7 +70,7 @@ const router = express.Router();
  *                   $ref: "#/components/schemas/Contribution"
  *                   description: Finalized details of the contributions just posted.
  */
-router.post("/:post_id/contribute", ensureLoggedIn, async (req, res) => {
+router.post("/:post_id/contribution", ensureLoggedIn, async (req, res) => {
   const { post_id } = req.params;
   const {
     content,
