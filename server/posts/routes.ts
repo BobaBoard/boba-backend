@@ -7,7 +7,7 @@ import {
   getPostFromStringId,
   updatePostTags,
 } from "./queries";
-import { ensureLoggedIn, isLoggedIn } from "../handlers/auth";
+import { ensureLoggedIn, isLoggedIn } from "../../handlers/auth";
 import {
   makeServerPost,
   makeServerComment,

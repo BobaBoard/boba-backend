@@ -12,7 +12,11 @@ import {
   getUserSettings,
   updateUserSettings,
 } from "./queries";
-import { ensureLoggedIn, isLoggedIn, withUserSettings } from "../handlers/auth";
+import {
+  ensureLoggedIn,
+  isLoggedIn,
+  withUserSettings,
+} from "../../handlers/auth";
 import {
   ensureNoIdentityLeakage,
   mergeObjectIdentity,
@@ -217,9 +221,8 @@ router.get("/me/feed", isLoggedIn, async (req, res) => {
 
   const threadsWithIdentity = userActivity.activity.map(
     (thread): ServerThreadType => {
-      const threadWithIdentity = mergeObjectIdentity<DbActivityThreadType>(
-        thread
-      );
+      const threadWithIdentity =
+        mergeObjectIdentity<DbActivityThreadType>(thread);
       return {
         posts: [
           {

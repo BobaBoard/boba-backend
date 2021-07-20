@@ -15,7 +15,7 @@ if (process.env.NODE_ENV == "production") {
 import debug from "debug";
 import express from "express";
 import bodyParser from "body-parser";
-import initOpenApiDocs from "./handlers/open-api";
+import initOpenApiDocs from "../handlers/open-api";
 import cors from "cors";
 import firebaseAuth from "firebase-admin";
 import { initCache } from "./cache";

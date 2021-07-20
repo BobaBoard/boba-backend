@@ -1,6 +1,6 @@
 import debug from "debug";
 import express from "express";
-import { withUserSettings } from "../handlers/auth";
+import { withUserSettings } from "../../handlers/auth";
 import {
   ensureNoIdentityLeakage,
   mergeObjectIdentity,
