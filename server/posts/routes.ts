@@ -131,7 +131,6 @@ router.post("/:post_id/contribution", ensureLoggedIn, async (req, res) => {
  *     description: Creates a comment nested under the contribution with id {post_id}.
  *     tags:
  *       - /posts/
- *       - todo
  *     parameters:
  *       - name: post_id
  *         in: path
@@ -224,16 +223,45 @@ router.post("/:post_id/comment", ensureLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * posts/{postId}/contribution:
+ * posts/{post_id}/contribution:
  *   patch:
  *     summary: Edits a contribution.
- *     description: Edits a contribution (for now just tags).
+ *     description: Edits a contribution (for now just its tags).
  *     tags:
  *       - /posts/
- *       - todo
+ *     parameters:
+ *       - name: post_id
+ *         in: path
+ *         description: The uuid of the contribution to edit.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       description: The details of the contribution to edit.
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/Tags"
+ *     responses:
+ *       401:
+ *         description: User was not found in request that requires authentication.
+ *       403:
+ *         description: User is not authorized to perform the action.
+ *       200:
+ *         description: The contribution was successfully edited.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 contribution:
+ *                   $ref: "#/components/schemas/Contribution"
+ *                   description: Finalized details of the contributions just edited.
  */
-router.patch("/:postId/contribution", ensureLoggedIn, async (req, res) => {
-  const { postId } = req.params;
+router.patch("/:post_id/contribution", ensureLoggedIn, async (req, res) => {
+  const { post_id } = req.params;
   const { whisper_tags, index_tags, category_tags, content_warnings } =
     req.body;
 
@@ -242,12 +270,12 @@ router.patch("/:postId/contribution", ensureLoggedIn, async (req, res) => {
 
   const permissions = await getUserPermissionsForPost({
     firebaseId,
-    postId,
+    postId: post_id,
   });
 
   log(`Permissions: ${permissions}`);
   if (!permissions) {
-    log(`Error while fetching permissions for post ${postId}`);
+    log(`Error while fetching permissions for post ${post_id}`);
     res.sendStatus(500);
     return;
   }
@@ -257,10 +285,10 @@ router.patch("/:postId/contribution", ensureLoggedIn, async (req, res) => {
     return;
   }
 
-  log(`Getting details from post ${postId}`);
+  log(`Getting details from post ${post_id}`);
   const postDetails = await getPostFromStringId(null, {
     firebaseId,
-    postId,
+    postId: post_id,
   });
 
   const postTags = {
@@ -287,15 +315,15 @@ router.patch("/:postId/contribution", ensureLoggedIn, async (req, res) => {
     res.sendStatus(401);
     return;
   }
-  log(`Editing post with id ${postId}}`);
+  log(`Editing post with id ${post_id}}`);
 
   const updatedDetails = await updatePostTags(null, {
     firebaseId,
-    postId,
+    postId: post_id,
     tagsDelta,
   });
   if (!updatedDetails) {
-    log(`Error while updating post ${postId}`);
+    log(`Error while updating post ${post_id}`);
     res.sendStatus(500);
     return;
   }
