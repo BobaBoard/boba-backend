@@ -6,3 +6,37 @@ components:
         comment_id:
           type: string
           format: uuid
+        parent_post:
+          type: string
+          format: uuid
+        chain_parent_id:
+          type: string
+          format: uuid
+        # TODO: change this into created_at
+        created:
+          type: string
+          # TODO: actually conform returned type to RFC 3339
+          format: date-time
+        anonymity_type:
+          type: string
+          enum: [everyone, friends_only]
+        self:
+          type: boolean
+        is_new:
+          type: boolean
+        is_own:
+          type: boolean
+        secret_identity:
+          description: The public-facing identity associated with the comment.
+          $ref: "#/components/schemas/SecretIdentity"
+        user_identity:
+          description: The identity of the original poster, if visible to the requester.
+          $ref: "#/components/schemas/Identity"
+      required:
+        - comment_id
+        - parent_post
+        - created
+        - secret_identity
+        - self
+        - is_new
+        - is_own

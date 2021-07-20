@@ -2,7 +2,6 @@ import debug from "debug";
 import express from "express";
 import {
   postNewContribution,
-  postNewComment,
   postNewCommentChain,
   getUserPermissionsForPost,
   getPostFromStringId,
@@ -128,83 +127,83 @@ router.post("/:post_id/contribute", ensureLoggedIn, async (req, res) => {
  * @openapi
  * posts/{postId}/comment:
  *   post:
- *     summary: Comments on a contribution
- *     description: Posts a comment replying to the contribution with id {postId}.
- *     tags:
- *       - /posts/
- *       - todo
- */
-router.post("/:postId/comment", isLoggedIn, async (req, res) => {
-  const { postId } = req.params;
-  const { content, forceAnonymous, replyToCommentId, identityId, accessoryId } =
-    req.body;
-
-  if (!req.currentUser) {
-    res.sendStatus(401);
-    return;
-  }
-
-  log(
-    `Making comment to post with id ${postId} replying to ${replyToCommentId}`
-  );
-  log(`Content: `, content);
-  log(`Anonymous: `, forceAnonymous);
-
-  const comment = await postNewComment({
-    firebaseId: req.currentUser.uid,
-    parentPostId: postId,
-    parentCommentId: replyToCommentId,
-    content,
-    anonymityType: forceAnonymous ? "everyone" : "strangers",
-    identityId,
-    accessoryId,
-  });
-  log(`Comment posted: `, comment);
-
-  if (!comment) {
-    res.sendStatus(500);
-    return;
-  }
-
-  const responseComment = makeServerComment(comment);
-
-  ensureNoIdentityLeakage(responseComment);
-  res.status(200).json({ comment: responseComment });
-});
-
-/**
- * @openapi
- * posts/{post_id}/comment:
- *   post:
  *     summary: Add comments to a contribution, optionally nested under a reply to it.
  *     description: Creates a comment nested under the contribution with id {post_id}.
  *     tags:
  *       - /posts/
  *       - todo
+ *     parameters:
+ *       - name: post_id
+ *         in: path
+ *         description: The uuid of the contribution to reply to.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       description: The details of the comment to post.
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             allOf:
+ *               - type: object
+ *                 properties:
+ *                   contents:
+ *                     required: true
+ *                     type: array
+ *                     items:
+ *                       $ref: "#/components/schemas/Comment"
+ *                   reply_to_comment_id:
+ *                     nullable: true
+ *                     type: string
+ *                     format: uuid
+ *               - $ref: "#/components/params/Identity"
+ *     responses:
+ *       401:
+ *         description: User was not found in request that requires authentication.
+ *       403:
+ *         description: User is not authorized to perform the action.
+ *       200:
+ *         description: The comments were successfully created.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 comments:
+ *                   $ref: "#/components/schemas/Comments"
+ *                   description: Finalized details of the comments just posted.
  */
-router.post("/:postId/comment/chain", isLoggedIn, async (req, res) => {
-  const { postId } = req.params;
-  const { contentArray, forceAnonymous, replyToCommentId, identityId } =
-    req.body;
+router.post("/:post_id/comment", ensureLoggedIn, async (req, res) => {
+  const { post_id } = req.params;
+  const {
+    contents,
+    forceAnonymous,
+    reply_to_comment_id,
+    identity_id,
+    accessory_id,
+  } = req.body;
 
-  if (!req.currentUser) {
-    res.sendStatus(401);
+  log(
+    `Making chained comment to post with id ${post_id} replying to ${reply_to_comment_id}`
+  );
+
+  if (!Array.isArray(contents)) {
+    res.status(500).json({
+      message: "Received non-array type as contents of comment.",
+    });
     return;
   }
 
-  log(
-    `Making chained comment to post with id ${postId} replying to ${replyToCommentId}`
-  );
-  log(`Content: `, contentArray);
-  log(`Anonymous: `, forceAnonymous);
-
   const comments = await postNewCommentChain({
     firebaseId: req.currentUser.uid,
-    parentPostId: postId,
-    parentCommentId: replyToCommentId,
-    contentArray,
+    parentPostId: post_id,
+    parentCommentId: reply_to_comment_id,
+    contentArray: contents,
     anonymityType: forceAnonymous ? "everyone" : "strangers",
-    identityId,
+    identityId: identity_id,
+    accessoryId: accessory_id,
   });
   log(`Comments posted: `, comments);
 

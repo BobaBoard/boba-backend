@@ -1,8 +1,7 @@
 components:
   schemas:
     Tags:
-      name: Tags
-      description: Types of tags that can be associated to a contribution.
+      description: Types of tags associated to a contribution.
       type: object
       properties:
         whisper_tags:
