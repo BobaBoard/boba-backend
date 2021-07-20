@@ -471,45 +471,6 @@ const postNewCommentWithTransaction = async ({
   };
 };
 
-export const postNewComment = async ({
-  firebaseId,
-  parentPostId,
-  parentCommentId,
-  content,
-  anonymityType,
-  identityId,
-  accessoryId,
-}: {
-  firebaseId: string;
-  parentPostId: string;
-  parentCommentId: string;
-  content: string;
-  anonymityType: string;
-  identityId?: string;
-  accessoryId?: string;
-}): Promise<DbCommentType | false> => {
-  return pool
-    .tx("create-comment", async (transaction) => {
-      const result = await postNewCommentWithTransaction({
-        firebaseId,
-        parentPostId,
-        parentCommentId,
-        chainParentId: null,
-        content,
-        anonymityType,
-        transaction,
-        identityId,
-        accessoryId,
-      });
-      return result.comment;
-    })
-    .catch((e) => {
-      error(`Error while creating comment.`);
-      error(e);
-      return false;
-    });
-};
-
 export const postNewCommentChain = async ({
   firebaseId,
   parentPostId,
@@ -517,6 +478,7 @@ export const postNewCommentChain = async ({
   contentArray,
   anonymityType,
   identityId,
+  accessoryId,
 }: {
   firebaseId: string;
   parentPostId: string;
@@ -524,6 +486,7 @@ export const postNewCommentChain = async ({
   contentArray: string[];
   anonymityType: string;
   identityId?: string;
+  accessoryId?: string;
 }): Promise<DbCommentType[] | false> => {
   return pool
     .tx("create-comment-chaim", async (transaction) => {
@@ -540,6 +503,7 @@ export const postNewCommentChain = async ({
           anonymityType,
           transaction,
           identityId,
+          accessoryId,
         });
         newComment.comment.chain_parent_id = prevStringId;
         prevId = newComment.id;
