@@ -10,7 +10,6 @@ import {
   maybeAddCategoryTags,
   maybeAddContentWarningTags,
   maybeAddIndexTags,
-  postNewComment,
   removeIndexTags,
   updateWhisperTags,
 } from "../queries";

@@ -127,7 +127,7 @@ router.post("/:post_id/contribution", ensureLoggedIn, async (req, res) => {
  * @openapi
  * posts/{postId}/comment:
  *   post:
- *     summary: Add comments to a contribution, optionally nested under a reply to it.
+ *     summary: Add comments to a contribution, optionally nested under another comment.
  *     description: Creates a comment nested under the contribution with id {post_id}.
  *     tags:
  *       - /posts/
@@ -172,8 +172,10 @@ router.post("/:post_id/contribution", ensureLoggedIn, async (req, res) => {
  *               type: object
  *               properties:
  *                 comments:
- *                   $ref: "#/components/schemas/Comments"
  *                   description: Finalized details of the comments just posted.
+ *                   type: array
+ *                   items:
+ *                     $ref: "#/components/schemas/Comment"
  */
 router.post("/:post_id/comment", ensureLoggedIn, async (req, res) => {
   const { post_id } = req.params;
@@ -222,24 +224,21 @@ router.post("/:post_id/comment", ensureLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * posts/{postId}/edit:
- *   post:
- *     summary: Edits a contribution
+ * posts/{postId}/contribution:
+ *   patch:
+ *     summary: Edits a contribution.
  *     description: Edits a contribution (for now just tags).
  *     tags:
  *       - /posts/
  *       - todo
  */
-router.post("/:postId/edit", isLoggedIn, async (req, res) => {
+router.patch("/:postId/contribution", ensureLoggedIn, async (req, res) => {
   const { postId } = req.params;
-  const { whisperTags, indexTags, categoryTags, contentWarnings } = req.body;
+  const { whisper_tags, index_tags, category_tags, content_warnings } =
+    req.body;
 
-  if (!req.currentUser) {
-    res.sendStatus(401);
-    return;
-  }
   const firebaseId = req.currentUser.uid;
-  log(`Getting permissions for user ${firebaseId}`);
+  log(`Getting post permissions for user ${firebaseId}`);
 
   const permissions = await getUserPermissionsForPost({
     firebaseId,
@@ -271,7 +270,12 @@ router.post("/:postId/edit", isLoggedIn, async (req, res) => {
     whisperTags: postDetails.whisper_tags,
   };
 
-  const newTags = { whisperTags, indexTags, categoryTags, contentWarnings };
+  const newTags = {
+    whisperTags: whisper_tags,
+    indexTags: index_tags,
+    categoryTags: category_tags,
+    contentWarnings: content_warnings,
+  };
 
   const tagsDelta = getTagsDelta({ oldTags: postTags, newTags });
   info(
@@ -298,7 +302,7 @@ router.post("/:postId/edit", isLoggedIn, async (req, res) => {
   const responsePost = makeServerPost(updatedDetails);
 
   ensureNoIdentityLeakage(responsePost);
-  res.status(220).json(responsePost);
+  res.status(220).json({ contribution: responsePost });
 });
 
 export default router;
