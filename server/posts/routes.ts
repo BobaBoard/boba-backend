@@ -133,6 +133,8 @@ router.post("/:post_id/contribution", ensureLoggedIn, async (req, res) => {
  *     description: Creates a comment nested under the contribution with id {post_id}.
  *     tags:
  *       - /posts/
+ *     security:
+ *       - firebase: []
  *     parameters:
  *       - name: post_id
  *         in: path
@@ -231,6 +233,8 @@ router.post("/:post_id/comment", ensureLoggedIn, async (req, res) => {
  *     description: Edits a contribution (for now just its tags).
  *     tags:
  *       - /posts/
+ *     security:
+ *       - firebase: []
  *     parameters:
  *       - name: post_id
  *         in: path
