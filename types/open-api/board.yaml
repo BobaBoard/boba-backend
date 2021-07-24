@@ -20,23 +20,21 @@ components:
           type: boolean
         last_post_at:
           type: string
-          # TODO: actually conform returned type to RFC 3339
           format: date-time
           nullable: true
         last_comment_at:
           type: string
-          # TODO: actually conform returned type to RFC 3339
           format: date-time
           nullable: true
         last_activity_at:
           type: string
-          # TODO: actually conform returned type to RFC 3339
           format: date-time
           nullable: true
       required:
         - id
         - slug
         - avatar_url
+        - accent_color
         - logged_in_only
         - delisted
         - last_post_at

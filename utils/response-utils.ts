@@ -237,7 +237,7 @@ export const processBoardsSummary = ({
 
   // TODO[cleanup]: get correct format from db
   return result.map((result) => ({
-    id: "",
+    id: result.slug,
     slug: result.slug,
     tagline: result.tagline,
     avatar_url: result.avatarUrl,

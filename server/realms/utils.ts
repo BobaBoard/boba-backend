@@ -78,3 +78,17 @@ export const filterOutDisabledSettings = (
   }
   return finalSettings;
 };
+
+export const processRealmActivity = ({ boards }: { boards: any[] }) => {
+  return boards.reduce((result, current) => {
+    result[current.slug] = {
+      id: current.slug,
+      last_post_at: current.last_post,
+      last_comment_at: current.last_comment,
+      last_activity_at: current.last_activity,
+      last_activity_from_others_at: current.last_activity_from_others,
+      last_visit_at: current.last_visit,
+    };
+    return result;
+  }, {});
+};
