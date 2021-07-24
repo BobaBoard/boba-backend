@@ -1,6 +1,6 @@
 components:
   schemas:
-    Settings:
+    Setting:
       type: object
       properties:
         todo:

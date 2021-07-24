@@ -225,3 +225,27 @@ export const processBoardsMetadata = ({
 
   return result.filter((board) => board != null);
 };
+
+export const processBoardsSummary = ({
+  boards,
+  isLoggedIn,
+}: {
+  boards: any[];
+  isLoggedIn: boolean;
+}) => {
+  const result = processBoardsMetadata({ boards, isLoggedIn });
+
+  // TODO[cleanup]: get correct format from db
+  return result.map((result) => ({
+    id: "",
+    slug: result.slug,
+    tagline: result.tagline,
+    avatar_url: result.avatarUrl,
+    accent_color: result.settings.accentColor,
+    delisted: !!result.delisted,
+    logged_in_only: !!result.loggedInOnly,
+    last_post_at: result.last_post,
+    last_comment_at: result.last_comment,
+    last_activity_at: result.last_activity,
+  }));
+};
