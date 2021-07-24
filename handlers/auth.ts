@@ -56,6 +56,7 @@ export const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
       }
       error("Error during verification. No user set.");
       error(e.errorInfo);
+      error(idToken);
       req.authenticationError = new Error(
         `An uncommon authentication error occurred: ${e.errorInfo?.code}`
       );

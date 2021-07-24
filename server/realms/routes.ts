@@ -1,5 +1,7 @@
 import debug from "debug";
 import express from "express";
+import { getBoards } from "../boards/queries";
+import { processBoardsSummary } from "../../utils/response-utils";
 import { withUserSettings } from "../../handlers/auth";
 import { getSettingsBySlug } from "./queries";
 
@@ -42,9 +44,24 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
       realmSlug: realm_slug,
       userSettings: currentUserSettings,
     });
+
+    // TODO[realms]: use a per-realm query here
+    const boards = await getBoards({
+      firebaseId: req.currentUser?.uid,
+    });
+
+    if (!boards) {
+      res.status(500);
+    }
+
+    const realmBoards = processBoardsSummary({
+      boards,
+      isLoggedIn: !!req.currentUser?.uid,
+    });
     res.status(200).json({
       slug: realm_slug,
       settings,
+      boards: realmBoards,
     });
   } catch (e) {
     error(e);
