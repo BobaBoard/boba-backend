@@ -28,6 +28,47 @@ const info = debug("bobaserver:board:routes-info");
 const log = debug("bobaserver:board:routes");
 
 const router = express.Router();
+
+/**
+ * @openapi
+ * boards/:
+ *   get:
+ *     summary: Get all boards and their metadata.
+ *     tags:
+ *       - /boards/
+ *       - todo
+ */
+router.get("/", isLoggedIn, async (req, res) => {
+  if (!req.currentUser?.uid) {
+    // Only get cache for non-logged in users, because for logged in users this
+    // method also returns updates.
+    const cachedBoards = await cache().get(CacheKeys.BOARDS);
+    if (cachedBoards) {
+      info(`Returning cached result for all boards.`);
+      res.status(200).json(JSON.parse(cachedBoards));
+      return;
+    }
+  }
+
+  const boards = await getBoards({
+    firebaseId: req.currentUser?.uid,
+  });
+  if (!boards) {
+    res.status(500);
+  }
+
+  const boardsResponse = processBoardsMetadata({
+    boards,
+    isLoggedIn: !!req.currentUser?.uid,
+  });
+  log(`Returning all boards for user ${req.currentUser?.uid}`);
+  res.status(200).json(boardsResponse);
+
+  if (!req.currentUser?.uid) {
+    cache().set(CacheKeys.BOARDS, JSON.stringify(boardsResponse));
+  }
+});
+
 /**
  * @openapi
  * boards/{slug}:
@@ -69,7 +110,7 @@ router.get("/:slug", isLoggedIn, async (req, res) => {
  *   post:
  *     summary: Update boards metadata
  *     tags:
- *       - boards
+ *       - /boards/
  *       - todo
  */
 router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
@@ -126,7 +167,7 @@ router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
  *   get:
  *     summary: Sets last visited time for board
  *     tags:
- *       - boards
+ *       - /boards/
  *       - todo
  */
 router.get("/:slug/visit", isLoggedIn, async (req, res) => {
@@ -159,7 +200,7 @@ router.get("/:slug/visit", isLoggedIn, async (req, res) => {
  *   post:
  *     summary: Mutes board
  *     tags:
- *       - boards
+ *       - /boards/
  *       - todo
  */
 router.post("/:slug/mute", isLoggedIn, async (req, res) => {
@@ -192,7 +233,7 @@ router.post("/:slug/mute", isLoggedIn, async (req, res) => {
  *   post:
  *     summary: Unmutes board
  *     tags:
- *       - boards
+ *       - /boards/
  *       - todo
  */
 router.post("/:slug/unmute", isLoggedIn, async (req, res) => {
@@ -225,7 +266,7 @@ router.post("/:slug/unmute", isLoggedIn, async (req, res) => {
  *   post:
  *     summary: Pins board
  *     tags:
- *       - boards
+ *       - /boards/
  *       - todo
  */
 router.post("/:slug/pin", isLoggedIn, async (req, res) => {
@@ -254,11 +295,11 @@ router.post("/:slug/pin", isLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * boards/{slug}/unmute:
+ * boards/{slug}/unpin:
  *   post:
  *     summary: Unpins board
  *     tags:
- *       - boards
+ *       - /boards/
  *       - todo
  */
 router.post("/:slug/unpin", isLoggedIn, async (req, res) => {
@@ -282,6 +323,15 @@ router.post("/:slug/unpin", isLoggedIn, async (req, res) => {
   res.status(200).json();
 });
 
+/**
+ * @openapi
+ * boards/{slug}/notifications/dismiss:
+ *   post:
+ *     summary: Dismiss all notifications for board {slug}
+ *     tags:
+ *       - /boards/
+ *       - todo
+ */
 router.post("/:slug/notifications/dismiss", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
   // @ts-ignore
@@ -312,7 +362,7 @@ router.post("/:slug/notifications/dismiss", isLoggedIn, async (req, res) => {
  *   get:
  *     summary: Get latest board activity.
  *     tags:
- *       - boards
+ *       - /boards/
  *       - todo
  */
 router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
@@ -401,47 +451,6 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
     `Returning board activity data for board ${slug} for user ${req.currentUser?.uid}.`
   );
   res.status(200).json(response);
-});
-
-/**
- * @openapi
- * boards/:
- *   get:
- *     summary: Get all boards and their metadata.
- *     tags:
- *       - boards
- *       - todo
- */
-router.get("/", isLoggedIn, async (req, res) => {
-  if (!req.currentUser?.uid) {
-    // Only get cache for non-logged in users, because for logged in users this
-    // method also returns updates.
-    const cachedBoards = await cache().get(CacheKeys.BOARDS);
-    if (cachedBoards) {
-      info(`Returning cached result for all boards.`);
-      res.status(200).json(JSON.parse(cachedBoards));
-      return;
-    }
-  }
-
-  const boards = await getBoards({
-    // @ts-ignore
-    firebaseId: req.currentUser?.uid,
-  });
-  if (!boards) {
-    res.status(500);
-  }
-
-  const boardsResponse = processBoardsMetadata({
-    boards,
-    isLoggedIn: !!req.currentUser?.uid,
-  });
-  log(`Returning all boards for user ${req.currentUser?.uid}`);
-  res.status(200).json(boardsResponse);
-
-  if (!req.currentUser?.uid) {
-    cache().set(CacheKeys.BOARDS, JSON.stringify(boardsResponse));
-  }
 });
 
 export default router;
