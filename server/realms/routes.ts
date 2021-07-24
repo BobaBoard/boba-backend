@@ -1,17 +1,7 @@
 import debug from "debug";
 import express from "express";
 import { withUserSettings } from "../../handlers/auth";
-import {
-  ensureNoIdentityLeakage,
-  mergeObjectIdentity,
-  transformImageUrls,
-} from "../../utils/response-utils";
-import firebaseAuth from "firebase-admin";
-import { ServerThreadType, DbActivityThreadType } from "../../Types";
-import { cache, CacheKeys } from "../cache";
-import { aggregateByType, parseSettings } from "../../utils/settings";
-import { CssVariableSetting, GlobalSettings } from "../../types/settings";
-import { filterOutDisabledSettings, getRealmCursorSetting } from "./utils";
+import { getSettingsBySlug } from "./queries";
 
 const info = debug("bobaserver:users:routes-info");
 const log = debug("bobaserver:users:routes-log");
@@ -19,66 +9,48 @@ const error = debug("bobaserver:users:routes-error");
 
 const router = express.Router();
 
-const CURSOR_SETTINGS = {
-  // image: "https://cur.cursors-4u.net/nature/nat-2/nat120.cur",
-  // trail: "/smoke.gif",
-};
-
-const INDEX_PAGE_SETTINGS: CssVariableSetting[] = [
-  // {
-  //   name: "header-background-image",
-  //   type: "CssVariable",
-  //   value: "url(/weed4.png)",
-  // },
-];
-
-const BOARD_PAGE_SETTINGS: CssVariableSetting[] = [
-  // {
-  //   name: "feed-background-image",
-  //   type: "CssVariable",
-  //   value: "url(/weed4.png)",
-  // },
-];
-
-const THREAD_PAGE_SETTINGS: CssVariableSetting[] = [
-  // {
-  //   name: "sidebar-background-image",
-  //   type: "CssVariable",
-  //   value: "url(/weed4.png)",
-  // },
-];
-
-router.get("/:id", withUserSettings, async (req, res) => {
+/**
+ * @openapi
+ * realms/slug/{realm_slug}/:
+ *   get:
+ *     summary: Fetches the top-level realm metadata by slug.
+ *     tags:
+ *       - /realms/
+ *     security:
+ *       - []
+ *       - firebase: []
+ *     parameters:
+ *       - name: realm_slug
+ *         in: path
+ *         description: The slug of the realm.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: The realm metadata. If authenticated, the settings object will respect the settings of the user.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Realm"
+ */
+router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
   try {
     const currentUserSettings = req.currentUser?.settings || [];
-    const { id } = req.params;
-    const baseSettings = {
-      name: id,
-      rootSettings: {},
-      indexPageSettings: [] as CssVariableSetting[],
-      boardPageSettings: [] as CssVariableSetting[],
-      threadPageSettings: [] as CssVariableSetting[],
-    };
-    // @ts-expect-error
-    baseSettings.rootSettings.cursor = getRealmCursorSetting(
-      CURSOR_SETTINGS,
-      currentUserSettings
-    );
-    baseSettings.indexPageSettings = filterOutDisabledSettings(
-      INDEX_PAGE_SETTINGS,
-      currentUserSettings
-    );
-    baseSettings.boardPageSettings = filterOutDisabledSettings(
-      BOARD_PAGE_SETTINGS,
-      currentUserSettings
-    );
-    baseSettings.threadPageSettings = filterOutDisabledSettings(
-      THREAD_PAGE_SETTINGS,
-      currentUserSettings
-    );
-    res.status(200).json(baseSettings);
+    const { realm_slug } = req.params;
+    const settings = await getSettingsBySlug({
+      realmSlug: realm_slug,
+      userSettings: currentUserSettings,
+    });
+    res.status(200).json({
+      slug: realm_slug,
+      settings,
+    });
   } catch (e) {
-    res.status(500).send("There was an error fetching realm data.");
+    error(e);
+    res.status(500).json({
+      message: "There was an error fetching realm data.",
+    });
   }
 });
 

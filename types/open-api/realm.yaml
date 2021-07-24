@@ -1,0 +1,41 @@
+components:
+  schemas:
+    RealmSettings:
+      type: object
+      properties:
+        root:
+          type: obect
+          properties:
+            cursor:
+              type: object
+        index_page:
+          type: array
+          items:
+            $ref: "#/components/schemas/Settings"
+        board_page:
+          type: array
+          items:
+            $ref: "#/components/schemas/Settings"
+        thread_page:
+          type: array
+          items:
+            $ref: "#/components/schemas/Settings"
+      required:
+        - root
+        - index_page
+        - board_page
+        - thread_page
+    Realm:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        slug:
+          type: string
+        settings:
+          $ref: "#/components/schemas/RealmSettings"
+      required:
+        - id
+        - slug
+        - settings
