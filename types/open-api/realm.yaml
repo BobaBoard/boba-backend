@@ -41,3 +41,41 @@ components:
         - id
         - slug
         - settings
+    RealmActivity:
+      type: object
+      properties:
+        id:
+          description: The Realm id.
+          type: string
+          format: uuid
+        boards:
+          description: |
+            The activity summary for each board in the realm. |
+            Keys are the uuid of each board.
+          type: object
+          additionalProperties:
+            type: object
+            properties:
+              id:
+                type: string
+                format: uuid
+              last_post_at:
+                type: string
+                format: date-time
+                nullable: true
+              last_comment_at:
+                type: string
+                format: date-time
+                nullable: true
+              last_activity_at:
+                type: string
+                format: date-time
+                nullable: true
+              last_activity_from_others_at:
+                type: string
+                format: date-time
+                nullable: true
+              last_visit_at:
+                type: string
+                format: date-time
+                nullable: true
