@@ -39,6 +39,10 @@ This is just to test that sections work. It will be written better later.
         description: "APIs related to the /boards/ endpoints.",
       },
       {
+        name: "/realms/",
+        description: "APIs related to the /realms/ endpoints.",
+      },
+      {
         name: "todo",
         description: "APIs whose documentation still needs work.",
       },
@@ -50,6 +54,8 @@ This is just to test that sections work. It will be written better later.
 <SchemaDefinition schemaRef="#/components/schemas/Contribution" />
 ## Tags
 <SchemaDefinition schemaRef="#/components/schemas/Tags" />
+## Comment
+<SchemaDefinition schemaRef="#/components/schemas/Comment" />
 `,
       },
     ],
@@ -57,7 +63,7 @@ This is just to test that sections work. It will be written better later.
     "x-tagGroups": [
       {
         name: "general",
-        tags: ["/posts/", "/boards/"],
+        tags: ["/posts/", "/boards/", "/realms/"],
       },
       {
         name: "models",

@@ -1,0 +1,7 @@
+components:
+  schemas:
+    Settings:
+      type: object
+      properties:
+        todo:
+          type: string
