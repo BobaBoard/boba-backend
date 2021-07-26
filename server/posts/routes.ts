@@ -153,7 +153,6 @@ router.post("/:post_id/contribution", ensureLoggedIn, async (req, res) => {
  *               - type: object
  *                 properties:
  *                   contents:
- *                     required: true
  *                     type: array
  *                     items:
  *                       $ref: "#/components/schemas/Comment"

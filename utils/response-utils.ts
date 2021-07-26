@@ -238,14 +238,14 @@ export const processBoardsSummary = ({
   // TODO[cleanup]: get correct format from db
   return result.map((result) => ({
     id: result.slug,
+    realm_id: "v0-fake-id",
     slug: result.slug,
     tagline: result.tagline,
     avatar_url: result.avatarUrl,
     accent_color: result.settings.accentColor,
     delisted: !!result.delisted,
     logged_in_only: !!result.loggedInOnly,
-    last_post_at: result.last_post,
-    last_comment_at: result.last_comment,
-    last_activity_at: result.last_activity,
+    muted: isLoggedIn ? !!result.muted : undefined,
+    pinned: isLoggedIn ? result.pinned_order !== null : undefined,
   }));
 };

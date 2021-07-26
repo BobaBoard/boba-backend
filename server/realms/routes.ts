@@ -38,40 +38,45 @@ const router = express.Router();
  *             schema:
  *               $ref: "#/components/schemas/Realm"
  */
-router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
-  try {
-    const currentUserSettings = req.currentUser?.settings || [];
-    const { realm_slug } = req.params;
-    const settings = await getSettingsBySlug({
-      realmSlug: realm_slug,
-      userSettings: currentUserSettings,
-    });
+router.get(
+  "/slug/:realm_slug",
+  isLoggedIn,
+  withUserSettings,
+  async (req, res) => {
+    try {
+      const currentUserSettings = req.currentUser?.settings || [];
+      const { realm_slug } = req.params;
+      const settings = await getSettingsBySlug({
+        realmSlug: realm_slug,
+        userSettings: currentUserSettings,
+      });
 
-    // TODO[realms]: use a per-realm query here
-    const boards = await getBoards({
-      firebaseId: req.currentUser?.uid,
-    });
+      // TODO[realms]: use a per-realm query here
+      const boards = await getBoards({
+        firebaseId: req.currentUser?.uid,
+      });
 
-    if (!boards) {
-      res.status(500);
+      if (!boards) {
+        res.status(500);
+      }
+
+      const realmBoards = processBoardsSummary({
+        boards,
+        isLoggedIn: !!req.currentUser?.uid,
+      });
+      res.status(200).json({
+        slug: realm_slug,
+        settings,
+        boards: realmBoards,
+      });
+    } catch (e) {
+      error(e);
+      res.status(500).json({
+        message: "There was an error fetching realm data.",
+      });
     }
-
-    const realmBoards = processBoardsSummary({
-      boards,
-      isLoggedIn: !!req.currentUser?.uid,
-    });
-    res.status(200).json({
-      slug: realm_slug,
-      settings,
-      boards: realmBoards,
-    });
-  } catch (e) {
-    error(e);
-    res.status(500).json({
-      message: "There was an error fetching realm data.",
-    });
   }
-});
+);
 
 /**
  * @openapi
