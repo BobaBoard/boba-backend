@@ -6,6 +6,9 @@ components:
         id:
           type: string
           format: uuid
+        realm_id:
+          type: string
+          format: uuid
         slug:
           type: string
         avatar_url:
@@ -18,6 +21,32 @@ components:
           type: boolean
         delisted:
           type: boolean
+      required:
+        - id
+        - realm_id
+        - slug
+        - avatar_url
+        - accent_color
+        - logged_in_only
+        - delisted
+    LoggedInBoardSummary:
+      allOf:
+        - $ref: "#/components/schemas/BoardSummary"
+        - type: object
+          properties:
+            muted:
+              type: boolean
+            pinned:
+              type: boolean
+      required:
+        - muted
+        - pinned
+    BoardActivity:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
         last_post_at:
           type: string
           format: date-time
@@ -30,13 +59,18 @@ components:
           type: string
           format: date-time
           nullable: true
+        last_activity_from_others_at:
+          type: string
+          format: date-time
+          nullable: true
+        last_visit_at:
+          type: string
+          format: date-time
+          nullable: true
       required:
         - id
-        - slug
-        - avatar_url
-        - accent_color
-        - logged_in_only
-        - delisted
         - last_post_at
         - last_comment_at
         - last_activity_at
+        - last_activity_from_others_at
+        - last_visit_at

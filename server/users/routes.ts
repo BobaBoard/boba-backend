@@ -20,12 +20,14 @@ import {
 import {
   ensureNoIdentityLeakage,
   mergeObjectIdentity,
+  processBoardsSummary,
   transformImageUrls,
 } from "../../utils/response-utils";
 import firebaseAuth from "firebase-admin";
 import { ServerThreadType, DbActivityThreadType } from "../../Types";
 import { cache, CacheKeys } from "../cache";
 import { aggregateByType, parseSettings } from "../../utils/settings";
+import { getBoards } from "../boards/queries";
 
 const info = debug("bobaserver:users:routes-info");
 const log = debug("bobaserver:users:routes-log");
@@ -33,18 +35,56 @@ const error = debug("bobaserver:users:routes-error");
 
 const router = express.Router();
 
-router.get("/me", isLoggedIn, async (req, res) => {
+/**
+ * @openapi
+ * users/@me:
+ *   get:
+ *     summary: Gets data for the current user.
+ *     tags:
+ *       - /users/
+ *     security:
+ *       - firebase: []
+ *     responses:
+ *       401:
+ *         description: User was not found in request that requires authentication.
+ *       403:
+ *         description: User is not authorized to perform the action.
+ *       200:
+ *         description: The user data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 username:
+ *                   type: string
+ *                 avatar_url:
+ *                   type: string
+ *                   format: uri
+ *                 pinned_boards:
+ *                   description: |
+ *                     A map from board id to its LoggedInSummary for each pinned board.
+ *                   type: object
+ *                   additionalProperties:
+ *                     allOf:
+ *                       - $ref: "#/components/schemas/LoggedInBoardSummary"
+ *                       - type: object
+ *                         properties:
+ *                           index:
+ *                             type: number
+ *                         required:
+ *                           - index
+ *               required:
+ *                 - username
+ *                 - pinned_boards
+ */
+router.get("/@me", ensureLoggedIn, async (req, res) => {
   let currentUserId: string = req.currentUser?.uid;
-  if (!currentUserId) {
-    res.sendStatus(401);
-    return;
-  }
-
-  const cachedData = await cache().hget(CacheKeys.USER, currentUserId);
-  if (cachedData) {
-    log(`Returning cached data for user ${currentUserId}`);
-    return res.status(200).json(JSON.parse(cachedData));
-  }
+  // const cachedData = await cache().hget(CacheKeys.USER, currentUserId);
+  // if (cachedData) {
+  //   log(`Returning cached data for user ${currentUserId}`);
+  //   return res.status(200).json(JSON.parse(cachedData));
+  // }
 
   log(`Fetching user data for firebase id: ${currentUserId}`);
   const userData = transformImageUrls(
@@ -54,9 +94,34 @@ router.get("/me", isLoggedIn, async (req, res) => {
   );
   info(`Found user data : `, userData);
 
+  // TODO[realms]: this needs a specific per-user query
+  const boards = await getBoards({
+    firebaseId: req.currentUser?.uid,
+  });
+
+  if (!boards) {
+    res.status(500);
+  }
+
+  const summaries = processBoardsSummary({
+    boards,
+    isLoggedIn: !!req.currentUser?.uid,
+  });
+  const pins = summaries
+    .filter((board: any) => board.pinned)
+    .reduce((result: any, current: any) => {
+      result[current.slug] = {
+        ...current,
+        index: boards.find(({ slug }: any) => current.slug == slug)
+          .pinned_order,
+      };
+      return result;
+    }, {});
+
   const userDataResponse = {
     username: userData.username,
-    avatarUrl: userData.avatarUrl,
+    avatar_url: userData.avatarUrl,
+    pinned_boards: pins,
   };
   res.status(200).json(userDataResponse);
   cache().hset(CacheKeys.USER, currentUserId, JSON.stringify(userDataResponse));

@@ -43,6 +43,10 @@ This is just to test that sections work. It will be written better later.
         description: "APIs related to the /realms/ endpoints.",
       },
       {
+        name: "/users/",
+        description: "APIs related to the /users/ endpoints.",
+      },
+      {
         name: "todo",
         description: "APIs whose documentation still needs work.",
       },
@@ -52,10 +56,15 @@ This is just to test that sections work. It will be written better later.
         description: `
 ## Contribution
 <SchemaDefinition schemaRef="#/components/schemas/Contribution" />
+
 ## Tags
 <SchemaDefinition schemaRef="#/components/schemas/Tags" />
+
 ## Comment
 <SchemaDefinition schemaRef="#/components/schemas/Comment" />
+
+## Board Summary (logged in)
+<SchemaDefinition schemaRef="#/components/schemas/LoggedInBoardSummary" />
 `,
       },
     ],
@@ -63,7 +72,7 @@ This is just to test that sections work. It will be written better later.
     "x-tagGroups": [
       {
         name: "general",
-        tags: ["/posts/", "/boards/", "/realms/"],
+        tags: ["/posts/", "/boards/", "/realms/", "/users/"],
       },
       {
         name: "models",
