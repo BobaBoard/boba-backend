@@ -161,7 +161,6 @@ router.get("/:slug/visit", isLoggedIn, async (req, res) => {
  *     description: Mutes the specified board for the current user.
  *     tags:
  *       - /boards/
- *       - todo
  *     security:
  *       - firebase: []
  *     parameters:
@@ -209,7 +208,6 @@ router.post("/:slug/mute", isLoggedIn, async (req, res) => {
  *     description: Unmutes the specified board for the current user.
  *     tags:
  *       - /boards/
- *       - todo
  *     security:
  *       - firebase: []
  *     parameters:
