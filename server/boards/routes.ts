@@ -69,7 +69,7 @@ router.get("/:slug", isLoggedIn, async (req, res) => {
  *   post:
  *     summary: Update boards metadata
  *     tags:
- *       - boards
+ *       - /boards/
  *       - todo
  */
 router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
@@ -126,7 +126,7 @@ router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
  *   get:
  *     summary: Sets last visited time for board
  *     tags:
- *       - boards
+ *       - /boards/
  *       - todo
  */
 router.get("/:slug/visit", isLoggedIn, async (req, res) => {
@@ -157,10 +157,25 @@ router.get("/:slug/visit", isLoggedIn, async (req, res) => {
  * @openapi
  * boards/{slug}/mute:
  *   post:
- *     summary: Mutes board
+ *     summary: Mutes a board.
+ *     description: Mutes the specified board for the current user.
  *     tags:
- *       - boards
+ *       - /boards/
  *       - todo
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: slug
+ *         in: path
+ *         description: The name of the board to mute.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       401:
+ *         description: User was not found in request that requires authentication.
+ *       200:
+ *         description: The board was successfully muted.
  */
 router.post("/:slug/mute", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
@@ -190,10 +205,26 @@ router.post("/:slug/mute", isLoggedIn, async (req, res) => {
  * @openapi
  * boards/{slug}/mute:
  *   delete:
- *     summary: Unmutes board
+ *     summary: Unmutes a board.
+ *     description: Unmutes the specified board for the current user.
  *     tags:
- *       - boards
+ *       - /boards/
  *       - todo
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: slug
+ *         in: path
+ *         description: The name of the board to unmute.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       401:
+ *         description: User was not found in request that requires authentication.
+ *       200:
+ *         description: The board was successfully unmuted.
+ *
  */
 router.delete("/:slug/mute", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
@@ -223,10 +254,25 @@ router.delete("/:slug/mute", isLoggedIn, async (req, res) => {
  * @openapi
  * boards/{slug}/pin:
  *   post:
- *     summary: Pins board
+ *     summary: Pins a board.
+ *     description: Pins the specified board for the current user.
  *     tags:
- *       - boards
- *       - todo
+ *       - /boards/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: slug
+ *         in: path
+ *         description: The name of the board to pin.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       401:
+ *         description: User was not found in request that requires authentication.
+ *       200:
+ *         description: The board was successfully pinned.
+ *
  */
 router.post("/:slug/pin", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
@@ -256,10 +302,25 @@ router.post("/:slug/pin", isLoggedIn, async (req, res) => {
  * @openapi
  * boards/{slug}/pin:
  *   delete:
- *     summary: Unpins board
+ *     summary: Unpins a board.
+ *     description: Unpins the specified board for the current user.
  *     tags:
- *       - boards
- *       - todo
+ *       - /boards/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: slug
+ *         in: path
+ *         description: The name of the board to unpin.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       401:
+ *         description: User was not found in request that requires authentication.
+ *       200:
+ *         description: The board was successfully unpinned.
+ *
  */
 router.delete("/:slug/pin", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
@@ -312,7 +373,7 @@ router.post("/:slug/notifications/dismiss", isLoggedIn, async (req, res) => {
  *   get:
  *     summary: Get latest board activity.
  *     tags:
- *       - boards
+ *       - /boards/
  *       - todo
  */
 router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
@@ -409,7 +470,7 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
  *   get:
  *     summary: Get all boards and their metadata.
  *     tags:
- *       - boards
+ *       - /boards/
  *       - todo
  */
 router.get("/", isLoggedIn, async (req, res) => {
