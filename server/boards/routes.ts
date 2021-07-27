@@ -188,14 +188,14 @@ router.post("/:slug/mute", isLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * boards/{slug}/unmute:
- *   post:
+ * boards/{slug}/mute:
+ *   delete:
  *     summary: Unmutes board
  *     tags:
  *       - boards
  *       - todo
  */
-router.post("/:slug/unmute", isLoggedIn, async (req, res) => {
+router.delete("/:slug/mute", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
   // @ts-ignore
   if (!req.currentUser) {
@@ -254,19 +254,19 @@ router.post("/:slug/pin", isLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * boards/{slug}/unmute:
- *   post:
+ * boards/{slug}/pin:
+ *   delete:
  *     summary: Unpins board
  *     tags:
  *       - boards
  *       - todo
  */
-router.post("/:slug/unpin", isLoggedIn, async (req, res) => {
+router.delete("/:slug/pin", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
   if (!req.currentUser) {
     return res.sendStatus(401);
   }
-  log(`Setting board unmuted: ${slug}`);
+  log(`Setting board unpinned: ${slug}`);
 
   if (
     !(await unpinBoard({
