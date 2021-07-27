@@ -20,6 +20,7 @@ import {
 import {
   ensureNoIdentityLeakage,
   mergeObjectIdentity,
+  processBoardsNotifications,
   processBoardsSummary,
   transformImageUrls,
 } from "../../utils/response-utils";
@@ -75,7 +76,6 @@ const router = express.Router();
  *                         required:
  *                           - index
  *               required:
- *                 - username
  *                 - pinned_boards
  */
 router.get("/@me", ensureLoggedIn, async (req, res) => {
@@ -227,6 +227,105 @@ router.post("/invite/accept", async (req, res) => {
         message: error.message,
       });
     });
+});
+
+/**
+ * @openapi
+ * users/@me/notifications:
+ *   get:
+ *     summary: Gets notifications data for the current user.
+ *     description: |
+ *       Gets notifications data for the current user, including pinned boards.
+ *       If `realm_id` is present, also fetch notification data for the current realm.
+ *     tags:
+ *       - /users/
+ *     security:
+ *       - firebase: []
+ *     responses:
+ *       401:
+ *         description: User was not found in request that requires authentication.
+ *       403:
+ *         description: User is not authorized to perform the action.
+ *       200:
+ *         description: The notifications data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 has_notifications:
+ *                   type: boolean
+ *                 is_outdated_notifications:
+ *                   type: boolean
+ *                 realm_boards:
+ *                   description: |
+ *                     A map from board id to its NotificationsStatus for each realm board.
+ *                     If `realm_id` is not present in the params, it will be empty.
+ *                   type: object
+ *                   additionalProperties:
+ *                     $ref: "#/components/schemas/BoardNotifications"
+ *                 pinned_boards:
+ *                   description: |
+ *                     A map from board id to its NotificationsStatus for each pinned board.
+ *                   type: object
+ *                   additionalProperties:
+ *                     $ref: "#/components/schemas/BoardNotifications"
+ *               required:
+ *                 - has_notifications
+ *                 - is_outdated_notifications
+ *                 - pinned_boards
+ *                 - realm_boards
+ */
+router.get("/@me/notifications", ensureLoggedIn, async (req, res) => {
+  const { realm_id } = req.params;
+
+  // TODO[realms]: this needs a specific per-realm query
+  const boards = await getBoards({
+    firebaseId: req.currentUser?.uid,
+  });
+
+  if (!boards) {
+    res.status(500);
+  }
+  const notifications = processBoardsNotifications({
+    boards,
+  });
+  const pinned = notifications
+    .filter((notification: any) =>
+      boards.find(
+        (board: any) =>
+          board.slug == notification.id && board.pinned_order !== null
+      )
+    )
+    .reduce((result: any, current: any) => {
+      result[current.id] = {
+        ...current,
+      };
+      return result;
+    }, {});
+  const realm = notifications.reduce((result: any, current: any) => {
+    result[current.id] = {
+      ...current,
+    };
+    return result;
+  }, {});
+
+  const hasNotifications = notifications.some(
+    (notification) => notification.has_updates
+  );
+  const isOutdatedNotifications = hasNotifications
+    ? notifications.every(
+        (notification) =>
+          notification.has_updates === false || notification.is_outdated
+      )
+    : false;
+  const notificationsDataResponse = {
+    has_notifications: hasNotifications,
+    is_outdated_notifications: isOutdatedNotifications,
+    pinned_boards: pinned,
+    realm_boards: realm,
+  };
+  res.status(200).json(notificationsDataResponse);
 });
 
 router.get("/me/bobadex", isLoggedIn, async (req, res) => {

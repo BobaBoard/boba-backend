@@ -249,3 +249,19 @@ export const processBoardsSummary = ({
     pinned: isLoggedIn ? result.pinned_order !== null : undefined,
   }));
 };
+
+export const processBoardsNotifications = ({ boards }: { boards: any[] }) => {
+  return boards.map((board) => ({
+    id: board.slug,
+    has_updates: board.has_updates,
+    is_outdated:
+      (board.last_activity_from_others &&
+        board.last_visit &&
+        new Date(board.last_visit) >=
+          new Date(board.last_activity_from_others)) ||
+      false,
+    last_activity_at: board.last_activity,
+    last_activity_from_others_at: board.last_activity_from_others,
+    last_visited_at: board.last_visit,
+  }));
+};

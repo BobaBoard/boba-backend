@@ -1,0 +1,35 @@
+components:
+  schemas:
+    BoardNotifications:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        has_updates:
+          description: Whether the board has a notification.
+          type: boolean
+        is_outdated:
+          description: Whether the board's notifications are older than the user's last visit.
+          type: boolean
+        last_activity_at:
+          description: When the board was last updated.
+          type: date-time
+          nullable: true
+        last_activity_from_others_at:
+          description: When the board was last updated by someone other than the current user.
+          type: date-time
+          nullable: true
+        last_visited at:
+          description: When the board was last visited by the current user.
+          type: date-time
+          nullable: true
+
+      required:
+        - id
+        - realm_id
+        - slug
+        - avatar_url
+        - accent_color
+        - logged_in_only
+        - delisted
