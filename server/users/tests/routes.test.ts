@@ -48,14 +48,14 @@ describe("Test users routes", function () {
       .withArgs(CacheKeys.USER, "fb2")
       .resolves(JSON.stringify(cachedData));
 
-    const res = await request(app).get("/me");
+    const res = await request(app).get("/@me");
     log(res.body);
     expect(res.status).to.equal(200);
     expect(res.body).to.eql(cachedData);
   });
 
   it("returns forbidden when no logged in user", async () => {
-    const res = await request(app).get("/me");
+    const res = await request(app).get("/@me");
     expect(res.status).to.equal(401);
   });
 
@@ -67,7 +67,7 @@ describe("Test users routes", function () {
       req.currentUser = { uid: "fb2" };
       next();
     });
-    const res = await request(app).get("/me");
+    const res = await request(app).get("/@me");
     expect(res.status).to.equal(200);
     expect(res.body).to.eql({
       avatarUrl: "/hannibal.png",
