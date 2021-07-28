@@ -13,7 +13,7 @@ import {
   pinBoard,
   unpinBoard,
 } from "./queries";
-import { isLoggedIn } from "../../handlers/auth";
+import { ensureLoggedIn, isLoggedIn } from "../../handlers/auth";
 import {
   mergeObjectIdentity,
   ensureNoIdentityLeakage,
@@ -173,15 +173,14 @@ router.get("/:slug/visit", isLoggedIn, async (req, res) => {
  *     responses:
  *       401:
  *         description: User was not found in request that requires authentication.
+ *       403:
+ *         description: User is not authorized to perform the action.
  *       200:
  *         description: The board was successfully muted.
  */
-router.post("/:slug/mute", isLoggedIn, async (req, res) => {
+router.post("/:slug/mute", ensureLoggedIn, async (req, res) => {
   const { slug } = req.params;
-  // @ts-ignore
-  if (!req.currentUser) {
-    return res.sendStatus(401);
-  }
+
   log(`Setting board muted: ${slug}`);
 
   if (
@@ -220,16 +219,15 @@ router.post("/:slug/mute", isLoggedIn, async (req, res) => {
  *     responses:
  *       401:
  *         description: User was not found in request that requires authentication.
+ *       403:
+ *         description: User is not authorized to perform the action.
  *       200:
  *         description: The board was successfully unmuted.
  *
  */
-router.delete("/:slug/mute", isLoggedIn, async (req, res) => {
+router.delete("/:slug/mute", ensureLoggedIn, async (req, res) => {
   const { slug } = req.params;
-  // @ts-ignore
-  if (!req.currentUser) {
-    return res.sendStatus(401);
-  }
+  
   log(`Setting board unmuted: ${slug}`);
 
   if (
@@ -268,16 +266,15 @@ router.delete("/:slug/mute", isLoggedIn, async (req, res) => {
  *     responses:
  *       401:
  *         description: User was not found in request that requires authentication.
+ *       403:
+ *         description: User is not authorized to perform the action.
  *       200:
  *         description: The board was successfully pinned.
  *
  */
-router.post("/:slug/pin", isLoggedIn, async (req, res) => {
+router.post("/:slug/pin", ensureLoggedIn, async (req, res) => {
   const { slug } = req.params;
-  // @ts-ignore
-  if (!req.currentUser) {
-    return res.sendStatus(401);
-  }
+
   log(`Setting board pinned: ${slug}`);
 
   if (
@@ -316,15 +313,15 @@ router.post("/:slug/pin", isLoggedIn, async (req, res) => {
  *     responses:
  *       401:
  *         description: User was not found in request that requires authentication.
+ *       403:
+ *         description: User is not authorized to perform the action.
  *       200:
  *         description: The board was successfully unpinned.
  *
  */
-router.delete("/:slug/pin", isLoggedIn, async (req, res) => {
+router.delete("/:slug/pin", ensureLoggedIn, async (req, res) => {
   const { slug } = req.params;
-  if (!req.currentUser) {
-    return res.sendStatus(401);
-  }
+
   log(`Setting board unpinned: ${slug}`);
 
   if (
