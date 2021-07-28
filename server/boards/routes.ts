@@ -13,7 +13,7 @@ import {
   pinBoard,
   unpinBoard,
 } from "./queries";
-import { isLoggedIn } from "../../handlers/auth";
+import { ensureLoggedIn, isLoggedIn } from "../../handlers/auth";
 import {
   mergeObjectIdentity,
   ensureNoIdentityLeakage,
@@ -69,7 +69,7 @@ router.get("/:slug", isLoggedIn, async (req, res) => {
  *   post:
  *     summary: Update boards metadata
  *     tags:
- *       - boards
+ *       - /boards/
  *       - todo
  */
 router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
@@ -126,7 +126,7 @@ router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
  *   get:
  *     summary: Sets last visited time for board
  *     tags:
- *       - boards
+ *       - /boards/
  *       - todo
  */
 router.get("/:slug/visit", isLoggedIn, async (req, res) => {
@@ -157,17 +157,30 @@ router.get("/:slug/visit", isLoggedIn, async (req, res) => {
  * @openapi
  * boards/{slug}/mute:
  *   post:
- *     summary: Mutes board
+ *     summary: Mutes a board.
+ *     description: Mutes the specified board for the current user.
  *     tags:
- *       - boards
- *       - todo
+ *       - /boards/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: slug
+ *         in: path
+ *         description: The name of the board to mute.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       401:
+ *         description: User was not found in request that requires authentication.
+ *       403:
+ *         description: User is not authorized to perform the action.
+ *       200:
+ *         description: The board was successfully muted.
  */
-router.post("/:slug/mute", isLoggedIn, async (req, res) => {
+router.post("/:slug/mute", ensureLoggedIn, async (req, res) => {
   const { slug } = req.params;
-  // @ts-ignore
-  if (!req.currentUser) {
-    return res.sendStatus(401);
-  }
+
   log(`Setting board muted: ${slug}`);
 
   if (
@@ -188,19 +201,33 @@ router.post("/:slug/mute", isLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * boards/{slug}/unmute:
- *   post:
- *     summary: Unmutes board
+ * boards/{slug}/mute:
+ *   delete:
+ *     summary: Unmutes a board.
+ *     description: Unmutes the specified board for the current user.
  *     tags:
- *       - boards
- *       - todo
+ *       - /boards/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: slug
+ *         in: path
+ *         description: The name of the board to unmute.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       401:
+ *         description: User was not found in request that requires authentication.
+ *       403:
+ *         description: User is not authorized to perform the action.
+ *       200:
+ *         description: The board was successfully unmuted.
+ *
  */
-router.post("/:slug/unmute", isLoggedIn, async (req, res) => {
+router.delete("/:slug/mute", ensureLoggedIn, async (req, res) => {
   const { slug } = req.params;
-  // @ts-ignore
-  if (!req.currentUser) {
-    return res.sendStatus(401);
-  }
+  
   log(`Setting board unmuted: ${slug}`);
 
   if (
@@ -223,17 +250,31 @@ router.post("/:slug/unmute", isLoggedIn, async (req, res) => {
  * @openapi
  * boards/{slug}/pin:
  *   post:
- *     summary: Pins board
+ *     summary: Pins a board.
+ *     description: Pins the specified board for the current user.
  *     tags:
- *       - boards
- *       - todo
+ *       - /boards/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: slug
+ *         in: path
+ *         description: The name of the board to pin.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       401:
+ *         description: User was not found in request that requires authentication.
+ *       403:
+ *         description: User is not authorized to perform the action.
+ *       200:
+ *         description: The board was successfully pinned.
+ *
  */
-router.post("/:slug/pin", isLoggedIn, async (req, res) => {
+router.post("/:slug/pin", ensureLoggedIn, async (req, res) => {
   const { slug } = req.params;
-  // @ts-ignore
-  if (!req.currentUser) {
-    return res.sendStatus(401);
-  }
+
   log(`Setting board pinned: ${slug}`);
 
   if (
@@ -254,19 +295,34 @@ router.post("/:slug/pin", isLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * boards/{slug}/unmute:
- *   post:
- *     summary: Unpins board
+ * boards/{slug}/pin:
+ *   delete:
+ *     summary: Unpins a board.
+ *     description: Unpins the specified board for the current user.
  *     tags:
- *       - boards
- *       - todo
+ *       - /boards/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: slug
+ *         in: path
+ *         description: The name of the board to unpin.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       401:
+ *         description: User was not found in request that requires authentication.
+ *       403:
+ *         description: User is not authorized to perform the action.
+ *       200:
+ *         description: The board was successfully unpinned.
+ *
  */
-router.post("/:slug/unpin", isLoggedIn, async (req, res) => {
+router.delete("/:slug/pin", ensureLoggedIn, async (req, res) => {
   const { slug } = req.params;
-  if (!req.currentUser) {
-    return res.sendStatus(401);
-  }
-  log(`Setting board unmuted: ${slug}`);
+
+  log(`Setting board unpinned: ${slug}`);
 
   if (
     !(await unpinBoard({
@@ -312,7 +368,7 @@ router.post("/:slug/notifications/dismiss", isLoggedIn, async (req, res) => {
  *   get:
  *     summary: Get latest board activity.
  *     tags:
- *       - boards
+ *       - /boards/
  *       - todo
  */
 router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
@@ -409,7 +465,7 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
  *   get:
  *     summary: Get all boards and their metadata.
  *     tags:
- *       - boards
+ *       - /boards/
  *       - todo
  */
 router.get("/", isLoggedIn, async (req, res) => {
