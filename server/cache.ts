@@ -56,7 +56,7 @@ export const cache = () => client;
 export enum CacheKeys {
   // All boards data.
   BOARDS = "BOARDS",
-  // Data pertaining to a single board. Keyed by the board slug.
+  // Data pertaining to a single board. Keyed by board string id.
   BOARD = "BOARD",
   // Data pertaining to a thread. Keyed by thread string id.
   THREAD = "THREAD",
