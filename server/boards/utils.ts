@@ -6,7 +6,10 @@ import {
 import { cache, CacheKeys } from "../cache";
 import { getBoardBySlug } from "./queries";
 import debug from "debug";
-import { processBoardMetadata } from "../../utils/response-utils";
+import {
+  processBoardMetadata,
+  processBoardsSummary,
+} from "../../utils/response-utils";
 
 const info = debug("bobaserver:board:utils-info");
 const log = debug("bobaserver:board:utils-log");
@@ -153,15 +156,23 @@ export const getBoardMetadata = async ({
     return;
   }
 
+  const boardSummary = processBoardsSummary({
+    boards: [board],
+    isLoggedIn: !!firebaseId,
+  });
   const boardMetadata = processBoardMetadata({
     metadata: board,
     isLoggedIn: !!firebaseId,
   });
+  const finalMetadata = {
+    ...boardSummary[0],
+    ...boardMetadata,
+  };
   if (!firebaseId) {
-    cache().hset(CacheKeys.BOARD_METADATA, slug, JSON.stringify(boardMetadata));
+    cache().hset(CacheKeys.BOARD_METADATA, slug, JSON.stringify(finalMetadata));
   }
   log(`Processed board metadata (${slug}) for user ${firebaseId}`);
-  return boardMetadata;
+  return finalMetadata;
 };
 
 export const canAccessBoard = async ({
