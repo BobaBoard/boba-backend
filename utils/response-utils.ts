@@ -15,7 +15,7 @@ const info = debug("bobaserver:response-utils-info");
 const log = debug("bobaserver::response-utils-log");
 
 const TRANSFORM_DICT: { [key: string]: string } = {
-  avatar_reference_id: "avatar",
+  avatar_reference_id: "avatarUrl",
   avatar: "avatar",
 };
 /* Uses TRANSFORM_DICT to look up which keys in an object
