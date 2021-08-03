@@ -65,6 +65,9 @@ This is just to test that sections work. It will be written better later.
 
 ## Board Summary (logged in)
 <SchemaDefinition schemaRef="#/components/schemas/LoggedInBoardSummary" />
+
+## Descriptions
+<SchemaDefinition schemaRef="#/components/schemas/Description" />
 `,
       },
     ],

@@ -15,7 +15,7 @@ const info = debug("bobaserver:response-utils-info");
 const log = debug("bobaserver::response-utils-log");
 
 const TRANSFORM_DICT: { [key: string]: string } = {
-  avatar_reference_id: "avatarUrl",
+  avatar_reference_id: "avatar",
   avatar: "avatar",
 };
 /* Uses TRANSFORM_DICT to look up which keys in an object
@@ -159,30 +159,23 @@ export const processBoardMetadata = ({
   isLoggedIn: boolean;
 }) => {
   let finalMetadata = {
-    ...metadata,
+    id: metadata.slug,
+    slug: metadata.slug,
+    descriptions: metadata.descriptions || [],
     permissions: transformPermissions(metadata.permissions),
-    postingIdentities: metadata.posting_identities.map((identity: any) =>
+    posting_identities: metadata.posting_identities.map((identity: any) =>
       transformImageUrls(identity)
     ),
-    delisted:
-      metadata.logged_out_restrictions.includes(restriction_types.DELIST) ||
-      metadata.logged_in_base_restrictions.includes(restriction_types.DELIST),
-    loggedInOnly: metadata.logged_out_restrictions.includes(
-      restriction_types.LOCK_ACCESS
-    ),
-    // TODO: remove this cast
-  } as any;
-  // Remove details from list if the board is locked and the user doesn't have access
-  // (right now we keep only avatar, color & description)
-  if (!isLoggedIn && finalMetadata.loggedInOnly) {
-    finalMetadata = extractLockedBoardMetadata(finalMetadata);
+    accessories: metadata.accessories,
+  };
+
+  if (!isLoggedIn) {
+    delete finalMetadata.permissions;
+    delete finalMetadata.posting_identities;
+    delete finalMetadata.accessories;
   }
 
-  delete finalMetadata.logged_out_restrictions;
-  delete finalMetadata.logged_in_base_restrictions;
-  delete finalMetadata.posting_identities;
-
-  return transformImageUrls(finalMetadata);
+  return finalMetadata;
 };
 
 export const processBoardsMetadata = ({
