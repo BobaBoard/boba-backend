@@ -1,8 +1,13 @@
-import { BoardDescription, DbBoardMetadata } from "../../Types";
+import {
+  BoardDescription,
+  restriction_types,
+  DbBoardMetadata,
+} from "../../Types";
 import { cache, CacheKeys } from "../cache";
 import { getBoardBySlug } from "./queries";
 import debug from "debug";
 import { processBoardMetadata } from "../../utils/response-utils";
+
 const info = debug("bobaserver:board:utils-info");
 const log = debug("bobaserver:board:utils-log");
 
@@ -131,7 +136,7 @@ export const getBoardMetadata = async ({
   firebaseId?: string;
 }) => {
   if (!firebaseId) {
-    const cachedBoard = await cache().hget(CacheKeys.BOARD, slug);
+    const cachedBoard = await cache().hget(CacheKeys.BOARD_METADATA, slug);
     if (cachedBoard) {
       log(`Found cached metadata for board ${slug}`);
       return JSON.parse(cachedBoard);
@@ -153,7 +158,7 @@ export const getBoardMetadata = async ({
     isLoggedIn: !!firebaseId,
   });
   if (!firebaseId) {
-    cache().hset(CacheKeys.BOARD, slug, JSON.stringify(boardMetadata));
+    cache().hset(CacheKeys.BOARD_METADATA, slug, JSON.stringify(boardMetadata));
   }
   log(`Processed board metadata (${slug}) for user ${firebaseId}`);
   return boardMetadata;
@@ -166,10 +171,16 @@ export const canAccessBoard = async ({
   slug: string;
   firebaseId?: string;
 }) => {
-  // We use the logged out one because it hits cache.
-  const boardMetadata = await getBoardMetadata({ slug });
-  info(boardMetadata);
-  if (boardMetadata.loggedInOnly) {
+  const board = await getBoardBySlug({
+    firebaseId,
+    slug,
+  });
+  info(`Found board`, board);
+
+  if (!board) {
+    return false;
+  }
+  if (board.logged_out_restrictions.includes(restriction_types.LOCK_ACCESS)) {
     return !!firebaseId;
   }
   return true;

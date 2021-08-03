@@ -2,10 +2,11 @@ import debug from "debug";
 
 import {
   DbRolePermissions,
-  BoardPermissions,
   QueryTagsType,
   PostPermissions,
   ThreadPermissions,
+  BoardPermissions,
+  UserBoardPermissions,
 } from "../Types";
 
 const log = debug("bobaserver::permissions-utils-log");
@@ -17,15 +18,6 @@ export const hasPermission = (
   return permissions.some(
     (p) =>
       (<any>DbRolePermissions)[p] == permission.toString() ||
-      (<any>DbRolePermissions)[p] == DbRolePermissions.all.toString()
-  );
-};
-
-export const canEditBoard = (permissions?: string[]) => {
-  return permissions.some(
-    (p) =>
-      (<any>DbRolePermissions)[p] ==
-        DbRolePermissions.edit_board_details.toString() ||
       (<any>DbRolePermissions)[p] == DbRolePermissions.all.toString()
   );
 };
@@ -58,15 +50,23 @@ export const transformThreadPermissions = (permissions?: string[]) => {
   return threadPermissions;
 };
 
+export const transformBoardPermissions = (permissions?: string[]) => {
+  const boardPermissions = [];
+  if (hasPermission(DbRolePermissions.edit_board_details, permissions)) {
+    boardPermissions.push(BoardPermissions.editMetadata);
+  }
+  return boardPermissions;
+};
+
 export const transformPermissions = (
   permissions?: string[]
-): BoardPermissions => {
+): UserBoardPermissions => {
   log(`Transforming the following user permissions: ${permissions}`);
 
   return {
-    canEditBoardData: canEditBoard(permissions),
-    postsPermissions: transformPostPermissions(permissions),
-    threadsPermissions: transformThreadPermissions(permissions),
+    board_permissions: transformBoardPermissions(permissions),
+    post_permissions: transformPostPermissions(permissions),
+    thread_permissions: transformThreadPermissions(permissions),
   };
 };
 

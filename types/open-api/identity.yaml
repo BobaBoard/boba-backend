@@ -7,7 +7,7 @@ components:
           type: string
         avatar:
           type: string
-          format: url∂
+          format: url
       required:
         - name
         - avatar
@@ -25,5 +25,41 @@ components:
           type: string
           format: url
       required:
+        - name
+        - avatar
+    Accessory:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        accessory:
+          type: string
+          format: uri
+      required:
+        - id
+        - name
+        - accessory
+    PostingIdentity:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        avatar:
+          type: string
+          format: uri
+        color:
+          type: string
+          format: color
+        accessory:
+          type: string
+          format: uri
+      required:
+        - id
         - name
         - avatar
