@@ -58,6 +58,8 @@ export enum CacheKeys {
   BOARDS = "BOARDS",
   // Data pertaining to a single board. Keyed by board string id.
   BOARD = "BOARD",
+  // Data pertaining to a single board's metadata. Keyed by the board slug.
+  BOARD_METADATA = "BOARD_METADATA",
   // Data pertaining to a thread. Keyed by thread string id.
   THREAD = "THREAD",
   // Data pertaining to a subscription. Keyed by subscription string id.

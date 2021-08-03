@@ -184,15 +184,19 @@ export enum DbRolePermissions {
   move_thread,
 }
 
-export interface BoardPermissions {
-  canEditBoardData: boolean;
-  postsPermissions: PostPermissions[];
-  threadsPermissions: ThreadPermissions[];
+export interface UserBoardPermissions {
+  board_permissions: BoardPermissions[];
+  post_permissions: PostPermissions[];
+  thread_permissions: ThreadPermissions[];
 }
 
 export enum ThreadPermissions {
   editDefaultView,
   moveThread = "move_thread",
+}
+
+export enum BoardPermissions {
+  editMetadata = "edit_metadata",
 }
 
 export enum PostPermissions {
@@ -231,6 +235,11 @@ export interface DbBoardMetadata {
     color: string | undefined;
     accessory: string | undefined;
     name: string;
+  }[];
+  accessories: {
+    id: string;
+    name: string;
+    accessory: string;
   }[];
   permissions: string[];
   logged_out_restrictions: restriction_types[];

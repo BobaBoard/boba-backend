@@ -1,0 +1,54 @@
+components:
+  schemas:
+    Description:
+        oneOf:
+          - $ref: '#/components/schemas/TextDescription'
+          - $ref: '#/components/schemas/CategoryFilterDescription'
+        discriminator:
+          propertyName: type
+          mapping:
+            text: '#/components/schemas/TextDescription'
+            category_filter: '#/components/schemas/CategoryFilterDescription'
+    BaseDescription:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        index:
+          type: number
+        title:
+          type: string
+      required:
+        - id
+        - index
+        - title
+    TextDescription:
+      allOf:
+        - $ref: "#/components/schemas/BaseDescription" 
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [text]
+            description:
+              type: string
+          required:
+            - type
+            - description
+    CategoryFilterDescription:
+      allOf:
+        - $ref: "#/components/schemas/BaseDescription" 
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [category_filter]
+            categories:
+              type: array
+              items:
+                type: string
+          required:
+            - type
+            - categories
+        
