@@ -42,19 +42,22 @@ components:
         - muted
         - pinned
     BoardMetadata:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        slug:
-          type: string
-        descriptions:
-          type: array
-          items:
-            $ref: "#/components/schemas/Description"
+      allOf:
+        - $ref: "#/components/schemas/BoardSummary"
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            slug:
+              type: string
+            descriptions:
+              type: array
+              items:
+                $ref: "#/components/schemas/Description"
     LoggedInBoardMetadata:
       allOf:
+        - $ref: "#/components/schemas/LoggedInBoardSummary"
         - $ref: "#/components/schemas/BoardMetadata"
         - type: object
           properties:
