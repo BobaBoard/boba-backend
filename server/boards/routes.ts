@@ -20,8 +20,12 @@ import {
   processBoardMetadata,
   processBoardsMetadata,
 } from "../../utils/response-utils";
-import { canEditBoard } from "../../utils/permissions-utils";
-import { DbActivityThreadType, ServerThreadType } from "../../Types";
+import { hasPermission } from "../../utils/permissions-utils";
+import {
+  DbActivityThreadType,
+  DbRolePermissions,
+  ServerThreadType,
+} from "../../Types";
 import { canAccessBoard, getBoardMetadata } from "./utils";
 
 const info = debug("bobaserver:board:routes-info");
@@ -73,28 +77,57 @@ router.get("/", isLoggedIn, async (req, res) => {
  * @openapi
  * boards/{slug}:
  *   get:
- *     summary: Fetches board data.
+ *     summary: Fetches board metadata.
  *     tags:
  *       - /boards/
- *       - todo
+ *     security:
+ *       - firebase: []
+ *       - []
+ *     parameters:
+ *       - name: slug
+ *         in: path
+ *         description: The slug of the board to update.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       401:
+ *         description: User was not found and board requires authentication.
+ *       403:
+ *         description: User is not authorized to fetch the metadata of this board.
+ *       404:
+ *         description: The board was not found.
+ *       200:
+ *         description: The board metadata.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               oneOf:
+ *                 - $ref: "#/components/schemas/BoardMetadata"
+ *                 - $ref: "#/components/schemas/LoggedInBoardMetadata"
  */
 router.get("/:slug", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
   log(`Fetching data for board with slug ${slug}.`);
-
-  if (!req.currentUser?.uid) {
-    const cachedBoard = await cache().hget(CacheKeys.BOARD, slug);
-    if (cachedBoard) {
-      log(`Returning cached data for board ${slug}`);
-      return res.status(200).json(JSON.parse(cachedBoard));
-    }
-  }
 
   const boardMetadata = await getBoardMetadata({
     firebaseId: req.currentUser?.uid,
     slug,
   });
 
+  if (!canAccessBoard({ slug, firebaseId: req.currentUser?.uid })) {
+    if (!req.currentUser?.uid) {
+      res
+        .status(401)
+        .json({ message: "This board is unavailable to logged out users." });
+    } else {
+      res
+        .status(403)
+        .json({ message: "You don't have permission to access this board." });
+    }
+    return;
+  }
   if (!boardMetadata) {
     res.sendStatus(404);
     return;
@@ -123,18 +156,18 @@ router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
   }
 
   const board = await getBoardBySlug({
-    // @ts-ignore
     firebaseId: req.currentUser?.uid,
     slug,
   });
   log(`Found board`, board);
+  console.log(board);
 
   if (!board) {
     // TOOD: add error log
     return res.sendStatus(404);
   }
 
-  if (!canEditBoard(board.permissions)) {
+  if (!hasPermission(DbRolePermissions.edit_board_details, board.permissions)) {
     // TOOD: add error log
     return res.sendStatus(403);
   }

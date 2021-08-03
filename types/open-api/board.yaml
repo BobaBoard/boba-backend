@@ -41,6 +41,37 @@ components:
       required:
         - muted
         - pinned
+    BoardMetadata:
+      allOf:
+        - $ref: "#/components/schemas/BoardSummary"
+        - type: object
+          properties:
+            id:
+              type: string
+              format: uuid
+            slug:
+              type: string
+            descriptions:
+              type: array
+              items:
+                $ref: "#/components/schemas/Description"
+    LoggedInBoardMetadata:
+      allOf:
+        - $ref: "#/components/schemas/LoggedInBoardSummary"
+        - $ref: "#/components/schemas/BoardMetadata"
+        - type: object
+          properties:
+            accessories:
+              type: array
+              items:
+                $ref: "#/components/schemas/Accessory"
+            permissions:
+              $ref: "#/components/schemas/Permissions"
+            posting_identities:
+              type: array
+              items:
+                $ref: "#/components/schemas/PostingIdentity"
+
     BoardActivity:
       type: object
       properties:
