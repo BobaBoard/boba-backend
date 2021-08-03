@@ -27,6 +27,9 @@ const API_KEY = "AIzaSyA2KQh1wqrLwsrWvKQvFWeWoWMR8KOyTD4";
 const getSheetUrl = (url: string) =>
   `https://sheets.googleapis.com/v4/spreadsheets/${url}/?key=${API_KEY}&includeGridData=true`;
 
+/*
+ * @deprecated
+ */
 router.post("/generate/boards", isLoggedIn, async (req, res) => {
   // @ts-ignore
   if (req.currentUser?.uid !== ADMIN_ID) {
