@@ -8,7 +8,7 @@
     "dev:debug": "nodemon --exec node --inspect -r ts-node/register server/index.ts",
     "typecheck": "tsc",
     "start": "cross-env DEBUG=bobaserver:*,-*info node -r dotenv/config -r ts-node/register server/index.ts dotenv_config_path=./.env.prod",
-    "start:watch": "nodemon --watch . --exec node -r ts-node/register server/index.ts -e yaml",
+    "start:watch": "nodemon --watch . --exec node -r ts-node/register server/index.ts -e yaml,ts,sql",
     "start-db": "docker-compose down && docker-compose up",
     "test": "cross-env DEBUG=bobaserver:* nyc --reporter=html mocha --exclude './node_modules/**' -r ts-node/register -r dotenv/config './**/*.test.ts'",
     "test:watch": "yarn run test  -- --watch --watch-extensions ts --watch-files . ",
