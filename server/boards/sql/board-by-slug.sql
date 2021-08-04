@@ -26,7 +26,7 @@ SELECT
     COALESCE(
         json_agg(DISTINCT jsonb_build_object(
             'id', p.role_id,
-            'avatar_reference_id', p.avatar_reference_id,
+            'avatar', p.avatar_reference_id,
             'accessory', p.role_accessory,
             'color', p.role_color,
             'name', p.role_name
