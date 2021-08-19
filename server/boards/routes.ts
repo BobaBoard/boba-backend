@@ -196,25 +196,39 @@ router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * boards/{slug}/visit:
+ * boards/{slug}/visits:
  *   get:
  *     summary: Sets last visited time for board
  *     tags:
  *       - /boards/
- *       - todo
+ *     security:
+ *       - firebase: []
+ *       - []
+ *     parameters:
+ *       - name: slug
+ *         in: path
+ *         description: The slug of the board to update.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       401:
+ *         description: User was not found.
+ *       200:
+ *         description: The visit was successfully registered.
  */
-router.get("/:slug/visit", isLoggedIn, async (req, res) => {
+router.post("/:slug/visits", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
-  // @ts-ignore
   if (!req.currentUser) {
-    // TODO: fix wrong status
-    return res.sendStatus(401);
+    res
+      .status(401)
+      .json({ message: "This board is unavailable to logged out users." });
   }
   log(`Setting last visited time for board: ${slug}`);
 
   if (
     !(await markBoardVisit({
-      // @ts-ignore
       firebaseId: req.currentUser.uid,
       slug,
     }))
@@ -224,7 +238,7 @@ router.get("/:slug/visit", isLoggedIn, async (req, res) => {
   }
 
   log(`Marked last visited time for board: ${slug}.`);
-  res.status(200).json();
+  res.sendStatus(200);
 });
 
 /**
@@ -259,7 +273,6 @@ router.post("/:slug/mute", ensureLoggedIn, async (req, res) => {
 
   if (
     !(await muteBoard({
-      // @ts-ignore
       firebaseId: req.currentUser.uid,
       slug,
     }))
@@ -268,7 +281,6 @@ router.post("/:slug/mute", ensureLoggedIn, async (req, res) => {
     return;
   }
 
-  // @ts-ignore
   info(`Muted board: ${slug} for user ${req.currentUser.uid}.`);
   res.status(200).json();
 });
