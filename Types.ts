@@ -223,7 +223,7 @@ export enum restriction_types {
 
 export interface DbBoardMetadata {
   slug: string;
-  avatarUrl: string;
+  avatar_url: string;
   tagline: string;
   settings: {
     accentColor: string;

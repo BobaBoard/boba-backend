@@ -11,7 +11,7 @@ describe("Tests delta metadata", async () => {
         settings: {
           accentColor: "red",
         },
-        avatarUrl: "this_is_a_url",
+        avatar_url: "this_is_a_url",
         tagline: "The tagline!",
         descriptions: [
           {
