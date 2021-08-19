@@ -35,46 +35,6 @@ const router = express.Router();
 
 /**
  * @openapi
- * boards/:
- *   get:
- *     summary: Get all boards and their metadata.
- *     tags:
- *       - /boards/
- *       - todo
- */
-router.get("/", isLoggedIn, async (req, res) => {
-  if (!req.currentUser?.uid) {
-    // Only get cache for non-logged in users, because for logged in users this
-    // method also returns updates.
-    const cachedBoards = await cache().get(CacheKeys.BOARDS);
-    if (cachedBoards) {
-      info(`Returning cached result for all boards.`);
-      res.status(200).json(JSON.parse(cachedBoards));
-      return;
-    }
-  }
-
-  const boards = await getBoards({
-    firebaseId: req.currentUser?.uid,
-  });
-  if (!boards) {
-    res.status(500);
-  }
-
-  const boardsResponse = processBoardsMetadata({
-    boards,
-    isLoggedIn: !!req.currentUser?.uid,
-  });
-  log(`Returning all boards for user ${req.currentUser?.uid}`);
-  res.status(200).json(boardsResponse);
-
-  if (!req.currentUser?.uid) {
-    cache().set(CacheKeys.BOARDS, JSON.stringify(boardsResponse));
-  }
-});
-
-/**
- * @openapi
  * boards/{slug}:
  *   get:
  *     summary: Fetches board metadata.
