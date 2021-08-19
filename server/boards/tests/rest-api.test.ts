@@ -51,7 +51,7 @@ describe("Tests boards REST API", () => {
       slug: "gore",
       realm_id: "v0-fake-id",
       tagline: "Blood! Blood! Blood!",
-      avatar: "/gore.png",
+      avatar_url: "/gore.png",
       delisted: false,
       logged_in_only: false,
     });
