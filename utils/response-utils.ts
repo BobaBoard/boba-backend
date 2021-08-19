@@ -161,6 +161,8 @@ export const processBoardMetadata = ({
   let finalMetadata = {
     id: metadata.slug,
     slug: metadata.slug,
+    // @ts-expect-error
+    avatar: metadata.avatar,
     descriptions: metadata.descriptions || [],
     permissions: transformPermissions(metadata.permissions),
     posting_identities: metadata.posting_identities.map((identity: any) =>
@@ -173,6 +175,11 @@ export const processBoardMetadata = ({
     delete finalMetadata.permissions;
     delete finalMetadata.posting_identities;
     delete finalMetadata.accessories;
+  }
+
+  // @ts-expect-error
+  if (!isLoggedIn && metadata.loggedInOnly) {
+    finalMetadata.descriptions = [];
   }
 
   return finalMetadata;

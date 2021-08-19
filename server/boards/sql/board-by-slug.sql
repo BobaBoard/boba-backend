@@ -6,7 +6,7 @@ WITH
 SELECT 
     boards.slug,
     boards.tagline,
-    boards.avatar_reference_id,
+    boards.avatar_reference_id as avatar,
     boards.settings,
     json_agg(DISTINCT jsonb_build_object(
         'id', bds.string_id,

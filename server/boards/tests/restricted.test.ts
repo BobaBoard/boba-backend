@@ -87,12 +87,14 @@ describe("Tests restricted board queries", () => {
 
         expect(res.status).to.equal(200);
         expect(res.body).to.eql({
-          avatarUrl:
+          avatar:
             "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2Fe4e263cf-ee98-4902-9c14-c10299210e01.png?alt=media&token=7c170411-9401-4d4e-9f66-5d6dfee2fccd",
-          loggedInOnly: true,
-          settings: {
-            accentColor: "#234a69",
-          },
+          logged_in_only: true,
+          accent_color: "#234a69",
+          id: "restricted",
+          delisted: false,
+          descriptions: [],
+          realm_id: "v0-fake-id",
           slug: "restricted",
           tagline: "A board to test for logged-in only view",
         });
