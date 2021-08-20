@@ -118,7 +118,7 @@ router.post("/:post_id/contribution", ensureLoggedIn, async (req, res) => {
 
   maybeUpdateSubscriptionsOnThreadChange({
     threadId: responsePost.parent_thread_id,
-    postId: responsePost.post_id,
+    postId: responsePost.id,
     boardSlug,
     secretIdentity: responsePost.secret_identity,
     categoryNames: responsePost.tags?.category_tags,

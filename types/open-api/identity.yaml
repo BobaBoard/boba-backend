@@ -5,6 +5,7 @@ components:
       properties:
         name:
           type: string
+        # TODO[realms]: make this avatar_url
         avatar:
           type: string
           format: url
@@ -16,6 +17,7 @@ components:
       properties:
         name:
           type: string
+        # TODO[realms]: make this avatar_url
         avatar:
           type: string
           format: url

@@ -35,6 +35,10 @@ This is just to test that sections work. It will be written better later.
         description: "APIs related to the /posts/ endpoints.",
       },
       {
+        name: "/threads/",
+        description: "APIs related to the /threads/ endpoints.",
+      },
+      {
         name: "/boards/",
         description: "APIs related to the /boards/ endpoints.",
       },
@@ -75,7 +79,7 @@ This is just to test that sections work. It will be written better later.
     "x-tagGroups": [
       {
         name: "general",
-        tags: ["/posts/", "/boards/", "/realms/", "/users/"],
+        tags: ["/realms/", "/boards/", "/threads/", "/posts/", "/users/"],
       },
       {
         name: "models",
