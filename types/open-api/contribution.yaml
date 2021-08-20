@@ -1,6 +1,7 @@
 components:
   schemas:
     Contribution:
+      description: "A contribution to a thread."
       type: object
       properties:
         post_id:

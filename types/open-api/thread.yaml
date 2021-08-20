@@ -1,0 +1,71 @@
+components:
+  schemas:
+    ThreadActivitySummary:
+      type: object
+      properties:
+        new_posts_amount:
+          type: number
+        new_comments_amount:
+          type: number
+        total_comments_amount:
+          type: number
+        total_posts_amount:
+          type: number
+        direct_threads_amount:
+          type: number
+        last_activity:
+          type: number
+      required:
+        - new_posts_amount
+        - new_comments_amount
+        - total_comments_amount
+        - total_posts_amount
+        - direct_threads_amount
+        - last_activity
+
+    ThreadSummary:
+      allOf:
+        - type: object
+          properties:
+            thread_id:
+              type: string
+              format: uuid
+            parent_board_slug:
+              type: string
+            starter:
+              description: "The contribution that starts the thread."
+              $ref: "#/components/schemas/Contribution"
+            default_view:
+              type: string
+              enum: [thread, gallery, timeline]
+            muted:
+              description: "Whether the contribution is muted. False when the user is logged out."
+              type: boolean
+            hidden:
+              description: "Whether the contribution is hidden. False when the user is logged out."
+              type: boolean
+          required:
+            - thread_id
+            - parent_board_slug
+            - starter
+            - default_view
+            - muted
+            - hidden
+        - $ref: "#/components/schemas/ThreadActivitySummary"
+
+    Thread:
+      allOf:
+        - type: object
+          properties:
+            posts:
+              type: array
+              items:
+                $ref: "#/components/schemas/Contribution"
+            comments:
+              type: array
+              items:
+                $ref: "#/components/schemas/Comment"
+          required:
+            - posts
+            - comments
+        - $ref: "#/components/schemas/ThreadSummary"

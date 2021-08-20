@@ -421,10 +421,27 @@ router.post("/:slug/notifications/dismiss", isLoggedIn, async (req, res) => {
  * @openapi
  * boards/{slug}/activity/latest:
  *   get:
- *     summary: Get latest board activity.
+ *     summary: Get latest board activity (TODO).
  *     tags:
  *       - /boards/
  *       - todo
+ *     parameters:
+ *       - name: slug
+ *         in: path
+ *         description: The slug of the board to fetch the activity of.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       404:
+ *         description: The board was not found.
+ *       200:
+ *         description: The board activity.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/BoardActivity"
  */
 router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
   const { slug } = req.params;

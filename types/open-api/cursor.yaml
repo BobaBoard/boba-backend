@@ -1,0 +1,11 @@
+components:
+  schemas:
+    Cursor:
+      type: object
+      properties:
+        next:
+          description: Pagination link pointing to the next page.
+          type: string
+          format: uri
+      required:
+        - next
