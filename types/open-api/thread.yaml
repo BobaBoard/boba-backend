@@ -13,7 +13,7 @@ components:
           type: number
         direct_threads_amount:
           type: number
-        last_activity:
+        last_activity_at:
           type: number
       required:
         - new_posts_amount
@@ -27,7 +27,7 @@ components:
       allOf:
         - type: object
           properties:
-            thread_id:
+            id:
               type: string
               format: uuid
             parent_board_slug:
@@ -45,7 +45,7 @@ components:
               description: "Whether the contribution is hidden. False when the user is logged out."
               type: boolean
           required:
-            - thread_id
+            - id
             - parent_board_slug
             - starter
             - default_view
@@ -62,9 +62,12 @@ components:
               items:
                 $ref: "#/components/schemas/Contribution"
             comments:
-              type: array
-              items:
-                $ref: "#/components/schemas/Comment"
+              description: "A map from post_id to its comments."
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Comment"
           required:
             - posts
             - comments
