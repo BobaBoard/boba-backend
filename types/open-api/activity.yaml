@@ -1,0 +1,42 @@
+components:
+  schemas:
+    BoardActivity:
+      type: object
+      properties:
+        cursor:
+          $ref: "#/components/schemas/Cursor"
+        activity:
+          type: array
+          items:
+            $ref: "#/components/schemas/ThreadSummary"
+
+    BoardActivitySummary:
+      type: object
+      properties:
+        last_post_at:
+          type: string
+          format: date-time
+          nullable: true
+        last_comment_at:
+          type: string
+          format: date-time
+          nullable: true
+        last_activity_at:
+          type: string
+          format: date-time
+          nullable: true
+        last_activity_from_others_at:
+          type: string
+          format: date-time
+          nullable: true
+        last_visit_at:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+        - id
+        - last_post_at
+        - last_comment_at
+        - last_activity_at
+        - last_activity_from_others_at
+        - last_visit_at
