@@ -108,34 +108,44 @@ export const makeServerThread = (thread: DbThreadType): ServerThreadType => {
     return rest;
   });
   return {
-    ...thread,
     id: thread.thread_id,
-    posts: postsWithoutComments,
-    starter: postsWithoutComments[0],
     parent_board_slug: thread.board_slug,
+    starter: postsWithoutComments[0],
+    posts: postsWithoutComments,
+    comments: posts.reduce(
+      (agg: Record<string, ServerCommentType[]>, post: ServerPostType) => {
+        if (post.comments) {
+          agg[post.id] = post.comments;
+        }
+        return agg;
+      },
+      {}
+    ),
+    default_view: thread.default_view,
+    muted: thread.muted,
+    hidden: thread.hidden,
     new_posts_amount: thread.thread_new_posts_amount,
     new_comments_amount: thread.thread_new_comments_amount,
     total_comments_amount: thread.thread_total_comments_amount,
     total_posts_amount: thread.thread_total_posts_amount,
     last_activity_at: thread.thread_last_activity,
     direct_threads_amount: thread.thread_direct_threads_amount,
-    comments: posts.reduce(
-      (agg: Record<string, ServerCommentType[]>, post: ServerPostType) => {
-        agg[post.id] = post.comments;
-        return agg;
-      },
-      {}
-    ),
   };
 };
 
 export const makeServerPost = (post: DbPostType): ServerPostType => {
+  const oldPost = mergeObjectIdentity<DbPostType>(post);
   const serverPost = {
-    ...mergeObjectIdentity<DbPostType>(post),
     id: post.post_id,
+    parent_thread_id: post.parent_thread_id,
+    parent_post_id: post.parent_post_id,
     created_at: post.created,
-    new: post.is_new,
+    content: post.content,
+    secret_identity: oldPost.secret_identity,
+    user_identity: oldPost.user_identity,
+    friend: post.friend,
     own: post.is_own,
+    new: post.is_new,
     comments: post.comments?.map(makeServerComment) || null,
     tags: {
       whisper_tags: post.whisper_tags || [],
@@ -143,11 +153,9 @@ export const makeServerPost = (post: DbPostType): ServerPostType => {
       category_tags: post.category_tags || [],
       content_warnings: post.content_warnings || [],
     },
+    total_comments_amount: post.total_comments_amount,
+    new_comments_amount: post.new_comments_amount,
   };
-  delete serverPost.whisper_tags;
-  delete serverPost.index_tags;
-  delete serverPost.category_tags;
-  delete serverPost.content_warnings;
 
   return serverPost;
 };
@@ -155,14 +163,19 @@ export const makeServerPost = (post: DbPostType): ServerPostType => {
 export const makeServerComment = (
   comment: DbCommentType
 ): ServerCommentType => {
+  const identityPost = mergeObjectIdentity<DbCommentType>(comment);
   return {
     id: comment.comment_id,
     parent_comment_id: comment.parent_comment,
+    chain_parent_id: comment.chain_parent_id,
     parent_post_id: comment.parent_post,
     created_at: comment.created,
+    content: comment.content,
+    secret_identity: identityPost.secret_identity,
+    user_identity: identityPost.user_identity,
+    friend: comment.friend,
     own: comment.is_own,
     new: comment.is_new,
-    ...mergeObjectIdentity<DbCommentType>(comment),
   };
 };
 
