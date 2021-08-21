@@ -24,6 +24,8 @@ import { hasPermission } from "../../utils/permissions-utils";
 import {
   DbActivityThreadType,
   DbRolePermissions,
+  ServerActivityType,
+  ServerThreadSummaryType,
   ServerThreadType,
 } from "../../Types";
 import { canAccessBoard, getBoardMetadata } from "./utils";
@@ -477,33 +479,10 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
   }
 
   const threadsWithIdentity = result.activity.map(
-    (thread): ServerThreadType => {
+    (thread): ServerThreadSummaryType => {
       const threadWithIdentity =
         mergeObjectIdentity<DbActivityThreadType>(thread);
       return {
-        posts: [
-          {
-            id: threadWithIdentity.post_id,
-            parent_thread_id: threadWithIdentity.thread_id,
-            parent_post_id: threadWithIdentity.parent_post_id,
-            secret_identity: threadWithIdentity.secret_identity,
-            user_identity: threadWithIdentity.user_identity,
-            accessory_avatar: threadWithIdentity.accessory_avatar,
-            friend: threadWithIdentity.friend,
-            created_at: threadWithIdentity.created,
-            content: threadWithIdentity.content,
-            tags: {
-              whisper_tags: threadWithIdentity.whisper_tags,
-              index_tags: threadWithIdentity.index_tags,
-              category_tags: threadWithIdentity.category_tags,
-              content_warnings: threadWithIdentity.content_warnings,
-            },
-            total_comments_amount: threadWithIdentity.comments_amount,
-            new_comments_amount: threadWithIdentity.new_comments_amount,
-            new: threadWithIdentity.is_new,
-            own: threadWithIdentity.self,
-          },
-        ],
         starter: {
           id: threadWithIdentity.post_id,
           parent_thread_id: threadWithIdentity.thread_id,
@@ -525,7 +504,6 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
           new: threadWithIdentity.is_new,
           own: threadWithIdentity.self,
         },
-        comments: [] as any,
         default_view: threadWithIdentity.default_view,
         id: threadWithIdentity.thread_id,
         parent_board_slug: slug,
@@ -540,10 +518,12 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
       };
     }
   );
-  const response: {
-    next_page_cursor: string;
-    activity: ServerThreadType[];
-  } = { next_page_cursor: result.cursor, activity: threadsWithIdentity };
+  const response: ServerActivityType = {
+    cursor: {
+      next: result.cursor,
+    },
+    activity: threadsWithIdentity,
+  };
 
   response.activity.map((post) => ensureNoIdentityLeakage(post));
   log(
