@@ -444,6 +444,7 @@ router.get("/me/feed", isLoggedIn, async (req, res) => {
         parent_board_slug: threadWithIdentity.board_slug,
         muted: threadWithIdentity.muted,
         hidden: threadWithIdentity.hidden,
+        new: threadWithIdentity.is_new,
       };
     }
   );

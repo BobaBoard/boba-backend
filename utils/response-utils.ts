@@ -114,6 +114,7 @@ export const makeServerThread = (thread: DbThreadType): ServerThreadType => {
     posts: postsWithoutComments,
     comments: posts.reduce(
       (agg: Record<string, ServerCommentType[]>, post: ServerPostType) => {
+        log(post.comments);
         if (post.comments) {
           agg[post.id] = post.comments;
         }
@@ -124,6 +125,7 @@ export const makeServerThread = (thread: DbThreadType): ServerThreadType => {
     default_view: thread.default_view,
     muted: thread.muted,
     hidden: thread.hidden,
+    new: postsWithoutComments[0].new,
     new_posts_amount: thread.thread_new_posts_amount,
     new_comments_amount: thread.thread_new_comments_amount,
     total_comments_amount: thread.thread_total_comments_amount,
@@ -180,7 +182,8 @@ export const makeServerComment = (
 };
 
 export const ensureNoIdentityLeakage = (post: any) => {
-  if (!post.friend && !post.self && post.user_identity) {
+  if (!post.friend && !post.own && post.user_identity) {
+    log(post);
     throw Error("Identity leakage detected.");
   }
   if (post.author || post.user_id || post.username || post.user_avatar) {

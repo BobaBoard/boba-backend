@@ -50,22 +50,6 @@ export interface ServerPostType {
   new_comments_amount: number;
 }
 
-export interface ServerThreadType {
-  posts: ServerPostType[];
-  comments: Record<string, ServerCommentType[]>;
-  starter: ServerPostType;
-  id: string;
-  parent_board_slug: string;
-  direct_threads_amount: number;
-  new_posts_amount: number;
-  new_comments_amount: number;
-  total_comments_amount: number;
-  total_posts_amount: number;
-  last_activity_at: string;
-  muted: boolean;
-  default_view: "thread" | "gallery" | "timeline";
-  hidden: boolean;
-}
 export interface ServerThreadSummaryType {
   starter: ServerPostType;
   id: string;
@@ -79,8 +63,13 @@ export interface ServerThreadSummaryType {
   muted: boolean;
   default_view: "thread" | "gallery" | "timeline";
   hidden: boolean;
+  new: boolean;
 }
 
+export interface ServerThreadType extends ServerThreadSummaryType {
+  posts: ServerPostType[];
+  comments: Record<string, ServerCommentType[]>;
+}
 export interface ServerActivityType {
   cursor: {
     next: string | null;
