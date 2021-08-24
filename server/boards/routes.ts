@@ -515,6 +515,7 @@ router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
         direct_threads_amount: threadWithIdentity.threads_amount,
         muted: threadWithIdentity.muted,
         hidden: threadWithIdentity.hidden,
+        new: threadWithIdentity.is_new,
       };
     }
   );
