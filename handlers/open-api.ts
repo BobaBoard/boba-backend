@@ -88,7 +88,12 @@ This is just to test that sections work. It will be written better later.
     ],
   },
   // Which paths to parse the API specs from.
-  apis: ["./types/open-api/*.yaml", "./server/*/routes.ts"],
+  apis: [
+    "./types/open-api/*.yaml",
+    "./types/open-api/examples/*.yaml",
+    "./server/*/routes.ts",
+    "./server/*/examples/*.yaml",
+  ],
 };
 
 const specs = swaggerJsdoc(options);
