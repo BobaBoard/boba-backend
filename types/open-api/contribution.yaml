@@ -16,6 +16,9 @@ components:
         parent_board_slug:
           type: string
           format: string
+        content:
+          type: string
+          format: quill-delta
         created_at:
           type: string
           # TODO: actually conform returned type to RFC 3339
@@ -56,6 +59,7 @@ components:
         - parent_post_id
         - parent_thread_id
         - parent_board_slug
+        - content
         - created_at
         - secret_identity
         - friend

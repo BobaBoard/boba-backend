@@ -37,7 +37,7 @@ const router = express.Router();
 
 /**
  * @openapi
- * boards/{slug}:
+ * /boards/{slug}:
  *   get:
  *     summary: Fetches board metadata.
  *     tags:
@@ -53,6 +53,16 @@ const router = express.Router();
  *         schema:
  *           type: string
  *           format: uuid
+ *         examples:
+ *           existing:
+ *             summary: An existing board
+ *             value: gore
+ *           locked:
+ *             summary: A board for logged in users only
+ *             value: restricted
+ *           not-found:
+ *             summary: A board that does not exists
+ *             value: this_does_not_exist
  *     responses:
  *       401:
  *         description: User was not found and board requires authentication.
@@ -68,6 +78,9 @@ const router = express.Router();
  *               oneOf:
  *                 - $ref: "#/components/schemas/BoardMetadata"
  *                 - $ref: "#/components/schemas/LoggedInBoardMetadata"
+ *             examples:
+ *               existing:
+ *                 $ref: '#/components/examples/BoardsGore'
  */
 router.get("/:slug", isLoggedIn, async (req, res) => {
   const { slug } = req.params;

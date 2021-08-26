@@ -15,29 +15,29 @@ components:
         chain_parent_id:
           type: string
           format: uuid
-        created_at:
+        content:
           type: string
-          # TODO: actually conform returned type to RFC 3339
-          format: date-time
-        anonymity_type:
-          type: string
-          enum: [everyone, friends_only]
-        own:
-          type: boolean
-        new:
-          type: boolean
-        friend:
-          type: boolean
+          format: quill-delta
         secret_identity:
           description: The public-facing identity associated with the comment.
           $ref: "#/components/schemas/SecretIdentity"
         user_identity:
           description: The identity of the original poster, if visible to the requester.
           $ref: "#/components/schemas/Identity"
+        created_at:
+          type: string
+          # TODO: actually conform returned type to RFC 3339
+          format: date-time
+        own:
+          type: boolean
+        new:
+          type: boolean
+        friend:
+          type: boolean
       required:
         - id
         - parent_post_id
-        - parent_comment_id
+        - content
         - created_at
         - secret_identity
         - new
