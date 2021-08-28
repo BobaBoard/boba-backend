@@ -52,7 +52,7 @@ const router = express.Router();
  *         required: true
  *         schema:
  *           type: string
- *           format: uuid
+ *           # format: uuid
  *         examples:
  *           existing:
  *             summary: An existing board

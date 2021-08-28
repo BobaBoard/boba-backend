@@ -96,7 +96,7 @@ This is just to test that sections work. It will be written better later.
   ],
 };
 
-const specs = swaggerJsdoc(options);
+export const specs = swaggerJsdoc(options);
 
 export default (app: express.Express) => {
   app.get("/open-api.json", (req, res) => {
