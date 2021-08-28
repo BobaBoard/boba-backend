@@ -4,30 +4,23 @@ components:
       summary: An existing board
       value:
         id: gore
-        realm_id: v0-fake-id
+        realm_id: f377afb3-5c62-40cc-8f07-1f4749a780eb
         slug: gore
-        tagline": Blood! Blood! Blood!
+        tagline: Blood! Blood! Blood!
         avatar_url: /gore.png
         accent_color: "#f96680"
         delisted: false
         logged_in_only: false
-        descriptions: []
-#  {
-#    id: id1
-#    type: category_filter
-#    index: 2
-#    title: Gore Categories
-#    categories: [
-#      "blood",
-#      "bruises"
-#    ],
-#    "description": null
-#  },
-#  {
-#    "id": "id2",
-#    "type": "text",
-#    "index": 1,
-#    "title": "Gore description",
-#    "categories": null,
-#    "description": "[{\"insert\": \"pls b nice\"}]"
-#  }
+        descriptions:
+          - id: f377afb3-5c62-40cc-8f07-1f4749a780eb
+            type: category_filter
+            index: 2
+            title: Gore Categories
+            categories: [blood, bruises]
+            description: null
+          - id: f377afb3-5c62-40cc-8f07-1f4749a780eb
+            type: text
+            index: 1
+            title: Gore description
+            categories: null
+            description: '[{"insert": "pls b nice"}]'
