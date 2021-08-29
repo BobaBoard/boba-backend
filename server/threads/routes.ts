@@ -47,6 +47,10 @@ const router = express.Router();
  *         schema:
  *           type: string
  *           format: uuid
+ *         examples:
+ *           withcommentsthread:
+ *             summary: A thread with a comments thread.
+ *             value: 8b2646af-2778-487e-8e44-7ae530c2549c
  *     responses:
  *       401:
  *         description: User was not found and thread requires authentication.
@@ -60,6 +64,9 @@ const router = express.Router();
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/Thread"
+ *             examples:
+ *               withcommentsthread:
+ *                 $ref: '#/components/examples/ThreadWithCommentsThreadResponse'
  */
 router.get("/:id", isLoggedIn, async (req, res) => {
   const { id } = req.params;

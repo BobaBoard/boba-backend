@@ -15,7 +15,6 @@ components:
           format: uuid
         parent_board_slug:
           type: string
-          format: string
         content:
           type: string
           format: quill-delta
