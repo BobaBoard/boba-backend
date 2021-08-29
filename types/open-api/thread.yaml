@@ -14,14 +14,15 @@ components:
         direct_threads_amount:
           type: number
         last_activity_at:
-          type: number
+          type: string
+          format: date-time
       required:
         - new_posts_amount
         - new_comments_amount
         - total_comments_amount
         - total_posts_amount
         - direct_threads_amount
-        - last_activity
+        - last_activity_at
 
     ThreadSummary:
       allOf:
