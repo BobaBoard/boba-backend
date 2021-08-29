@@ -23,9 +23,11 @@ components:
           format: url
         color:
           type: string
+          nullable: true
         accessory:
           type: string
           format: url
+          nullable: true
       required:
         - name
         - avatar
@@ -58,9 +60,11 @@ components:
         color:
           type: string
           format: color
+          nullable: true
         accessory:
           type: string
           format: uri
+          nullable: true
       required:
         - id
         - name

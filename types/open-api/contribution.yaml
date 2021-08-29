@@ -13,6 +13,7 @@ components:
         parent_post_id:
           type: string
           format: uuid
+          nullable: true
         parent_board_slug:
           type: string
         content:
@@ -38,10 +39,6 @@ components:
           type: number
         new_comments_amount:
           type: number
-        comments:
-          type: array
-          items:
-            $ref: "#/components/schemas/Comment"
         tags:
           type: object
           $ref: "#/components/schemas/Tags"
@@ -66,5 +63,4 @@ components:
         - new
         - total_comments_amount
         - new_comments_amount
-        - comments
         - tags

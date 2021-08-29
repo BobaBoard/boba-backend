@@ -12,9 +12,11 @@ components:
         parent_comment_id:
           type: string
           format: uuid
+          nullable: true
         chain_parent_id:
           type: string
           format: uuid
+          nullable: true
         content:
           type: string
           format: quill-delta
