@@ -37,3 +37,6 @@ workflows:
   build-and-test:
     jobs:
       - build-and-test
+  open-api-validate:
+    jobs:
+      - open-api-validate
