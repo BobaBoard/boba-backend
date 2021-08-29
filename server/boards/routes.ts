@@ -92,6 +92,7 @@ router.get("/:slug", isLoggedIn, async (req, res) => {
 
   if (!canAccessBoard({ slug, firebaseId: req.currentUser?.uid })) {
     if (!req.currentUser?.uid) {
+      // TODO: is this WORKING????
       res
         .status(401)
         .json({ message: "This board is unavailable to logged out users." });

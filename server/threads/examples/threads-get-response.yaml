@@ -1,0 +1,94 @@
+components:
+  examples:
+    ThreadWithCommentsThreadResponse:
+      summary: A thread with a comments thread with nested comments.
+      value:
+        id: 8b2646af-2778-487e-8e44-7ae530c2549c
+        parent_board_slug: gore
+        starter:
+          id: ff9f2ae2-a254-4069-9791-3ac5e6dff5bb
+          parent_thread_id: 8b2646af-2778-487e-8e44-7ae530c2549c
+          parent_post_id:
+          created_at: "2020-09-25T05:42:00"
+          content:
+            '[{"insert":"Remember to be excellent to each other and only be mean to
+            fictional characters!"}]'
+          secret_identity:
+            name: GoreMaster5000
+            avatar: https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F6518df53-2031-4ac5-8d75-57a0051ed924?alt=media&token=23df54b7-297c-42ff-a0ea-b9862c9814f8
+            color: red
+            accessory:
+          friend: false
+          own: false
+          new: false
+          tags:
+            whisper_tags:
+              - An announcement from your headmaster!
+            index_tags: []
+            category_tags: []
+            content_warnings: []
+          total_comments_amount: 2
+          new_comments_amount: 0
+        posts:
+          - id: ff9f2ae2-a254-4069-9791-3ac5e6dff5bb
+            parent_thread_id: 8b2646af-2778-487e-8e44-7ae530c2549c
+            parent_post_id:
+            created_at: "2020-09-25T05:42:00"
+            content:
+              '[{"insert":"Remember to be excellent to each other and only be mean to
+              fictional characters!"}]'
+            secret_identity:
+              name: GoreMaster5000
+              avatar: https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F6518df53-2031-4ac5-8d75-57a0051ed924?alt=media&token=23df54b7-297c-42ff-a0ea-b9862c9814f8
+              color: red
+              accessory:
+            friend: false
+            own: false
+            new: false
+            tags:
+              whisper_tags:
+                - An announcement from your headmaster!
+              index_tags: []
+              category_tags: []
+              content_warnings: []
+            total_comments_amount: 2
+            new_comments_amount: 0
+        comments:
+          ff9f2ae2-a254-4069-9791-3ac5e6dff5bb:
+            - id: d3c21e0c-7ab9-4cb6-b1ed-1b7e558ba375
+              parent_comment_id:
+              chain_parent_id:
+              parent_post_id: 8b2646af-2778-487e-8e44-7ae530c2549c
+              created_at: "2020-10-02T05:43:00"
+              content: '[{"insert":"But can we be mean to you?"}]'
+              secret_identity:
+                name: DragonFucker
+                avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
+                color:
+                accessory:
+              friend: false
+              own: false
+              new: false
+            - id: 146d4087-e11e-4912-9d67-93065b9a0c78
+              parent_comment_id: d3c21e0c-7ab9-4cb6-b1ed-1b7e558ba375
+              chain_parent_id:
+              parent_post_id: 8b2646af-2778-487e-8e44-7ae530c2549c
+              created_at: "2020-10-04T05:44:00"
+              content: '[{"insert":"BobaNitro users can be mean to the webmaster once a month."}]'
+              secret_identity:
+                name: GoreMaster5000
+                avatar: https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F6518df53-2031-4ac5-8d75-57a0051ed924?alt=media&token=23df54b7-297c-42ff-a0ea-b9862c9814f8
+                color: red
+                accessory:
+              friend: false
+              own: false
+              new: false
+        default_view: thread
+        muted: false
+        hidden: false
+        new: false
+        new_posts_amount: 0
+        new_comments_amount: 0
+        total_comments_amount: 2
+        total_posts_amount: 1
+        direct_threads_amount: 0
