@@ -60,9 +60,6 @@ const router = express.Router();
  *           locked:
  *             summary: A board for logged in users only
  *             value: restricted
- *           not-found:
- *             summary: A board that does not exists
- *             value: this_does_not_exist
  *     responses:
  *       401:
  *         description: User was not found and board requires authentication.
@@ -80,7 +77,9 @@ const router = express.Router();
  *                 - $ref: "#/components/schemas/LoggedInBoardMetadata"
  *             examples:
  *               existing:
- *                 $ref: '#/components/examples/BoardsGore'
+ *                 $ref: '#/components/examples/BoardsGoreResponse'
+ *               locked:
+ *                 $ref: '#/components/examples/BoardsRestrictedResponse'
  */
 router.get("/:slug", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
