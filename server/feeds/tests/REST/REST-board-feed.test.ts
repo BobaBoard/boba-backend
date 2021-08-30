@@ -23,7 +23,7 @@ describe("Tests boards REST API", () => {
   });
 
   it("should return activity data", async () => {
-    const res = await request(app).get("/gore/activity/latest");
+    const res = await request(app).get("/boards/gore");
 
     expect(res.status).to.equal(200);
     expect(res.body).to.eql({
