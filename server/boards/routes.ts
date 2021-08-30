@@ -3,8 +3,6 @@ import express from "express";
 import { cache, CacheKeys } from "../cache";
 import {
   getBoardBySlug,
-  getBoardActivityBySlug,
-  getBoards,
   markBoardVisit,
   updateBoardMetadata,
   muteBoard,
@@ -14,21 +12,10 @@ import {
   unpinBoard,
 } from "./queries";
 import { ensureLoggedIn, isLoggedIn } from "../../handlers/auth";
-import {
-  mergeObjectIdentity,
-  ensureNoIdentityLeakage,
-  processBoardMetadata,
-  processBoardsMetadata,
-} from "../../utils/response-utils";
-import { hasPermission } from "../../utils/permissions-utils";
-import {
-  DbActivityThreadType,
-  DbRolePermissions,
-  ServerActivityType,
-  ServerThreadSummaryType,
-  ServerThreadType,
-} from "../../Types";
-import { canAccessBoard, getBoardMetadata } from "./utils";
+import { processBoardMetadata } from "../../utils/response-utils";
+import { hasPermission, canAccessBoard } from "../../utils/permissions-utils";
+import { DbRolePermissions } from "../../Types";
+import { getBoardMetadata } from "./utils";
 
 const info = debug("bobaserver:board:routes-info");
 const log = debug("bobaserver:board:routes");
@@ -430,120 +417,6 @@ router.post("/:slug/notifications/dismiss", isLoggedIn, async (req, res) => {
   info(`Dismiss successful`);
 
   res.sendStatus(204);
-});
-
-/**
- * @openapi
- * boards/{slug}/activity/latest:
- *   get:
- *     summary: Get latest board activity (TODO).
- *     tags:
- *       - /boards/
- *       - todo
- *     parameters:
- *       - name: slug
- *         in: path
- *         description: The slug of the board to fetch the activity of.
- *         required: true
- *         schema:
- *           type: string
- *           format: uuid
- *     responses:
- *       404:
- *         description: The board was not found.
- *       200:
- *         description: The board activity.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/BoardActivity"
- */
-router.get("/:slug/activity/latest", isLoggedIn, async (req, res) => {
-  const { slug } = req.params;
-  const { cursor, categoryFilter } = req.query;
-  log(
-    `Fetching activity data for board with slug ${slug} with cursor ${cursor} and filtered category "${categoryFilter}"`
-  );
-
-  if (!(await canAccessBoard({ slug, firebaseId: req.currentUser?.uid }))) {
-    // TOOD: add error log
-    return res.sendStatus(403);
-  }
-
-  const result = await getBoardActivityBySlug({
-    slug,
-    firebaseId: req.currentUser?.uid,
-    filterCategory: (categoryFilter as string) || null,
-    cursor: (cursor as string) || null,
-  });
-  info(`Found activity for board ${slug}:`, result);
-
-  if (result === false) {
-    res.sendStatus(500);
-    return;
-  }
-  if (!result) {
-    res.sendStatus(404);
-    return;
-  }
-  if (!result.activity.length) {
-    res.sendStatus(204);
-    return;
-  }
-
-  const threadsWithIdentity = result.activity.map(
-    (thread): ServerThreadSummaryType => {
-      const threadWithIdentity =
-        mergeObjectIdentity<DbActivityThreadType>(thread);
-      return {
-        starter: {
-          id: threadWithIdentity.post_id,
-          parent_thread_id: threadWithIdentity.thread_id,
-          parent_post_id: threadWithIdentity.parent_post_id,
-          secret_identity: threadWithIdentity.secret_identity,
-          user_identity: threadWithIdentity.user_identity,
-          accessory_avatar: threadWithIdentity.accessory_avatar,
-          friend: threadWithIdentity.friend,
-          created_at: threadWithIdentity.created,
-          content: threadWithIdentity.content,
-          tags: {
-            whisper_tags: threadWithIdentity.whisper_tags,
-            index_tags: threadWithIdentity.index_tags,
-            category_tags: threadWithIdentity.category_tags,
-            content_warnings: threadWithIdentity.content_warnings,
-          },
-          total_comments_amount: threadWithIdentity.comments_amount,
-          new_comments_amount: threadWithIdentity.new_comments_amount,
-          new: threadWithIdentity.is_new,
-          own: threadWithIdentity.self,
-        },
-        default_view: threadWithIdentity.default_view,
-        id: threadWithIdentity.thread_id,
-        parent_board_slug: slug,
-        new_posts_amount: threadWithIdentity.new_posts_amount,
-        new_comments_amount: threadWithIdentity.new_comments_amount,
-        total_comments_amount: threadWithIdentity.comments_amount,
-        total_posts_amount: threadWithIdentity.posts_amount,
-        last_activity_at: threadWithIdentity.thread_last_activity,
-        direct_threads_amount: threadWithIdentity.threads_amount,
-        muted: threadWithIdentity.muted,
-        hidden: threadWithIdentity.hidden,
-        new: threadWithIdentity.is_new,
-      };
-    }
-  );
-  const response: ServerActivityType = {
-    cursor: {
-      next: result.cursor,
-    },
-    activity: threadsWithIdentity,
-  };
-
-  response.activity.map((post) => ensureNoIdentityLeakage(post));
-  log(
-    `Returning board activity data for board ${slug} for user ${req.currentUser?.uid}.`
-  );
-  res.status(200).json(response);
 });
 
 export default router;

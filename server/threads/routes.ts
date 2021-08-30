@@ -19,9 +19,11 @@ import {
 } from "../../utils/response-utils";
 import { ThreadPermissions } from "../../Types";
 import axios from "axios";
-import { canAccessBoard } from "../boards/utils";
 import { getBoardBySlug } from "../boards/queries";
-import { transformThreadPermissions } from "../../utils/permissions-utils";
+import {
+  transformThreadPermissions,
+  canAccessBoard,
+} from "../../utils/permissions-utils";
 import { moveThread } from "./queries";
 
 const info = debug("bobaserver:threads:routes-info");

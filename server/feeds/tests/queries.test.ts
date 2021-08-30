@@ -1,9 +1,10 @@
 import "mocha";
 import { expect } from "chai";
 
-import { getUserActivity, getUserFromFirebaseId } from "../queries";
+import { getUserActivity } from "../queries";
+import { getUserFromFirebaseId } from "../../users/queries";
 import { DbActivityThreadType } from "../../../Types";
-import { extractActivity } from "../../boards/tests/activity.test";
+import { extractActivity } from "./board-feed.test";
 
 describe("Test users query", () => {
   it("gets user from id", async () => {
