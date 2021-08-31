@@ -23,7 +23,7 @@ describe("Tests boards REST API", () => {
     listener.close(done);
     process.env.FORCED_USER = undefined;
   });
-  it("should return board data", async () => {
+  it("should return board data (logged out)", async () => {
     const res = await request(app).get("/gore");
 
     expect(res.status).to.equal(200);
@@ -46,34 +46,14 @@ describe("Tests boards REST API", () => {
           type: "text",
         },
       ],
-      settings: {
-        accentColor: "#f96680",
-      },
-      muted: false,
+      accent_color: "#f96680",
+      id: "gore",
       slug: "gore",
+      realm_id: "v0-fake-id",
       tagline: "Blood! Blood! Blood!",
-      postingIdentities: [],
-      pinned_order: null,
-      permissions: {
-        canEditBoardData: false,
-        postsPermissions: [],
-        threadsPermissions: [],
-      },
-      accessories: [
-        {
-          accessory: "/420accessories/weed_hands.png",
-          id: 4,
-          name: "Rolling",
-        },
-        {
-          accessory: "/420accessories/joint.png",
-          id: 5,
-          name: "Joint",
-        },
-      ],
-      avatarUrl: "/gore.png",
+      avatar_url: "/gore.png",
       delisted: false,
-      loggedInOnly: false,
+      logged_in_only: false,
     });
   });
 
