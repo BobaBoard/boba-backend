@@ -64,40 +64,6 @@ describe("Tests restricted board queries", () => {
       //   it("fetches board details when logged in (REST)", async () => {
       //   });
 
-      it("doesn't fetch board details in all boards query when logged out (REST)", async () => {
-        const res = await request(app).get("/");
-
-        expect(res.status).to.equal(200);
-        expect(
-          res.body.find((board: any) => board.slug == "restricted")
-        ).to.eql({
-          avatarUrl:
-            "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2Fe4e263cf-ee98-4902-9c14-c10299210e01.png?alt=media&token=7c170411-9401-4d4e-9f66-5d6dfee2fccd",
-          loggedInOnly: true,
-          settings: {
-            accentColor: "#234a69",
-          },
-          slug: "restricted",
-          tagline: "A board to test for logged-in only view",
-        });
-      });
-
-      it("doesn't fetch board details when logged out (REST)", async () => {
-        const res = await request(app).get("/restricted");
-
-        expect(res.status).to.equal(200);
-        expect(res.body).to.eql({
-          avatarUrl:
-            "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2Fe4e263cf-ee98-4902-9c14-c10299210e01.png?alt=media&token=7c170411-9401-4d4e-9f66-5d6dfee2fccd",
-          loggedInOnly: true,
-          settings: {
-            accentColor: "#234a69",
-          },
-          slug: "restricted",
-          tagline: "A board to test for logged-in only view",
-        });
-      });
-
       it("doesn't fetch board activity when logged out (REST)", async () => {
         const res = await request(app).get("/restricted/activity/latest");
 

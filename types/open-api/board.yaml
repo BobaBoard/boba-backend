@@ -14,6 +14,8 @@ components:
         avatar_url:
           type: string
           format: uri
+        tagline:
+          type: string
         accent_color:
           type: string
           format: color
@@ -26,6 +28,7 @@ components:
         - realm_id
         - slug
         - avatar_url
+        - tagline
         - accent_color
         - logged_in_only
         - delisted
@@ -71,37 +74,3 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/PostingIdentity"
-
-    BoardActivity:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-        last_post_at:
-          type: string
-          format: date-time
-          nullable: true
-        last_comment_at:
-          type: string
-          format: date-time
-          nullable: true
-        last_activity_at:
-          type: string
-          format: date-time
-          nullable: true
-        last_activity_from_others_at:
-          type: string
-          format: date-time
-          nullable: true
-        last_visit_at:
-          type: string
-          format: date-time
-          nullable: true
-      required:
-        - id
-        - last_post_at
-        - last_comment_at
-        - last_activity_at
-        - last_activity_from_others_at
-        - last_visit_at

@@ -6,7 +6,7 @@ WITH
 SELECT 
     boards.slug,
     boards.tagline,
-    boards.avatar_reference_id,
+    boards.avatar_reference_id as avatar_url,
     boards.settings,
     json_agg(DISTINCT jsonb_build_object(
         'id', bds.string_id,
@@ -26,7 +26,7 @@ SELECT
     COALESCE(
         json_agg(DISTINCT jsonb_build_object(
             'id', p.role_id,
-            'avatar_reference_id', p.avatar_reference_id,
+            'avatar_url', p.avatar_reference_id,
             'accessory', p.role_accessory,
             'color', p.role_color,
             'name', p.role_name

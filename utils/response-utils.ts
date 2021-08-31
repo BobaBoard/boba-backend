@@ -17,6 +17,7 @@ const log = debug("bobaserver::response-utils-log");
 const TRANSFORM_DICT: { [key: string]: string } = {
   avatar_reference_id: "avatarUrl",
   avatar: "avatar",
+  avatar_url: "avatar_url",
 };
 /* Uses TRANSFORM_DICT to look up which keys in an object
  * should have their urls transformed into full paths, and
@@ -161,6 +162,7 @@ export const processBoardMetadata = ({
   let finalMetadata = {
     id: metadata.slug,
     slug: metadata.slug,
+    avatar_url: metadata.avatar_url,
     descriptions: metadata.descriptions || [],
     permissions: transformPermissions(metadata.permissions),
     posting_identities: metadata.posting_identities.map((identity: any) =>
@@ -173,6 +175,11 @@ export const processBoardMetadata = ({
     delete finalMetadata.permissions;
     delete finalMetadata.posting_identities;
     delete finalMetadata.accessories;
+  }
+
+  // @ts-expect-error
+  if (!isLoggedIn && metadata.loggedInOnly) {
+    finalMetadata.descriptions = [];
   }
 
   return finalMetadata;

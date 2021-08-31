@@ -54,28 +54,10 @@ components:
             Keys are the uuid of each board.
           type: object
           additionalProperties:
-            type: object
-            properties:
-              id:
-                type: string
-                format: uuid
-              last_post_at:
-                type: string
-                format: date-time
-                nullable: true
-              last_comment_at:
-                type: string
-                format: date-time
-                nullable: true
-              last_activity_at:
-                type: string
-                format: date-time
-                nullable: true
-              last_activity_from_others_at:
-                type: string
-                format: date-time
-                nullable: true
-              last_visit_at:
-                type: string
-                format: date-time
-                nullable: true
+            allOf:
+              - type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+              - $ref: "#/components/schemas/BoardActivitySummary"
