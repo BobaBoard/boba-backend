@@ -16,14 +16,14 @@ const deleteSectionCategories = `
     WHERE  
         bds.string_id = $/section_id/ AND 
         bds.id = bdsc.section_id AND 
-        bds.board_id = (SELECT id from boards WHERE boards.slug = $/board_slug/) AND
+        bds.board_id = (SELECT id from boards WHERE boards.string_id = $/board_uuid/) AND
         ($/category_names/ IS NULL OR bdsc.category_id IN (SELECT id FROM categories WHERE category = ANY($/category_names/)));`;
 
 const deleteSection = `
     DELETE FROM board_description_sections bds
     WHERE  
         bds.string_id = $/section_id/ AND
-        bds.board_id = (SELECT id from boards WHERE boards.slug = $/board_slug/);`;
+        bds.board_id = (SELECT id from boards WHERE boards.string_id = $/board_uuid/);`;
 
 const updateSection = `
     UPDATE board_description_sections bds
@@ -34,7 +34,7 @@ const updateSection = `
     FROM boards
     WHERE
         boards.id = bds.board_id 
-        AND bds.board_id  = (SELECT id from boards WHERE boards.slug = $/board_slug/)
+        AND bds.board_id  = (SELECT id from boards WHERE boards.string_id = $/board_uuid/)
         AND bds.string_id = $/section_id/
     RETURNING *;
 `;
@@ -43,7 +43,7 @@ const createSection = `
     INSERT INTO board_description_sections(string_id, board_id, title, description, index, type)
     VALUES(
         $/section_id/,
-        (SELECT id from boards WHERE boards.slug = $/board_slug/),
+        (SELECT id from boards WHERE boards.string_id = $/board_uuid/),
         $/title/,
         $/description/,
         $/index/,
@@ -113,7 +113,7 @@ const updateBoardSettings = `
     UPDATE boards
     SET tagline = $/tagline/,
         settings = $/settings/
-    WHERE boards.slug = $/slug/`;
+    WHERE boards.string_id = $/uuid/`;
 
 export default {
   getAllBoards: new QueryFile(path.join(__dirname, "all-boards.sql")),

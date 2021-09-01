@@ -101,15 +101,15 @@ router.get("/:uuid", isLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * boards/{slug}/metadata/update:
+ * boards/{uuid}/metadata/update:
  *   post:
  *     summary: Update boards metadata
  *     tags:
  *       - /boards/
  *       - todo
  */
-router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
-  const { slug } = req.params;
+router.post("/:uuid/metadata/update", isLoggedIn, async (req, res) => {
+  const { uuid } = req.params;
   const { descriptions, accentColor, tagline } = req.body;
 
   // @ts-ignore
@@ -117,9 +117,9 @@ router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
     return res.sendStatus(401);
   }
 
-  const board = await getBoardBySlug({
+  const board = await getBoardByUUID({
     firebaseId: req.currentUser?.uid,
-    slug,
+    uuid,
   });
   log(`Found board`, board);
   console.log(board);
@@ -135,7 +135,7 @@ router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
   }
 
   const newMetadata = await updateBoardMetadata({
-    slug,
+    uuid,
     // @ts-ignore
     firebaseId: req.currentUser?.uid,
     oldMetadata: board,
@@ -147,7 +147,7 @@ router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
     return;
   }
 
-  await cache().hdel(CacheKeys.BOARD, slug);
+  await cache().hdel(CacheKeys.BOARD, uuid);
   res.status(200).json(
     processBoardMetadata({
       metadata: newMetadata,
