@@ -4,7 +4,7 @@ import {
   DbBoardMetadata,
 } from "../../Types";
 import { cache, CacheKeys } from "../cache";
-import { getBoardBySlug } from "./queries";
+import { getBoardBySlug, getBoardByUUID } from "./queries";
 import debug from "debug";
 import {
   processBoardMetadata,
@@ -175,6 +175,50 @@ export const getBoardMetadata = async ({
   return finalMetadata;
 };
 
+export const getBoardMetadataByUUID = async ({
+  uuid,
+  firebaseId,
+}: {
+  uuid: string;
+  firebaseId?: string;
+}) => {
+  if (!firebaseId) {
+    const cachedBoard = await cache().hget(CacheKeys.BOARD_METADATA, uuid);
+    if (cachedBoard) {
+      log(`Found cached metadata for board ${uuid}`);
+      return JSON.parse(cachedBoard);
+    }
+  }
+
+  const board = await getBoardByUUID({
+    firebaseId,
+    uuid,
+  });
+  info(`Found board`, board);
+
+  if (!board) {
+    return;
+  }
+
+  const boardSummary = processBoardsSummary({
+    boards: [board],
+    isLoggedIn: !!firebaseId,
+  });
+  const boardMetadata = processBoardMetadata({
+    metadata: board,
+    isLoggedIn: !!firebaseId,
+  });
+  const finalMetadata = {
+    ...boardSummary[0],
+    ...boardMetadata,
+  };
+  if (!firebaseId) {
+    cache().hset(CacheKeys.BOARD_METADATA, uuid, JSON.stringify(finalMetadata));
+  }
+  log(`Processed board metadata (${uuid}) for user ${firebaseId}`);
+  return finalMetadata;
+};
+
 export const canAccessBoard = async ({
   slug,
   firebaseId,
@@ -185,6 +229,28 @@ export const canAccessBoard = async ({
   const board = await getBoardBySlug({
     firebaseId,
     slug,
+  });
+  info(`Found board`, board);
+
+  if (!board) {
+    return false;
+  }
+  if (board.logged_out_restrictions.includes(restriction_types.LOCK_ACCESS)) {
+    return !!firebaseId;
+  }
+  return true;
+};
+
+export const canAccessBoardByUUID = async ({
+  uuid,
+  firebaseId,
+}: {
+  uuid: string;
+  firebaseId?: string;
+}) => {
+  const board = await getBoardByUUID({
+    firebaseId,
+    uuid,
   });
   info(`Found board`, board);
 
