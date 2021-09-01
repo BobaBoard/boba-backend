@@ -14,8 +14,6 @@ components:
           type: string
           format: uuid
           nullable: true
-        parent_board_slug:
-          type: string
         content:
           type: string
           format: quill-delta
@@ -42,19 +40,10 @@ components:
         tags:
           type: object
           $ref: "#/components/schemas/Tags"
-        type:
-          type: string
-          enum: [text]
-          deprecated: true
-        anonymity_type:
-          type: string
-          enum: [everyone, friends_only]
-          deprecated: true
       required:
         - id
         - parent_post_id
         - parent_thread_id
-        - parent_board_slug
         - content
         - created_at
         - secret_identity

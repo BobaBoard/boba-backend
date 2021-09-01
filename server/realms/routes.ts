@@ -18,7 +18,7 @@ const router = express.Router();
 
 /**
  * @openapi
- * realms/slug/{realm_slug}/:
+ * /realms/slug/{realm_slug}/:
  *   get:
  *     summary: Fetches the top-level realm metadata by slug.
  *     tags:
@@ -80,13 +80,13 @@ router.get(
 
 /**
  * @openapi
- * realms/{realm_id}/activity:
+ * /realms/{realm_id}/activity:
  *   get:
  *     summary: Fetches latest activity summary for the realm.
  *     tags:
  *       - /realms/
  *     security:
- *       - []
+ *       - {}
  *       - firebase: []
  *     parameters:
  *       - name: realm_id

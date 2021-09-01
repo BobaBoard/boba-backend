@@ -28,7 +28,6 @@ components:
           $ref: "#/components/schemas/Identity"
         created_at:
           type: string
-          # TODO: actually conform returned type to RFC 3339
           format: date-time
         own:
           type: boolean

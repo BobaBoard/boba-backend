@@ -39,11 +39,14 @@ components:
             default_view:
               type: string
               enum: [thread, gallery, timeline]
+            new:
+              type: boolean
+              description: "Whether the thread is new. False when the user is logged out."
             muted:
-              description: "Whether the contribution is muted. False when the user is logged out."
+              description: "Whether the thread is muted. False when the user is logged out."
               type: boolean
             hidden:
-              description: "Whether the contribution is hidden. False when the user is logged out."
+              description: "Whether the thread is hidden. False when the user is logged out."
               type: boolean
           required:
             - id

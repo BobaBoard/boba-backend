@@ -31,7 +31,7 @@ const router = express.Router();
  *       - /boards/
  *     security:
  *       - firebase: []
- *       - []
+ *       - {}
  *     parameters:
  *       - name: slug
  *         in: path
@@ -101,7 +101,7 @@ router.get("/:slug", isLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * boards/{slug}/metadata/update:
+ * /boards/{slug}/metadata/update:
  *   post:
  *     summary: Update boards metadata
  *     tags:
@@ -158,14 +158,14 @@ router.post("/:slug/metadata/update", isLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * boards/{slug}/visits:
+ * /boards/{slug}/visits:
  *   get:
  *     summary: Sets last visited time for board
  *     tags:
  *       - /boards/
  *     security:
  *       - firebase: []
- *       - []
+ *       - {}
  *     parameters:
  *       - name: slug
  *         in: path
@@ -205,7 +205,7 @@ router.post("/:slug/visits", isLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * boards/{slug}/mute:
+ * /boards/{slug}/mute:
  *   post:
  *     summary: Mutes a board.
  *     description: Mutes the specified board for the current user.
@@ -249,7 +249,7 @@ router.post("/:slug/mute", ensureLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * boards/{slug}/mute:
+ * /boards/{slug}/mute:
  *   delete:
  *     summary: Unmutes a board.
  *     description: Unmutes the specified board for the current user.
@@ -296,7 +296,7 @@ router.delete("/:slug/mute", ensureLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * boards/{slug}/pin:
+ * /boards/{slug}/pin:
  *   post:
  *     summary: Pins a board.
  *     description: Pins the specified board for the current user.
@@ -343,7 +343,7 @@ router.post("/:slug/pin", ensureLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * boards/{slug}/pin:
+ * /boards/{slug}/pin:
  *   delete:
  *     summary: Unpins a board.
  *     description: Unpins the specified board for the current user.
@@ -388,7 +388,7 @@ router.delete("/:slug/pin", ensureLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * boards/{slug}/notifications/dismiss:
+ * /boards/{slug}/notifications/dismiss:
  *   post:
  *     summary: Dismiss all notifications for board {slug}
  *     tags:

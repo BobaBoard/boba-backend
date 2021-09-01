@@ -18,7 +18,7 @@ WITH
                 'secret_identity_color', thread_comments.secret_identity_color,
                 'accessory_avatar', thread_comments.accessory_avatar,
                 'content', thread_comments.content,
-                'created',  TO_CHAR(thread_comments.created, 'YYYY-MM-DD"T"HH24:MI:SS'),
+                'created',  TO_CHAR(thread_comments.created, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"'),
                 'anonymity_type', thread_comments.anonymity_type,
                 'self', thread_comments.is_own,
                 'friend', thread_comments.is_friend,
@@ -69,7 +69,7 @@ WITH
                      ON users.id = friends.user_id 
                WHERE firebase_id = ${firebase_id}
             ) as friend,
-            TO_CHAR(posts.created, 'YYYY-MM-DD"T"HH24:MI:SS') as created,
+            TO_CHAR(posts.created, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as created,
             posts.content,
             posts.options,
             posts.type,
@@ -114,6 +114,7 @@ WITH
 SELECT 
     threads.string_id as thread_id, 
     boards.slug as board_slug,
+    TO_CHAR(thread_details.last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as thread_last_activity,
     json_agg(row_to_json(thread_posts) ORDER BY thread_posts.created ASC) as posts,
     COALESCE(threads.OPTIONS ->> 'default_view', 'thread')::view_types AS default_view,
     COALESCE(SUM(thread_posts.new_comments_amount)::int, 0) as thread_new_comments_amount,
@@ -128,6 +129,8 @@ SELECT
 FROM threads
 LEFT JOIN thread_posts
     ON threads.string_id = thread_posts.parent_thread_id
+LEFT JOIN thread_details
+    ON threads.string_id = thread_details.thread_string_id
 LEFT JOIN boards
     ON threads.parent_board = boards.id
 LEFT JOIN user_muted_threads umt
@@ -135,4 +138,4 @@ LEFT JOIN user_muted_threads umt
 LEFT JOIN user_hidden_threads uht
     ON  ${firebase_id} IS NOT NULL AND uht.user_id = (SELECT id FROM users WHERE firebase_id = ${firebase_id}) AND uht.thread_id = threads.id
 WHERE threads.string_id = ${thread_string_id}
-GROUP BY threads.id, boards.slug, uht.user_id, umt.user_id
+GROUP BY threads.id, boards.slug, uht.user_id, umt.user_id, thread_details.last_update_timestamp
