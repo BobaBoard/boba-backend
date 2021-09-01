@@ -3,6 +3,7 @@ import express from "express";
 import { cache, CacheKeys } from "../cache";
 import {
   getBoardBySlug,
+  getBoardByUUID,
   getBoardActivityBySlug,
   getBoards,
   markBoardVisit,
@@ -26,7 +27,8 @@ import {
   DbRolePermissions,
   ServerThreadType,
 } from "../../Types";
-import { canAccessBoard, getBoardMetadata } from "./utils";
+import { canAccessBoard, canAccessBoardByUUID, 
+         getBoardMetadata, getBoardMetadataByUUID } from "./utils";
 
 const info = debug("bobaserver:board:routes-info");
 const log = debug("bobaserver:board:routes");
@@ -35,7 +37,7 @@ const router = express.Router();
 
 /**
  * @openapi
- * boards/{slug}:
+ * boards/{uuid}:
  *   get:
  *     summary: Fetches board metadata.
  *     tags:
@@ -44,9 +46,9 @@ const router = express.Router();
  *       - firebase: []
  *       - []
  *     parameters:
- *       - name: slug
+ *       - name: uuid
  *         in: path
- *         description: The slug of the board to update.
+ *         description: The uuid of the board to update.
  *         required: true
  *         schema:
  *           type: string
@@ -67,16 +69,16 @@ const router = express.Router();
  *                 - $ref: "#/components/schemas/BoardMetadata"
  *                 - $ref: "#/components/schemas/LoggedInBoardMetadata"
  */
-router.get("/:slug", isLoggedIn, async (req, res) => {
-  const { slug } = req.params;
-  log(`Fetching data for board with slug ${slug}.`);
+router.get("/:uuid", isLoggedIn, async (req, res) => {
+  const { uuid } = req.params;
+  log(`Fetching data for board with uuid ${uuid}.`);
 
-  const boardMetadata = await getBoardMetadata({
+  const boardMetadata = await getBoardMetadataByUUID({
     firebaseId: req.currentUser?.uid,
-    slug,
+    uuid,
   });
 
-  if (!canAccessBoard({ slug, firebaseId: req.currentUser?.uid })) {
+  if (!canAccessBoardByUUID({ uuid, firebaseId: req.currentUser?.uid })) {
     if (!req.currentUser?.uid) {
       res
         .status(401)
@@ -93,7 +95,7 @@ router.get("/:slug", isLoggedIn, async (req, res) => {
     return;
   }
 
-  log(`Returning data for board ${slug} for user ${req.currentUser?.uid}.`);
+  log(`Returning data for board ${uuid} for user ${req.currentUser?.uid}.`);
   res.status(200).json(boardMetadata);
 });
 

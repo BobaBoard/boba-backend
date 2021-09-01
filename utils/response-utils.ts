@@ -160,7 +160,7 @@ export const processBoardMetadata = ({
   isLoggedIn: boolean;
 }) => {
   let finalMetadata = {
-    id: metadata.slug,
+    id: metadata.string_id,
     slug: metadata.slug,
     avatar_url: metadata.avatar_url,
     descriptions: metadata.descriptions || [],

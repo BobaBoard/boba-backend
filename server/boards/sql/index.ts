@@ -121,6 +121,7 @@ export default {
     path.join(__dirname, "board-activity-by-slug.sql")
   ),
   getBoardBySlug: new QueryFile(path.join(__dirname, "board-by-slug.sql")),
+  getBoardByUUID: new QueryFile(path.join(__dirname, "board-by-uuid.sql")),
   markBoardVisit,
   deleteSectionCategories,
   deleteSection,

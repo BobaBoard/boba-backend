@@ -52,6 +52,34 @@ export const getBoardBySlug = async ({
   }
 };
 
+export const getBoardByUUID = async ({
+  firebaseId,
+  uuid,
+}: {
+  firebaseId: string | undefined;
+  uuid: string;
+}): Promise<DbBoardMetadata> => {
+  try {
+    const rows = await pool.oneOrNone(sql.getBoardByUUID, {
+      firebase_id: firebaseId,
+      board_uuid: uuid,
+    });
+
+    if (!rows) {
+      log(`Board not found: ${uuid}`);
+      return null;
+    }
+
+    info(`Got getBoardByUUID query result:`, rows);
+    log(`Fetched board ${uuid} for user ${firebaseId}`);
+    return rows;
+  } catch (e) {
+    error(`Error while fetching board by slug (${uuid}).`);
+    error(e);
+    return null;
+  }
+};
+
 export const updateBoardMetadata = async ({
   slug,
   firebaseId,
@@ -270,6 +298,70 @@ export const getBoardActivityBySlug = async ({
     return { cursor: nextCursor, activity: rows };
   } catch (e) {
     error(`Error while fetching board by slug (${slug}).`);
+    error(e);
+    return false;
+  }
+};
+
+export const getBoardActivityByUUID = async ({
+  uuid,
+  firebaseId,
+  filterCategory,
+  cursor,
+  pageSize,
+}: {
+  uuid: string;
+  firebaseId: string;
+  filterCategory?: string | null;
+  cursor: string;
+  pageSize?: number;
+}): Promise<
+  | {
+      cursor: string | null;
+      activity: DbActivityThreadType[];
+    }
+  | false
+> => {
+  try {
+    const decodedCursor = cursor && decodeCursor(cursor);
+
+    const finalPageSize =
+      decodedCursor?.page_size || pageSize || DEFAULT_PAGE_SIZE;
+    const rows = await pool.manyOrNone(sql.getBoardActivityBySlug, {
+      board_slug: uuid,
+      firebase_id: firebaseId,
+      filtered_category: filterCategory || null,
+      last_activity_cursor: decodedCursor?.last_activity_cursor || null,
+      page_size: finalPageSize,
+    });
+
+    if (!rows) {
+      log(`Board not found: ${uuid}`);
+      return null;
+    }
+
+    if (rows.length == 1 && rows[0].thread_id == null) {
+      // Only one row with just the null thread)
+      log(`Board empty: ${uuid}`);
+      return { cursor: undefined, activity: [] };
+    }
+
+    let result = rows;
+    let nextCursor = null;
+    info(`Got getBoardActivityBySlug query result`, result);
+    if (result.length > finalPageSize) {
+      nextCursor = encodeCursor({
+        last_activity_cursor: result[result.length - 1].thread_last_activity,
+        page_size: finalPageSize,
+      });
+      // remove last element from array
+      result.pop();
+    }
+
+    log(`Fetched board ${uuid} activity data for user ${firebaseId}`);
+    return { cursor: nextCursor, activity: rows };
+  } catch (e) {
+    error(`Error while fetching board by uuid (${uuid}).`);
     error(e);
     return false;
   }
