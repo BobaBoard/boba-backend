@@ -2,6 +2,9 @@ import swaggerJsdoc from "swagger-jsdoc";
 import redoc from "redoc-express";
 import express from "express";
 
+import debug from "debug";
+const info = debug("bobaserver:handlers:open-api-log");
+
 const options = {
   definition: {
     openapi: "3.1.0",
@@ -79,7 +82,14 @@ This is just to test that sections work. It will be written better later.
     "x-tagGroups": [
       {
         name: "general",
-        tags: ["/realms/", "/boards/", "/threads/", "/posts/", "/users/"],
+        tags: [
+          "/realms/",
+          "/feeds/",
+          "/boards/",
+          "/threads/",
+          "/posts/",
+          "/users/",
+        ],
       },
       {
         name: "models",
@@ -100,6 +110,7 @@ export const specs = swaggerJsdoc(options);
 
 export default (app: express.Express) => {
   app.get("/open-api.json", (req, res) => {
+    info("Fetching open api specification");
     res.setHeader("Content-Type", "application/json");
     res.send(specs);
   });

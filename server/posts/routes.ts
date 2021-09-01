@@ -25,7 +25,7 @@ const router = express.Router();
 
 /**
  * @openapi
- * posts/{post_id}/contribution:
+ * /posts/{post_id}/contribution:
  *   post:
  *     summary: Replies to a contribution.
  *     description: Posts a contribution replying to the one with id {postId}.
@@ -55,7 +55,7 @@ const router = express.Router();
  *                     type: string
  *                     format: quill-delta
  *               - $ref: "#/components/schemas/Tags"
- *               - $ref: "#/components/params/Identity"
+ *               - $ref: "#/components/schemas/IdentityParams"
  *     responses:
  *       401:
  *         description: User was not found in request that requires authentication.
@@ -127,7 +127,7 @@ router.post("/:post_id/contribution", ensureLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * posts/{post_id}/comment:
+ * /posts/{post_id}/comment:
  *   post:
  *     summary: Add comments to a contribution, optionally nested under another comment.
  *     description: Creates a comment nested under the contribution with id {post_id}.
@@ -160,7 +160,7 @@ router.post("/:post_id/contribution", ensureLoggedIn, async (req, res) => {
  *                     nullable: true
  *                     type: string
  *                     format: uuid
- *               - $ref: "#/components/params/Identity"
+ *               - $ref: "#/components/schemas/IdentityParams"
  *     responses:
  *       401:
  *         description: User was not found in request that requires authentication.
@@ -226,7 +226,7 @@ router.post("/:post_id/comment", ensureLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * posts/{post_id}/contribution:
+ * /posts/{post_id}/contribution:
  *   patch:
  *     summary: Edits a contribution.
  *     description: Edits a contribution (for now just its tags).

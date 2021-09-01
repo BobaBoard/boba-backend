@@ -35,7 +35,7 @@ const router = express.Router();
 
 /**
  * @openapi
- * users/@me:
+ * /users/@me:
  *   get:
  *     summary: Gets data for the current user.
  *     tags:
@@ -228,7 +228,7 @@ router.post("/invite/accept", async (req, res) => {
 
 /**
  * @openapi
- * users/@me/notifications:
+ * /users/@me/notifications:
  *   get:
  *     summary: Gets notifications data for the current user.
  *     description: |

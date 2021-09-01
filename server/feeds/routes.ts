@@ -1,4 +1,3 @@
-import debug from "debug";
 import express from "express";
 import { getUserActivity, getBoardActivityBySlug } from "./queries";
 import { isLoggedIn } from "../../handlers/auth";
@@ -14,6 +13,7 @@ import {
 } from "../../Types";
 import { canAccessBoard } from "../../utils/permissions-utils";
 
+import debug from "debug";
 const info = debug("bobaserver:feeds:routes-info");
 const log = debug("bobaserver:feeds:routes");
 
@@ -21,11 +21,11 @@ const router = express.Router();
 
 /**
  * @openapi
- * feeds/boards/{slug}:
+ * /feeds/boards/{slug}:
  *   get:
- *     summary: Get latest board activity (TODO).
+ *     summary: Get the feed for the given boards' activity.
  *     tags:
- *       - /boards/
+ *       - /feeds/
  *       - todo
  *     parameters:
  *       - name: slug
@@ -35,6 +35,11 @@ const router = express.Router();
  *         schema:
  *           type: string
  *           format: uuid
+ *       - name: cursor
+ *         in: query
+ *         description: The cursor to start feeding the activity of the board from.
+ *         schema:
+ *           type: string
  *     responses:
  *       404:
  *         description: The board was not found.
@@ -52,7 +57,6 @@ router.get("/boards/:slug", isLoggedIn, async (req, res) => {
     `Fetching activity data for board with slug ${slug} with cursor ${cursor} and filtered category "${categoryFilter}"`
   );
 
-  console.log("sjdhkahjksdhk");
   if (!(await canAccessBoard({ slug, firebaseId: req.currentUser?.uid }))) {
     // TOOD: add error log
     return res.sendStatus(403);
@@ -134,7 +138,31 @@ router.get("/boards/:slug", isLoggedIn, async (req, res) => {
   res.status(200).json(response);
 });
 
-router.get("/me/feed", isLoggedIn, async (req, res) => {
+/**
+ * @openapi
+ * /feeds/users/@me:
+ *   get:
+ *     summary: Get the feed for the current user activity activity.
+ *     tags:
+ *       - /feeds/
+ *       - todo
+ *     parameters:
+ *       - name: cursor
+ *         in: query
+ *         description: The cursor to start feeding the activity of the board from.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       404:
+ *         description: The board was not found.
+ *       200:
+ *         description: The board activity.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/BoardActivity"
+ */
+router.get("/users/@me", isLoggedIn, async (req, res) => {
   const { cursor, updatedOnly, ownOnly } = req.query;
   let currentUserId: string = req.currentUser?.uid;
   if (!currentUserId) {

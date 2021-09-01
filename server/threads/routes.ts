@@ -25,6 +25,7 @@ import {
   canAccessBoard,
 } from "../../utils/permissions-utils";
 import { moveThread } from "./queries";
+import { server } from "sinon";
 
 const info = debug("bobaserver:threads:routes-info");
 const log = debug("bobaserver:threads:routes-log");
@@ -33,14 +34,14 @@ const router = express.Router();
 
 /**
  * @openapi
- * threads/{thread_id}:
+ * /threads/{thread_id}:
  *   get:
  *     summary: Fetches thread data.
  *     tags:
  *       - /threads/
  *     security:
  *       - firebase: []
- *       - []
+ *       - {}
  *     parameters:
  *       - name: thread_id
  *         in: path
@@ -104,6 +105,9 @@ router.get("/:id", isLoggedIn, async (req, res) => {
 
   const serverThread = makeServerThread(thread);
   ensureNoIdentityLeakage(serverThread);
+
+  serverThread.comments = {};
+  serverThread.posts = [];
 
   info(`sending back data for thread ${id}.`);
   res.status(200).json(serverThread);
