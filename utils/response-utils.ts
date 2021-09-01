@@ -237,7 +237,7 @@ export const processBoardsSummary = ({
 
   // TODO[cleanup]: get correct format from db
   return result.map((result) => ({
-    id: result.slug,
+    id: result.string_id,
     realm_id: "v0-fake-id",
     slug: result.slug,
     tagline: result.tagline,
