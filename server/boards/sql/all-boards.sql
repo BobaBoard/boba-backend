@@ -5,6 +5,7 @@ WITH
     (SELECT row_number() OVER(ORDER BY id) AS index, board_id, user_id FROM user_pinned_boards)
 SELECT 
     boards.slug,
+    boards.string_id,
     boards.tagline,
     boards.avatar_reference_id,
     boards.settings,

@@ -82,7 +82,7 @@ export const filterOutDisabledSettings = (
 export const processRealmActivity = ({ boards }: { boards: any[] }) => {
   return boards.reduce((result, current) => {
     result[current.slug] = {
-      id: current.slug,
+      id: current.string_id,
       last_post_at: current.last_post,
       last_comment_at: current.last_comment,
       last_activity_at: current.last_activity,
