@@ -2,15 +2,10 @@ import express from "express";
 import { getUserActivity, getBoardActivityBySlug } from "./queries";
 import { ensureLoggedIn, isLoggedIn } from "../../handlers/auth";
 import {
-  mergeObjectIdentity,
   ensureNoIdentityLeakage,
   makeServerThreadSummary,
 } from "../../utils/response-utils";
-import {
-  DbThreadSummaryType,
-  ServerActivityType,
-  ServerThreadType,
-} from "../../Types";
+import { ServerFeedType } from "../../Types";
 import { canAccessBoard } from "../../utils/permissions-utils";
 
 import debug from "debug";
@@ -101,7 +96,7 @@ router.get("/boards/:slug", isLoggedIn, async (req, res) => {
   }
 
   const threadsWithIdentity = result.activity.map(makeServerThreadSummary);
-  const response: ServerActivityType = {
+  const response: ServerFeedType = {
     cursor: {
       next: result.cursor,
     },
@@ -164,7 +159,7 @@ router.get("/users/@me", ensureLoggedIn, async (req, res) => {
   const threadsWithIdentity = userActivity.activity.map(
     makeServerThreadSummary
   );
-  const response: ServerActivityType = {
+  const response: ServerFeedType = {
     cursor: {
       next: userActivity.cursor,
     },

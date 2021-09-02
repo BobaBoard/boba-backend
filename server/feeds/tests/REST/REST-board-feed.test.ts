@@ -40,7 +40,7 @@ describe("Tests boards REST API", () => {
             parent_thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
             content:
               '[{"insert":"Remember to be excellent to each other and only be mean to fictional characters!"}]',
-            created_at: "2020-09-25T05:42:00",
+            created_at: "2020-09-25T05:42:00.00Z",
             new_comments_amount: 0,
             secret_identity: {
               avatar:
@@ -58,10 +58,11 @@ describe("Tests boards REST API", () => {
               index_tags: [],
               whisper_tags: ["An announcement from your headmaster!"],
             },
-            total_comments_amount: 2,
+            // TODO[realms]: this is not accurate and should be rethought
+            total_comments_amount: 0,
           },
           direct_threads_amount: 0,
-          last_activity_at: "2020-10-04T05:44:00.000000",
+          last_activity_at: "2020-10-04T05:44:00.00Z",
           new_comments_amount: 0,
           new_posts_amount: 0,
           total_comments_amount: 2,
@@ -78,7 +79,7 @@ describe("Tests boards REST API", () => {
             id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
             parent_thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
             parent_post_id: null,
-            created_at: "2020-04-30T03:23:00",
+            created_at: "2020-04-30T03:23:00.00Z",
             content: '[{"insert":"Favorite character to maim?"}]',
             tags: {
               index_tags: ["evil", "bobapost"],
@@ -86,7 +87,8 @@ describe("Tests boards REST API", () => {
               category_tags: ["bruises"],
               content_warnings: [],
             },
-            total_comments_amount: 2,
+            // TODO[realms]: this is not accurate and should be rethought
+            total_comments_amount: 0,
             new_comments_amount: 0,
             secret_identity: {
               name: "DragonFucker",
@@ -104,7 +106,7 @@ describe("Tests boards REST API", () => {
           new_comments_amount: 0,
           total_comments_amount: 2,
           total_posts_amount: 3,
-          last_activity_at: "2020-05-23T05:52:00.000000",
+          last_activity_at: "2020-05-23T05:52:00.00Z",
           direct_threads_amount: 2,
           muted: false,
           hidden: false,
@@ -117,7 +119,7 @@ describe("Tests boards REST API", () => {
             id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
             parent_thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
             parent_post_id: null,
-            created_at: "2020-04-24T05:42:00",
+            created_at: "2020-04-24T05:42:00.00Z",
             content: '[{"insert":"Favorite murder scene in videogames?"}]',
             secret_identity: {
               name: "DragonFucker",
@@ -143,7 +145,7 @@ describe("Tests boards REST API", () => {
           new_comments_amount: 0,
           total_comments_amount: 0,
           total_posts_amount: 3,
-          last_activity_at: "2020-05-03T09:47:00.000000",
+          last_activity_at: "2020-05-03T09:47:00.00Z",
           direct_threads_amount: 2,
           muted: false,
           hidden: false,

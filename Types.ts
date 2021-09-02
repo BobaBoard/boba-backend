@@ -70,7 +70,8 @@ export interface ServerThreadType extends ServerThreadSummaryType {
   posts: ServerPostType[];
   comments: Record<string, ServerCommentType[]>;
 }
-export interface ServerActivityType {
+
+export interface ServerFeedType {
   cursor: {
     next: string | null;
   };
@@ -196,6 +197,11 @@ export interface DbThreadSummaryType
       "total_comments_amount" | "new_comments_amount" | "comments"
     > {
   last_activity_at_micro: string | null;
+}
+
+export interface DbFeedType {
+  cursor: string | null;
+  activity: DbThreadSummaryType[];
 }
 
 export enum DbRolePermissions {
