@@ -89,7 +89,7 @@ export const getUserActivity = async ({
 }): Promise<
   | {
       cursor: string | null;
-      activity: DbActivityThreadType[];
+      activity: DbThreadSummaryType[];
     }
   | false
 > => {

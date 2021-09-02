@@ -162,73 +162,14 @@ router.get("/users/@me", ensureLoggedIn, async (req, res) => {
   }
 
   const threadsWithIdentity = userActivity.activity.map(
-    (thread): ServerThreadType => {
-      const threadWithIdentity = mergeObjectIdentity<any>(thread);
-      return {
-        posts: [
-          {
-            id: threadWithIdentity.post_id,
-            parent_thread_id: threadWithIdentity.thread_id,
-            parent_post_id: threadWithIdentity.parent_post_id,
-            secret_identity: threadWithIdentity.secret_identity,
-            user_identity: threadWithIdentity.user_identity,
-            accessory_avatar: threadWithIdentity.accessory_avatar,
-            own: threadWithIdentity.self,
-            friend: threadWithIdentity.friend,
-            created_at: threadWithIdentity.created,
-            content: threadWithIdentity.content,
-            tags: {
-              whisper_tags: threadWithIdentity.whisper_tags,
-              index_tags: threadWithIdentity.index_tags,
-              category_tags: threadWithIdentity.category_tags,
-              content_warnings: threadWithIdentity.content_warnings,
-            },
-            total_comments_amount: threadWithIdentity.comments_amount,
-            new_comments_amount: threadWithIdentity.new_comments_amount,
-            new: threadWithIdentity.is_new,
-          },
-        ],
-        comments: [] as any,
-        starter: {
-          id: threadWithIdentity.post_id,
-          parent_thread_id: threadWithIdentity.thread_id,
-          parent_post_id: threadWithIdentity.parent_post_id,
-          secret_identity: threadWithIdentity.secret_identity,
-          user_identity: threadWithIdentity.user_identity,
-          accessory_avatar: threadWithIdentity.accessory_avatar,
-          own: threadWithIdentity.self,
-          friend: threadWithIdentity.friend,
-          created_at: threadWithIdentity.created,
-          content: threadWithIdentity.content,
-          tags: {
-            whisper_tags: threadWithIdentity.whisper_tags,
-            index_tags: threadWithIdentity.index_tags,
-            category_tags: threadWithIdentity.category_tags,
-            content_warnings: threadWithIdentity.content_warnings,
-          },
-          total_comments_amount: threadWithIdentity.comments_amount,
-          new_comments_amount: threadWithIdentity.new_comments_amount,
-          new: threadWithIdentity.is_new,
-        },
-        default_view: threadWithIdentity.default_view,
-        id: threadWithIdentity.thread_id,
-        new_posts_amount: threadWithIdentity.new_posts_amount,
-        new_comments_amount: threadWithIdentity.new_comments_amount,
-        total_comments_amount: threadWithIdentity.comments_amount,
-        total_posts_amount: threadWithIdentity.posts_amount,
-        last_activity_at: threadWithIdentity.thread_last_activity,
-        direct_threads_amount: threadWithIdentity.threads_amount,
-        parent_board_slug: threadWithIdentity.board_slug,
-        muted: threadWithIdentity.muted,
-        hidden: threadWithIdentity.hidden,
-        new: threadWithIdentity.is_new,
-      };
-    }
+    makeServerThreadSummary
   );
-  const response: {
-    next_page_cursor: string;
-    activity: ServerThreadType[];
-  } = { next_page_cursor: userActivity.cursor, activity: threadsWithIdentity };
+  const response: ServerActivityType = {
+    cursor: {
+      next: userActivity.cursor,
+    },
+    activity: threadsWithIdentity,
+  };
 
   response.activity.map((post) => ensureNoIdentityLeakage(post));
   res.status(200).json(response);
