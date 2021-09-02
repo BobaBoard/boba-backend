@@ -1,6 +1,6 @@
 components:
   schemas:
-    Feed:
+    FeedActivity:
       type: object
       properties:
         cursor:

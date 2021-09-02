@@ -1,336 +1,337 @@
 components:
   examples:
     FeedBoardCursor:
-      cursor:
-        next: eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDQtMDVUMDU6NDI6MDAuMDAwMDAwIiwicGFnZV9zaXplIjoxMH0=
-      activity:
-        - starter:
-            id: 676f0a9a-897e-4194-9020-980cf2ac813f
-            parent_thread_id: 78d98a6a-c24b-4b7a-8e06-4a30862afa2d
-            parent_post_id:
-            secret_identity:
-              name: DragonFucker
-              avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
-              color:
-              accessory:
-            friend: false
-            created_at: "2020-04-15T05:42:00.00Z"
-            content: '[{"insert":"Post 16!"}]'
-            tags:
-              whisper_tags: []
-              index_tags: []
-              category_tags: []
-              content_warnings: []
-            total_comments_amount: 0
+      value:
+        cursor:
+          next: eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDQtMDVUMDU6NDI6MDAuMDAwMDAwIiwicGFnZV9zaXplIjoxMH0=
+        activity:
+          - starter:
+              id: 676f0a9a-897e-4194-9020-980cf2ac813f
+              parent_thread_id: 78d98a6a-c24b-4b7a-8e06-4a30862afa2d
+              parent_post_id: null
+              secret_identity:
+                name: DragonFucker
+                avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
+                color: null
+                accessory: null
+              friend: false
+              created_at: "2020-04-15T05:42:00.00Z"
+              content: '[{"insert":"Post 16!"}]'
+              tags:
+                whisper_tags: []
+                index_tags: []
+                category_tags: []
+                content_warnings: []
+              total_comments_amount: 0
+              new_comments_amount: 0
+              new: false
+              own: false
+            default_view: thread
+            id: 78d98a6a-c24b-4b7a-8e06-4a30862afa2d
+            parent_board_slug: long
+            new_posts_amount: 0
             new_comments_amount: 0
-            new: false
-            own: false
-          default_view: thread
-          id: 78d98a6a-c24b-4b7a-8e06-4a30862afa2d
-          parent_board_slug: long
-          new_posts_amount: 0
-          new_comments_amount: 0
-          total_comments_amount: 0
-          total_posts_amount: 1
-          last_activity_at: "2020-04-15T05:42:00.00Z"
-          direct_threads_amount: 0
-          muted: false
-          hidden: false
-          new: false
-        - starter:
-            id: 07a31562-c7e5-4026-b268-de758299f924
-            parent_thread_id: c5004e2b-4358-43df-8078-905b608e9ceb
-            parent_post_id:
-            secret_identity:
-              name: DragonFucker
-              avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
-              color:
-              accessory:
-            friend: false
-            created_at: "2020-04-14T05:42:00.00Z"
-            content: '[{"insert":"Post 15!"}]'
-            tags:
-              whisper_tags: []
-              index_tags: []
-              category_tags: []
-              content_warnings: []
             total_comments_amount: 0
-            new_comments_amount: 0
+            total_posts_amount: 1
+            last_activity_at: "2020-04-15T05:42:00.00Z"
+            direct_threads_amount: 0
+            muted: false
+            hidden: false
             new: false
-            own: false
-          default_view: thread
-          id: c5004e2b-4358-43df-8078-905b608e9ceb
-          parent_board_slug: long
-          new_posts_amount: 0
-          new_comments_amount: 0
-          total_comments_amount: 0
-          total_posts_amount: 1
-          last_activity_at: "2020-04-14T05:42:00.00Z"
-          direct_threads_amount: 0
-          muted: false
-          hidden: false
-          new: false
-        - starter:
-            id: 07fb6be3-b4db-4e44-adaf-4d0d5214fdf8
-            parent_thread_id: 8d0be581-5cc7-47c1-947c-f8242898682d
-            parent_post_id:
-            secret_identity:
-              name: DragonFucker
-              avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
-              color:
-              accessory:
-            friend: false
-            created_at: "2020-04-13T05:42:00.00Z"
-            content: '[{"insert":"Post 14!"}]'
-            tags:
-              whisper_tags: []
-              index_tags: []
-              category_tags: []
-              content_warnings: []
+          - starter:
+              id: 07a31562-c7e5-4026-b268-de758299f924
+              parent_thread_id: c5004e2b-4358-43df-8078-905b608e9ceb
+              parent_post_id: null
+              secret_identity:
+                name: DragonFucker
+                avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
+                color: null
+                accessory: null
+              friend: false
+              created_at: "2020-04-14T05:42:00.00Z"
+              content: '[{"insert":"Post 15!"}]'
+              tags:
+                whisper_tags: []
+                index_tags: []
+                category_tags: []
+                content_warnings: []
+              total_comments_amount: 0
+              new_comments_amount: 0
+              new: false
+              own: false
+            default_view: thread
+            id: c5004e2b-4358-43df-8078-905b608e9ceb
+            parent_board_slug: long
+            new_posts_amount: 0
+            new_comments_amount: 0
             total_comments_amount: 0
-            new_comments_amount: 0
+            total_posts_amount: 1
+            last_activity_at: "2020-04-14T05:42:00.00Z"
+            direct_threads_amount: 0
+            muted: false
+            hidden: false
             new: false
-            own: false
-          default_view: thread
-          id: 8d0be581-5cc7-47c1-947c-f8242898682d
-          parent_board_slug: long
-          new_posts_amount: 0
-          new_comments_amount: 0
-          total_comments_amount: 0
-          total_posts_amount: 1
-          last_activity_at: "2020-04-13T05:42:00.00Z"
-          direct_threads_amount: 0
-          muted: false
-          hidden: false
-          new: false
-        - starter:
-            id: 77037fd3-3a14-46ce-928c-86ab97c513df
-            parent_thread_id: 1c92ab43-4309-454f-be27-d85d3fd78808
-            parent_post_id:
-            secret_identity:
-              name: DragonFucker
-              avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
-              color:
-              accessory:
-            friend: false
-            created_at: "2020-04-12T05:42:00.00Z"
-            content: '[{"insert":"Post 13!"}]'
-            tags:
-              whisper_tags: []
-              index_tags: []
-              category_tags: []
-              content_warnings: []
+          - starter:
+              id: 07fb6be3-b4db-4e44-adaf-4d0d5214fdf8
+              parent_thread_id: 8d0be581-5cc7-47c1-947c-f8242898682d
+              parent_post_id:
+              secret_identity:
+                name: DragonFucker
+                avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
+                color: null
+                accessory: null
+              friend: false
+              created_at: "2020-04-13T05:42:00.00Z"
+              content: '[{"insert":"Post 14!"}]'
+              tags:
+                whisper_tags: []
+                index_tags: []
+                category_tags: []
+                content_warnings: []
+              total_comments_amount: 0
+              new_comments_amount: 0
+              new: false
+              own: false
+            default_view: thread
+            id: 8d0be581-5cc7-47c1-947c-f8242898682d
+            parent_board_slug: long
+            new_posts_amount: 0
+            new_comments_amount: 0
             total_comments_amount: 0
-            new_comments_amount: 0
+            total_posts_amount: 1
+            last_activity_at: "2020-04-13T05:42:00.00Z"
+            direct_threads_amount: 0
+            muted: false
+            hidden: false
             new: false
-            own: false
-          default_view: thread
-          id: 1c92ab43-4309-454f-be27-d85d3fd78808
-          parent_board_slug: long
-          new_posts_amount: 0
-          new_comments_amount: 0
-          total_comments_amount: 0
-          total_posts_amount: 1
-          last_activity_at: "2020-04-12T05:42:00.00Z"
-          direct_threads_amount: 0
-          muted: false
-          hidden: false
-          new: false
-        - starter:
-            id: e3b05f4d-fda3-4c4e-ab5c-5f0f0afa626d
-            parent_thread_id: 3e9a317f-2bcd-4db3-abbb-619fa7c03f24
-            parent_post_id:
-            secret_identity:
-              name: DragonFucker
-              avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
-              color:
-              accessory:
-            friend: false
-            created_at: "2020-04-11T05:42:00.00Z"
-            content: '[{"insert":"Post 12!"}]'
-            tags:
-              whisper_tags: []
-              index_tags: []
-              category_tags: []
-              content_warnings: []
+          - starter:
+              id: 77037fd3-3a14-46ce-928c-86ab97c513df
+              parent_thread_id: 1c92ab43-4309-454f-be27-d85d3fd78808
+              parent_post_id:
+              secret_identity:
+                name: DragonFucker
+                avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
+                color:
+                accessory:
+              friend: false
+              created_at: "2020-04-12T05:42:00.00Z"
+              content: '[{"insert":"Post 13!"}]'
+              tags:
+                whisper_tags: []
+                index_tags: []
+                category_tags: []
+                content_warnings: []
+              total_comments_amount: 0
+              new_comments_amount: 0
+              new: false
+              own: false
+            default_view: thread
+            id: 1c92ab43-4309-454f-be27-d85d3fd78808
+            parent_board_slug: long
+            new_posts_amount: 0
+            new_comments_amount: 0
             total_comments_amount: 0
-            new_comments_amount: 0
+            total_posts_amount: 1
+            last_activity_at: "2020-04-12T05:42:00.00Z"
+            direct_threads_amount: 0
+            muted: false
+            hidden: false
             new: false
-            own: false
-          default_view: thread
-          id: 3e9a317f-2bcd-4db3-abbb-619fa7c03f24
-          parent_board_slug: long
-          new_posts_amount: 0
-          new_comments_amount: 0
-          total_comments_amount: 0
-          total_posts_amount: 1
-          last_activity_at: "2020-04-11T05:42:00.00Z"
-          direct_threads_amount: 0
-          muted: false
-          hidden: false
-          new: false
-        - starter:
-            id: 7fbb6b0b-eb1d-4cbf-b610-6aaa3dbf50ba
-            parent_thread_id: 7006e0dc-7c7b-4cc5-8c08-61362e8d288b
-            parent_post_id:
-            secret_identity:
-              name: DragonFucker
-              avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
-              color:
-              accessory:
-            friend: false
-            created_at: "2020-04-10T05:42:00.00Z"
-            content: '[{"insert":"Post 11!"}]'
-            tags:
-              whisper_tags: []
-              index_tags: []
-              category_tags: []
-              content_warnings: []
+          - starter:
+              id: e3b05f4d-fda3-4c4e-ab5c-5f0f0afa626d
+              parent_thread_id: 3e9a317f-2bcd-4db3-abbb-619fa7c03f24
+              parent_post_id:
+              secret_identity:
+                name: DragonFucker
+                avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
+                color: null
+                accessory: null
+              friend: false
+              created_at: "2020-04-11T05:42:00.00Z"
+              content: '[{"insert":"Post 12!"}]'
+              tags:
+                whisper_tags: []
+                index_tags: []
+                category_tags: []
+                content_warnings: []
+              total_comments_amount: 0
+              new_comments_amount: 0
+              new: false
+              own: false
+            default_view: thread
+            id: 3e9a317f-2bcd-4db3-abbb-619fa7c03f24
+            parent_board_slug: long
+            new_posts_amount: 0
+            new_comments_amount: 0
             total_comments_amount: 0
-            new_comments_amount: 0
+            total_posts_amount: 1
+            last_activity_at: "2020-04-11T05:42:00.00Z"
+            direct_threads_amount: 0
+            muted: false
+            hidden: false
             new: false
-            own: false
-          default_view: thread
-          id: 7006e0dc-7c7b-4cc5-8c08-61362e8d288b
-          parent_board_slug: long
-          new_posts_amount: 0
-          new_comments_amount: 0
-          total_comments_amount: 0
-          total_posts_amount: 1
-          last_activity_at: "2020-04-10T05:42:00.00Z"
-          direct_threads_amount: 0
-          muted: false
-          hidden: false
-          new: false
-        - starter:
-            id: 946f0408-f0a5-4b7e-90ee-a70f6c1e2082
-            parent_thread_id: 72470830-7984-4bf6-a0bf-dc5af7d4779b
-            parent_post_id:
-            secret_identity:
-              name: DragonFucker
-              avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
-              color:
-              accessory:
-            friend: false
-            created_at: "2020-04-09T05:42:00.00Z"
-            content: '[{"insert":"Post 10!"}]'
-            tags:
-              whisper_tags: []
-              index_tags: []
-              category_tags: []
-              content_warnings: []
+          - starter:
+              id: 7fbb6b0b-eb1d-4cbf-b610-6aaa3dbf50ba
+              parent_thread_id: 7006e0dc-7c7b-4cc5-8c08-61362e8d288b
+              parent_post_id:
+              secret_identity:
+                name: DragonFucker
+                avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
+                color: null
+                accessory: null
+              friend: false
+              created_at: "2020-04-10T05:42:00.00Z"
+              content: '[{"insert":"Post 11!"}]'
+              tags:
+                whisper_tags: []
+                index_tags: []
+                category_tags: []
+                content_warnings: []
+              total_comments_amount: 0
+              new_comments_amount: 0
+              new: false
+              own: false
+            default_view: thread
+            id: 7006e0dc-7c7b-4cc5-8c08-61362e8d288b
+            parent_board_slug: long
+            new_posts_amount: 0
+            new_comments_amount: 0
             total_comments_amount: 0
-            new_comments_amount: 0
+            total_posts_amount: 1
+            last_activity_at: "2020-04-10T05:42:00.00Z"
+            direct_threads_amount: 0
+            muted: false
+            hidden: false
             new: false
-            own: false
-          default_view: thread
-          id: 72470830-7984-4bf6-a0bf-dc5af7d4779b
-          parent_board_slug: long
-          new_posts_amount: 0
-          new_comments_amount: 0
-          total_comments_amount: 0
-          total_posts_amount: 1
-          last_activity_at: "2020-04-09T05:42:00.00Z"
-          direct_threads_amount: 0
-          muted: false
-          hidden: false
-          new: false
-        - starter:
-            id: d3c57555-a40e-4036-a001-e9b6177a4ddc
-            parent_thread_id: 06ba998d-82d8-4e0b-8bbb-a3b3455c4167
-            parent_post_id:
-            secret_identity:
-              name: DragonFucker
-              avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
-              color:
-              accessory:
-            friend: false
-            created_at: "2020-04-08T05:42:00.00Z"
-            content: '[{"insert":"Post 9!"}]'
-            tags:
-              whisper_tags: []
-              index_tags: []
-              category_tags: []
-              content_warnings: []
+          - starter:
+              id: 946f0408-f0a5-4b7e-90ee-a70f6c1e2082
+              parent_thread_id: 72470830-7984-4bf6-a0bf-dc5af7d4779b
+              parent_post_id:
+              secret_identity:
+                name: DragonFucker
+                avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
+                color: null
+                accessory: null
+              friend: false
+              created_at: "2020-04-09T05:42:00.00Z"
+              content: '[{"insert":"Post 10!"}]'
+              tags:
+                whisper_tags: []
+                index_tags: []
+                category_tags: []
+                content_warnings: []
+              total_comments_amount: 0
+              new_comments_amount: 0
+              new: false
+              own: false
+            default_view: thread
+            id: 72470830-7984-4bf6-a0bf-dc5af7d4779b
+            parent_board_slug: long
+            new_posts_amount: 0
+            new_comments_amount: 0
             total_comments_amount: 0
-            new_comments_amount: 0
+            total_posts_amount: 1
+            last_activity_at: "2020-04-09T05:42:00.00Z"
+            direct_threads_amount: 0
+            muted: false
+            hidden: false
             new: false
-            own: false
-          default_view: thread
-          id: 06ba998d-82d8-4e0b-8bbb-a3b3455c4167
-          parent_board_slug: long
-          new_posts_amount: 0
-          new_comments_amount: 0
-          total_comments_amount: 0
-          total_posts_amount: 1
-          last_activity_at: "2020-04-08T05:42:00.00Z"
-          direct_threads_amount: 0
-          muted: false
-          hidden: false
-          new: false
-        - starter:
-            id: ec74bcfd-1660-4f84-8656-89ae52b403d7
-            parent_thread_id: 8d227983-7649-49c9-9fa4-b3c398f4648c
-            parent_post_id:
-            secret_identity:
-              name: DragonFucker
-              avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
-              color:
-              accessory:
-            friend: false
-            created_at: "2020-04-07T05:42:00.00Z"
-            content: '[{"insert":"Post 8!"}]'
-            tags:
-              whisper_tags: []
-              index_tags: []
-              category_tags: []
-              content_warnings: []
+          - starter:
+              id: d3c57555-a40e-4036-a001-e9b6177a4ddc
+              parent_thread_id: 06ba998d-82d8-4e0b-8bbb-a3b3455c4167
+              parent_post_id: null
+              secret_identity:
+                name: DragonFucker
+                avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
+                color: null
+                accessory: null
+              friend: false
+              created_at: "2020-04-08T05:42:00.00Z"
+              content: '[{"insert":"Post 9!"}]'
+              tags:
+                whisper_tags: []
+                index_tags: []
+                category_tags: []
+                content_warnings: []
+              total_comments_amount: 0
+              new_comments_amount: 0
+              new: false
+              own: false
+            default_view: thread
+            id: 06ba998d-82d8-4e0b-8bbb-a3b3455c4167
+            parent_board_slug: long
+            new_posts_amount: 0
+            new_comments_amount: 0
             total_comments_amount: 0
-            new_comments_amount: 0
+            total_posts_amount: 1
+            last_activity_at: "2020-04-08T05:42:00.00Z"
+            direct_threads_amount: 0
+            muted: false
+            hidden: false
             new: false
-            own: false
-          default_view: thread
-          id: 8d227983-7649-49c9-9fa4-b3c398f4648c
-          parent_board_slug: long
-          new_posts_amount: 0
-          new_comments_amount: 0
-          total_comments_amount: 0
-          total_posts_amount: 1
-          last_activity_at: "2020-04-07T05:42:00.00Z"
-          direct_threads_amount: 0
-          muted: false
-          hidden: false
-          new: false
-        - starter:
-            id: ce00d513-1c45-4248-8124-d18cc2174631
-            parent_thread_id: bcbde425-7f84-4e68-acd5-65aaae95714c
-            parent_post_id:
-            secret_identity:
-              name: DragonFucker
-              avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
-              color:
-              accessory:
-            friend: false
-            created_at: "2020-04-06T05:42:00.00Z"
-            content: '[{"insert":"Post 7!"}]'
-            tags:
-              whisper_tags: []
-              index_tags: []
-              category_tags: []
-              content_warnings: []
+          - starter:
+              id: ec74bcfd-1660-4f84-8656-89ae52b403d7
+              parent_thread_id: 8d227983-7649-49c9-9fa4-b3c398f4648c
+              parent_post_id:
+              secret_identity:
+                name: DragonFucker
+                avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
+                color: null
+                accessory: null
+              friend: false
+              created_at: "2020-04-07T05:42:00.00Z"
+              content: '[{"insert":"Post 8!"}]'
+              tags:
+                whisper_tags: []
+                index_tags: []
+                category_tags: []
+                content_warnings: []
+              total_comments_amount: 0
+              new_comments_amount: 0
+              new: false
+              own: false
+            default_view: thread
+            id: 8d227983-7649-49c9-9fa4-b3c398f4648c
+            parent_board_slug: long
+            new_posts_amount: 0
+            new_comments_amount: 0
             total_comments_amount: 0
-            new_comments_amount: 0
+            total_posts_amount: 1
+            last_activity_at: "2020-04-07T05:42:00.00Z"
+            direct_threads_amount: 0
+            muted: false
+            hidden: false
             new: false
-            own: false
-          default_view: thread
-          id: bcbde425-7f84-4e68-acd5-65aaae95714c
-          parent_board_slug: long
-          new_posts_amount: 0
-          new_comments_amount: 0
-          total_comments_amount: 0
-          total_posts_amount: 1
-          last_activity_at: "2020-04-06T05:42:00.00Z"
-          direct_threads_amount: 0
-          muted: false
-          hidden: false
-          new: false
+          - starter:
+              id: ce00d513-1c45-4248-8124-d18cc2174631
+              parent_thread_id: bcbde425-7f84-4e68-acd5-65aaae95714c
+              parent_post_id:
+              secret_identity:
+                name: DragonFucker
+                avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
+                color: null
+                accessory: null
+              friend: false
+              created_at: "2020-04-06T05:42:00.00Z"
+              content: '[{"insert":"Post 7!"}]'
+              tags:
+                whisper_tags: []
+                index_tags: []
+                category_tags: []
+                content_warnings: []
+              total_comments_amount: 0
+              new_comments_amount: 0
+              new: false
+              own: false
+            default_view: thread
+            id: bcbde425-7f84-4e68-acd5-65aaae95714c
+            parent_board_slug: long
+            new_posts_amount: 0
+            new_comments_amount: 0
+            total_comments_amount: 0
+            total_posts_amount: 1
+            last_activity_at: "2020-04-06T05:42:00.00Z"
+            direct_threads_amount: 0
+            muted: false
+            hidden: false
+            new: false
