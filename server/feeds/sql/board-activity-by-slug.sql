@@ -22,11 +22,12 @@ SELECT
     COALESCE(muted, FALSE) as muted,
     COALESCE(hidden, FALSE) as hidden,
     -- Time details
-    TO_CHAR(first_post_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS') as created,
+    TO_CHAR(first_post_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as created,
+    TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z') as thread_last_activity,
         -- This last activity must have the .US at the end or it will trigger a bug
         -- where some posts are skipped by the last activity cursor.
         -- See documentation on the queries JS file.
-    TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.US') as thread_last_activity,
+    TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.US') as thread_last_activity_micro,
     -- Amount details
     COALESCE(posts_amount, 0) as posts_amount,
     COALESCE(threads_amount, 0) as threads_amount,

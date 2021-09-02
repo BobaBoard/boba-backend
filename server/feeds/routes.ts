@@ -34,12 +34,26 @@ const router = express.Router();
  *         required: true
  *         schema:
  *           type: string
- *           format: uuid
+ *         examples:
+ *           gore:
+ *             summary: The feed for the gore board.
+ *             value: gore
+ *           cursor:
+ *             summary: The feed for a board with a cursor.
+ *             value: long
  *       - name: cursor
  *         in: query
  *         description: The cursor to start feeding the activity of the board from.
  *         schema:
  *           type: string
+ *         allowEmptyValue: true
+ *         examples:
+ *           gore:
+ *             summary: The feed for the gore board.
+ *             value: ""
+ *           cursor:
+ *             summary: The feed for a board with a cursor.
+ *             value: eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDQtMTVUMDU6NDI6MDAuMDAwMDAwIiwicGFnZV9zaXplIjoxMH0=
  *     responses:
  *       404:
  *         description: The board was not found.
@@ -49,6 +63,11 @@ const router = express.Router();
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/BoardActivity"
+ *             examples:
+ *               gore:
+ *                 $ref: '#/components/examples/FeedBoardGore'
+ *               cursor:
+ *                 $ref: '#/components/examples/FeedBoardCursor'
  */
 router.get("/boards/:slug", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
