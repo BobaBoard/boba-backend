@@ -1,7 +1,7 @@
 import debug from "debug";
 import pool from "../db-pool";
 import sql from "./sql";
-import { DbActivityThreadType } from "../../Types";
+import { DbActivityThreadType, DbThreadSummaryType } from "../../Types";
 import { encodeCursor, decodeCursor } from "../../utils/queries-utils";
 
 const info = debug("bobaserver:feeds:queries-info");
@@ -24,7 +24,7 @@ export const getBoardActivityBySlug = async ({
 }): Promise<
   | {
       cursor: string | null;
-      activity: DbActivityThreadType[];
+      activity: DbThreadSummaryType[];
     }
   | false
 > => {
