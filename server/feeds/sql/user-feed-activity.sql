@@ -4,7 +4,7 @@ SELECT
     -- Thread details (DbThreadType)
     thread_string_id as thread_id,
     board_slug,
-    TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z') as thread_last_activity,
+    TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as thread_last_activity,
     thread_details.default_view,
     -- Amount details
     COALESCE(posts_amount, 0) as thread_total_posts_amount,
@@ -29,7 +29,7 @@ SELECT
     author_identity.accessory_avatar,
     COALESCE(friend_thread, FALSE) as friend,
     COALESCE(own_thread, FALSE) as self,    
-    TO_CHAR(first_post_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS') as created,
+    TO_CHAR(first_post_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as created,
     -- Generic details
     content,
     -- TODO[realms]: deprecated   

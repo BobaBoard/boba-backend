@@ -1,7 +1,7 @@
 import debug from "debug";
 import pool from "../db-pool";
 import sql from "./sql";
-import { DbActivityThreadType, DbThreadSummaryType } from "../../Types";
+import { DbFeedType } from "../../Types";
 import { encodeCursor, decodeCursor } from "../../utils/queries-utils";
 
 const info = debug("bobaserver:feeds:queries-info");
@@ -21,13 +21,7 @@ export const getBoardActivityBySlug = async ({
   filterCategory?: string | null;
   cursor: string;
   pageSize?: number;
-}): Promise<
-  | {
-      cursor: string | null;
-      activity: DbThreadSummaryType[];
-    }
-  | false
-> => {
+}): Promise<DbFeedType | false> => {
   try {
     const decodedCursor = cursor && decodeCursor(cursor);
 
@@ -86,13 +80,7 @@ export const getUserActivity = async ({
   ownOnly: boolean;
   cursor: string | null;
   pageSize?: number;
-}): Promise<
-  | {
-      cursor: string | null;
-      activity: DbThreadSummaryType[];
-    }
-  | false
-> => {
+}): Promise<DbFeedType | false> => {
   try {
     const decodedCursor = cursor && decodeCursor(cursor);
 
@@ -117,7 +105,8 @@ export const getUserActivity = async ({
     log(`Got getBoardActivityBySlug query result`, result);
     if (result.length > finalPageSize) {
       nextCursor = encodeCursor({
-        last_activity_cursor: result[result.length - 1].thread_last_activity,
+        last_activity_cursor:
+          result[result.length - 1].thread_last_activity_micro,
         page_size: finalPageSize,
       });
       // remove last element from array
