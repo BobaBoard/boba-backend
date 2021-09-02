@@ -5,7 +5,9 @@ components:
       properties:
         next:
           description: Pagination link pointing to the next page.
-          type: string
-          format: uri
+          anyOf:
+            - type: string
+              format: uri
+            - type: "null"
       required:
         - next
