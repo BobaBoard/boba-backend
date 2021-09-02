@@ -51,8 +51,8 @@ components:
           required:
             - id
             - parent_board_slug
-            - starter
             - default_view
+            - new
             - muted
             - hidden
         - $ref: "#/components/schemas/ThreadActivitySummary"
