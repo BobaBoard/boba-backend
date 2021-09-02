@@ -106,9 +106,6 @@ router.get("/:id", isLoggedIn, async (req, res) => {
   const serverThread = makeServerThread(thread);
   ensureNoIdentityLeakage(serverThread);
 
-  serverThread.comments = {};
-  serverThread.posts = [];
-
   info(`sending back data for thread ${id}.`);
   res.status(200).json(serverThread);
 });

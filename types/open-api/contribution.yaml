@@ -3,6 +3,7 @@ components:
     Contribution:
       description: "A contribution to a thread."
       type: object
+      additionalProperties: false
       properties:
         id:
           type: string
@@ -11,9 +12,10 @@ components:
           type: string
           format: uuid
         parent_post_id:
-          type: string
-          format: uuid
-          nullable: true
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
         content:
           type: string
           format: quill-delta

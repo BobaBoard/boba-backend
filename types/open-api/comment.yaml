@@ -2,6 +2,7 @@ components:
   schemas:
     Comment:
       type: object
+      additionalProperties: false
       properties:
         id:
           type: string
@@ -10,13 +11,15 @@ components:
           type: string
           format: uuid
         parent_comment_id:
-          type: string
-          format: uuid
-          nullable: true
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
         chain_parent_id:
-          type: string
-          format: uuid
-          nullable: true
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
         content:
           type: string
           format: quill-delta
