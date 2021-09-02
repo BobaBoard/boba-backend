@@ -62,12 +62,10 @@ const router = express.Router();
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/BoardActivity"
+ *               $ref: "#/components/schemas/FeedActivity"
  *             examples:
  *               gore:
  *                 $ref: '#/components/examples/FeedBoardGore'
- *               cursor:
- *                 $ref: '#/components/examples/FeedBoardCursor'
  */
 router.get("/boards/:slug", isLoggedIn, async (req, res) => {
   const { slug } = req.params;
@@ -179,7 +177,7 @@ router.get("/boards/:slug", isLoggedIn, async (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/BoardActivity"
+ *               $ref: "#/components/schemas/FeedActivity"
  */
 router.get("/users/@me", isLoggedIn, async (req, res) => {
   const { cursor, updatedOnly, ownOnly } = req.query;

@@ -15,7 +15,7 @@
     "test:file": "cross-env DEBUG=bobaserver:* DEBUG_DEPTH=3 mocha --watch --watch-extensions ts --watch-files . --exclude './node_modules/**' -r ts-node/register -r dotenv/config",
     "test:docker": "docker-compose -f docker-compose.test.yml run --rm test",
     "open-api:generate": "node -r dotenv/config -r ts-node/register utils/generate-spec-file.ts dotenv_config_path=./.env.prod",
-    "open-api:validate": "yarn run open-api:generate && npx openapi-examples-validator open-api-spec.json --ignore-formats color quill-delta",
+    "open-api:validate": "yarn run open-api:generate && npx -p @seriousme/openapi-schema-validator validate-api open-api-spec.json && npx openapi-examples-validator open-api-spec.json --ignore-formats color quill-delta",
     "open-api:docker": "docker-compose -f docker-compose.open-api.test.yml run --rm test",
     "deploy": "gcloud config set project bobaboard && gcloud app deploy --version live",
     "stage": "gcloud config set project bobaboard && gcloud app deploy --quiet --version staging --no-promote"
