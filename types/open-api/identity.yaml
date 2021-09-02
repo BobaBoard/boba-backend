@@ -24,11 +24,12 @@ components:
         color:
           oneOf:
             - type: string
-              format: uri-reference
+              format: color
             - type: "null"
         accessory:
           oneOf:
             - type: string
+              format: uri-reference
             - type: "null"
       required:
         - name

@@ -21,7 +21,6 @@ components:
           format: quill-delta
         created_at:
           type: string
-          # TODO: actually conform returned type to RFC 3339
           format: date-time
         secret_identity:
           description: The public-facing identity associated with the contribution.
@@ -52,6 +51,7 @@ components:
         - friend
         - own
         - new
+        # TODO[realms]: these shouldn't be required, but maybe calculated at runtime in the frontend
         - total_comments_amount
         - new_comments_amount
         - tags

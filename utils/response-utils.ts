@@ -8,6 +8,8 @@ import {
   DbCommentType,
   DbBoardMetadata,
   restriction_types,
+  ServerThreadSummaryType,
+  DbThreadSummaryType,
 } from "../Types";
 import { transformPermissions } from "./permissions-utils";
 
@@ -100,6 +102,32 @@ export const mergeObjectIdentity = <T>(
   } as any;
 };
 
+export const makeServerThreadSummary = (
+  thread: DbThreadType | DbThreadSummaryType
+): ServerThreadSummaryType => {
+  const starter =
+    "posts" in thread
+      ? makeServerPost(thread.posts[0])
+      : makeServerPost(thread);
+  // TODO[realms]: remove comments from post in db
+  delete starter.comments;
+  return {
+    id: thread.thread_id,
+    parent_board_slug: thread.board_slug,
+    starter: starter,
+    default_view: thread.default_view,
+    muted: thread.muted,
+    hidden: thread.hidden,
+    new: starter.new,
+    new_posts_amount: thread.thread_new_posts_amount,
+    new_comments_amount: thread.thread_new_comments_amount,
+    total_comments_amount: thread.thread_total_comments_amount,
+    total_posts_amount: thread.thread_total_posts_amount,
+    last_activity_at: thread.thread_last_activity,
+    direct_threads_amount: thread.thread_direct_threads_amount,
+  };
+};
+
 export const makeServerThread = (thread: DbThreadType): ServerThreadType => {
   const posts = thread.posts?.map(makeServerPost) || [];
   // TODO[realms]: remove this
@@ -108,9 +136,7 @@ export const makeServerThread = (thread: DbThreadType): ServerThreadType => {
     return rest;
   });
   return {
-    id: thread.thread_id,
-    parent_board_slug: thread.board_slug,
-    starter: postsWithoutComments[0],
+    ...makeServerThreadSummary(thread),
     posts: postsWithoutComments,
     comments: posts.reduce(
       (agg: Record<string, ServerCommentType[]>, post: ServerPostType) => {
@@ -122,21 +148,13 @@ export const makeServerThread = (thread: DbThreadType): ServerThreadType => {
       },
       {}
     ),
-    default_view: thread.default_view,
-    muted: thread.muted,
-    hidden: thread.hidden,
-    new: postsWithoutComments[0].new,
-    new_posts_amount: thread.thread_new_posts_amount,
-    new_comments_amount: thread.thread_new_comments_amount,
-    total_comments_amount: thread.thread_total_comments_amount,
-    total_posts_amount: thread.thread_total_posts_amount,
-    last_activity_at: thread.thread_last_activity,
-    direct_threads_amount: thread.thread_direct_threads_amount,
   };
 };
 
-export const makeServerPost = (post: DbPostType): ServerPostType => {
-  const oldPost = mergeObjectIdentity<DbPostType>(post);
+export const makeServerPost = (
+  post: DbPostType | DbThreadSummaryType
+): ServerPostType => {
+  const oldPost = mergeObjectIdentity<DbPostType | DbThreadSummaryType>(post);
   const serverPost = {
     id: post.post_id,
     parent_thread_id: post.parent_thread_id,
@@ -148,15 +166,18 @@ export const makeServerPost = (post: DbPostType): ServerPostType => {
     friend: post.friend,
     own: post.is_own,
     new: post.is_new,
-    comments: post.comments?.map(makeServerComment) || null,
+    comments:
+      ("comments" in post && post.comments?.map(makeServerComment)) || [],
     tags: {
       whisper_tags: post.whisper_tags || [],
       index_tags: post.index_tags || [],
       category_tags: post.category_tags || [],
       content_warnings: post.content_warnings || [],
     },
-    total_comments_amount: post.total_comments_amount,
-    new_comments_amount: post.new_comments_amount,
+    total_comments_amount:
+      "total_comments_amount" in post ? post.total_comments_amount : 0,
+    new_comments_amount:
+      "new_comments_amount" in post ? post.new_comments_amount : 0,
   };
 
   return serverPost;

@@ -1,14 +1,14 @@
 import express from "express";
 import { getUserActivity, getBoardActivityBySlug } from "./queries";
-import { isLoggedIn } from "../../handlers/auth";
+import { ensureLoggedIn, isLoggedIn } from "../../handlers/auth";
 import {
   mergeObjectIdentity,
   ensureNoIdentityLeakage,
+  makeServerThreadSummary,
 } from "../../utils/response-utils";
 import {
-  DbActivityThreadType,
+  DbThreadSummaryType,
   ServerActivityType,
-  ServerThreadSummaryType,
   ServerThreadType,
 } from "../../Types";
 import { canAccessBoard } from "../../utils/permissions-utils";
@@ -100,47 +100,7 @@ router.get("/boards/:slug", isLoggedIn, async (req, res) => {
     return;
   }
 
-  const threadsWithIdentity = result.activity.map(
-    (thread): ServerThreadSummaryType => {
-      const threadWithIdentity =
-        mergeObjectIdentity<DbActivityThreadType>(thread);
-      return {
-        starter: {
-          id: threadWithIdentity.post_id,
-          parent_thread_id: threadWithIdentity.thread_id,
-          parent_post_id: threadWithIdentity.parent_post_id,
-          secret_identity: threadWithIdentity.secret_identity,
-          user_identity: threadWithIdentity.user_identity,
-          accessory_avatar: threadWithIdentity.accessory_avatar,
-          friend: threadWithIdentity.friend,
-          created_at: threadWithIdentity.created,
-          content: threadWithIdentity.content,
-          tags: {
-            whisper_tags: threadWithIdentity.whisper_tags,
-            index_tags: threadWithIdentity.index_tags,
-            category_tags: threadWithIdentity.category_tags,
-            content_warnings: threadWithIdentity.content_warnings,
-          },
-          total_comments_amount: threadWithIdentity.comments_amount,
-          new_comments_amount: threadWithIdentity.new_comments_amount,
-          new: threadWithIdentity.is_new,
-          own: threadWithIdentity.self,
-        },
-        default_view: threadWithIdentity.default_view,
-        id: threadWithIdentity.thread_id,
-        parent_board_slug: slug,
-        new_posts_amount: threadWithIdentity.new_posts_amount,
-        new_comments_amount: threadWithIdentity.new_comments_amount,
-        total_comments_amount: threadWithIdentity.comments_amount,
-        total_posts_amount: threadWithIdentity.posts_amount,
-        last_activity_at: threadWithIdentity.thread_last_activity,
-        direct_threads_amount: threadWithIdentity.threads_amount,
-        muted: threadWithIdentity.muted,
-        hidden: threadWithIdentity.hidden,
-        new: threadWithIdentity.is_new,
-      };
-    }
-  );
+  const threadsWithIdentity = result.activity.map(makeServerThreadSummary);
   const response: ServerActivityType = {
     cursor: {
       next: result.cursor,
@@ -163,6 +123,8 @@ router.get("/boards/:slug", isLoggedIn, async (req, res) => {
  *     tags:
  *       - /feeds/
  *       - todo
+ *     security:
+ *       - firebase: []
  *     parameters:
  *       - name: cursor
  *         in: query
@@ -179,13 +141,10 @@ router.get("/boards/:slug", isLoggedIn, async (req, res) => {
  *             schema:
  *               $ref: "#/components/schemas/FeedActivity"
  */
-router.get("/users/@me", isLoggedIn, async (req, res) => {
+router.get("/users/@me", ensureLoggedIn, async (req, res) => {
   const { cursor, updatedOnly, ownOnly } = req.query;
-  let currentUserId: string = req.currentUser?.uid;
-  if (!currentUserId) {
-    res.sendStatus(401);
-    return;
-  }
+  const currentUserId: string = req.currentUser?.uid;
+
   const userActivity = await getUserActivity({
     firebaseId: currentUserId,
     cursor: (cursor as string) || null,
@@ -204,8 +163,7 @@ router.get("/users/@me", isLoggedIn, async (req, res) => {
 
   const threadsWithIdentity = userActivity.activity.map(
     (thread): ServerThreadType => {
-      const threadWithIdentity =
-        mergeObjectIdentity<DbActivityThreadType>(thread);
+      const threadWithIdentity = mergeObjectIdentity<any>(thread);
       return {
         posts: [
           {
