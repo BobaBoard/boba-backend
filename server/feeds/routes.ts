@@ -137,13 +137,13 @@ router.get("/boards/:slug", isLoggedIn, async (req, res) => {
  *               $ref: "#/components/schemas/FeedActivity"
  */
 router.get("/users/@me", ensureLoggedIn, async (req, res) => {
-  const { cursor, updatedOnly, ownOnly } = req.query;
+  const { cursor, showRead, ownOnly } = req.query;
   const currentUserId: string = req.currentUser?.uid;
 
   const userActivity = await getUserActivity({
     firebaseId: currentUserId,
     cursor: (cursor as string) || null,
-    updatedOnly: updatedOnly === "true",
+    updatedOnly: showRead !== "true",
     ownOnly: ownOnly === "true",
   });
 

@@ -25,7 +25,6 @@ import {
   canAccessBoard,
 } from "../../utils/permissions-utils";
 import { moveThread } from "./queries";
-import { server } from "sinon";
 
 const info = debug("bobaserver:threads:routes-info");
 const log = debug("bobaserver:threads:routes-log");
