@@ -174,25 +174,3 @@ export const getBoardMetadata = async ({
   log(`Processed board metadata (${slug}) for user ${firebaseId}`);
   return finalMetadata;
 };
-
-export const canAccessBoard = async ({
-  slug,
-  firebaseId,
-}: {
-  slug: string;
-  firebaseId?: string;
-}) => {
-  const board = await getBoardBySlug({
-    firebaseId,
-    slug,
-  });
-  info(`Found board`, board);
-
-  if (!board) {
-    return false;
-  }
-  if (board.logged_out_restrictions.includes(restriction_types.LOCK_ACCESS)) {
-    return !!firebaseId;
-  }
-  return true;
-};

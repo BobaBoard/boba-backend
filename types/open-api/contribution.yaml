@@ -3,24 +3,24 @@ components:
     Contribution:
       description: "A contribution to a thread."
       type: object
+      additionalProperties: false
       properties:
-        post_id:
+        id:
           type: string
           format: uuid
         parent_thread_id:
           type: string
           format: uuid
         parent_post_id:
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
+        content:
           type: string
-          format: uuid
-        # TODO: change this into parent_board_id
-        parent_board_slug:
+          format: quill-delta
+        created_at:
           type: string
-          format: string
-        # TODO: change this into created_at
-        created:
-          type: string
-          # TODO: actually conform returned type to RFC 3339
           format: date-time
         secret_identity:
           description: The public-facing identity associated with the contribution.
@@ -28,47 +28,30 @@ components:
         user_identity:
           description: The identity of the original poster, if visible to the requester.
           $ref: "#/components/schemas/Identity"
-        self:
+        new:
           type: boolean
-        is_new:
+        own:
           type: boolean
-        is_own:
+        friend:
           type: boolean
         total_comments_amount:
           type: number
         new_comments_amount:
           type: number
-        # TODO: change to empty array instead of null
-        comments:
-          nullable: true
-          type: array
-          items:
-            $ref: "#/components/schemas/Comment"
         tags:
           type: object
           $ref: "#/components/schemas/Tags"
-        type:
-          type: string
-          enum: [text]
-          deprecated: true
-        anonymity_type:
-          type: string
-          enum: [everyone, friends_only]
-          deprecated: true
-        friend:
-          type: boolean
-          deprecated: true
       required:
-        - post_id
+        - id
         - parent_post_id
         - parent_thread_id
-        - parent_board_slug
-        - created
+        - content
+        - created_at
         - secret_identity
-        - self
-        - is_new
-        - is_own
+        - friend
+        - own
+        - new
+        # TODO[realms]: these shouldn't be required, but maybe calculated at runtime in the frontend
         - total_comments_amount
         - new_comments_amount
-        - comments
         - tags

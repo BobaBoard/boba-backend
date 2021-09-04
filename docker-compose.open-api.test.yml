@@ -1,0 +1,14 @@
+version: "3"
+services:
+  test:
+    image: "bobaserver"
+    build:
+      context: .
+    environment:
+      TZ: "America/Los_Angeles"
+    command: yarn run open-api:validate
+    volumes:
+      - .:/usr/src/app
+      # Below line prevents Docker from mapping the host's node_modules/
+      # folder into the container.  We don't want cross-contamination.
+      - /usr/src/app/node_modules

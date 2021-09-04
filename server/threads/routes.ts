@@ -19,16 +19,58 @@ import {
 } from "../../utils/response-utils";
 import { ThreadPermissions } from "../../Types";
 import axios from "axios";
-import { canAccessBoard } from "../boards/utils";
 import { getBoardBySlug } from "../boards/queries";
-import { transformThreadPermissions } from "../../utils/permissions-utils";
+import {
+  transformThreadPermissions,
+  canAccessBoard,
+} from "../../utils/permissions-utils";
 import { moveThread } from "./queries";
+import { server } from "sinon";
 
 const info = debug("bobaserver:threads:routes-info");
 const log = debug("bobaserver:threads:routes-log");
 
 const router = express.Router();
 
+/**
+ * @openapi
+ * /threads/{thread_id}:
+ *   get:
+ *     summary: Fetches thread data.
+ *     tags:
+ *       - /threads/
+ *     security:
+ *       - firebase: []
+ *       - {}
+ *     parameters:
+ *       - name: thread_id
+ *         in: path
+ *         description: The id of the thread to fetch.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         examples:
+ *           withcommentsthread:
+ *             summary: A thread with a comments thread.
+ *             value: 8b2646af-2778-487e-8e44-7ae530c2549c
+ *     responses:
+ *       401:
+ *         description: User was not found and thread requires authentication.
+ *       403:
+ *         description: User is not authorized to fetch this thread.
+ *       404:
+ *         description: The thread was not found.
+ *       200:
+ *         description: The thread data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Thread"
+ *             examples:
+ *               withcommentsthread:
+ *                 $ref: '#/components/examples/ThreadWithCommentsThreadResponse'
+ */
 router.get("/:id", isLoggedIn, async (req, res) => {
   const { id } = req.params;
   log(`Fetching data for thread with id ${id}`);
@@ -49,8 +91,7 @@ router.get("/:id", isLoggedIn, async (req, res) => {
       firebaseId: req.currentUser?.uid,
     }))
   ) {
-    // TOOD: add error log
-    return res.sendStatus(403);
+    return req.currentUser ? res.sendStatus(403) : res.sendStatus(401);
   }
 
   if (thread === false) {
@@ -180,11 +221,6 @@ router.get("/:threadId/visit", isLoggedIn, async (req, res) => {
 
   info(`Marked last visited time for thread: ${threadId}.`);
   res.status(200).json();
-});
-
-router.get("/activity/latest", async (req, res) => {
-  // TODO: implement. Gets latest active threads.
-  res.status(501);
 });
 
 router.post("/:boardSlug/create", isLoggedIn, async (req, res, next) => {

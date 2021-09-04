@@ -1,11 +1,10 @@
 import "mocha";
 import { expect } from "chai";
 
-import request from "supertest";
 import express, { Express } from "express";
 import router from "../routes";
 import { Server } from "http";
-import { getBoardActivityBySlug, getBoardBySlug, getBoards } from "../queries";
+import { getBoardBySlug, getBoards } from "../queries";
 
 const extractRestrictions = (board: any) => {
   return {
@@ -57,18 +56,6 @@ describe("Tests restricted board queries", () => {
           logged_in_base_restrictions: [],
           logged_out_restrictions: ["lock_access"],
         });
-      });
-    });
-    describe("REST API", async () => {
-      // TODO: figure out mocking of firebase AUTH
-      //   it("fetches board details when logged in (REST)", async () => {
-      //   });
-
-      it("doesn't fetch board activity when logged out (REST)", async () => {
-        const res = await request(app).get("/restricted/activity/latest");
-
-        expect(res.status).to.equal(403);
-        expect(res.body).to.eql({});
       });
     });
   });

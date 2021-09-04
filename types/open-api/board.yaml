@@ -5,20 +5,20 @@ components:
       properties:
         id:
           type: string
-          format: uuid
+          # format: uuid
         realm_id:
           type: string
-          format: uuid
+          # format: uuid
         slug:
           type: string
         avatar_url:
           type: string
-          format: uri
+          format: uri-reference
         tagline:
           type: string
         accent_color:
           type: string
-          format: color
+          # format: color
         logged_in_only:
           type: boolean
         delisted:
@@ -51,7 +51,7 @@ components:
           properties:
             id:
               type: string
-              format: uuid
+              # format: uuid
             slug:
               type: string
             descriptions:

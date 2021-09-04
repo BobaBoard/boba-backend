@@ -1,0 +1,115 @@
+components:
+  examples:
+    FeedBoardGore:
+      value:
+        cursor:
+          next: null
+        activity:
+          - starter:
+              id: ff9f2ae2-a254-4069-9791-3ac5e6dff5bb
+              parent_thread_id: 8b2646af-2778-487e-8e44-7ae530c2549c
+              parent_post_id:
+              secret_identity:
+                name: GoreMaster5000
+                avatar: https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F6518df53-2031-4ac5-8d75-57a0051ed924?alt=media&token=23df54b7-297c-42ff-a0ea-b9862c9814f8
+                color: red
+                accessory: null
+              friend: false
+              created_at: "2020-09-25T05:42:00.00Z"
+              content:
+                '[{"insert":"Remember to be excellent to each other and only be mean
+                to fictional characters!"}]'
+              tags:
+                whisper_tags:
+                  - An announcement from your headmaster!
+                index_tags: []
+                category_tags: []
+                content_warnings: []
+              total_comments_amount: 2
+              new_comments_amount: 0
+              new: false
+              own: false
+            default_view: thread
+            id: 8b2646af-2778-487e-8e44-7ae530c2549c
+            parent_board_slug: gore
+            new_posts_amount: 0
+            new_comments_amount: 0
+            total_comments_amount: 2
+            total_posts_amount: 1
+            last_activity_at: "2020-10-04T05:44:00.00Z"
+            direct_threads_amount: 0
+            muted: false
+            hidden: false
+            new: false
+          - starter:
+              id: 11b85dac-e122-40e0-b09a-8829c5e0250e
+              parent_thread_id: 29d1b2da-3289-454a-9089-2ed47db4967b
+              parent_post_id: null
+              secret_identity:
+                name: DragonFucker
+                avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
+                color: null
+                accessory: https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F989f4b40-c1b8-4793-93dd-57e93df3e7ec.png?alt=media&token=cabdd8d5-b6a9-4914-bb59-eda4629f151b
+              friend: false
+              created_at: "2020-04-30T03:23:00.00Z"
+              content: '[{"insert":"Favorite character to maim?"}]'
+              tags:
+                whisper_tags: []
+                index_tags:
+                  - evil
+                  - bobapost
+                category_tags:
+                  - bruises
+                content_warnings: []
+              total_comments_amount: 2
+              new_comments_amount: 0
+              new: false
+              own: false
+            default_view: thread
+            id: 29d1b2da-3289-454a-9089-2ed47db4967b
+            parent_board_slug: gore
+            new_posts_amount: 0
+            new_comments_amount: 0
+            total_comments_amount: 2
+            total_posts_amount: 3
+            last_activity_at: "2020-05-23T05:52:00.00Z"
+            direct_threads_amount: 2
+            muted: false
+            hidden: false
+            new: false
+          - starter:
+              id: 3db477e0-57ed-491d-ba11-b3a0110b59b0
+              parent_thread_id: a5c903df-35e8-43b2-a41a-208c43154671
+              parent_post_id: null
+              secret_identity:
+                name: DragonFucker
+                avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
+                color: null
+                accessory: null
+              friend: false
+              created_at: "2020-04-24T05:42:00.00Z"
+              content: '[{"insert":"Favorite murder scene in videogames?"}]'
+              tags:
+                whisper_tags:
+                  - mwehehehehe
+                index_tags: []
+                category_tags:
+                  - blood
+                  - bruises
+                content_warnings: []
+              total_comments_amount: 0
+              new_comments_amount: 0
+              new: false
+              own: false
+            default_view: thread
+            id: a5c903df-35e8-43b2-a41a-208c43154671
+            parent_board_slug: gore
+            new_posts_amount: 0
+            new_comments_amount: 0
+            total_comments_amount: 0
+            total_posts_amount: 3
+            last_activity_at: "2020-05-03T09:47:00.00Z"
+            direct_threads_amount: 2
+            muted: false
+            hidden: false
+            new: false

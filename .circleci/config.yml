@@ -16,7 +16,27 @@ jobs:
       - run:
           name: run test
           command: docker-compose -f docker-compose.test.yml run --rm test
+  open-api-validate:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: create env file
+          command: env > .env
+      - run:
+          name: see files
+          command: ls -la
+      - run:
+          name: stop everything
+          command: docker-compose -f docker-compose.open-api.test.yml down
+      - run:
+          name: run test
+          command: docker-compose -f docker-compose.open-api.test.yml run --rm test
+
 workflows:
   build-and-test:
     jobs:
       - build-and-test
+  open-api-validate:
+    jobs:
+      - open-api-validate

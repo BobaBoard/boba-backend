@@ -2,6 +2,9 @@ import swaggerJsdoc from "swagger-jsdoc";
 import redoc from "redoc-express";
 import express from "express";
 
+import debug from "debug";
+const info = debug("bobaserver:handlers:open-api-log");
+
 const options = {
   definition: {
     openapi: "3.1.0",
@@ -33,6 +36,10 @@ This is just to test that sections work. It will be written better later.
       {
         name: "/posts/",
         description: "APIs related to the /posts/ endpoints.",
+      },
+      {
+        name: "/threads/",
+        description: "APIs related to the /threads/ endpoints.",
       },
       {
         name: "/boards/",
@@ -75,7 +82,14 @@ This is just to test that sections work. It will be written better later.
     "x-tagGroups": [
       {
         name: "general",
-        tags: ["/posts/", "/boards/", "/realms/", "/users/"],
+        tags: [
+          "/realms/",
+          "/feeds/",
+          "/boards/",
+          "/threads/",
+          "/posts/",
+          "/users/",
+        ],
       },
       {
         name: "models",
@@ -84,13 +98,19 @@ This is just to test that sections work. It will be written better later.
     ],
   },
   // Which paths to parse the API specs from.
-  apis: ["./types/open-api/*.yaml", "./server/*/routes.ts"],
+  apis: [
+    "./types/open-api/*.yaml",
+    "./types/open-api/examples/*.yaml",
+    "./server/*/routes.ts",
+    "./server/*/examples/*.yaml",
+  ],
 };
 
-const specs = swaggerJsdoc(options);
+export const specs = swaggerJsdoc(options);
 
 export default (app: express.Express) => {
   app.get("/open-api.json", (req, res) => {
+    info("Fetching open api specification");
     res.setHeader("Content-Type", "application/json");
     res.send(specs);
   });
