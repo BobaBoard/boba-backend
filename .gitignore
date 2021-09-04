@@ -10,3 +10,4 @@ dump.rdb
 .vscode/
 .nyc_output/
 coverage/
+open-api-spec.json

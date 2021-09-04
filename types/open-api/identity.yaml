@@ -5,9 +5,10 @@ components:
       properties:
         name:
           type: string
+        # TODO[realms]: make this avatar_url
         avatar:
           type: string
-          format: url
+          format: uri-reference
       required:
         - name
         - avatar
@@ -16,14 +17,20 @@ components:
       properties:
         name:
           type: string
+        # TODO[realms]: make this avatar_url
         avatar:
           type: string
-          format: url
+          format: uri-reference
         color:
-          type: string
+          oneOf:
+            - type: string
+              format: color
+            - type: "null"
         accessory:
-          type: string
-          format: url
+          oneOf:
+            - type: string
+              format: uri-reference
+            - type: "null"
       required:
         - name
         - avatar
@@ -37,7 +44,7 @@ components:
           type: string
         accessory:
           type: string
-          format: uri
+          format: uri-reference
       required:
         - id
         - name
@@ -52,13 +59,17 @@ components:
           type: string
         avatar:
           type: string
-          format: uri
+          format: uri-reference
         color:
-          type: string
-          format: color
+          oneOf:
+            - type: string
+              format: color
+            - type: "null"
         accessory:
-          type: string
-          format: uri
+          oneOf:
+            - type: string
+              format: uri
+            - type: "null"
       required:
         - id
         - name

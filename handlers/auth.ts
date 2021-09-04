@@ -1,10 +1,10 @@
 import firebaseAuth, { auth } from "firebase-admin";
 import { Request, Response, NextFunction } from "express";
-import debug from "debug";
 import { cache, CacheKeys } from "../server/cache";
 import { getUserSettings } from "../server/users/queries";
 import { SettingEntry } from "../types/settings";
 
+import debug from "debug";
 const log = debug("bobaserver:auth-log");
 const error = debug("bobaserver:auth-error");
 

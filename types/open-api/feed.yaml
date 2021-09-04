@@ -1,0 +1,11 @@
+components:
+  schemas:
+    FeedActivity:
+      type: object
+      properties:
+        cursor:
+          $ref: "#/components/schemas/Cursor"
+        activity:
+          type: array
+          items:
+            $ref: "#/components/schemas/ThreadSummary"

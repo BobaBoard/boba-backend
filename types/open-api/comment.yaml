@@ -2,41 +2,48 @@ components:
   schemas:
     Comment:
       type: object
+      additionalProperties: false
       properties:
-        comment_id:
+        id:
           type: string
           format: uuid
-        parent_post:
+        parent_post_id:
           type: string
           format: uuid
+        parent_comment_id:
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
         chain_parent_id:
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
+        content:
           type: string
-          format: uuid
-        # TODO: change this into created_at
-        created:
-          type: string
-          # TODO: actually conform returned type to RFC 3339
-          format: date-time
-        anonymity_type:
-          type: string
-          enum: [everyone, friends_only]
-        self:
-          type: boolean
-        is_new:
-          type: boolean
-        is_own:
-          type: boolean
+          format: quill-delta
         secret_identity:
           description: The public-facing identity associated with the comment.
           $ref: "#/components/schemas/SecretIdentity"
         user_identity:
           description: The identity of the original poster, if visible to the requester.
           $ref: "#/components/schemas/Identity"
+        created_at:
+          type: string
+          format: date-time
+        own:
+          type: boolean
+        new:
+          type: boolean
+        friend:
+          type: boolean
       required:
-        - comment_id
-        - parent_post
-        - created
+        - id
+        - parent_post_id
+        - content
+        - created_at
         - secret_identity
-        - self
-        - is_new
-        - is_own
+        - new
+        - own
+        - friend

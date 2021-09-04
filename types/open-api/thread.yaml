@@ -13,21 +13,22 @@ components:
           type: number
         direct_threads_amount:
           type: number
-        last_activity:
-          type: number
+        last_activity_at:
+          type: string
+          format: date-time
       required:
         - new_posts_amount
         - new_comments_amount
         - total_comments_amount
         - total_posts_amount
         - direct_threads_amount
-        - last_activity
+        - last_activity_at
 
     ThreadSummary:
       allOf:
         - type: object
           properties:
-            thread_id:
+            id:
               type: string
               format: uuid
             parent_board_slug:
@@ -38,17 +39,20 @@ components:
             default_view:
               type: string
               enum: [thread, gallery, timeline]
+            new:
+              type: boolean
+              description: "Whether the thread is new. False when the user is logged out."
             muted:
-              description: "Whether the contribution is muted. False when the user is logged out."
+              description: "Whether the thread is muted. False when the user is logged out."
               type: boolean
             hidden:
-              description: "Whether the contribution is hidden. False when the user is logged out."
+              description: "Whether the thread is hidden. False when the user is logged out."
               type: boolean
           required:
-            - thread_id
+            - id
             - parent_board_slug
-            - starter
             - default_view
+            - new
             - muted
             - hidden
         - $ref: "#/components/schemas/ThreadActivitySummary"
@@ -62,9 +66,12 @@ components:
               items:
                 $ref: "#/components/schemas/Contribution"
             comments:
-              type: array
-              items:
-                $ref: "#/components/schemas/Comment"
+              description: "A map from post_id to its comments."
+              type: object
+              additionalProperties:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Comment"
           required:
             - posts
             - comments
