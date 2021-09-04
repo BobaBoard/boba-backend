@@ -1,7 +1,7 @@
 import "mocha";
 import { expect } from "chai";
 
-import { getBoardBySlug, getBoardActivityBySlug } from "../queries";
+import { getBoardBySlug } from "../queries";
 
 describe("Tests boards queries", () => {
   it("fetches board by slug when slug present", async () => {

@@ -1,10 +1,24 @@
 -- The return type of this query is DbActivityThreadType.
 -- If updating, please also update DbActivityThreadType in Types.
 SELECT
-    first_post_string_id as post_id,
-    NULL as parent_post_id,
+    -- Thread details (DbThreadType)
     thread_string_id as thread_id,
     board_slug,
+    TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z') as thread_last_activity,
+    thread_details.default_view,
+    -- Amount details
+    COALESCE(posts_amount, 0) as thread_total_posts_amount,
+    COALESCE(threads_amount, 0) as thread_direct_threads_amount,
+    COALESCE(comments_amount, 0) as thread_total_comments_amount,
+    COALESCE(new_posts_board_amount, 0) as thread_new_posts_amount,
+    COALESCE(new_comments_board_amount, 0) as thread_new_comments_amount,
+    COALESCE(muted, FALSE) as muted,
+    COALESCE(hidden, FALSE) as hidden,
+    -- Post details (DbPostType)
+    first_post_string_id as post_id,
+    thread_string_id as parent_thread_id,
+    NULL as parent_post_id,
+    board_slug as parent_board_slug,
     -- Author details
     author,
     username,
@@ -14,31 +28,24 @@ SELECT
     secret_identity_color,
     accessory_avatar,
     COALESCE(friend_thread, FALSE) as friend,
-    COALESCE(own_thread, FALSE) as self,    
+    COALESCE(own_thread, FALSE) as self,   
+    TO_CHAR(first_post_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as created,
     -- Generic details
     content,
+    -- TODO[realms]: deprecated   
     thread_details.options,
-    thread_details.default_view,
-    COALESCE(muted, FALSE) as muted,
-    COALESCE(hidden, FALSE) as hidden,
-    -- Time details
-    TO_CHAR(first_post_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS') as created,
-        -- This last activity must have the .US at the end or it will trigger a bug
-        -- where some posts are skipped by the last activity cursor.
-        -- See documentation on the queries JS file.
-    TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.US') as thread_last_activity,
-    -- Amount details
-    COALESCE(posts_amount, 0) as posts_amount,
-    COALESCE(threads_amount, 0) as threads_amount,
-    COALESCE(comments_amount, 0) as comments_amount,
-    COALESCE(new_posts_board_amount, 0) as new_posts_amount,
-    COALESCE(new_comments_board_amount, 0) as new_comments_amount,
-    COALESCE(is_new_board, FALSE) as is_new,
     -- post tags
-    whisper_tags,
     index_tags,
+    category_tags,
     content_warnings,
-    category_tags
+    whisper_tags,
+    -- TODO[realms]: likely deprecated   
+    COALESCE(own_thread, FALSE) as is_own,
+    COALESCE(is_new_board, FALSE) as is_new,
+    -- This last activity must have the .US at the end or it will trigger a bug
+    -- where some posts are skipped by the last activity cursor.
+    -- See documentation on the queries JS file.
+    TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.US') as thread_last_activity_micro
 FROM threads
 INNER JOIN thread_details
   ON threads.id = thread_details.thread_id AND thread_details.board_slug = ${board_slug}

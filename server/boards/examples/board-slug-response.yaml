@@ -1,0 +1,38 @@
+components:
+  examples:
+    BoardsGoreResponse:
+      summary: An existing board
+      value:
+        id: gore
+        realm_id: f377afb3-5c62-40cc-8f07-1f4749a780eb
+        slug: gore
+        tagline: Blood! Blood! Blood!
+        avatar_url: /gore.png
+        accent_color: "#f96680"
+        delisted: false
+        logged_in_only: false
+        descriptions:
+          - id: f377afb3-5c62-40cc-8f07-1f4749a780eb
+            type: category_filter
+            index: 2
+            title: Gore Categories
+            categories: [blood, bruises]
+            description: null
+          - id: f377afb3-5c62-40cc-8f07-1f4749a780eb
+            type: text
+            index: 1
+            title: Gore description
+            categories: null
+            description: '[{"insert": "pls b nice"}]'
+    BoardsRestrictedResponse:
+      summary: A restricted board
+      value:
+        id: restricted
+        realm_id: f377afb3-5c62-40cc-8f07-1f4749a780eb
+        slug: restricted
+        tagline: A board to test for logged-in only view
+        avatar_url: https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2Fe4e263cf-ee98-4902-9c14-c10299210e01.png?alt=media&token=7c170411-9401-4d4e-9f66-5d6dfee2fccd
+        accent_color: "#234a69"
+        delisted: false
+        logged_in_only: true
+        descriptions: []

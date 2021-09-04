@@ -1,20 +1,20 @@
 components:
   schemas:
     Description:
-        oneOf:
-          - $ref: '#/components/schemas/TextDescription'
-          - $ref: '#/components/schemas/CategoryFilterDescription'
-        discriminator:
-          propertyName: type
-          mapping:
-            text: '#/components/schemas/TextDescription'
-            category_filter: '#/components/schemas/CategoryFilterDescription'
+      oneOf:
+        - $ref: "#/components/schemas/TextDescription"
+        - $ref: "#/components/schemas/CategoryFilterDescription"
+      discriminator:
+        propertyName: type
+        mapping:
+          text: "#/components/schemas/TextDescription"
+          category_filter: "#/components/schemas/CategoryFilterDescription"
     BaseDescription:
       type: object
       properties:
         id:
           type: string
-          format: uuid
+          #format: uuid
         index:
           type: number
         title:
@@ -25,7 +25,7 @@ components:
         - title
     TextDescription:
       allOf:
-        - $ref: "#/components/schemas/BaseDescription" 
+        - $ref: "#/components/schemas/BaseDescription"
         - type: object
           properties:
             type:
@@ -38,7 +38,7 @@ components:
             - description
     CategoryFilterDescription:
       allOf:
-        - $ref: "#/components/schemas/BaseDescription" 
+        - $ref: "#/components/schemas/BaseDescription"
         - type: object
           properties:
             type:
@@ -51,4 +51,3 @@ components:
           required:
             - type
             - categories
-        

@@ -1,4 +1,5 @@
 import debug from "debug";
+import { getBoardBySlug } from "../server/boards/queries";
 
 import {
   DbRolePermissions,
@@ -7,6 +8,7 @@ import {
   ThreadPermissions,
   BoardPermissions,
   UserBoardPermissions,
+  restriction_types,
 } from "../Types";
 
 const log = debug("bobaserver::permissions-utils-log");
@@ -97,4 +99,47 @@ export const canDoTagsEdit = (
     (isEditingWhisperTags &&
       !permissions.includes(PostPermissions.editWhisperTags))
   );
+};
+
+export const canAccessBoard = async ({
+  slug,
+  firebaseId,
+}: {
+  slug: string;
+  firebaseId?: string;
+}) => {
+  const board = await getBoardBySlug({
+    firebaseId,
+    slug,
+  });
+
+  if (!board) {
+    return false;
+  }
+  if (board.logged_out_restrictions.includes(restriction_types.LOCK_ACCESS)) {
+    return !!firebaseId;
+  }
+  return true;
+};
+
+export const canAccessBoardByUUID = async ({
+  uuid,
+  firebaseId,
+}: {
+  uuid: string;
+  firebaseId?: string;
+}) => {
+  const board = await getBoardByUUID({
+    firebaseId,
+    uuid,
+  });
+  info(`Found board`, board);
+
+  if (!board) {
+    return false;
+  }
+  if (board.logged_out_restrictions.includes(restriction_types.LOCK_ACCESS)) {
+    return !!firebaseId;
+  }
+  return true;
 };
