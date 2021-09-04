@@ -1,42 +1,44 @@
+export interface UserIdentityType {
+  name: string;
+  // TODO[realms]: make this avatar_url
+  avatar: string;
+}
+
+export interface SecretIdentityType {
+  name: string;
+  // TODO[realms]: make this avatar_url
+  avatar: string;
+  color?: string;
+  accessory?: string;
+}
+
 export interface ServerCommentType {
-  comment_id: string;
-  parent_comment: string;
-  secret_identity: {
-    name: string;
-    avatar: string;
-  };
-  user_identity?: {
-    name: string;
-    avatar: string;
-  };
-  accessory_avatar?: string;
+  id: string;
+  parent_comment_id: string;
+  parent_post_id: string;
+  created_at: string;
   content: string;
-  created: string;
+  secret_identity: SecretIdentityType;
+  user_identity?: UserIdentityType;
+  accessory_avatar?: string;
   chain_parent_id: string | null;
+  own: boolean;
+  friend: boolean;
+  new: boolean;
 }
 
 export interface ServerPostType {
-  post_id: string;
+  id: string;
   parent_thread_id: string;
   parent_post_id: string;
-  secret_identity: {
-    name: string;
-    avatar: string;
-    color?: string;
-    accessory?: string;
-  };
-  user_identity?: {
-    name: string;
-    avatar: string;
-  };
+  secret_identity: SecretIdentityType;
+  user_identity?: UserIdentityType;
   accessory_avatar?: string;
-  self: boolean;
+  created_at: string;
+  own: boolean;
   friend: boolean;
-  created: string;
+  new: boolean;
   content: string;
-  options: {
-    wide?: boolean;
-  };
   tags?: {
     index_tags: string[];
     whisper_tags: string[];
@@ -46,22 +48,34 @@ export interface ServerPostType {
   comments?: ServerCommentType[];
   total_comments_amount: number;
   new_comments_amount: number;
-  is_new: boolean;
 }
 
-export interface ServerThreadType {
-  posts: ServerPostType[];
-  thread_id: string;
-  board_slug: string;
-  thread_direct_threads_amount: number;
-  thread_new_posts_amount: number;
-  thread_new_comments_amount: number;
-  thread_total_comments_amount: number;
-  thread_total_posts_amount: number;
-  thread_last_activity: string;
+export interface ServerThreadSummaryType {
+  starter: ServerPostType;
+  id: string;
+  parent_board_slug: string;
+  direct_threads_amount: number;
+  new_posts_amount: number;
+  new_comments_amount: number;
+  total_comments_amount: number;
+  total_posts_amount: number;
+  last_activity_at: string;
   muted: boolean;
   default_view: "thread" | "gallery" | "timeline";
   hidden: boolean;
+  new: boolean;
+}
+
+export interface ServerThreadType extends ServerThreadSummaryType {
+  posts: ServerPostType[];
+  comments: Record<string, ServerCommentType[]>;
+}
+
+export interface ServerFeedType {
+  cursor: {
+    next: string | null;
+  };
+  activity: ServerThreadSummaryType[];
 }
 
 export interface DbIdentityType {
@@ -84,31 +98,32 @@ export interface DbPostType {
   user_avatar: string;
   secret_identity_name: string;
   secret_identity_avatar: string;
+  secret_identity_color?: string;
   accessory_avatar?: string;
-  friend: boolean;
   self: boolean;
+  friend: boolean;
   created: string;
   content: string;
   options: {
     wide?: boolean;
   };
   type: string;
-  whisper_tags: string[];
   index_tags: string[];
   category_tags: string[];
   content_warnings: string[];
+  whisper_tags: string[];
   anonymity_type: "everyone" | "strangers";
   total_comments_amount: number;
   new_comments_amount: number;
   comments: DbCommentType[] | null;
-  is_new: boolean;
   is_own: boolean;
+  is_new: boolean;
 }
-
 export interface DbCommentType {
   comment_id: string;
   parent_post: string;
   parent_comment: string;
+  chain_parent_id: string | null;
   author: number;
   username: string;
   user_avatar: string;
@@ -116,12 +131,11 @@ export interface DbCommentType {
   secret_identity_avatar: string;
   secret_identity_color: string | null;
   accessory_avatar?: string;
-  chain_parent_id: string | null;
-  friend: boolean;
-  self: boolean;
   content: string;
   created: string;
   anonymity_type: "everyone" | "strangers";
+  self: boolean;
+  friend: boolean;
   is_new: boolean;
   is_own: boolean;
 }
@@ -129,18 +143,19 @@ export interface DbCommentType {
 export interface DbThreadType {
   thread_id: string;
   board_slug: string;
+  thread_last_activity: string;
   posts: DbPostType[];
+  default_view: "thread" | "gallery" | "timeline";
+  thread_new_comments_amount: number;
+  thread_total_comments_amount: number;
   thread_direct_threads_amount: number;
   thread_new_posts_amount: number;
-  thread_new_comments_amount: number;
   thread_total_posts_amount: number;
-  thread_total_comments_amount: number;
-  thread_last_activity: string;
-  default_view: "thread" | "gallery" | "timeline";
   muted: boolean;
   hidden: boolean;
 }
 
+// TODO[realms]: deprecate this
 export interface DbActivityThreadType {
   post_id: string;
   parent_post_id: null;
@@ -173,6 +188,20 @@ export interface DbActivityThreadType {
   comments_amount: number;
   thread_last_activity: string;
   default_view: "thread" | "gallery" | "timeline";
+}
+
+export interface DbThreadSummaryType
+  extends Omit<DbThreadType, "posts">,
+    Omit<
+      DbPostType,
+      "total_comments_amount" | "new_comments_amount" | "comments"
+    > {
+  last_activity_at_micro: string | null;
+}
+
+export interface DbFeedType {
+  cursor: string | null;
+  activity: DbThreadSummaryType[];
 }
 
 export enum DbRolePermissions {

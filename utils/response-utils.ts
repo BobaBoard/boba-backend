@@ -8,6 +8,8 @@ import {
   DbCommentType,
   DbBoardMetadata,
   restriction_types,
+  ServerThreadSummaryType,
+  DbThreadSummaryType,
 } from "../Types";
 import { transformPermissions } from "./permissions-utils";
 
@@ -100,28 +102,83 @@ export const mergeObjectIdentity = <T>(
   } as any;
 };
 
-export const makeServerThread = (thread: DbThreadType): ServerThreadType => {
+export const makeServerThreadSummary = (
+  thread: DbThreadType | DbThreadSummaryType
+): ServerThreadSummaryType => {
+  const starter =
+    "posts" in thread
+      ? makeServerPost(thread.posts[0])
+      : makeServerPost(thread);
+  // TODO[realms]: remove comments from post in db
+  delete starter.comments;
   return {
-    ...thread,
-    posts: thread.posts?.map((post: DbPostType) => makeServerPost(post)),
+    id: thread.thread_id,
+    parent_board_slug: thread.board_slug,
+    starter: starter,
+    default_view: thread.default_view,
+    muted: thread.muted,
+    hidden: thread.hidden,
+    new: starter.new,
+    new_posts_amount: thread.thread_new_posts_amount,
+    new_comments_amount: thread.thread_new_comments_amount,
+    total_comments_amount: thread.thread_total_comments_amount,
+    total_posts_amount: thread.thread_total_posts_amount,
+    last_activity_at: thread.thread_last_activity,
+    direct_threads_amount: thread.thread_direct_threads_amount,
   };
 };
 
-export const makeServerPost = (post: DbPostType): ServerPostType => {
+export const makeServerThread = (thread: DbThreadType): ServerThreadType => {
+  const posts = thread.posts?.map(makeServerPost) || [];
+  // TODO[realms]: remove this
+  const postsWithoutComments = posts.map((post) => {
+    const { comments, ...rest } = post;
+    return rest;
+  });
+  return {
+    ...makeServerThreadSummary(thread),
+    posts: postsWithoutComments,
+    comments: posts.reduce(
+      (agg: Record<string, ServerCommentType[]>, post: ServerPostType) => {
+        log(post.comments);
+        if (post.comments) {
+          agg[post.id] = post.comments;
+        }
+        return agg;
+      },
+      {}
+    ),
+  };
+};
+
+export const makeServerPost = (
+  post: DbPostType | DbThreadSummaryType
+): ServerPostType => {
+  const oldPost = mergeObjectIdentity<DbPostType | DbThreadSummaryType>(post);
   const serverPost = {
-    ...mergeObjectIdentity<DbPostType>(post),
-    comments: post.comments?.map(makeServerComment) || null,
+    id: post.post_id,
+    parent_thread_id: post.parent_thread_id,
+    parent_post_id: post.parent_post_id,
+    created_at: post.created,
+    content: post.content,
+    secret_identity: oldPost.secret_identity,
+    user_identity: oldPost.user_identity,
+    friend: post.friend,
+    own: post.is_own,
+    new: post.is_new,
+    comments:
+      ("comments" in post && post.comments?.map(makeServerComment)) || [],
     tags: {
       whisper_tags: post.whisper_tags || [],
       index_tags: post.index_tags || [],
       category_tags: post.category_tags || [],
       content_warnings: post.content_warnings || [],
     },
+    total_comments_amount:
+      "total_comments_amount" in post ? post.total_comments_amount : 0,
+    new_comments_amount:
+      "new_comments_amount" in post ? post.new_comments_amount : 0,
   };
-  delete serverPost.whisper_tags;
-  delete serverPost.index_tags;
-  delete serverPost.category_tags;
-  delete serverPost.content_warnings;
 
   return serverPost;
 };
@@ -129,17 +186,37 @@ export const makeServerPost = (post: DbPostType): ServerPostType => {
 export const makeServerComment = (
   comment: DbCommentType
 ): ServerCommentType => {
-  return mergeObjectIdentity<DbCommentType>(comment);
+  const identityPost = mergeObjectIdentity<DbCommentType>(comment);
+  return {
+    id: comment.comment_id,
+    parent_comment_id: comment.parent_comment,
+    chain_parent_id: comment.chain_parent_id,
+    parent_post_id: comment.parent_post,
+    created_at: comment.created,
+    content: comment.content,
+    secret_identity: identityPost.secret_identity,
+    user_identity: identityPost.user_identity,
+    friend: comment.friend,
+    own: comment.is_own,
+    new: comment.is_new,
+  };
 };
 
 export const ensureNoIdentityLeakage = (post: any) => {
-  if (!post.friend && !post.self && post.user_identity) {
+  if (!post.friend && !post.own && post.user_identity) {
+    log(post);
     throw Error("Identity leakage detected.");
   }
   if (post.author || post.user_id || post.username || post.user_avatar) {
     throw Error("Identity leakage detected.");
   }
-  post.comments?.forEach((comment: any) => ensureNoIdentityLeakage(comment));
+  if (Array.isArray(post.comments)) {
+    post.comments?.forEach((comment: any) => ensureNoIdentityLeakage(comment));
+  } else if (post.comments) {
+    Object.values(post.comments).forEach((comment: any) =>
+      ensureNoIdentityLeakage(comment)
+    );
+  }
 };
 
 const extractLockedBoardMetadata = (metadata: any) => {

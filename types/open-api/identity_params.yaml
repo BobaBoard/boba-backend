@@ -1,6 +1,6 @@
 components:
-  params:
-    Identity:
+  schemas:
+    IdentityParams:
       type: object
       properties:
         accessory_id:
