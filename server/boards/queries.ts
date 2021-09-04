@@ -368,16 +368,16 @@ export const getBoardActivityByUUID = async ({
 };
 
 export const markBoardVisit = async ({
-  slug,
+  uuid,
   firebaseId,
 }: {
-  slug: string;
+  uuid: string;
   firebaseId: string;
 }) => {
   try {
     await pool.none(sql.markBoardVisit, {
       firebase_id: firebaseId,
-      board_slug: slug,
+      board_uuid: uuid,
     });
     return true;
   } catch (e) {

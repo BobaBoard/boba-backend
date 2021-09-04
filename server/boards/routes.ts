@@ -158,7 +158,7 @@ router.post("/:uuid/metadata/update", isLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * boards/{slug}/visits:
+ * boards/{uuid}/visits:
  *   get:
  *     summary: Sets last visited time for board
  *     tags:
@@ -167,9 +167,9 @@ router.post("/:uuid/metadata/update", isLoggedIn, async (req, res) => {
  *       - firebase: []
  *       - []
  *     parameters:
- *       - name: slug
+ *       - name: uuid
  *         in: path
- *         description: The slug of the board to update.
+ *         description: The uuid of the board to update.
  *         required: true
  *         schema:
  *           type: string
@@ -180,26 +180,26 @@ router.post("/:uuid/metadata/update", isLoggedIn, async (req, res) => {
  *       200:
  *         description: The visit was successfully registered.
  */
-router.post("/:slug/visits", isLoggedIn, async (req, res) => {
-  const { slug } = req.params;
+router.post("/:uuid/visits", isLoggedIn, async (req, res) => {
+  const { uuid } = req.params;
   if (!req.currentUser) {
     res
       .status(401)
       .json({ message: "This board is unavailable to logged out users." });
   }
-  log(`Setting last visited time for board: ${slug}`);
+  log(`Setting last visited time for board: ${uuid}`);
 
   if (
     !(await markBoardVisit({
       firebaseId: req.currentUser.uid,
-      slug,
+      uuid,
     }))
   ) {
     res.sendStatus(500);
     return;
   }
 
-  log(`Marked last visited time for board: ${slug}.`);
+  log(`Marked last visited time for board: ${uuid}.`);
   res.sendStatus(200);
 });
 
