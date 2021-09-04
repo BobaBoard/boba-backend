@@ -4,11 +4,11 @@ import path from "path";
 const markBoardVisit = `
     INSERT INTO user_board_last_visits(user_id, board_id) VALUES (
         (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
-        (SELECT id from boards WHERE boards.slug = $/board_slug/))
+        (SELECT id from boards WHERE boards.string_id = $/board_uuid/))
     ON CONFLICT(user_id, board_id) DO UPDATE 
         SET last_visit_time = DEFAULT
         WHERE user_board_last_visits.user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
-            AND user_board_last_visits.board_id = (SELECT id from boards WHERE boards.slug = $/board_slug/)`;
+            AND user_board_last_visits.board_id = (SELECT id from boards WHERE boards.string_id = $/board_uuid/)`;
 
 const deleteSectionCategories = `
     DELETE FROM board_description_section_categories bdsc 
