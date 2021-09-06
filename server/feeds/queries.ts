@@ -52,7 +52,7 @@ export const getBoardActivityBySlug = async ({
     if (result.length > finalPageSize) {
       nextCursor = encodeCursor({
         last_activity_cursor:
-          result[result.length - 1].thread_last_activity_micro,
+          result[result.length - 1].thread_last_activity_at_micro,
         page_size: finalPageSize,
       });
       // remove last element from array
@@ -106,7 +106,7 @@ export const getUserActivity = async ({
     if (result.length > finalPageSize) {
       nextCursor = encodeCursor({
         last_activity_cursor:
-          result[result.length - 1].thread_last_activity_micro,
+          result[result.length - 1].thread_last_activity_at_micro,
         page_size: finalPageSize,
       });
       // remove last element from array

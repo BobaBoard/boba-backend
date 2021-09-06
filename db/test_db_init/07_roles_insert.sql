@@ -30,6 +30,10 @@ VALUES
     ((SELECT id FROM users WHERE username = 'bobatan'),
      (SELECT id FROM roles WHERE name = 'The Owner'));
 
+INSERT INTO content_warnings(warning)
+VALUES
+  ('harassment PSA');
+
 WITH
   new_thread_id AS
     (INSERT INTO threads(string_id, parent_board)
@@ -72,6 +76,12 @@ WITH
         '[{"insert":"BobaNitro users can be mean to the webmaster once a month."}]', 
         'strangers',
         (SELECT id FROM comments_insert1 LIMIT 1)
+      )),
+  content_notice_insert AS
+    (INSERT INTO post_warnings(post_id, warning_id)
+      VALUES(
+        (SELECT id FROM posts_insert ORDER BY id DESC LIMIT 1),
+        (SELECT id FROM content_warnings WHERE warning = 'harassment PSA')
       ))
 INSERT INTO user_thread_identities(thread_id, user_id, identity_id, role_id)
     VALUES
