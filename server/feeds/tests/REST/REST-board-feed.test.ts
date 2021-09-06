@@ -54,7 +54,7 @@ describe("Tests boards REST API", () => {
             new: false,
             tags: {
               category_tags: [],
-              content_warnings: [],
+              content_warnings: ["harassment PSA"],
               index_tags: [],
               whisper_tags: ["An announcement from your headmaster!"],
             },

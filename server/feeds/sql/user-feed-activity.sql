@@ -36,7 +36,7 @@ SELECT
     thread_details.options,
     -- post tags
     index_tags,
-    category_tags
+    category_tags,
     content_warnings,
     whisper_tags,
     -- TODO[realms]: likely deprecated   
@@ -45,7 +45,7 @@ SELECT
     -- This last activity must have the .US at the end or it will trigger a bug
     -- where some posts are skipped by the last activity cursor.
     -- See documentation on the queries JS file.
-    TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.US') as thread_last_activity_micro
+    TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.US') as thread_last_activity_at_micro
 FROM (
   SELECT * FROM threads
   INNER JOIN user_thread_identities uti 

@@ -45,7 +45,7 @@ SELECT
     -- This last activity must have the .US at the end or it will trigger a bug
     -- where some posts are skipped by the last activity cursor.
     -- See documentation on the queries JS file.
-    TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.US') as thread_last_activity_micro
+    TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.US') as thread_last_activity_at_micro
 FROM threads
 INNER JOIN thread_details
   ON threads.id = thread_details.thread_id AND thread_details.board_slug = ${board_slug}
