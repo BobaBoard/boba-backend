@@ -41,7 +41,6 @@ describe("Tests restricted board realm queries", () => {
         expect(
           res.body.boards.find((board: any) => board.slug == "restricted")
         ).to.eql({
-          id: "restricted",
           realm_id: "v0-fake-id",
           avatar_url:
             "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2Fe4e263cf-ee98-4902-9c14-c10299210e01.png?alt=media&token=7c170411-9401-4d4e-9f66-5d6dfee2fccd",

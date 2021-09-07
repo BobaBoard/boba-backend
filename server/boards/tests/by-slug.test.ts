@@ -1,11 +1,14 @@
 import "mocha";
 import { expect } from "chai";
 
-import { getBoardBySlug } from "../queries";
+import { getBoardByUUID } from "../queries";
 
 describe("Tests boards queries", () => {
   it("fetches board by slug when slug present", async () => {
-    const board = await getBoardBySlug({ slug: "gore", firebaseId: undefined });
+    const board = await getBoardByUUID({ 
+      uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec", 
+      firebaseId: undefined 
+    });
 
     expect(board).to.eql({
       settings: {
@@ -30,6 +33,7 @@ describe("Tests boards queries", () => {
         },
       ],
       slug: "gore",
+      string_id: "c6d3d10e-8e49-4d73-b28a-9d652b41beec", 
       tagline: "Blood! Blood! Blood!",
       avatar_url: "gore.png",
       // TODO: do we want to surface accessories for
@@ -56,8 +60,8 @@ describe("Tests boards queries", () => {
   });
 
   it("fetches board by slug when slug present (logged in)", async () => {
-    const board = await getBoardBySlug({
-      slug: "gore",
+    const board = await getBoardByUUID({
+      uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
       // Bobatan
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
     });
@@ -85,6 +89,7 @@ describe("Tests boards queries", () => {
         },
       ],
       slug: "gore",
+      string_id: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
       tagline: "Blood! Blood! Blood!",
       avatar_url: "gore.png",
       muted: false,
@@ -132,8 +137,8 @@ describe("Tests boards queries", () => {
   });
 
   it("returns null board when slugs not found", async () => {
-    const board = await getBoardBySlug({
-      slug: "this_will_not_be_in_the_db",
+    const board = await getBoardByUUID({
+      uuid: "00000000-0000-0000-0000-000000000000",
       firebaseId: undefined,
     });
 

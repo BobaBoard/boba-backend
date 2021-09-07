@@ -117,9 +117,6 @@ const updateBoardSettings = `
 
 export default {
   getAllBoards: new QueryFile(path.join(__dirname, "all-boards.sql")),
-  getBoardActivityBySlug: new QueryFile(
-    path.join(__dirname, "board-activity-by-slug.sql")
-  ),
   getBoardBySlug: new QueryFile(path.join(__dirname, "board-by-slug.sql")),
   getBoardByUUID: new QueryFile(path.join(__dirname, "board-by-uuid.sql")),
   markBoardVisit,
