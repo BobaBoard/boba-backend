@@ -206,7 +206,7 @@ router.post("/:uuid/visits", isLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * /boards/{slug}/mute:
+ * /boards/{uuid}/mute:
  *   post:
  *     summary: Mutes a board.
  *     description: Mutes the specified board for the current user.
@@ -215,12 +215,13 @@ router.post("/:uuid/visits", isLoggedIn, async (req, res) => {
  *     security:
  *       - firebase: []
  *     parameters:
- *       - name: slug
+ *       - name: uuid
  *         in: path
- *         description: The name of the board to mute.
+ *         description: The uuid of the board to mute.
  *         required: true
  *         schema:
  *           type: string
+ *           # format: uuid
  *     responses:
  *       401:
  *         description: User was not found in request that requires authentication.
@@ -229,28 +230,28 @@ router.post("/:uuid/visits", isLoggedIn, async (req, res) => {
  *       200:
  *         description: The board was successfully muted.
  */
-router.post("/:slug/mute", ensureLoggedIn, async (req, res) => {
-  const { slug } = req.params;
+router.post("/:uuid/mute", ensureLoggedIn, async (req, res) => {
+  const { uuid } = req.params;
 
-  log(`Setting board muted: ${slug}`);
+  log(`Setting board muted: ${uuid}`);
 
   if (
     !(await muteBoard({
       firebaseId: req.currentUser.uid,
-      slug,
+      uuid,
     }))
   ) {
     res.sendStatus(500);
     return;
   }
 
-  info(`Muted board: ${slug} for user ${req.currentUser.uid}.`);
+  info(`Muted board: ${uuid} for user ${req.currentUser.uid}.`);
   res.status(200).json();
 });
 
 /**
  * @openapi
- * /boards/{slug}/mute:
+ * /boards/{uuid}/mute:
  *   delete:
  *     summary: Unmutes a board.
  *     description: Unmutes the specified board for the current user.
@@ -259,7 +260,7 @@ router.post("/:slug/mute", ensureLoggedIn, async (req, res) => {
  *     security:
  *       - firebase: []
  *     parameters:
- *       - name: slug
+ *       - name: uuid
  *         in: path
  *         description: The name of the board to unmute.
  *         required: true
@@ -274,16 +275,16 @@ router.post("/:slug/mute", ensureLoggedIn, async (req, res) => {
  *         description: The board was successfully unmuted.
  *
  */
-router.delete("/:slug/mute", ensureLoggedIn, async (req, res) => {
-  const { slug } = req.params;
+router.delete("/:uuid/mute", ensureLoggedIn, async (req, res) => {
+  const { uuid } = req.params;
 
-  log(`Setting board unmuted: ${slug}`);
+  log(`Setting board unmuted: ${uuid}`);
 
   if (
     !(await unmuteBoard({
       // @ts-ignore
       firebaseId: req.currentUser.uid,
-      slug,
+      uuid,
     }))
   ) {
     res.sendStatus(500);
@@ -291,7 +292,7 @@ router.delete("/:slug/mute", ensureLoggedIn, async (req, res) => {
   }
 
   // @ts-ignore
-  info(`Unmuted board: ${slug} for user ${req.currentUser.uid}.`);
+  info(`Unmuted board: ${uuid} for user ${req.currentUser.uid}.`);
   res.status(200).json();
 });
 

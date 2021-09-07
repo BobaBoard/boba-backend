@@ -1,5 +1,5 @@
 import debug from "debug";
-import { getBoardBySlug } from "../server/boards/queries";
+import { getBoardBySlug, getBoardByUUID } from "../server/boards/queries";
 
 import {
   DbRolePermissions,
@@ -11,6 +11,7 @@ import {
   restriction_types,
 } from "../Types";
 
+const info = debug("bobaserver:board:utils-info");
 const log = debug("bobaserver::permissions-utils-log");
 
 export const hasPermission = (
