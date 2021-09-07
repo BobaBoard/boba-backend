@@ -298,16 +298,16 @@ export const unmuteBoard = async ({
 };
 
 export const pinBoard = async ({
-  slug,
+  uuid,
   firebaseId,
 }: {
-  slug: string;
+  uuid: string;
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.pinBoardBySlug, {
+    await pool.none(sql.pinBoardByUUID, {
       firebase_id: firebaseId,
-      board_slug: slug,
+      board_uuid: uuid,
     });
     return true;
   } catch (e) {
@@ -318,16 +318,16 @@ export const pinBoard = async ({
 };
 
 export const unpinBoard = async ({
-  slug,
+  uuid,
   firebaseId,
 }: {
-  slug: string;
+  uuid: string;
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.unpinBoardBySlug, {
+    await pool.none(sql.unpinBoardByUUID, {
       firebase_id: firebaseId,
-      board_slug: slug,
+      board_uuid: uuid,
     });
     return true;
   } catch (e) {
@@ -338,16 +338,16 @@ export const unpinBoard = async ({
 };
 
 export const dismissBoardNotifications = async ({
-  slug,
+  uuid,
   firebaseId,
 }: {
-  slug: string;
+  uuid: string;
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.dismissNotificationsBySlug, {
+    await pool.none(sql.dismissNotificationsByUUID, {
       firebase_id: firebaseId,
-      board_slug: slug,
+      board_uuid: uuid,
     });
     return true;
   } catch (e) {
