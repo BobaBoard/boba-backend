@@ -258,16 +258,16 @@ export const markBoardVisit = async ({
 };
 
 export const muteBoard = async ({
-  slug,
+  uuid,
   firebaseId,
 }: {
-  slug: string;
+  uuid: string;
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.muteBoardBySlug, {
+    await pool.none(sql.muteBoardByUUID, {
       firebase_id: firebaseId,
-      board_slug: slug,
+      board_uuid: uuid,
     });
     return true;
   } catch (e) {
@@ -278,16 +278,16 @@ export const muteBoard = async ({
 };
 
 export const unmuteBoard = async ({
-  slug,
+  uuid,
   firebaseId,
 }: {
-  slug: string;
+  uuid: string;
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.unmuteBoardBySlug, {
+    await pool.none(sql.unmuteBoardByUUID, {
       firebase_id: firebaseId,
-      board_slug: slug,
+      board_uuid: uuid,
     });
     return true;
   } catch (e) {

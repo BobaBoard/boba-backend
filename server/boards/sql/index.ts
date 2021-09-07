@@ -74,17 +74,17 @@ const createAddCategoriesToFilterSectionQuery = (
   );
 };
 
-const muteBoardBySlug = `
+const muteBoardByUUID = `
     INSERT INTO user_muted_boards(user_id, board_id) VALUES (
         (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
-        (SELECT id from boards WHERE boards.slug = $/board_slug/))
+        (SELECT id from boards WHERE boards.string_id = $/board_uuid/))
     ON CONFLICT(user_id, board_id) DO NOTHING`;
 
-const unmuteBoardBySlug = `
+const unmuteBoardByUUID = `
     DELETE FROM user_muted_boards WHERE
         user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
         AND
-        board_id = (SELECT id from boards WHERE boards.slug = $/board_slug/)`;
+        board_id = (SELECT id from boards WHERE boards.string_id = $/board_uuid/)`;
 
 const pinBoardBySlug = `
     INSERT INTO user_pinned_boards(user_id, board_id) VALUES (
@@ -129,8 +129,8 @@ export default {
   createSection,
   updateBoardSettings,
   createAddCategoriesToFilterSectionQuery,
-  muteBoardBySlug,
-  unmuteBoardBySlug,
+  muteBoardByUUID,
+  unmuteBoardByUUID,
   pinBoardBySlug,
   unpinBoardBySlug,
   dismissNotificationsBySlug,
