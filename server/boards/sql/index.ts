@@ -86,28 +86,28 @@ const unmuteBoardByUUID = `
         AND
         board_id = (SELECT id from boards WHERE boards.string_id = $/board_uuid/)`;
 
-const pinBoardBySlug = `
+const pinBoardByUUID = `
     INSERT INTO user_pinned_boards(user_id, board_id) VALUES (
         (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
-        (SELECT id from boards WHERE boards.slug = $/board_slug/))
+        (SELECT id from boards WHERE boards.string_id = $/board_uuid/))
     ON CONFLICT(user_id, board_id) DO NOTHING`;
 
-const unpinBoardBySlug = `
+const unpinBoardByUUID = `
     DELETE FROM user_pinned_boards WHERE
         user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
         AND
-        board_id = (SELECT id from boards WHERE boards.slug = $/board_slug/)`;
+        board_id = (SELECT id from boards WHERE boards.string_id = $/board_uuid/)`;
 
-const dismissNotificationsBySlug = `
+const dismissNotificationsByUUID = `
     INSERT INTO dismiss_board_notifications_requests(user_id, board_id, dismiss_request_time) VALUES (
         (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
-        (SELECT id from boards WHERE boards.slug = $/board_slug/),
+        (SELECT id from boards WHERE boards.string_id = $/board_uuid/),
         DEFAULT)
     ON CONFLICT(user_id, board_id) DO UPDATE
         SET dismiss_request_time = DEFAULT
         WHERE
             dismiss_board_notifications_requests.user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
-            AND dismiss_board_notifications_requests.board_id = (SELECT id from boards WHERE boards.slug = $/board_slug/)`;
+            AND dismiss_board_notifications_requests.board_id = (SELECT id from boards WHERE boards.string_id = $/board_uuid/)`;
 
 const updateBoardSettings = `
     UPDATE boards
@@ -131,7 +131,7 @@ export default {
   createAddCategoriesToFilterSectionQuery,
   muteBoardByUUID,
   unmuteBoardByUUID,
-  pinBoardBySlug,
-  unpinBoardBySlug,
-  dismissNotificationsBySlug,
+  pinBoardByUUID,
+  unpinBoardByUUID,
+  dismissNotificationsByUUID,
 };

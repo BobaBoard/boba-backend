@@ -298,7 +298,7 @@ router.delete("/:uuid/mute", ensureLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * /boards/{slug}/pin:
+ * /boards/{uuid}/pin:
  *   post:
  *     summary: Pins a board.
  *     description: Pins the specified board for the current user.
@@ -307,12 +307,13 @@ router.delete("/:uuid/mute", ensureLoggedIn, async (req, res) => {
  *     security:
  *       - firebase: []
  *     parameters:
- *       - name: slug
+ *       - name: uuid
  *         in: path
  *         description: The name of the board to pin.
  *         required: true
  *         schema:
  *           type: string
+ *           # format: uuid
  *     responses:
  *       401:
  *         description: User was not found in request that requires authentication.
@@ -322,16 +323,16 @@ router.delete("/:uuid/mute", ensureLoggedIn, async (req, res) => {
  *         description: The board was successfully pinned.
  *
  */
-router.post("/:slug/pin", ensureLoggedIn, async (req, res) => {
-  const { slug } = req.params;
+router.post("/:uuid/pin", ensureLoggedIn, async (req, res) => {
+  const { uuid } = req.params;
 
-  log(`Setting board pinned: ${slug}`);
+  log(`Setting board pinned: ${uuid}`);
 
   if (
     !(await pinBoard({
       // @ts-ignore
       firebaseId: req.currentUser.uid,
-      slug,
+      uuid,
     }))
   ) {
     res.sendStatus(500);
@@ -339,13 +340,13 @@ router.post("/:slug/pin", ensureLoggedIn, async (req, res) => {
   }
 
   // @ts-ignore
-  info(`Pinned board: ${slug} for user ${req.currentUser.uid}.`);
+  info(`Pinned board: ${uuid} for user ${req.currentUser.uid}.`);
   res.status(200).json();
 });
 
 /**
  * @openapi
- * /boards/{slug}/pin:
+ * /boards/{uuid}/pin:
  *   delete:
  *     summary: Unpins a board.
  *     description: Unpins the specified board for the current user.
@@ -354,12 +355,13 @@ router.post("/:slug/pin", ensureLoggedIn, async (req, res) => {
  *     security:
  *       - firebase: []
  *     parameters:
- *       - name: slug
+ *       - name: uuid
  *         in: path
  *         description: The name of the board to unpin.
  *         required: true
  *         schema:
  *           type: string
+ *           # format: uuid
  *     responses:
  *       401:
  *         description: User was not found in request that requires authentication.
@@ -369,45 +371,45 @@ router.post("/:slug/pin", ensureLoggedIn, async (req, res) => {
  *         description: The board was successfully unpinned.
  *
  */
-router.delete("/:slug/pin", ensureLoggedIn, async (req, res) => {
-  const { slug } = req.params;
+router.delete("/:uuid/pin", ensureLoggedIn, async (req, res) => {
+  const { uuid } = req.params;
 
-  log(`Setting board unpinned: ${slug}`);
+  log(`Setting board unpinned: ${uuid}`);
 
   if (
     !(await unpinBoard({
       firebaseId: req.currentUser?.uid,
-      slug,
+      uuid,
     }))
   ) {
     res.sendStatus(500);
     return;
   }
 
-  info(`Unpinned board: ${slug} for user ${req.currentUser?.uid}.`);
+  info(`Unpinned board: ${uuid} for user ${req.currentUser?.uid}.`);
   res.status(200).json();
 });
 
 /**
  * @openapi
- * /boards/{slug}/notifications/dismiss:
+ * /boards/{uuid}/notifications/dismiss:
  *   post:
- *     summary: Dismiss all notifications for board {slug}
+ *     summary: Dismiss all notifications for board {uuid}
  *     tags:
  *       - /boards/
  *       - todo
  */
-router.post("/:slug/notifications/dismiss", isLoggedIn, async (req, res) => {
-  const { slug } = req.params;
+router.post("/:uuid/notifications/dismiss", isLoggedIn, async (req, res) => {
+  const { uuid } = req.params;
   // @ts-ignore
   let currentUserId: string = req.currentUser?.uid;
   if (!currentUserId) {
     res.sendStatus(401);
     return;
   }
-  log(`Dismissing ${slug} notifications for firebase id: ${currentUserId}`);
+  log(`Dismissing ${uuid} notifications for firebase id: ${currentUserId}`);
   const dismissSuccessful = await dismissBoardNotifications({
-    slug,
+    uuid,
     firebaseId: currentUserId,
   });
 
