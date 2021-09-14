@@ -196,7 +196,7 @@ export interface DbThreadSummaryType
       DbPostType,
       "total_comments_amount" | "new_comments_amount" | "comments"
     > {
-  last_activity_at_micro: string | null;
+  thread_last_activity_at_micro: string | null;
 }
 
 export interface DbFeedType {

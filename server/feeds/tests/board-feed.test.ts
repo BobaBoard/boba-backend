@@ -2,13 +2,14 @@ import "mocha";
 import { expect } from "chai";
 
 import { getBoardActivityBySlug } from "../queries";
+import { DbThreadSummaryType } from "../../../Types";
 
-export const extractActivity = (thread: any) => {
+export const extractActivity = (thread: DbThreadSummaryType) => {
   return {
     thread_id: thread.thread_id,
     created: thread.created,
     thread_last_activity: thread.thread_last_activity,
-    thread_last_activity_micro: thread.thread_last_activity_micro,
+    thread_last_activity_micro: thread.thread_last_activity_at_micro,
     post_id: thread.post_id,
     is_new: thread.is_new,
     threads_amount: thread.thread_direct_threads_amount,
@@ -201,7 +202,7 @@ describe("Tests boards activity queries", () => {
           hidden: false,
           index_tags: [],
           category_tags: [],
-          content_warnings: [],
+          content_warnings: ["harassment PSA"],
           whisper_tags: ["An announcement from your headmaster!"],
         },
         {
@@ -259,7 +260,7 @@ describe("Tests boards activity queries", () => {
           hidden: false,
           index_tags: [],
           category_tags: [],
-          content_warnings: [],
+          content_warnings: ["harassment PSA"],
           whisper_tags: ["An announcement from your headmaster!"],
         },
         {

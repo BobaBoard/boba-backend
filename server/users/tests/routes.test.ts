@@ -10,7 +10,7 @@ const authStub = sinon.stub(authHandler, "ensureLoggedIn");
 import router from "../routes";
 import { CacheKeys } from "../../cache";
 import { Server } from "http";
-import { exception } from "console";
+import { getUserFromFirebaseId } from "../queries";
 const log = debug("bobaserver:test:users:routes-log");
 
 describe("Test users routes", function () {
@@ -29,6 +29,19 @@ describe("Test users routes", function () {
   afterEach(function (done) {
     authStub.restore();
     listener.close(done);
+  });
+
+  it("gets user from id", async () => {
+    const user = await getUserFromFirebaseId({ firebaseId: "fb2" });
+
+    expect(user).to.eql({
+      avatar_reference_id: "hannibal.png",
+      created_on: null,
+      firebase_id: "fb2",
+      id: "2",
+      invited_by: "1",
+      username: "jersey_devil_69",
+    });
   });
 
   // TODO: reactivate this once cache is fixed.
