@@ -359,7 +359,7 @@ describe("Tests notifications", async () => {
       boardActivity.activity.map((activity: any) => ({
         thread_id: activity.thread_id,
         last_activity: activity.thread_last_activity,
-        last_activity_micro: activity.thread_last_activity_micro,
+        last_activity_micro: activity.thread_last_activity_at_micro,
         new_comments_amount: activity.thread_new_comments_amount,
         new_posts_amount: activity.thread_new_posts_amount,
         is_new: activity.is_new,
@@ -598,7 +598,7 @@ describe("Tests notifications", async () => {
       boardActivity.activity.map((activity: any) => ({
         thread_id: activity.thread_id,
         last_activity: activity.thread_last_activity,
-        last_activity_micro: activity.thread_last_activity_micro,
+        last_activity_micro: activity.thread_last_activity_at_micro,
         new_comments_amount: activity.thread_new_comments_amount,
         new_posts_amount: activity.thread_new_posts_amount,
         is_new: activity.is_new,
