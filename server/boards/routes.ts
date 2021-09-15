@@ -25,7 +25,7 @@ const router = express.Router();
 
 /**
  * @openapi
- * boards/{uuid}:
+ * /boards/{uuid}:
  *   get:
  *     summary: Fetches board metadata.
  *     tags:
@@ -36,7 +36,7 @@ const router = express.Router();
  *     parameters:
  *       - name: uuid
  *         in: path
- *         description: The uuid of the board to update.
+ *         description: The uuid of the board to retrieve metadata for.
  *         required: true
  *         schema:
  *           type: string
@@ -44,17 +44,34 @@ const router = express.Router();
  *         examples:
  *           existing:
  *             summary: An existing board
- *             value: gore
+ *             value: c6d3d10e-8e49-4d73-b28a-9d652b41beec
  *           locked:
  *             summary: A board for logged in users only
- *             value: restricted
+ *             value: 76ebaab0-6c3e-4d7b-900f-f450625a5ed3
  *     responses:
  *       401:
  *         description: User was not found and board requires authentication.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             example: { message: "This board is unavailable to logged out users." }
  *       403:
  *         description: User is not authorized to fetch the metadata of this board.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             example: { message: "You don't have permission to access this board." }
  *       404:
  *         description: The board was not found.
+ *         $ref: "#/components/schemas/default404"
  *       200:
  *         description: The board metadata.
  *         content:
@@ -102,12 +119,54 @@ router.get("/:uuid", isLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * boards/{uuid}/metadata/update:
+ * /boards/{uuid}/metadata/update:
  *   post:
  *     summary: Update boards metadata
  *     tags:
  *       - /boards/
- *       - todo
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: uuid
+ *         in: path
+ *         description: The uuid of the board to update metadata for.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           # format: uuid
+ *         examples:
+ *           existing:
+ *             summary: An existing board (gore)
+ *             value: c6d3d10e-8e49-4d73-b28a-9d652b41beec
+ *     requestBody:
+ *       description: request body
+ *       content: 
+ *         application/json:
+ *           schema: 
+ *             $ref: "#/components/schemas/BoardDescription"
+ *           examples: 
+ *             gore:
+ *               $ref: "#/components/examples/BoardsUpdateMetadataRequestBody"
+ *       required: false
+ *     responses:
+ *       401:
+ *         description: User was not found.
+ *         $ref: "#/components/schemas/default401"
+ *       403:
+ *         description: User is not authorized to update the metadata of this board.
+ *         $ref: "#/components/schemas/default403"
+ *       404:
+ *         description: The board was not found.
+ *         $ref: "#/components/schemas/default404"
+ *       200:
+ *         description: The board metadata.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/UpdatedBoardDescription"
+ *             examples:
+ *               existing:
+ *                 $ref: '#/components/examples/BoardsUpdateMetadataResponse'
  */
 router.post("/:uuid/metadata/update", isLoggedIn, async (req, res) => {
   const { uuid } = req.params;
@@ -159,14 +218,13 @@ router.post("/:uuid/metadata/update", isLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * boards/{uuid}/visits:
+ * /boards/{uuid}/visits:
  *   get:
  *     summary: Sets last visited time for board
  *     tags:
  *       - /boards/
  *     security:
  *       - firebase: []
- *       - {}
  *     parameters:
  *       - name: uuid
  *         in: path
@@ -178,6 +236,17 @@ router.post("/:uuid/metadata/update", isLoggedIn, async (req, res) => {
  *     responses:
  *       401:
  *         description: User was not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             example: { "message" : "This board is unavailable to logged out users." }
+ *       500:
+ *         description: Internal Server Error
+ *         $ref: "#/components/schemas/default500"
  *       200:
  *         description: The visit was successfully registered.
  */
@@ -224,9 +293,12 @@ router.post("/:uuid/visits", isLoggedIn, async (req, res) => {
  *           # format: uuid
  *     responses:
  *       401:
- *         description: User was not found in request that requires authentication.
+ *         $ref: "#/components/schemas/ensureLoggedIn401"
  *       403:
- *         description: User is not authorized to perform the action.
+ *         $ref: "#/components/schemas/ensureLoggedIn403"
+ *       500:
+ *         description: Internal Server Error
+ *         $ref: "#/components/schemas/default500"
  *       200:
  *         description: The board was successfully muted.
  */
@@ -268,9 +340,12 @@ router.post("/:uuid/mute", ensureLoggedIn, async (req, res) => {
  *           type: string
  *     responses:
  *       401:
- *         description: User was not found in request that requires authentication.
+ *         $ref: "#/components/schemas/ensureLoggedIn401"
  *       403:
- *         description: User is not authorized to perform the action.
+ *         $ref: "#/components/schemas/ensureLoggedIn403"
+ *       500:
+ *         description: Internal Server Error
+ *         $ref: "#/components/schemas/default500"
  *       200:
  *         description: The board was successfully unmuted.
  *
@@ -316,11 +391,14 @@ router.delete("/:uuid/mute", ensureLoggedIn, async (req, res) => {
  *           # format: uuid
  *     responses:
  *       401:
- *         description: User was not found in request that requires authentication.
+ *         $ref: "#/components/schemas/ensureLoggedIn401"
  *       403:
- *         description: User is not authorized to perform the action.
+ *         $ref: "#/components/schemas/ensureLoggedIn403"
+ *       500:
+ *         description: Internal Server Error
+ *         $ref: "#/components/schemas/default500"
  *       200:
- *         description: The board was successfully pinned.
+ *         description: The board was successfully muted.
  *
  */
 router.post("/:uuid/pin", ensureLoggedIn, async (req, res) => {
@@ -364,11 +442,14 @@ router.post("/:uuid/pin", ensureLoggedIn, async (req, res) => {
  *           # format: uuid
  *     responses:
  *       401:
- *         description: User was not found in request that requires authentication.
+ *         $ref: "#/components/schemas/ensureLoggedIn401"
  *       403:
- *         description: User is not authorized to perform the action.
+ *         $ref: "#/components/schemas/ensureLoggedIn403"
+ *       500:
+ *         description: Internal Server Error
+ *         $ref: "#/components/schemas/default500"
  *       200:
- *         description: The board was successfully unpinned.
+ *         description: The board was successfully muted.
  *
  */
 router.delete("/:uuid/pin", ensureLoggedIn, async (req, res) => {
@@ -394,10 +475,32 @@ router.delete("/:uuid/pin", ensureLoggedIn, async (req, res) => {
  * @openapi
  * /boards/{uuid}/notifications/dismiss:
  *   post:
- *     summary: Dismiss all notifications for board {uuid}
+ *     summary: Dismiss all notifications for board
  *     tags:
  *       - /boards/
- *       - todo
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: uuid
+ *         in: path
+ *         description: The uuid of the board to dismiss notifications for.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           # format: uuid
+ *         examples:
+ *           existing:
+ *             summary: An existing board
+ *             value: c6d3d10e-8e49-4d73-b28a-9d652b41beec
+ *     responses:
+ *       401:
+ *         description: User is not logged in.
+ *         $ref: "#/components/schemas/default401"
+ *       500:
+ *         description: Internal Server Error
+ *         $ref: "#/components/schemas/default500"
+ *       204:
+ *         description: Board notifications dismissed.
  */
 router.post("/:uuid/notifications/dismiss", isLoggedIn, async (req, res) => {
   const { uuid } = req.params;
