@@ -228,7 +228,7 @@ router.post("/:uuid/metadata/update", isLoggedIn, async (req, res) => {
  *     parameters:
  *       - name: uuid
  *         in: path
- *         description: The uuid of the board to update.
+ *         description: The uuid of the board to mark as visited.
  *         required: true
  *         schema:
  *           type: string
@@ -398,7 +398,7 @@ router.delete("/:uuid/mute", ensureLoggedIn, async (req, res) => {
  *         description: Internal Server Error
  *         $ref: "#/components/schemas/default500"
  *       200:
- *         description: The board was successfully muted.
+ *         description: The board was successfully pinned.
  *
  */
 router.post("/:uuid/pin", ensureLoggedIn, async (req, res) => {
@@ -449,7 +449,7 @@ router.post("/:uuid/pin", ensureLoggedIn, async (req, res) => {
  *         description: Internal Server Error
  *         $ref: "#/components/schemas/default500"
  *       200:
- *         description: The board was successfully muted.
+ *         description: The board was successfully unpinned.
  *
  */
 router.delete("/:uuid/pin", ensureLoggedIn, async (req, res) => {
