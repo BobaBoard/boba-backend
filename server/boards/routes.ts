@@ -3,7 +3,7 @@ import express from "express";
 import { cache, CacheKeys } from "../cache";
 import {
   getBoardBySlug,
-  getBoardByUUID,
+  getBoardByUuid,
   markBoardVisit,
   updateBoardMetadata,
   muteBoard,
@@ -14,9 +14,9 @@ import {
 } from "./queries";
 import { ensureLoggedIn, isLoggedIn } from "../../handlers/auth";
 import { processBoardMetadata } from "../../utils/response-utils";
-import { hasPermission, canAccessBoard, canAccessBoardByUUID } from "../../utils/permissions-utils";
+import { hasPermission, canAccessBoard, canAccessBoardByUuid } from "../../utils/permissions-utils";
 import { DbRolePermissions } from "../../Types";
-import { getBoardMetadata, getBoardMetadataByUUID } from "./utils";
+import { getBoardMetadata, getBoardMetadataByUuid } from "./utils";
 
 const info = debug("bobaserver:board:routes-info");
 const log = debug("bobaserver:board:routes");
@@ -90,12 +90,12 @@ router.get("/:uuid", isLoggedIn, async (req, res) => {
   const { uuid } = req.params;
   log(`Fetching data for board with uuid ${uuid}.`);
 
-  const boardMetadata = await getBoardMetadataByUUID({
+  const boardMetadata = await getBoardMetadataByUuid({
     firebaseId: req.currentUser?.uid,
     uuid,
   });
 
-  if (!canAccessBoardByUUID({ uuid, firebaseId: req.currentUser?.uid })) {
+  if (!canAccessBoardByUuid({ uuid, firebaseId: req.currentUser?.uid })) {
     if (!req.currentUser?.uid) {
       // TODO: is this WORKING????
       res
@@ -146,7 +146,7 @@ router.get("/:uuid", isLoggedIn, async (req, res) => {
  *             $ref: "#/components/schemas/BoardDescription"
  *           examples: 
  *             gore:
- *               $ref: "#/components/examples/BoardsUpdateMetadataRequestBody"
+ *               $ref: "#/components/examples/GoreMetadataUpdateBody"
  *       required: false
  *     responses:
  *       401:
@@ -166,7 +166,7 @@ router.get("/:uuid", isLoggedIn, async (req, res) => {
  *               $ref: "#/components/schemas/UpdatedBoardDescription"
  *             examples:
  *               existing:
- *                 $ref: '#/components/examples/BoardsUpdateMetadataResponse'
+ *                 $ref: '#/components/examples/GoreMetadataUpdateResponse'
  */
 router.post("/:uuid/metadata/update", isLoggedIn, async (req, res) => {
   const { uuid } = req.params;
@@ -177,7 +177,7 @@ router.post("/:uuid/metadata/update", isLoggedIn, async (req, res) => {
     return res.sendStatus(401);
   }
 
-  const board = await getBoardByUUID({
+  const board = await getBoardByUuid({
     firebaseId: req.currentUser?.uid,
     uuid,
   });

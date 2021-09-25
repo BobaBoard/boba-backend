@@ -51,7 +51,7 @@ export const getBoardBySlug = async ({
   }
 };
 
-export const getBoardByUUID = async ({
+export const getBoardByUuid = async ({
   firebaseId,
   uuid,
 }: {
@@ -59,7 +59,7 @@ export const getBoardByUUID = async ({
   uuid: string;
 }): Promise<DbBoardMetadata> => {
   try {
-    const rows = await pool.oneOrNone(sql.getBoardByUUID, {
+    const rows = await pool.oneOrNone(sql.getBoardByUuid, {
       firebase_id: firebaseId,
       board_uuid: uuid,
     });
@@ -69,7 +69,7 @@ export const getBoardByUUID = async ({
       return null;
     }
 
-    info(`Got getBoardByUUID query result:`, rows);
+    info(`Got getBoardByUuid query result:`, rows);
     log(`Fetched board ${uuid} for user ${firebaseId}`);
     return rows;
   } catch (e) {
@@ -226,7 +226,7 @@ export const updateBoardMetadata = async ({
     }
 
     // Now return the new result
-    return await pool.oneOrNone(sql.getBoardByUUID, {
+    return await pool.oneOrNone(sql.getBoardByUuid, {
       board_uuid: uuid,
       firebase_id: firebaseId,
     });
@@ -265,7 +265,7 @@ export const muteBoard = async ({
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.muteBoardByUUID, {
+    await pool.none(sql.muteBoardByUuid, {
       firebase_id: firebaseId,
       board_uuid: uuid,
     });
@@ -285,7 +285,7 @@ export const unmuteBoard = async ({
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.unmuteBoardByUUID, {
+    await pool.none(sql.unmuteBoardByUuid, {
       firebase_id: firebaseId,
       board_uuid: uuid,
     });
@@ -305,7 +305,7 @@ export const pinBoard = async ({
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.pinBoardByUUID, {
+    await pool.none(sql.pinBoardByUuid, {
       firebase_id: firebaseId,
       board_uuid: uuid,
     });
@@ -325,7 +325,7 @@ export const unpinBoard = async ({
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.unpinBoardByUUID, {
+    await pool.none(sql.unpinBoardByUuid, {
       firebase_id: firebaseId,
       board_uuid: uuid,
     });
@@ -345,7 +345,7 @@ export const dismissBoardNotifications = async ({
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.dismissNotificationsByUUID, {
+    await pool.none(sql.dismissNotificationsByUuid, {
       firebase_id: firebaseId,
       board_uuid: uuid,
     });

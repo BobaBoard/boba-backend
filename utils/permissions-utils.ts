@@ -1,5 +1,5 @@
 import debug from "debug";
-import { getBoardBySlug, getBoardByUUID } from "../server/boards/queries";
+import { getBoardBySlug, getBoardByUuid } from "../server/boards/queries";
 
 import {
   DbRolePermissions,
@@ -123,14 +123,14 @@ export const canAccessBoard = async ({
   return true;
 };
 
-export const canAccessBoardByUUID = async ({
+export const canAccessBoardByUuid = async ({
   uuid,
   firebaseId,
 }: {
   uuid: string;
   firebaseId?: string;
 }) => {
-  const board = await getBoardByUUID({
+  const board = await getBoardByUuid({
     firebaseId,
     uuid,
   });
