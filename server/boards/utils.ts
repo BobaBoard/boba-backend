@@ -4,7 +4,7 @@ import {
   DbBoardMetadata,
 } from "../../Types";
 import { cache, CacheKeys } from "../cache";
-import { getBoardBySlug, getBoardByUUID } from "./queries";
+import { getBoardBySlug, getBoardByUuid } from "./queries";
 import debug from "debug";
 import {
   processBoardMetadata,
@@ -175,7 +175,7 @@ export const getBoardMetadata = async ({
   return finalMetadata;
 };
 
-export const getBoardMetadataByUUID = async ({
+export const getBoardMetadataByUuid = async ({
   uuid,
   firebaseId,
 }: {
@@ -190,7 +190,7 @@ export const getBoardMetadataByUUID = async ({
     }
   }
 
-  const board = await getBoardByUUID({
+  const board = await getBoardByUuid({
     firebaseId,
     uuid,
   });

@@ -1,11 +1,11 @@
 import "mocha";
 import { expect } from "chai";
 
-import { getBoardByUUID } from "../queries";
+import { getBoardByUuid } from "../queries";
 
 describe("Tests boards queries", () => {
   it("fetches board by slug when slug present", async () => {
-    const board = await getBoardByUUID({ 
+    const board = await getBoardByUuid({ 
       uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec", 
       firebaseId: undefined 
     });
@@ -60,7 +60,7 @@ describe("Tests boards queries", () => {
   });
 
   it("fetches board by slug when slug present (logged in)", async () => {
-    const board = await getBoardByUUID({
+    const board = await getBoardByUuid({
       uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
       // Bobatan
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
@@ -137,7 +137,7 @@ describe("Tests boards queries", () => {
   });
 
   it("returns null board when slugs not found", async () => {
-    const board = await getBoardByUUID({
+    const board = await getBoardByUuid({
       uuid: "00000000-0000-0000-0000-000000000000",
       firebaseId: undefined,
     });

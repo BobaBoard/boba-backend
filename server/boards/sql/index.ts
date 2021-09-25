@@ -74,31 +74,31 @@ const createAddCategoriesToFilterSectionQuery = (
   );
 };
 
-const muteBoardByUUID = `
+const muteBoardByUuid = `
     INSERT INTO user_muted_boards(user_id, board_id) VALUES (
         (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
         (SELECT id from boards WHERE boards.string_id = $/board_uuid/))
     ON CONFLICT(user_id, board_id) DO NOTHING`;
 
-const unmuteBoardByUUID = `
+const unmuteBoardByUuid = `
     DELETE FROM user_muted_boards WHERE
         user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
         AND
         board_id = (SELECT id from boards WHERE boards.string_id = $/board_uuid/)`;
 
-const pinBoardByUUID = `
+const pinBoardByUuid = `
     INSERT INTO user_pinned_boards(user_id, board_id) VALUES (
         (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
         (SELECT id from boards WHERE boards.string_id = $/board_uuid/))
     ON CONFLICT(user_id, board_id) DO NOTHING`;
 
-const unpinBoardByUUID = `
+const unpinBoardByUuid = `
     DELETE FROM user_pinned_boards WHERE
         user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
         AND
         board_id = (SELECT id from boards WHERE boards.string_id = $/board_uuid/)`;
 
-const dismissNotificationsByUUID = `
+const dismissNotificationsByUuid = `
     INSERT INTO dismiss_board_notifications_requests(user_id, board_id, dismiss_request_time) VALUES (
         (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
         (SELECT id from boards WHERE boards.string_id = $/board_uuid/),
@@ -118,7 +118,7 @@ const updateBoardSettings = `
 export default {
   getAllBoards: new QueryFile(path.join(__dirname, "all-boards.sql")),
   getBoardBySlug: new QueryFile(path.join(__dirname, "board-by-slug.sql")),
-  getBoardByUUID: new QueryFile(path.join(__dirname, "board-by-uuid.sql")),
+  getBoardByUuid: new QueryFile(path.join(__dirname, "board-by-uuid.sql")),
   markBoardVisit,
   deleteSectionCategories,
   deleteSection,
@@ -126,9 +126,9 @@ export default {
   createSection,
   updateBoardSettings,
   createAddCategoriesToFilterSectionQuery,
-  muteBoardByUUID,
-  unmuteBoardByUUID,
-  pinBoardByUUID,
-  unpinBoardByUUID,
-  dismissNotificationsByUUID,
+  muteBoardByUuid,
+  unmuteBoardByUuid,
+  pinBoardByUuid,
+  unpinBoardByUuid,
+  dismissNotificationsByUuid,
 };
