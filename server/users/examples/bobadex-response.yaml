@@ -1,0 +1,22 @@
+components:
+  examples:
+    BobaDexResponse:
+      summary: A BobaDex with multiple seasons
+      value:
+        seasons:
+          - id: 8d64d742-48d5-43e8-9378-bd73c7bfa871
+            realm_id: v0
+            name: Default
+            identities_count: 3
+            caught_identities:
+              - index: 1
+                id: 3f0d24b8-decc-4413-8f9d-eace821116a8
+              - index: 3
+                id: 02be1cb0-e685-4dcb-a05c-adc1054e6fb2
+        identities:
+          - id: 3f0d24b8-decc-4413-8f9d-eace821116a8
+            name: Old Time-y Anon
+            avatar: https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png
+          - id: 02be1cb0-e685-4dcb-a05c-adc1054e6fb2
+            name: Outdated Meme
+            avatar: https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png
