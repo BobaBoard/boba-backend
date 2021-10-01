@@ -24,28 +24,23 @@ components:
             properties:
               index:
                 type: number
-              id:
-                type: string
-                format: uuid
+              identity:
+                $ref: "#/components/schemas/PostingIdentity"
             required:
               - index
-              - id
+              - identity
       required:
         - id
         - realm_id
         - name
+        - identities_count
         - caught_identities
     BobaDex:
       type: object
       properties:
-        identities:
-          type: array
-          items:
-            $ref: "#/components/schemas/PostingIdentity"
         seasons:
           type: array
           items:
             $ref: "#/components/schemas/BobaDexSeason"
       required:
-        - identities
         - seasons
