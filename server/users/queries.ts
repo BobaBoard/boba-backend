@@ -208,9 +208,11 @@ export const getBobadexIdentities = async ({
 }) => {
   try {
     log(`Getting boba identities firebase ID ${firebaseId}`);
-    return await pool.one(sql.getBobadexIdentities, {
-      firebase_id: firebaseId,
-    });
+    return {
+      seasons: await pool.many(sql.getBobadexIdentities, {
+        firebase_id: firebaseId,
+      }),
+    };
   } catch (e) {
     error(`Error getting boba identities.`);
     error(e);

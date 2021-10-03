@@ -49,6 +49,8 @@ components:
         - id
         - name
         - accessory
+    # TODO: decide whether to remove this and use SecretIdentity everywhere
+    # to do this, we need to add id to SecretIdentity
     PostingIdentity:
       type: object
       properties:

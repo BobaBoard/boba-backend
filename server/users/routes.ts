@@ -325,7 +325,29 @@ router.get("/@me/notifications", ensureLoggedIn, async (req, res) => {
   res.status(200).json(notificationsDataResponse);
 });
 
-router.get("/me/bobadex", isLoggedIn, async (req, res) => {
+/**
+ * @openapi
+ * /users/@me/bobadex:
+ *   get:
+ *     summary: Gets bobadex data for the current user.
+ *     tags:
+ *       - /users/
+ *     security:
+ *       - firebase: []
+ *     responses:
+ *       401:
+ *         description: User was not found in request that requires authentication.
+ *       200:
+ *         description: The bobadex data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/BobaDex"
+ *             examples:
+ *               existing:
+ *                 $ref: '#/components/examples/BobaDexResponse'
+ */
+router.get("/@me/bobadex", isLoggedIn, async (req, res) => {
   let currentUserId: string = req.currentUser?.uid;
   if (!currentUserId) {
     res.sendStatus(401);
