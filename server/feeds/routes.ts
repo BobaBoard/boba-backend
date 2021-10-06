@@ -170,4 +170,39 @@ router.get("/users/@me", ensureLoggedIn, async (req, res) => {
   res.status(200).json(response);
 });
 
+/* STARRED THREADS TEST */
+router.get("/users/@me/stars", ensureLoggedIn, async (req, res) => {
+  const { cursor, showRead, ownOnly } = req.query;
+  const currentUserId: string = req.currentUser?.uid;
+
+  const userActivity = await getUserActivity({
+    firebaseId: currentUserId,
+    cursor: (cursor as string) || null,
+    updatedOnly: showRead !== "true",
+    ownOnly: ownOnly === "true",
+  });
+
+  if (!userActivity) {
+    res.sendStatus(404);
+    return;
+  }
+  if (!userActivity.activity.length) {
+    res.sendStatus(204);
+    return;
+  }
+
+  const threadsWithIdentity = userActivity.activity.map(
+    makeServerThreadSummary
+  );
+  const response: ServerFeedType = {
+    cursor: {
+      next: userActivity.cursor,
+    },
+    activity: threadsWithIdentity,
+  };
+
+  response.activity.map((post) => ensureNoIdentityLeakage(post));
+  res.status(200).json(response);
+});
+
 export default router;

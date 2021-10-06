@@ -6,6 +6,8 @@ import {
   markThreadVisit,
   muteThread,
   unmuteThread,
+  starThread,
+  unstarThread,
   hideThread,
   unhideThread,
   updateThreadView,
@@ -391,6 +393,50 @@ router.post("/:threadId/move", isLoggedIn, async (req, res) => {
   }
 
   res.sendStatus(200);
+});
+
+/* STARRED THREAD ADD TEST */
+router.post("/:threadId/stars", isLoggedIn, async (req, res) => {
+  const { threadId } = req.params;
+  if (!req.currentUser) {
+    return res.sendStatus(401);
+  }
+  log(`Thread starred: ${threadId}`);
+
+  if (
+    !(await starThread({
+      firebaseId: req.currentUser.uid,
+      threadId,
+    }))
+  ) {
+    res.sendStatus(500);
+    return;
+  }
+
+  info(`Marked last visited time for thread: ${threadId}.`);
+  res.status(200).json();
+});
+
+/* STARRED THREAD DELETE TEST */
+router.delete("/:threadId/stars", isLoggedIn, async (req, res) => {
+  const { threadId } = req.params;
+  if (!req.currentUser) {
+    return res.sendStatus(401);
+  }
+  log(`Thread removed from starred: ${threadId}`);
+
+  if (
+    !(await unstarThread({
+      firebaseId: req.currentUser.uid,
+      threadId,
+    }))
+  ) {
+    res.sendStatus(500);
+    return;
+  }
+
+  info(`Marked last visited time for thread: ${threadId}.`);
+  res.status(200).json();
 });
 
 export default router;

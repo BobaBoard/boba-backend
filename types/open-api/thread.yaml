@@ -48,6 +48,9 @@ components:
             hidden:
               description: "Whether the thread is hidden. False when the user is logged out."
               type: boolean
+            starred:
+              description: "Whether the thread is starred."
+              type: boolean
           required:
             - id
             - parent_board_slug

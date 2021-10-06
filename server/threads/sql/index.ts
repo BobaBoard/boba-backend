@@ -11,23 +11,23 @@ const createThread = `
 
 const createPost = `
     INSERT INTO posts(
-      string_id, 
-      parent_post, 
-      parent_thread, 
-      author, 
-      content, type, 
-      whisper_tags, 
+      string_id,
+      parent_post,
+      parent_thread,
+      author,
+      content, type,
+      whisper_tags,
       anonymity_type, options)
     VALUES (
-      $/post_string_id/, 
-      NULL, 
+      $/post_string_id/,
+      NULL,
       $/parent_thread/,
       (SELECT id FROM users WHERE firebase_id = $/firebase_id/),
-      $/content/, 
-      'text', 
-      $/whisper_tags/, 
+      $/content/,
+      'text',
+      $/whisper_tags/,
       $/anonymity_type/,
-      $/options/) 
+      $/options/)
     RETURNING id, author`;
 
 const getRandomIdentityId = `
@@ -40,7 +40,7 @@ const getRandomIdentityId = `
  * but we're only interested in whether it's associated to them at all.
  */
 const getRoleByStringId = `
-    SELECT 
+    SELECT
       roles.id,
       roles.name,
       roles.avatar_reference_id,
@@ -51,7 +51,7 @@ const getRoleByStringId = `
       ON roles.id = bur.role_id
     LEFT JOIN realm_user_roles rur
       ON roles.id = rur.role_id
-    INNER JOIN users 
+    INNER JOIN users
       ON users.id = bur.user_id  OR users.id = rur.user_id
     WHERE
       roles.string_id = $/role_id/
@@ -79,6 +79,20 @@ const unmuteThreadByStringId = `
         AND
         thread_id = (SELECT id from threads WHERE threads.string_id = $/thread_string_id/)`;
 
+/* ADD STARRED THREAD TEST */
+const starThreadByStringId = `
+  INSERT INTO user_starred_threads(user_id, thread_id) VALUES (
+      (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
+      (SELECT id from threads WHERE threads.string_id = $/thread_string_id/))
+  ON CONFLICT(user_id, thread_id) DO NOTHING`;
+
+/* DELETE STARRED THREAD TEST */
+const unstarThreadByStringId = `
+  DELETE FROM user_starred_threads WHERE
+      user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
+      AND
+      thread_id = (SELECT id from threads WHERE threads.string_id = $/thread_string_id/)`;
+
 const hideThreadByStringId = `
     INSERT INTO user_hidden_threads(user_id, thread_id) VALUES (
         (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
@@ -92,7 +106,7 @@ const unhideThreadByStringId = `
         thread_id = (SELECT id from threads WHERE threads.string_id = $/thread_string_id/)`;
 
 const updateThreadViewByStringId = `
-    UPDATE threads 
+    UPDATE threads
       SET options = jsonb_set(options, '{default_view}', to_jsonb($/thread_default_view/::text))
       WHERE threads.string_id = $/thread_string_id/
     RETURNING *;
@@ -110,7 +124,7 @@ const getThreadDetails = `
 `;
 
 const getTriggeredWebhooks = `
-    SELECT 
+    SELECT
         webhook,
         array_agg(DISTINCT subscriptions.name) AS subscription_names,
         array_agg(DISTINCT categories.category) AS triggered_categories
@@ -126,7 +140,7 @@ const getTriggeredWebhooks = `
 `;
 
 const moveThread = `
-    UPDATE threads 
+    UPDATE threads
     SET parent_board = (SELECT id FROM boards WHERE slug = $/board_slug/)
     WHERE string_id = $/thread_string_id/;
 `;
