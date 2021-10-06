@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS collections
     string_id TEXT NOT NULL,
     title TEXT NOT NULL,
     content_description TEXT NOT NULL,
-    /** 
+    /**
      * Whisper Tags are textual tags that do not get indicized but act as an extra
      * space for comments.
      */
@@ -151,7 +151,7 @@ CREATE TABLE IF NOT EXISTS posts (
     created timestamp NOT NULL DEFAULT now(),
     content TEXT NOT NULL,
     type post_type NOT NULL,
-    /** 
+    /**
      * Whisper Tags are textual tags that do not get indicized but act as an extra
      * space for comments.
      */
@@ -274,6 +274,13 @@ CREATE TABLE IF NOT EXISTS user_hidden_threads(
 );
 CREATE UNIQUE INDEX user_hidden_thread_entry on user_hidden_threads(user_id, thread_id);
 
+/* starred thread test */
+CREATE TABLE IF NOT EXISTS user_starred_threads(
+    thread_id BIGINT REFERENCES threads(id) ON DELETE RESTRICT NOT NULL,
+    user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL
+);
+CREATE UNIQUE INDEX user_starred_thread_entry on user_starred_threads(thread_id, user_id);
+
 CREATE TYPE board_description_section_type AS ENUM ('text', 'category_filter');
 CREATE TABLE IF NOT EXISTS board_description_sections(
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
@@ -297,10 +304,10 @@ CREATE UNIQUE INDEX board_description_section_categories_entry on board_descript
  * Roles tables.
  */
 CREATE TYPE role_permissions AS ENUM (
-    'all', 
-    'edit_board_details', 
-    'post_as_role', 
-    'edit_category_tags', 
+    'all',
+    'edit_board_details',
+    'post_as_role',
+    'edit_category_tags',
     'edit_content_notices',
     'move_thread');
 
