@@ -395,8 +395,8 @@ router.post("/:threadId/move", isLoggedIn, async (req, res) => {
   res.sendStatus(200);
 });
 
-/* STARRED THREAD ADD TEST */
-router.post("/:threadId/stars", isLoggedIn, async (req, res) => {
+/* STARRED THREAD ADD */
+router.post("/:threadId/star", isLoggedIn, async (req, res) => {
   const { threadId } = req.params;
   if (!req.currentUser) {
     return res.sendStatus(401);
@@ -417,8 +417,8 @@ router.post("/:threadId/stars", isLoggedIn, async (req, res) => {
   res.status(200).json();
 });
 
-/* STARRED THREAD DELETE TEST */
-router.delete("/:threadId/stars", isLoggedIn, async (req, res) => {
+/* STARRED THREAD DELETE */
+router.post("/:threadId/unstar", isLoggedIn, async (req, res) => {
   const { threadId } = req.params;
   if (!req.currentUser) {
     return res.sendStatus(401);

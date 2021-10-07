@@ -79,14 +79,14 @@ const unmuteThreadByStringId = `
         AND
         thread_id = (SELECT id from threads WHERE threads.string_id = $/thread_string_id/)`;
 
-/* ADD STARRED THREAD TEST */
+/* ADD STARRED THREAD */
 const starThreadByStringId = `
   INSERT INTO user_starred_threads(user_id, thread_id) VALUES (
       (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
       (SELECT id from threads WHERE threads.string_id = $/thread_string_id/))
   ON CONFLICT(user_id, thread_id) DO NOTHING`;
 
-/* DELETE STARRED THREAD TEST */
+/* DELETE STARRED THREAD */
 const unstarThreadByStringId = `
   DELETE FROM user_starred_threads WHERE
       user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)

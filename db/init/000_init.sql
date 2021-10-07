@@ -274,12 +274,11 @@ CREATE TABLE IF NOT EXISTS user_hidden_threads(
 );
 CREATE UNIQUE INDEX user_hidden_thread_entry on user_hidden_threads(user_id, thread_id);
 
-/* starred thread test */
 CREATE TABLE IF NOT EXISTS user_starred_threads(
-    thread_id BIGINT REFERENCES threads(id) ON DELETE RESTRICT NOT NULL,
-    user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL
+    user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
+    thread_id BIGINT REFERENCES threads(id) ON DELETE RESTRICT NOT NULL
 );
-CREATE UNIQUE INDEX user_starred_thread_entry on user_starred_threads(thread_id, user_id);
+CREATE UNIQUE INDEX user_starred_thread_entry on user_starred_threads(user_id, thread_id);
 
 CREATE TYPE board_description_section_type AS ENUM ('text', 'category_filter');
 CREATE TABLE IF NOT EXISTS board_description_sections(
