@@ -205,6 +205,27 @@ export const unmuteThread = async ({
   }
 };
 
+/* ADD STAR THREAD TEST */
+export const starThread = async ({
+  threadId,
+  firebaseId,
+}: {
+  threadId: string;
+  firebaseId: string;
+}) => {
+  try {
+    await pool.none(sql.starThreadByStringId, {
+      firebase_id: firebaseId,
+      thread_string_id: threadId,
+    });
+    return true;
+  } catch (e) {
+    error(`Error while starring thread.`);
+    error(e);
+    return false;
+  }
+};
+
 export const hideThread = async ({
   threadId,
   firebaseId,

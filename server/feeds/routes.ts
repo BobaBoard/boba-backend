@@ -170,7 +170,34 @@ router.get("/users/@me", ensureLoggedIn, async (req, res) => {
   res.status(200).json(response);
 });
 
-/* STARRED THREADS TEST */
+/**
+ * @openapi
+ * /feeds/users/@me/stars:
+ *   get:
+ *     summary: Get current users Star Feed.
+ *     tags:
+ *       - /feeds/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: cursor
+ *         in: query
+ *         description: The cursor to start feeding the activity of the board from.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       404:
+ *         description: Star Feed was not found
+ *       204:
+ *         description: Star Feed request successful, no additional data
+ *       200:
+ *         description: Star Feed activity
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/FeedActivity"
+ */
+
 router.get("/users/@me/stars", ensureLoggedIn, async (req, res) => {
   const { cursor, showRead, ownOnly } = req.query;
   const currentUserId: string = req.currentUser?.uid;
