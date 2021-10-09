@@ -158,6 +158,8 @@ export default {
   insertNewIdentity,
   muteThreadByStringId,
   unmuteThreadByStringId,
+  starThreadByStringId,
+  unstarThreadByStringId,
   hideThreadByStringId,
   unhideThreadByStringId,
   updateThreadViewByStringId,

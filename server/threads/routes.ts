@@ -395,13 +395,32 @@ router.post("/:threadId/move", isLoggedIn, async (req, res) => {
   res.sendStatus(200);
 });
 
-/* STARRED THREAD ADD */
-router.post("/:threadId/star", isLoggedIn, async (req, res) => {
+/**
+ * @openapi
+ * threads/{thread_id}/stars:
+ *   post:
+ *     summary: Adds thread to Star Feed
+ *     description: Adds selected thread to current user Star Feed.
+ *     tags:
+ *       - /threads/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: threadId
+ *         in: path
+ *         description: The id of the thread to fetch.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       500:
+ *         description: Internal Server Error
+ *       204:
+ *         description: Thread added to Star Feed successfully.
+ */
+
+router.post("/:threadId/stars", ensureLoggedIn, async (req, res) => {
   const { threadId } = req.params;
-  if (!req.currentUser) {
-    return res.sendStatus(401);
-  }
-  log(`Thread starred: ${threadId}`);
 
   if (
     !(await starThread({
@@ -413,17 +432,36 @@ router.post("/:threadId/star", isLoggedIn, async (req, res) => {
     return;
   }
 
-  info(`Marked last visited time for thread: ${threadId}.`);
-  res.status(200).json();
+  info(`Thread ${threadId} added to starfeed of user ${req.currentUser.uid}.`);
+  res.status(204).json();
 });
 
-/* STARRED THREAD DELETE */
-router.post("/:threadId/unstar", isLoggedIn, async (req, res) => {
+/**
+ * @openapi
+ * threads/{thread_id}/stars:
+ *   delete:
+ *     summary: Removes thread from Star Feed
+ *     description: Deletes selected thread from current user Star Feed.
+ *     tags:
+ *       - /threads/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: threadId
+ *         in: path
+ *         description: The id of the thread to fetch.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       500:
+ *         description: Internal Server Error
+ *       204:
+ *         description: Thread removed from Star Feed successfully.
+ */
+
+router.delete("/:threadId/stars", ensureLoggedIn, async (req, res) => {
   const { threadId } = req.params;
-  if (!req.currentUser) {
-    return res.sendStatus(401);
-  }
-  log(`Thread removed from starred: ${threadId}`);
 
   if (
     !(await unstarThread({
@@ -435,8 +473,8 @@ router.post("/:threadId/unstar", isLoggedIn, async (req, res) => {
     return;
   }
 
-  info(`Marked last visited time for thread: ${threadId}.`);
-  res.status(200).json();
+  info(`Thread ${threadId} removed from starfeed of user ${req.currentUser.uid}.`);
+  res.status(204).json();
 });
 
 export default router;
