@@ -1,5 +1,3 @@
-import "mocha";
-import { expect } from "chai";
 import request from "supertest";
 import express, { Express } from "express";
 import router from "../../routes";
@@ -11,21 +9,21 @@ const log = debug("bobaserver:board:routes");
 describe("Tests boards REST API", () => {
   let app: Express;
   let listener: Server;
-  beforeEach(function (done) {
+  beforeEach(done => {
     app = express();
     app.use(router);
     listener = app.listen(4000, () => {
       done();
     });
   });
-  afterEach(function (done) {
+  afterEach(done => {
     listener.close(done);
   });
   it("should return board data (logged out)", async () => {
     const res = await request(app).get("/gore");
 
-    expect(res.status).to.equal(200);
-    expect(res.body).to.eql({
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({
       descriptions: [
         {
           categories: ["blood", "bruises"],

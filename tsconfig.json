@@ -11,7 +11,8 @@
     "paths": {
       "*": ["node_modules/*"]
     },
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["node", "jest"]
   },
   "include": ["server/**/*", "extra-types.d.ts", "utils", "handlers"],
   "exclude": ["node_modules"]

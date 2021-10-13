@@ -1,13 +1,10 @@
-import "mocha";
-import { expect } from "chai";
-
 import { getBoardBySlug } from "../queries";
 
 describe("Tests boards queries", () => {
   it("fetches board by slug when slug present", async () => {
     const board = await getBoardBySlug({ slug: "gore", firebaseId: undefined });
 
-    expect(board).to.eql({
+    expect(board).toEqual({
       settings: {
         accentColor: "#f96680",
       },
@@ -62,7 +59,7 @@ describe("Tests boards queries", () => {
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
     });
 
-    expect(board).to.eql({
+    expect(board).toEqual({
       settings: {
         accentColor: "#f96680",
       },
@@ -137,6 +134,6 @@ describe("Tests boards queries", () => {
       firebaseId: undefined,
     });
 
-    expect(board).to.be.null;
+    expect(board).toBeNull();
   });
 });
