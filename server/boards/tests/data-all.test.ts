@@ -1,6 +1,3 @@
-import "mocha";
-import { expect } from "chai";
-
 import { getBoards } from "../queries";
 
 const extractBoardDetails = (boardData: any) => {
@@ -33,14 +30,14 @@ const extractBoardUserSettings = (boardData: any) => {
 };
 
 describe("Tests boards queries", () => {
-  describe("Boards details", async () => {
+  describe("Boards details", () => {
     it("fetches boards details(with user)", async () => {
       const boards = await getBoards({
         // Bobatan
         firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
       });
 
-      expect(boards.map(extractBoardDetails)).to.eql([
+      expect(boards.map(extractBoardDetails)).toEqual([
         {
           avatar_reference_id: "villains.png",
           settings: {
@@ -112,14 +109,14 @@ describe("Tests boards queries", () => {
     });
   });
 
-  describe("Boards updates", async () => {
+  describe("Boards updates", () => {
     it("fetches all boards updates (with user)", async () => {
       const boards = await getBoards({
         // Bobatan
         firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
       });
 
-      expect(boards.map(extractBoardUpdates)).to.eql([
+      expect(boards.map(extractBoardUpdates)).toEqual([
         {
           slug: "main_street",
           has_updates: false,
@@ -198,7 +195,7 @@ describe("Tests boards queries", () => {
     it("fetches all boards updates (no user)", async () => {
       const boards = await getBoards({ firebaseId: undefined });
 
-      expect(boards.map(extractBoardUpdates)).to.eql([
+      expect(boards.map(extractBoardUpdates)).toEqual([
         {
           slug: "main_street",
           has_updates: false,
@@ -280,7 +277,7 @@ describe("Tests boards queries", () => {
         firebaseId: "fb5",
       });
 
-      expect(boards.map(extractBoardUpdates)).to.eql([
+      expect(boards.map(extractBoardUpdates)).toEqual([
         {
           slug: "main_street",
           has_updates: false,
@@ -360,14 +357,14 @@ describe("Tests boards queries", () => {
     });
   });
 
-  describe("User settings", async () => {
+  describe("User settings", () => {
     it("fetches all boards (with user)", async () => {
       const boards = await getBoards({
         // Bobatan
         firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
       });
 
-      expect(boards.map(extractBoardUserSettings)).to.eql([
+      expect(boards.map(extractBoardUserSettings)).toEqual([
         {
           slug: "main_street",
           muted: false,
@@ -385,7 +382,7 @@ describe("Tests boards queries", () => {
     it("fetches all boards user settings (no user)", async () => {
       const boards = await getBoards({ firebaseId: undefined });
 
-      expect(boards.map(extractBoardUserSettings)).to.eql([
+      expect(boards.map(extractBoardUserSettings)).toEqual([
         {
           slug: "main_street",
           muted: false,
@@ -412,7 +409,7 @@ describe("Tests boards queries", () => {
         firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
       });
 
-      expect(boards[0]).to.eql({
+      expect(boards[0]).toEqual({
         avatar_reference_id: "villains.png",
         has_updates: false,
         last_comment: null,
