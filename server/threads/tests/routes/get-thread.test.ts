@@ -1,15 +1,17 @@
 import "mocha";
+
+import { ServerCommentType, ServerPostType } from "../../../../Types";
+import express, { Express } from "express";
+
+import { Server } from "http";
 import { expect } from "chai";
 import request from "supertest";
-import express, { Express } from "express";
-import { Server } from "http";
 import router from "../../routes";
-import { ServerCommentType, ServerPostType } from "../../../../Types";
 
 const CHARACTER_TO_MAIM_POST: ServerPostType = {
   id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
   content: '[{"insert":"Favorite character to maim?"}]',
-  created_at: "2020-04-30T03:23:00",
+  created_at: "2020-04-30T03:23:00.00Z",
   new: false,
   own: false,
   friend: false,
@@ -36,7 +38,7 @@ const CHARACTER_TO_MAIM_POST: ServerPostType = {
 const REVOLVER_OCELOT_POST: ServerPostType = {
   id: "619adf62-833f-4bea-b591-03e807338a8e",
   content: '[{"insert":"Revolver Ocelot"}]',
-  created_at: "2020-05-01T05:42:00",
+  created_at: "2020-05-01T05:42:00.00Z",
   new: false,
   own: false,
   friend: false,
@@ -61,7 +63,7 @@ const REVOLVER_OCELOT_POST: ServerPostType = {
 
 const KERMIT_POST: ServerPostType = {
   content: '[{"insert":"Kermit the Frog"}]',
-  created_at: "2020-05-02T06:04:00",
+  created_at: "2020-05-02T06:04:00.00Z",
   id: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
   new: false,
   own: false,
@@ -93,7 +95,7 @@ const KERMIT_POST: ServerPostType = {
 const KERMIT_COMMENTS: ServerCommentType[] = [
   {
     content: '[{"insert":"OMG ME TOO"}]',
-    created_at: "2020-05-22T00:22:00",
+    created_at: "2020-05-22T00:22:00.00Z",
     id: "46a16199-33d1-48c2-bb79-4d4095014688",
     chain_parent_id: null,
     new: false,
@@ -112,7 +114,7 @@ const KERMIT_COMMENTS: ServerCommentType[] = [
   },
   {
     content: '[{"insert":"friends!!!!!"}]',
-    created_at: "2020-05-23T05:52:00",
+    created_at: "2020-05-23T05:52:00.00Z",
     id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
     chain_parent_id: "46a16199-33d1-48c2-bb79-4d4095014688",
     new: false,
@@ -158,8 +160,12 @@ describe("Tests threads REST API", () => {
       starter: CHARACTER_TO_MAIM_POST,
       posts: [CHARACTER_TO_MAIM_POST, REVOLVER_OCELOT_POST, KERMIT_POST],
       comments: {
+        [CHARACTER_TO_MAIM_POST.id]: [],
+        [REVOLVER_OCELOT_POST.id]: [],
         [KERMIT_POST.id]: KERMIT_COMMENTS,
       },
+      new: false,
+      last_activity_at: KERMIT_COMMENTS[1].created_at,
       new_comments_amount: 0,
       total_posts_amount: 3,
       new_posts_amount: 0,
