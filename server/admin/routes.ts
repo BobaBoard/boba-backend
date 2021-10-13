@@ -1,17 +1,18 @@
-import debug from "debug";
-import express from "express";
-import axios from "axios";
+import { CacheKeys, cache } from "../cache";
 import {
   createBoardsIfNotExist,
   createIdentitiesIfNotExist,
   createInvite,
   updateIdentities,
 } from "./queries";
-import { isLoggedIn } from "../../handlers/auth";
+
+import axios from "axios";
+import debug from "debug";
+import { ensureLoggedIn } from "../../handlers/auth";
+import express from "express";
 import firebaseAuth from "firebase-admin";
-import { randomBytes } from "crypto";
 import { getUserFromFirebaseId } from "../users/queries";
-import { cache, CacheKeys } from "../cache";
+import { randomBytes } from "crypto";
 
 // import { transformImageUrls, mergeActivityIdentities } from "../response-utils";
 
@@ -27,8 +28,7 @@ const API_KEY = "AIzaSyA2KQh1wqrLwsrWvKQvFWeWoWMR8KOyTD4";
 const getSheetUrl = (url: string) =>
   `https://sheets.googleapis.com/v4/spreadsheets/${url}/?key=${API_KEY}&includeGridData=true`;
 
-router.post("/generate/boards", isLoggedIn, async (req, res) => {
-  // @ts-ignore
+router.post("/generate/boards", ensureLoggedIn, async (req, res) => {
   if (req.currentUser?.uid !== ADMIN_ID) {
     return res.sendStatus(403);
   }
@@ -49,8 +49,7 @@ router.post("/generate/boards", isLoggedIn, async (req, res) => {
   cache().del(CacheKeys.BOARDS);
 });
 
-router.post("/generate/identities", isLoggedIn, async (req, res) => {
-  // @ts-ignore
+router.post("/generate/identities", ensureLoggedIn, async (req, res) => {
   if (req.currentUser?.uid !== ADMIN_ID) {
     return res.sendStatus(403);
   }
@@ -67,8 +66,7 @@ router.post("/generate/identities", isLoggedIn, async (req, res) => {
   res.status(200).json({ added: recordsAdded });
 });
 
-router.post("/generate/identities/event", isLoggedIn, async (req, res) => {
-  // @ts-ignore
+router.post("/generate/identities/event", ensureLoggedIn, async (req, res) => {
   if (req.currentUser?.uid !== ADMIN_ID) {
     return res.sendStatus(403);
   }
@@ -96,9 +94,8 @@ router.post("/generate/identities/event", isLoggedIn, async (req, res) => {
 
 router.post(
   "/generate/identities/event/revert",
-  isLoggedIn,
+  ensureLoggedIn,
   async (req, res) => {
-    // @ts-ignore
     if (req.currentUser?.uid !== ADMIN_ID) {
       return res.sendStatus(403);
     }
@@ -125,8 +122,7 @@ router.post(
   }
 );
 
-router.post("/invite/generate", isLoggedIn, async (req, res) => {
-  // @ts-ignore
+router.post("/invite/generate", ensureLoggedIn, async (req, res) => {
   const user = req.currentUser?.uid;
   if (user !== ADMIN_ID) {
     return res.sendStatus(403);
@@ -151,7 +147,7 @@ router.post("/invite/generate", isLoggedIn, async (req, res) => {
     .json({ inviteUrl: `https://v0.boba.social/invite/${inviteCode}` });
 });
 
-router.post("/migrate_fb_data", isLoggedIn, async (req, res) => {
+router.post("/migrate_fb_data", ensureLoggedIn, async (req, res) => {
   // @ts-ignore
   const user = req.currentUser?.uid;
   if (user !== ADMIN_ID) {

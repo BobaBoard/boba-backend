@@ -1,10 +1,11 @@
+import { CacheKeys, cache } from "../server/cache";
+import { NextFunction, Request, Response } from "express";
 import firebaseAuth, { auth } from "firebase-admin";
-import { Request, Response, NextFunction } from "express";
-import { cache, CacheKeys } from "../server/cache";
-import { getUserSettings } from "../server/users/queries";
-import { SettingEntry } from "../types/settings";
 
+import { SettingEntry } from "../types/settings";
 import debug from "debug";
+import { getUserSettings } from "../server/users/queries";
+
 const log = debug("bobaserver:auth-log");
 const error = debug("bobaserver:auth-error");
 
@@ -21,7 +22,11 @@ declare global {
   }
 }
 
-export const isLoggedIn = (req: Request, res: Response, next: NextFunction) => {
+export const withLoggedIn = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   const idToken = req.headers?.authorization;
   req.currentUser = null;
 
@@ -70,7 +75,7 @@ export const ensureLoggedIn = (
   res: Response,
   next: NextFunction
 ) => {
-  isLoggedIn(req, res, async () => {
+  withLoggedIn(req, res, async () => {
     const currentUserId = req.currentUser?.uid;
     if (!currentUserId) {
       error(
@@ -102,7 +107,7 @@ export const withUserSettings = (
   next: NextFunction
 ) => {
   // First ensure that the isLoggedIn middleware is correctly called.
-  isLoggedIn(req, res, async () => {
+  withLoggedIn(req, res, async () => {
     const currentUserId = req.currentUser?.uid;
     if (!currentUserId) {
       next();
