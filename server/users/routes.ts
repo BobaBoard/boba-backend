@@ -1,30 +1,26 @@
-import debug from "debug";
-import express from "express";
+import { CacheKeys, cache } from "../cache";
 import {
-  getUserFromFirebaseId,
-  dismissAllNotifications,
-  updateUserData,
-  getInviteDetails,
-  markInviteUsed,
   createNewUser,
+  dismissAllNotifications,
   getBobadexIdentities,
+  getInviteDetails,
+  getUserFromFirebaseId,
   getUserSettings,
+  markInviteUsed,
+  updateUserData,
   updateUserSettings,
 } from "./queries";
-import {
-  ensureLoggedIn,
-  isLoggedIn,
-  withUserSettings,
-} from "../../handlers/auth";
+import { ensureLoggedIn, withUserSettings } from "../../handlers/auth";
 import {
   processBoardsNotifications,
   processBoardsSummary,
   transformImageUrls,
 } from "../../utils/response-utils";
+
+import { aggregateByType } from "../../utils/settings";
+import debug from "debug";
+import express from "express";
 import firebaseAuth from "firebase-admin";
-import { ServerThreadType, DbActivityThreadType } from "../../Types";
-import { cache, CacheKeys } from "../cache";
-import { aggregateByType, parseSettings } from "../../utils/settings";
 import { getBoards } from "../boards/queries";
 
 const info = debug("bobaserver:users:routes-info");
@@ -124,12 +120,8 @@ router.get("/@me", ensureLoggedIn, async (req, res) => {
   cache().hset(CacheKeys.USER, currentUserId, JSON.stringify(userDataResponse));
 });
 
-router.post("/me/update", isLoggedIn, async (req, res) => {
-  let currentUserId: string = req.currentUser?.uid;
-  if (!currentUserId) {
-    res.sendStatus(401);
-    return;
-  }
+router.post("/me/update", ensureLoggedIn, async (req, res) => {
+  let currentUserId: string = req.currentUser.uid;
   const { username, avatarUrl } = req.body;
 
   if (!username || !avatarUrl) {
@@ -347,17 +339,13 @@ router.get("/@me/notifications", ensureLoggedIn, async (req, res) => {
  *               existing:
  *                 $ref: '#/components/examples/BobaDexResponse'
  */
-router.get("/@me/bobadex", isLoggedIn, async (req, res) => {
-  let currentUserId: string = req.currentUser?.uid;
-  if (!currentUserId) {
-    res.sendStatus(401);
-    return;
-  }
+router.get("/@me/bobadex", ensureLoggedIn, async (req, res) => {
+  let currentUserId: string = req.currentUser.uid;
   const identities = await getBobadexIdentities({ firebaseId: currentUserId });
   res.status(200).json(identities);
 });
 
-router.post("/notifications/dismiss", isLoggedIn, async (req, res) => {
+router.post("/notifications/dismiss", async (req, res) => {
   let currentUserId: string = req.currentUser?.uid;
   if (!currentUserId) {
     res.sendStatus(401);
@@ -379,14 +367,10 @@ router.post("/notifications/dismiss", isLoggedIn, async (req, res) => {
   res.sendStatus(204);
 });
 
-router.post("/settings/update", isLoggedIn, async (req, res) => {
+router.post("/settings/update", ensureLoggedIn, async (req, res) => {
   const { name, value } = req.body;
 
-  const firebaseId = req.currentUser?.uid;
-  if (!firebaseId) {
-    res.sendStatus(401);
-    return;
-  }
+  const firebaseId = req.currentUser.uid;
   try {
     await updateUserSettings({
       firebaseId,
@@ -409,7 +393,7 @@ router.post("/settings/update", isLoggedIn, async (req, res) => {
 
 router.get("/settings", ensureLoggedIn, withUserSettings, async (req, res) => {
   try {
-    res.status(200).json(aggregateByType(req.currentUser?.settings));
+    res.status(200).json(aggregateByType(req.currentUser.settings));
   } catch (e) {
     error(e);
     res.status(500).send("Error while fetching settings.");
