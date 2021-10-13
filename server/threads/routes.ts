@@ -278,20 +278,33 @@ router.post("/:boardSlug/create", ensureLoggedIn, async (req, res, next) => {
   }
 });
 
-router.post("/:threadId/update/view", async (req, res) => {
-  const { threadId } = req.params;
+router.post("/:thread_id/update/view", async (req, res) => {
+  console.log("########################");
+  console.log(req.body);
+  console.log(req.params);
+  console.log("########################");
+  const { thread_id } = req.params;
   const { defaultView } = req.body;
 
+  if (!defaultView) {
+    res
+      .send(500)
+      .json({ message: "Missing default view in thread view update request." });
+    console.log("sent response");
+    return;
+  }
+
+  console.log("########################");
   // TODO: CHECK PERMISSIONS
   // NOTE: if updating this (and it makes sense) also update
   // the method for thread creation + retrieval.
   const permissions = await getUserPermissionsForThread({
     firebaseId: req.currentUser.uid,
-    threadId,
+    threadId: thread_id,
   });
 
   if (!permissions) {
-    log(`Error while fetching permissions for post ${threadId}`);
+    log(`Error while fetching permissions for post ${thread_id}`);
     res.sendStatus(500);
     return;
   }
@@ -306,7 +319,7 @@ router.post("/:threadId/update/view", async (req, res) => {
 
   if (
     !(await updateThreadView({
-      threadId,
+      threadId: thread_id,
       defaultView,
     }))
   ) {

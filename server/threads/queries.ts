@@ -1,16 +1,17 @@
-import debug from "debug";
-import pool from "../db-pool";
-import { v4 as uuidv4 } from "uuid";
-import sql from "./sql";
+import { DbThreadType, ThreadPermissions } from "../../Types";
 import {
-  maybeAddIndexTags,
+  addNewIdentityToThread,
   maybeAddCategoryTags,
   maybeAddContentWarningTags,
-  addNewIdentityToThread,
+  maybeAddIndexTags,
 } from "../posts/queries";
-import { DbThreadType, ThreadPermissions } from "../../Types";
+
+import debug from "debug";
 import { getBoardBySlug } from "../boards/queries";
+import pool from "../db-pool";
+import sql from "./sql";
 import { transformThreadPermissions } from "../../utils/permissions-utils";
+import { v4 as uuidv4 } from "uuid";
 
 const log = debug("bobaserver:threads:queries-log");
 const error = debug("bobaserver:threads:queries-error");
@@ -252,13 +253,19 @@ export const getUserPermissionsForThread = async ({
   threadId: string;
   firebaseId: string;
 }) => {
+  console.log("$$$$$$$$$$");
+  console.log("$$$$$$$$$$");
+  console.log("$$$$$$$$$$");
+  console.log("$$$$$$$$$$");
   try {
     const permissions = [];
+    console.log("$$$$$$$$$$");
     const threadDetails = await pool.one(sql.getThreadDetails, {
       firebase_id: firebaseId,
       thread_string_id: threadId,
     });
 
+    console.log("$$$$$$$$$$");
     if (threadDetails.is_thread_owner) {
       permissions.push(ThreadPermissions.editDefaultView);
     }
@@ -271,6 +278,7 @@ export const getUserPermissionsForThread = async ({
     permissions.push(...threadPermissions);
     return permissions;
   } catch (e) {
+    console.log("$$$$$$$$$$");
     error(`Error while getting user permissions for the thread.`);
     error(e);
     return false;

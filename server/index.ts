@@ -54,6 +54,10 @@ const port = process.env.PORT || 4200;
 
 applyRoutes(app);
 app.set("json spaces", 2);
+// @ts-expect-error
+app.use((err, req, res, next) => {
+  console.log(err);
+});
 
 if (require.main === module) {
   app.listen(port, () =>
@@ -64,5 +68,8 @@ if (require.main === module) {
     )
   );
 }
+process.on("uncaughtException", function (err) {
+  console.log("uncaughtException caught the error");
+});
 
 export default app;
