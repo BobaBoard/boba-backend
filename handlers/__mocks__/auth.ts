@@ -10,7 +10,7 @@ beforeEach(() => {
   withUserSettings.mockImplementation(original.withUserSettings);
 });
 afterEach(function () {
-  ensureLoggedIn.mockClear();
-  withLoggedIn.mockClear();
-  withUserSettings.mockClear();
+  ensureLoggedIn.mockRestore();
+  withLoggedIn.mockRestore();
+  withUserSettings.mockRestore();
 });

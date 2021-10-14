@@ -73,11 +73,12 @@ const router = express.Router();
  */
 router.get("/@me", ensureLoggedIn, async (req, res) => {
   let currentUserId: string = req.currentUser?.uid;
-  // const cachedData = await cache().hget(CacheKeys.USER, currentUserId);
-  // if (cachedData) {
-  //   log(`Returning cached data for user ${currentUserId}`);
-  //   return res.status(200).json(JSON.parse(cachedData));
-  // }
+  const cachedData = await cache().hget(CacheKeys.USER, currentUserId);
+  console.log(currentUserId);
+  if (cachedData) {
+    log(`Returning cached data for user ${currentUserId}`);
+    return res.status(200).json(JSON.parse(cachedData));
+  }
 
   log(`Fetching user data for firebase id: ${currentUserId}`);
   const userData = transformImageUrls(
