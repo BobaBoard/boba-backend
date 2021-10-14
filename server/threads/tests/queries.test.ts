@@ -1,6 +1,3 @@
-import "mocha";
-import { expect } from "chai";
-
 import { getThreadByStringId } from "../queries";
 
 describe("threads queries", () => {
@@ -11,7 +8,7 @@ describe("threads queries", () => {
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
     });
 
-    expect(thread).to.eql({
+    expect(thread).toEqual({
       thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
       board_slug: "gore",
       thread_total_comments_amount: 2,
@@ -173,7 +170,7 @@ describe("threads queries", () => {
       // Oncest
       firebaseId: "fb3",
     });
-    expect(thread).to.eql({
+    expect(thread).toEqual({
       thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
       board_slug: "gore",
       thread_total_comments_amount: 0,
@@ -289,6 +286,6 @@ describe("threads queries", () => {
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
     });
 
-    expect(thread).to.be.null;
+    expect(thread).toBeNull();
   });
 });

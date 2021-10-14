@@ -28,33 +28,39 @@ describe("Tests restricted board queries", () => {
   });
   describe("tests logged-in-only board fetch", () => {
     describe("DB queries", () => {
-      it("board fetch contains lock access restriction for logged out users", async () => {
-        const board = await getBoardBySlug({
-          slug: "restricted",
-          // Oncest
-          firebaseId: "fb3",
-        });
+      it(
+        "board fetch contains lock access restriction for logged out users",
+        async () => {
+          const board = await getBoardBySlug({
+            slug: "restricted",
+            // Oncest
+            firebaseId: "fb3",
+          });
 
-        expect(extractRestrictions(board)).toEqual({
-          logged_in_base_restrictions: [],
-          logged_out_restrictions: ["lock_access"],
-        });
-      });
+          expect(extractRestrictions(board)).toEqual({
+            logged_in_base_restrictions: [],
+            logged_out_restrictions: ["lock_access"],
+          });
+        }
+      );
 
-      it("board fetch contains lock access restriction for logged out users", async () => {
-        const boards = await getBoards({
-          firebaseId: "fb3",
-        });
+      it(
+        "board fetch contains lock access restriction for logged out users",
+        async () => {
+          const boards = await getBoards({
+            firebaseId: "fb3",
+          });
 
-        expect(
-          extractRestrictions(
-            boards.find((board: any) => board.slug == "restricted")
-          )
-        ).toEqual({
-          logged_in_base_restrictions: [],
-          logged_out_restrictions: ["lock_access"],
-        });
-      });
+          expect(
+            extractRestrictions(
+              boards.find((board: any) => board.slug == "restricted")
+            )
+          ).toEqual({
+            logged_in_base_restrictions: [],
+            logged_out_restrictions: ["lock_access"],
+          });
+        }
+      );
     });
   });
 });

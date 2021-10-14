@@ -1,22 +1,24 @@
-import request from "supertest";
 import express, { Express } from "express";
-import router from "../../routes";
-import { Server } from "http";
 
+import { Server } from "http";
 import debug from "debug";
+import request from "supertest";
+import router from "../../routes";
+
 const log = debug("bobaserver:board:routes");
+jest.mock("../../../cache");
 
 describe("Tests boards REST API", () => {
   let app: Express;
   let listener: Server;
-  beforeEach(done => {
+  beforeEach((done) => {
     app = express();
     app.use(router);
     listener = app.listen(4000, () => {
       done();
     });
   });
-  afterEach(done => {
+  afterEach((done) => {
     listener.close(done);
   });
   it("should return board data (logged out)", async () => {

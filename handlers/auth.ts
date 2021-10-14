@@ -76,6 +76,7 @@ export const ensureLoggedIn = (
   next: NextFunction
 ) => {
   withLoggedIn(req, res, async () => {
+    console.log(req.currentUser);
     const currentUserId = req.currentUser?.uid;
     if (!currentUserId) {
       error(

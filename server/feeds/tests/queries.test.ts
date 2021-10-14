@@ -1,16 +1,13 @@
-import "mocha";
-import { expect } from "chai";
-
-import { getUserActivity } from "../queries";
-import { getUserFromFirebaseId } from "../../users/queries";
 import { DbFeedType } from "../../../Types";
 import { extractActivity } from "./board-feed.test";
+import { getUserActivity } from "../queries";
+import { getUserFromFirebaseId } from "../../users/queries";
 
 describe("Test users query", () => {
   it("gets user from id", async () => {
     const user = await getUserFromFirebaseId({ firebaseId: "fb2" });
 
-    expect(user).to.eql({
+    expect(user).toEqual({
       avatar_reference_id: "hannibal.png",
       created_on: null,
       firebase_id: "fb2",
@@ -31,7 +28,7 @@ describe("feed activity queries", () => {
       ownOnly: true,
     })) as DbFeedType;
 
-    expect(feed.activity.map(extractActivity)).to.deep.equal([
+    expect(feed.activity.map(extractActivity)).toEqual([
       {
         comments_amount: 2,
         created: "2020-09-25T05:42:00.00Z",
@@ -57,7 +54,7 @@ describe("feed activity queries", () => {
       ownOnly: true,
     })) as DbFeedType;
 
-    expect(feed.activity.map(extractActivity)).to.eql([
+    expect(feed.activity.map(extractActivity)).toEqual([
       {
         comments_amount: 2,
         created: "2020-09-25T05:42:00.00Z",
@@ -96,7 +93,7 @@ describe("feed activity queries", () => {
       ownOnly: false,
     })) as DbFeedType;
 
-    expect(feed.activity.map(extractActivity)).to.deep.equal([
+    expect(feed.activity.map(extractActivity)).toEqual([
       {
         comments_amount: 2,
         created: "2020-09-25T05:42:00.00Z",
@@ -122,7 +119,7 @@ describe("feed activity queries", () => {
       ownOnly: false,
     })) as DbFeedType;
 
-    expect(feed.activity.map(extractActivity)).to.eql([
+    expect(feed.activity.map(extractActivity)).toEqual([
       {
         comments_amount: 2,
         created: "2020-09-25T05:42:00.00Z",
@@ -175,10 +172,10 @@ describe("feed activity queries", () => {
       pageSize: 1,
     })) as DbFeedType;
 
-    expect(feed.cursor).to.equal(
+    expect(feed.cursor).toBe(
       "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDUtMjNUMDU6NTI6MDAuMDAwMDAwIiwicGFnZV9zaXplIjoxfQ=="
     );
-    expect(feed.activity.map(extractActivity)).to.eql([
+    expect(feed.activity.map(extractActivity)).toEqual([
       {
         comments_amount: 2,
         created: "2020-09-25T05:42:00.00Z",
@@ -207,7 +204,7 @@ describe("feed activity queries", () => {
     })) as DbFeedType;
 
     console.log(feed.cursor);
-    expect(feed.activity.map(extractActivity)).to.eql([
+    expect(feed.activity.map(extractActivity)).toEqual([
       {
         comments_amount: 2,
         created: "2020-04-30T03:23:00.00Z",
@@ -224,7 +221,7 @@ describe("feed activity queries", () => {
     ]);
   });
 
-  describe("correctly considers board notifications dismissal", async () => {
+  describe("correctly considers board notifications dismissal", () => {
     it("updated: FALSE, own: FALSE", async () => {
       const feed = (await getUserActivity({
         // oncest5evah
@@ -235,11 +232,11 @@ describe("feed activity queries", () => {
         pageSize: 10,
       })) as DbFeedType;
 
-      expect(feed.cursor).to.equal(null);
-      expect(feed.activity.length).to.eql(3);
+      expect(feed.cursor).toBe(null);
+      expect(feed.activity.length).toEqual(3);
       // Ensure that the post in !long with the dismissed board notifications
       // is counted when "updatedOnly" is false.
-      expect(extractActivity(feed.activity[2])).to.eql({
+      expect(extractActivity(feed.activity[2])).toEqual({
         comments_amount: 2,
         created: "2020-04-01T05:20:00.00Z",
         is_new: false,
@@ -255,7 +252,7 @@ describe("feed activity queries", () => {
     });
   });
 
-  describe("correctly considers board notifications dismissal", async () => {
+  describe("correctly considers board notifications dismissal", () => {
     it("updated: true, own: FALSE", async () => {
       const feed = (await getUserActivity({
         // oncest5evah
@@ -266,10 +263,10 @@ describe("feed activity queries", () => {
         pageSize: 10,
       })) as DbFeedType;
 
-      expect(feed.cursor).to.equal(null);
+      expect(feed.cursor).toBe(null);
       // Ensure that the post in !long with the dismissed board notifications
       // is not counted in "updatedOnly".
-      expect(feed.activity.length).to.eql(2);
+      expect(feed.activity.length).toEqual(2);
     });
   });
 });
