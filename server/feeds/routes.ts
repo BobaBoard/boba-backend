@@ -1,4 +1,3 @@
-import { ensureLoggedIn, withLoggedIn } from "../../handlers/auth";
 import {
   ensureNoIdentityLeakage,
   makeServerThreadSummary,
@@ -8,6 +7,7 @@ import { getBoardActivityBySlug, getUserActivity } from "./queries";
 import { ServerFeedType } from "../../Types";
 import { canAccessBoard } from "../../utils/permissions-utils";
 import debug from "debug";
+import { ensureLoggedIn } from "../../handlers/auth";
 import express from "express";
 
 const info = debug("bobaserver:feeds:routes-info");
@@ -72,6 +72,7 @@ router.get("/boards/:slug", async (req, res) => {
 
   if (!(await canAccessBoard({ slug, firebaseId: req.currentUser?.uid }))) {
     // TOOD: add error log
+    // TODO: make it 401 or 403 according to actual token presence.
     return res.sendStatus(403);
   }
 

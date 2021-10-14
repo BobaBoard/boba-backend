@@ -15,7 +15,7 @@ export const runWithinTransaction = async (
   });
 };
 
-export const setLoggedInUser = (firebaseId: string) => {
+export const setLoggedInUser = (firebaseId: string, app?: Express) => {
   mocked(withLoggedIn).mockImplementation((req, res, next) => {
     // @ts-ignore
     req.currentUser = { uid: firebaseId };
@@ -33,6 +33,11 @@ export const startTestServer = (router: Router) => {
   let listener: Server;
   beforeEach((done) => {
     server.app = express();
+    // We add this middleware cause the server uses it in every request to check
+    // logged in status.
+    // TODO: extract middleware initialization in its own method and use it here
+    // to keep these prerequisite in sync.
+    server.app.use(withLoggedIn);
     server.app.use(router);
     listener = server.app.listen(4000, () => {
       done();
