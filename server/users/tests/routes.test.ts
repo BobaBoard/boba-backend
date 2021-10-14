@@ -1,3 +1,4 @@
+import { CacheKeys, cache } from "../../cache";
 import express, { Express } from "express";
 
 import { Server } from "http";
@@ -7,7 +8,7 @@ import { getUserFromFirebaseId } from "../queries";
 import { mocked } from "ts-jest/utils";
 import request from "supertest";
 import router from "../routes";
-import sinon from "sinon";
+import { setLoggedInUser } from "../../../utils/test-utils";
 
 jest.mock("../../cache");
 jest.mock("../../../handlers/auth");
@@ -40,56 +41,32 @@ describe("Test users routes", () => {
     });
   });
 
-  // TODO: reactivate this once cache is fixed.
-  // it("returns data logged in user (cached)", async function () {
-  //   const cachedData = {
-  //     avatarUrl: "/this_was_cached.png",
-  //     username: "super_cached",
-  //   };
-  //   log(cachedData);
-  //   // @ts-ignore
-  //   authStub.callsFake((req, res, next) => {
-  //     log("Overriding current user");
-  //     // @ts-ignore
-  //     req.currentUser = { uid: "fb2" };
-  //     next();
-  //   });
+  it("returns data logged in user (cached)", async function () {
+    const cachedData = {
+      avatar_url: "/this_was_cached.png",
+      username: "super_cached",
+      pinned_boards: {
+        cached_board: {},
+      },
+    };
 
-  //   this.hgetStub
-  //     .withArgs(CacheKeys.USER, "fb2")
-  //     .resolves(JSON.stringify(cachedData));
+    setLoggedInUser("fb2");
+    mocked(cache().hget).mockResolvedValueOnce(JSON.stringify(cachedData));
 
-  //   const res = await request(app).get("/@me");
-  //   log(res.body);
-  //   expect(res.status).to.equal(200);
-  //   expect(res.body).to.eql(cachedData);
-  // });
-
-  it("Calls ensureLoggedIn to prevent unauthorized access", async () => {
-    //   expect(authStub.called).toBe(false);
-    //   authStub.callsFake((req, res, next) => {
-    //     log("Overriding current user");
-    //     // @ts-ignore
-    //     req.currentUser = { uid: "fb2" };
-    //     next();
-    //   });
     const res = await request(app).get("/@me");
-    expect(res.status).toBe(401);
-    // expect(authStub.called).toBe(true);
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(cachedData);
+    expect(cache().hget).toBeCalledTimes(1);
+    expect(cache().hget).toBeCalledWith(CacheKeys.USER, "fb2");
   });
 
-  it("returns data for the logged in user", async () => {
-    // authStub.callsFake((req, res, next) => {
-    //   log("Overriding current user");
-    //   // @ts-ignore
-    //   req.currentUser = { uid: "fb2" };
-    //   next();
-    // });
-    mocked(ensureLoggedIn).mockImplementation((req, res, next) => {
-      // @ts-ignore
-      req.currentUser = { uid: "fb2" };
-      next();
-    });
+  it("Prevents unauthorized access", async () => {
+    const res = await request(app).get("/@me");
+    expect(res.status).toBe(401);
+  });
+
+  it("Returns data for the logged in user", async () => {
+    setLoggedInUser("fb2");
     const res = await request(app).get("/@me");
     expect(res.status).toBe(200);
     expect(res.body).toEqual({
@@ -101,29 +78,21 @@ describe("Test users routes", () => {
     mocked(ensureLoggedIn).mockRestore();
   });
 
-  it("Calls ensureLoggedIn to prevent unauthorized access 2", async () => {
-    //   expect(authStub.called).toBe(false);
-    //   authStub.callsFake((req, res, next) => {
-    //     log("Overriding current user");
-    //     // @ts-ignore
-    //     req.currentUser = { uid: "fb2" };
-    //     next();
-    //   });
+  it("caches logged in user data", async function () {
+    setLoggedInUser("fb2");
+
     const res = await request(app).get("/@me");
-    expect(res.status).toBe(401);
-    // expect(authStub.called).toBe(true);
+    expect(res.status).toBe(200);
+    expect(cache().hset).toBeCalledTimes(1);
+    expect(cache().hset).toBeCalledWith(
+      CacheKeys.USER,
+      "fb2",
+      // TODO: this will fail if we change what we cache. We should not
+      // rely on the whole response being cached, but declare the object ourselves.
+      // ISSUE: JSON.stringify is not deterministic. Might use: https://www.npmjs.com/package/json-stable-stringify
+      JSON.stringify(res.body)
+    );
   });
 
-  // TODO: reactivate this once cache is fixed.
-  // it("caches logged in user data", async function () {
-  //   // @ts-ignore
-  //   authStub.callsFake((req, res, next) => {
-  //     log("Overriding current user");
-  //     // @ts-ignore
-  //     req.currentUser = { uid: "fb2" };
-  //     next();
-  //   });
-  //   await request(app).get("/@me");
-  //   sinon.assert.calledOnceWithMatch(this.hsetStub, CacheKeys.USER, "fb2");
-  // });
+  it("Correctly updates the cache after user pins board", async function () {});
 });
