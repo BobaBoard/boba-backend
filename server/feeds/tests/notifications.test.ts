@@ -1,9 +1,6 @@
-import "mocha";
-import { expect } from "chai";
-
 import { getBoardActivityBySlug } from "../queries";
 
-describe("Tests notifications", async () => {
+describe("Tests notifications", () => {
   it("gets correct amounts with no visit", async () => {
     // Since there was no visit we expect every post/comment to be marked as new
     const boardActivity = await getBoardActivityBySlug({
@@ -31,7 +28,7 @@ describe("Tests notifications", async () => {
             // Favorite character
             activity.thread_id == "29d1b2da-3289-454a-9089-2ed47db4967b"
         )
-    ).to.eql([
+    ).toEqual([
       {
         thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
         is_new: true,
@@ -67,7 +64,7 @@ describe("Tests notifications", async () => {
             // Favorite character
             activity.thread_id == "29d1b2da-3289-454a-9089-2ed47db4967b"
         )
-    ).to.eql([
+    ).toEqual([
       {
         thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
         is_new: false,
@@ -104,7 +101,7 @@ describe("Tests notifications", async () => {
             // Favorite character
             activity.thread_id == "29d1b2da-3289-454a-9089-2ed47db4967b"
         )
-    ).to.eql([
+    ).toEqual([
       {
         thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
         is_new: false,
@@ -141,7 +138,7 @@ describe("Tests notifications", async () => {
             // Favorite murder
             activity.thread_id == "a5c903df-35e8-43b2-a41a-208c43154671"
         )
-    ).to.eql([
+    ).toEqual([
       {
         thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
         is_new: false,
@@ -178,7 +175,7 @@ describe("Tests notifications", async () => {
             // Favorite murder
             activity.thread_id == "a5c903df-35e8-43b2-a41a-208c43154671"
         )
-    ).to.eql([
+    ).toEqual([
       {
         thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
         is_new: false,
@@ -215,7 +212,7 @@ describe("Tests notifications", async () => {
             // Favorite murder
             activity.thread_id == "a5c903df-35e8-43b2-a41a-208c43154671"
         )
-    ).to.eql([
+    ).toEqual([
       {
         thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
         is_new: false,
@@ -243,7 +240,7 @@ describe("Tests notifications", async () => {
         new_posts_amount: activity.thread_new_posts_amount,
         is_new: activity.is_new,
       }))
-    ).to.eql([
+    ).toEqual([
       {
         thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
         is_new: false,
@@ -285,7 +282,7 @@ describe("Tests notifications", async () => {
         new_posts_amount: activity.thread_new_posts_amount,
         is_new: activity.is_new,
       }))
-    ).to.eql([
+    ).toEqual([
       {
         thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
         is_new: true,
@@ -327,7 +324,7 @@ describe("Tests notifications", async () => {
         new_posts_amount: activity.thread_new_posts_amount,
         is_new: activity.is_new,
       }))
-    ).to.eql([
+    ).toEqual([
       {
         thread_id: "b27710a8-0a9f-4c09-b3a5-54668bab7051",
         is_new: false,
@@ -351,10 +348,10 @@ describe("Tests notifications", async () => {
     }
 
     // get only activity-related values
-    expect(boardActivity.activity.length).to.eql(26);
+    expect(boardActivity.activity.length).toEqual(26);
     expect(
       boardActivity.activity.filter((thread: any) => !thread.is_new).length
-    ).to.eql(21);
+    ).toEqual(21);
     expect(
       boardActivity.activity.map((activity: any) => ({
         thread_id: activity.thread_id,
@@ -364,7 +361,7 @@ describe("Tests notifications", async () => {
         new_posts_amount: activity.thread_new_posts_amount,
         is_new: activity.is_new,
       }))
-    ).to.eql([
+    ).toEqual([
       {
         is_new: true,
         last_activity: "2020-04-25T05:42:00.00Z",
@@ -590,7 +587,7 @@ describe("Tests notifications", async () => {
     }
 
     // get only activity-related values
-    expect(boardActivity.activity.length).to.eql(26);
+    expect(boardActivity.activity.length).toEqual(26);
     // expect(
     //   boardActivity.activity.filter((thread: any) => !thread.is_new).length
     // ).to.eql(21);
@@ -603,7 +600,7 @@ describe("Tests notifications", async () => {
         new_posts_amount: activity.thread_new_posts_amount,
         is_new: activity.is_new,
       }))
-    ).to.eql([
+    ).toEqual([
       {
         is_new: true,
         last_activity: "2020-04-25T05:42:00.00Z",

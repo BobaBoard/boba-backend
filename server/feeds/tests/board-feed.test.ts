@@ -1,8 +1,5 @@
-import "mocha";
-import { expect } from "chai";
-
-import { getBoardActivityBySlug } from "../queries";
 import { DbThreadSummaryType } from "../../../Types";
+import { getBoardActivityBySlug } from "../queries";
 
 export const extractActivity = (thread: DbThreadSummaryType) => {
   return {
@@ -50,7 +47,7 @@ const extractAuthorData = (thread: any) => {
 };
 
 describe("Tests boards activity queries", () => {
-  describe("tests activity metadata", async () => {
+  describe("tests activity metadata", () => {
     it("fetches board activity when slug present (logged in)", async () => {
       const board = await getBoardActivityBySlug({
         slug: "gore",
@@ -63,7 +60,7 @@ describe("Tests boards activity queries", () => {
         throw Error("Board activity fetching encountered an Error.");
       }
 
-      expect(board.activity.map(extractActivity)).to.eql([
+      expect(board.activity.map(extractActivity)).toEqual([
         {
           comments_amount: 2,
           created: "2020-09-25T05:42:00.00Z",
@@ -117,7 +114,7 @@ describe("Tests boards activity queries", () => {
         throw Error("Board activity fetching encountered an Error.");
       }
 
-      expect(board.activity.map(extractActivity)).to.eql([
+      expect(board.activity.map(extractActivity)).toEqual([
         {
           comments_amount: 2,
           created: "2020-09-25T05:42:00.00Z",
@@ -172,11 +169,11 @@ describe("Tests boards activity queries", () => {
         throw Error("Board activity fetching encountered an Error.");
       }
 
-      expect(board.activity).to.eql([]);
+      expect(board.activity).toEqual([]);
     });
   });
 
-  describe("fetches metadata", async () => {
+  describe("fetches metadata", () => {
     it("fetches board activity when slug present (logged in)", async () => {
       const board = await getBoardActivityBySlug({
         slug: "gore",
@@ -189,7 +186,7 @@ describe("Tests boards activity queries", () => {
         throw Error("Board activity fetching encountered an Error.");
       }
 
-      expect(board.activity.map(extractsMetadata)).to.eql([
+      expect(board.activity.map(extractsMetadata)).toEqual([
         {
           parent_post_id: null,
           post_id: "ff9f2ae2-a254-4069-9791-3ac5e6dff5bb",
@@ -247,7 +244,7 @@ describe("Tests boards activity queries", () => {
         throw Error("Board activity fetching encountered an Error.");
       }
 
-      expect(board.activity.map(extractsMetadata)).to.eql([
+      expect(board.activity.map(extractsMetadata)).toEqual([
         {
           parent_post_id: null,
           post_id: "ff9f2ae2-a254-4069-9791-3ac5e6dff5bb",
@@ -295,7 +292,7 @@ describe("Tests boards activity queries", () => {
     });
   });
 
-  describe("fetches author data", async () => {
+  describe("fetches author data", () => {
     it("fetches board activity when slug present (logged in)", async () => {
       const board = await getBoardActivityBySlug({
         slug: "gore",
@@ -308,7 +305,7 @@ describe("Tests boards activity queries", () => {
         throw Error("Board activity fetching encountered an Error.");
       }
 
-      expect(board.activity.map(extractAuthorData)).to.eql([
+      expect(board.activity.map(extractAuthorData)).toEqual([
         {
           author: "1",
           friend: true,
@@ -353,7 +350,7 @@ describe("Tests boards activity queries", () => {
         throw Error("Board activity fetching encountered an Error.");
       }
 
-      expect(board.activity.map(extractAuthorData)).to.eql([
+      expect(board.activity.map(extractAuthorData)).toEqual([
         {
           author: "1",
           friend: false,

@@ -1,4 +1,3 @@
-import "mocha";
 import deepEqualInAnyOrder from "deep-equal-in-any-order";
 import chai, { expect } from "chai";
 chai.use(deepEqualInAnyOrder);

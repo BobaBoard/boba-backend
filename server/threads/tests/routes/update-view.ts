@@ -1,10 +1,7 @@
-import "mocha";
-
 import { ServerCommentType, ServerPostType } from "../../../../Types";
 import express, { Express } from "express";
 
 import { Server } from "http";
-import { expect } from "chai";
 import request from "supertest";
 import router from "../../routes";
 
@@ -154,14 +151,14 @@ const CHARACTER_TO_MAIM_THREAD = {
 describe("Tests update view REST API", () => {
   let app: Express;
   let listener: Server;
-  beforeEach(function (done) {
+  beforeEach(done => {
     app = express();
     app.use(router);
     listener = app.listen(4000, () => {
       done();
     });
   });
-  afterEach(function (done) {
+  afterEach(done => {
     listener.close(done);
   });
 
@@ -172,13 +169,13 @@ describe("Tests update view REST API", () => {
       defaultView: "gallery",
     });
 
-    expect(res.status).to.equal(200);
+    expect(res.status).toBe(200);
 
     const threadRes = await request(app).get(
       "/29d1b2da-3289-454a-9089-2ed47db4967b"
     );
 
-    expect(threadRes.status).to.equal(200);
-    expect(threadRes.body.default_view).to.eql("gallery");
+    expect(threadRes.status).toBe(200);
+    expect(threadRes.body.default_view).toEqual("gallery");
   });
 });

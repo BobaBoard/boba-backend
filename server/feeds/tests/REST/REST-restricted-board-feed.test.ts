@@ -1,15 +1,13 @@
-import "mocha";
-import { expect } from "chai";
-
-import request from "supertest";
 import express, { Express } from "express";
-import router from "../../routes";
+
 import { Server } from "http";
+import request from "supertest";
+import router from "../../routes";
 
 describe("Test feed of restricted boards", () => {
   let app: Express;
   let listener: Server;
-  beforeEach(function (done) {
+  beforeEach((done) => {
     app = express();
     app.use(router);
     listener = app.listen(4000, () => {
@@ -17,17 +15,17 @@ describe("Test feed of restricted boards", () => {
     });
     process.env.FORCED_USER = undefined;
   });
-  afterEach(function (done) {
+  afterEach((done) => {
     listener.close(done);
     process.env.FORCED_USER = undefined;
   });
 
-  describe("REST API", async () => {
+  describe("REST API", () => {
     it("doesn't fetch board activity when logged out (REST)", async () => {
       const res = await request(app).get("/boards/restricted");
 
-      expect(res.status).to.equal(403);
-      expect(res.body).to.eql({});
+      expect(res.status).toBe(403);
+      expect(res.body).toEqual({});
     });
   });
 });

@@ -1,6 +1,3 @@
-import "mocha";
-import { expect } from "chai";
-
 import { getUserActivity } from "../queries";
 import { DbFeedType, DbThreadSummaryType } from "../../../Types";
 
@@ -42,7 +39,7 @@ describe("feed activity tags", () => {
       extractTags(
         getThreadFromActivity("29d1b2da-3289-454a-9089-2ed47db4967b", feed)
       ).tags
-    ).to.eql(["evil", "bobapost"]);
+    ).toEqual(["evil", "bobapost"]);
   });
 
   it("correctly fetches categories", async () => {
@@ -62,7 +59,7 @@ describe("feed activity tags", () => {
       extractTags(
         getThreadFromActivity("a5c903df-35e8-43b2-a41a-208c43154671", feed)
       ).categories
-    ).to.eql(["blood", "bruises"]);
+    ).toEqual(["blood", "bruises"]);
   });
 
   it("correctly fetches whisper tags", async () => {
@@ -82,7 +79,7 @@ describe("feed activity tags", () => {
       extractTags(
         getThreadFromActivity("8b2646af-2778-487e-8e44-7ae530c2549c", feed)
       ).whisper_tags
-    ).to.eql(["An announcement from your headmaster!"]);
+    ).toEqual(["An announcement from your headmaster!"]);
   });
 
   it("correctly fetches content warnings", async () => {
@@ -102,6 +99,6 @@ describe("feed activity tags", () => {
       extractTags(
         getThreadFromActivity("8b2646af-2778-487e-8e44-7ae530c2549c", feed)
       ).content_warnings
-    ).to.eql(["harassment PSA"]);
+    ).toEqual(["harassment PSA"]);
   });
 });

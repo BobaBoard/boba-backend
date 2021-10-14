@@ -1,6 +1,3 @@
-import "mocha";
-import { expect } from "chai";
-
 import { getThreadByStringId } from "../queries";
 
 const extractActivityFromThread = (thread: any) => {
@@ -31,7 +28,7 @@ describe("threads activity queries", () => {
     });
 
     // get only activity-related values
-    expect(extractActivityFromThread(thread)).to.eql({
+    expect(extractActivityFromThread(thread)).toEqual({
       thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
       new_comments_amount: 2,
       new_posts_amount: 3,
@@ -76,7 +73,7 @@ describe("threads activity queries", () => {
     });
 
     // get only activity-related values
-    expect(extractActivityFromThread(thread)).to.eql({
+    expect(extractActivityFromThread(thread)).toEqual({
       thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
       new_comments_amount: 0,
       new_posts_amount: 0,
@@ -122,7 +119,7 @@ describe("threads activity queries", () => {
     });
 
     // get only activity-related values
-    expect(extractActivityFromThread(thread)).to.eql({
+    expect(extractActivityFromThread(thread)).toEqual({
       thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
       new_comments_amount: 2,
       new_posts_amount: 0,
@@ -167,7 +164,7 @@ describe("threads activity queries", () => {
     });
 
     // get only activity-related values
-    expect(extractActivityFromThread(thread)).to.eql({
+    expect(extractActivityFromThread(thread)).toEqual({
       new_comments_amount: 0,
       new_posts_amount: 0,
       posts: [
@@ -203,7 +200,7 @@ describe("threads activity queries", () => {
     });
 
     // get only activity-related values
-    expect(extractActivityFromThread(thread)).to.eql({
+    expect(extractActivityFromThread(thread)).toEqual({
       new_comments_amount: 0,
       new_posts_amount: 1,
       posts: [
@@ -239,7 +236,7 @@ describe("threads activity queries", () => {
     });
 
     // get only activity-related values
-    expect(extractActivityFromThread(thread)).to.eql({
+    expect(extractActivityFromThread(thread)).toEqual({
       new_comments_amount: 0,
       new_posts_amount: 0,
       posts: [
@@ -274,7 +271,7 @@ describe("threads activity queries", () => {
     });
 
     // get only activity-related values
-    expect(extractActivityFromThread(thread)).to.eql({
+    expect(extractActivityFromThread(thread)).toEqual({
       thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
       new_comments_amount: 0,
       new_posts_amount: 0,
@@ -320,7 +317,7 @@ describe("threads activity queries", () => {
     });
 
     // get only activity-related values
-    expect(extractActivityFromThread(thread)).to.eql({
+    expect(extractActivityFromThread(thread)).toEqual({
       thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
       new_comments_amount: 2,
       new_posts_amount: 2,
@@ -366,7 +363,7 @@ describe("threads activity queries", () => {
     });
 
     // get only activity-related values
-    expect(extractActivityFromThread(thread)).to.eql({
+    expect(extractActivityFromThread(thread)).toEqual({
       thread_id: "b27710a8-0a9f-4c09-b3a5-54668bab7051",
       new_comments_amount: 0,
       new_posts_amount: 0,
@@ -390,7 +387,7 @@ describe("threads activity queries", () => {
     });
   });
 
-  describe("Test correct amounts with both dismiss and visit", async () => {
+  describe("Test correct amounts with both dismiss and visit", () => {
     it("Visited earlier than dismiss", async () => {
       // The only new comments are from the user itself
       const thread = await getThreadByStringId({
@@ -401,7 +398,7 @@ describe("threads activity queries", () => {
       });
 
       // get only activity-related values
-      expect(extractActivityFromThread(thread)).to.eql({
+      expect(extractActivityFromThread(thread)).toEqual({
         thread_id: "32a0174b-091e-4fe6-82f3-bffd6c6026ae",
         new_comments_amount: 0,
         new_posts_amount: 0,
@@ -424,7 +421,7 @@ describe("threads activity queries", () => {
         // Zodiac Killer
         firebaseId: "fb5",
       });
-      expect(extractActivityFromThread(thread)).to.eql({
+      expect(extractActivityFromThread(thread)).toEqual({
         thread_id: "c55314b4-0b61-41c9-aa2f-b7fa28adf651",
         new_comments_amount: 0,
         new_posts_amount: 0,
@@ -447,7 +444,7 @@ describe("threads activity queries", () => {
         // Zodiac Killer
         firebaseId: "fb5",
       });
-      expect(extractActivityFromThread(thread)).to.eql({
+      expect(extractActivityFromThread(thread)).toEqual({
         thread_id: "dacfb175-0d47-4c5e-8ecc-7fbf176ad915",
         new_comments_amount: 0,
         new_posts_amount: 0,
@@ -470,7 +467,7 @@ describe("threads activity queries", () => {
         // Zodiac Killer
         firebaseId: "fb5",
       });
-      expect(extractActivityFromThread(thread)).to.eql({
+      expect(extractActivityFromThread(thread)).toEqual({
         thread_id: "7d88a537-f23f-46de-970e-29ae392cd5f9",
         new_comments_amount: 0,
         new_posts_amount: 1,
