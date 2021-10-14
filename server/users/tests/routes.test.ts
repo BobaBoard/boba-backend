@@ -1,8 +1,6 @@
 import { CacheKeys, cache } from "../../cache";
-import express, { Express } from "express";
 import { setLoggedInUser, startTestServer } from "../../../utils/test-utils";
 
-import { Server } from "http";
 import debug from "debug";
 import { ensureLoggedIn } from "../../../handlers/auth";
 import { getUserFromFirebaseId } from "../queries";
