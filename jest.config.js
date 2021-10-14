@@ -4,4 +4,5 @@ module.exports = {
     "\\.(ts|tsx)$": "ts-jest",
   },
   setupFiles: ["./test/jestSetup.ts"],
+  testPathIgnorePatterns: ["<rootDir>/dist/"],
 };

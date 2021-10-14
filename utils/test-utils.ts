@@ -15,7 +15,7 @@ export const runWithinTransaction = async (
   });
 };
 
-export const setLoggedInUser = (firebaseId: string, app?: Express) => {
+export const setLoggedInUser = (firebaseId: string) => {
   mocked(withLoggedIn).mockImplementation((req, res, next) => {
     // @ts-ignore
     req.currentUser = { uid: firebaseId };
