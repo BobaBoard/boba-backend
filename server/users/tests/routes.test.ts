@@ -1,5 +1,6 @@
 import { CacheKeys, cache } from "../../cache";
 import express, { Express } from "express";
+import { setLoggedInUser, startTestServer } from "../../../utils/test-utils";
 
 import { Server } from "http";
 import debug from "debug";
@@ -8,25 +9,13 @@ import { getUserFromFirebaseId } from "../queries";
 import { mocked } from "ts-jest/utils";
 import request from "supertest";
 import router from "../routes";
-import { setLoggedInUser } from "../../../utils/test-utils";
 
 jest.mock("../../cache");
 jest.mock("../../../handlers/auth");
 const log = debug("bobaserver:test:users:routes-log");
 
 describe("Test users routes", () => {
-  let app: Express;
-  let listener: Server;
-  beforeEach((done) => {
-    app = express();
-    app.use(router);
-    listener = app.listen(4000, () => {
-      done();
-    });
-  });
-  afterEach((done) => {
-    listener.close(done);
-  });
+  const server = startTestServer(router);
 
   it("gets user from id", async () => {
     const user = await getUserFromFirebaseId({ firebaseId: "fb2" });
@@ -53,7 +42,7 @@ describe("Test users routes", () => {
     setLoggedInUser("fb2");
     mocked(cache().hget).mockResolvedValueOnce(JSON.stringify(cachedData));
 
-    const res = await request(app).get("/@me");
+    const res = await request(server.app).get("/@me");
     expect(res.status).toBe(200);
     expect(res.body).toEqual(cachedData);
     expect(cache().hget).toBeCalledTimes(1);
@@ -61,13 +50,13 @@ describe("Test users routes", () => {
   });
 
   it("Prevents unauthorized access", async () => {
-    const res = await request(app).get("/@me");
+    const res = await request(server.app).get("/@me");
     expect(res.status).toBe(401);
   });
 
   it("Returns data for the logged in user", async () => {
     setLoggedInUser("fb2");
-    const res = await request(app).get("/@me");
+    const res = await request(server.app).get("/@me");
     expect(res.status).toBe(200);
     expect(res.body).toEqual({
       avatar_url: "/hannibal.png",
@@ -81,7 +70,7 @@ describe("Test users routes", () => {
   it("caches logged in user data", async function () {
     setLoggedInUser("fb2");
 
-    const res = await request(app).get("/@me");
+    const res = await request(server.app).get("/@me");
     expect(res.status).toBe(200);
     expect(cache().hset).toBeCalledTimes(1);
     expect(cache().hset).toBeCalledWith(
