@@ -74,7 +74,7 @@ const router = express.Router();
 router.get("/@me", ensureLoggedIn, async (req, res) => {
   let currentUserId: string = req.currentUser?.uid;
   const cachedData = await cache().hget(CacheKeys.USER, currentUserId);
-  console.log(currentUserId);
+
   if (cachedData) {
     log(`Returning cached data for user ${currentUserId}`);
     return res.status(200).json(JSON.parse(cachedData));
