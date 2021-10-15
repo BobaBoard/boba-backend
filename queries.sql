@@ -19,8 +19,8 @@ CREATE UNIQUE INDEX tags_tag on tags(tag);
 ALTER TABLE identity_thread_accessories ALTER COLUMN identity_id DROP NOT NULL;
 
 --- ADD COLUMN TO TABLE ---
-ALTER TABLE accessories
-ADD COLUMN name JSONB NOT NULL DEFAULT '{}'::jsonb;
+ALTER TABLE secret_identities
+ADD COLUMN external_id TEXT NOT NULL DEFAULT uuid_generate_v4();
 
 --- REMOVE COLUMN FROM TABLE ---
 ALTER TABLE threads
@@ -32,6 +32,16 @@ ADD CHECK (identity_id is not null or role_id is not null);
 
 --- REMOVE NULL CONSTRAINT ---
 alter table user_thread_identities alter column identity_id drop not null;
+
+--- REMOVE DEFAULT VALUE ---
+ALTER TABLE secret_identities ALTER external_id DROP DEFAULT;
+
+--- ADD ENTRY IN RELATIONSHIP FOR EVERY COLUMN IN OTHER TABLE ---
+INSERT INTO bobadex_season_secret_identities(bobadex_season_id, secret_identity_id)
+SELECT
+  3 as bobadex_season_id,
+  id AS secret_identity_id
+FROM secret_identities;
 
 --- DELETE THREAD ---
 DELETE FROM post_categories WHERE post_id IN (SELECT id FROM posts WHERE posts.parent_thread IN (SELECT id FROM threads WHERE string_id = '157b0460-6cfe-416a-9c65-bb35ce2c7521'));

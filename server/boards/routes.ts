@@ -1,22 +1,23 @@
-import debug from "debug";
-import express from "express";
-import { cache, CacheKeys } from "../cache";
+import { CacheKeys, cache } from "server/cache";
+import { canAccessBoard, hasPermission } from "utils/permissions-utils";
 import {
+  dismissBoardNotifications,
   getBoardBySlug,
   getBoardByUuid,
   markBoardVisit,
-  updateBoardMetadata,
   muteBoard,
-  unmuteBoard,
-  dismissBoardNotifications,
   pinBoard,
+  unmuteBoard,
   unpinBoard,
+  updateBoardMetadata,
 } from "./queries";
-import { ensureLoggedIn, isLoggedIn } from "../../handlers/auth";
-import { processBoardMetadata } from "../../utils/response-utils";
-import { hasPermission, canAccessBoard, canAccessBoardByUuid } from "../../utils/permissions-utils";
-import { DbRolePermissions } from "../../Types";
+
+import { DbRolePermissions } from "Types";
+import debug from "debug";
+import { ensureLoggedIn } from "handlers/auth";
+import express from "express";
 import { getBoardMetadata, getBoardMetadataByUuid } from "./utils";
+import { processBoardMetadata } from "utils/response-utils";
 
 const info = debug("bobaserver:board:routes-info");
 const log = debug("bobaserver:board:routes");
@@ -86,7 +87,7 @@ const router = express.Router();
  *               locked:
  *                 $ref: '#/components/examples/BoardsRestrictedResponse'
  */
-router.get("/:uuid", isLoggedIn, async (req, res) => {
+router.get("/:uuid", async (req, res) => {
   const { uuid } = req.params;
   log(`Fetching data for board with uuid ${uuid}.`);
 
@@ -168,14 +169,9 @@ router.get("/:uuid", isLoggedIn, async (req, res) => {
  *               existing:
  *                 $ref: '#/components/examples/GoreMetadataUpdateResponse'
  */
-router.post("/:uuid/metadata/update", isLoggedIn, async (req, res) => {
+router.post("/:uuid/metadata/update", ensureLoggedIn, async (req, res) => {
   const { uuid } = req.params;
   const { descriptions, accentColor, tagline } = req.body;
-
-  // @ts-ignore
-  if (!req.currentUser) {
-    return res.sendStatus(401);
-  }
 
   const board = await getBoardByUuid({
     firebaseId: req.currentUser?.uid,
@@ -197,7 +193,7 @@ router.post("/:uuid/metadata/update", isLoggedIn, async (req, res) => {
   const newMetadata = await updateBoardMetadata({
     uuid,
     // @ts-ignore
-    firebaseId: req.currentUser?.uid,
+    firebaseId: req.currentUser.uid,
     oldMetadata: board,
     newMetadata: { descriptions, settings: { accentColor }, tagline },
   });
@@ -211,7 +207,7 @@ router.post("/:uuid/metadata/update", isLoggedIn, async (req, res) => {
   res.status(200).json(
     processBoardMetadata({
       metadata: newMetadata,
-      isLoggedIn: !!req.currentUser?.uid,
+      isLoggedIn: true,
     })
   );
 });
@@ -250,13 +246,8 @@ router.post("/:uuid/metadata/update", isLoggedIn, async (req, res) => {
  *       200:
  *         description: The visit was successfully registered.
  */
-router.post("/:uuid/visits", isLoggedIn, async (req, res) => {
+router.post("/:uuid/visits", ensureLoggedIn, async (req, res) => {
   const { uuid } = req.params;
-  if (!req.currentUser) {
-    res
-      .status(401)
-      .json({ message: "This board is unavailable to logged out users." });
-  }
   log(`Setting last visited time for board: ${uuid}`);
 
   if (
@@ -357,7 +348,6 @@ router.delete("/:uuid/mute", ensureLoggedIn, async (req, res) => {
 
   if (
     !(await unmuteBoard({
-      // @ts-ignore
       firebaseId: req.currentUser.uid,
       uuid,
     }))
@@ -408,7 +398,6 @@ router.post("/:uuid/pin", ensureLoggedIn, async (req, res) => {
 
   if (
     !(await pinBoard({
-      // @ts-ignore
       firebaseId: req.currentUser.uid,
       uuid,
     }))
@@ -459,7 +448,7 @@ router.delete("/:uuid/pin", ensureLoggedIn, async (req, res) => {
 
   if (
     !(await unpinBoard({
-      firebaseId: req.currentUser?.uid,
+      firebaseId: req.currentUser.uid,
       uuid,
     }))
   ) {
@@ -502,28 +491,27 @@ router.delete("/:uuid/pin", ensureLoggedIn, async (req, res) => {
  *       204:
  *         description: Board notifications dismissed.
  */
-router.post("/:uuid/notifications/dismiss", isLoggedIn, async (req, res) => {
-  const { uuid } = req.params;
-  // @ts-ignore
-  let currentUserId: string = req.currentUser?.uid;
-  if (!currentUserId) {
-    res.sendStatus(401);
-    return;
+router.post(
+  "/:uuid/notifications/dismiss",
+  ensureLoggedIn,
+  async (req, res) => {
+    const { uuid } = req.params;
+    let currentUserId: string = req.currentUser?.uid;
+    log(`Dismissing ${uuid} notifications for firebase id: ${currentUserId}`);
+    const dismissSuccessful = await dismissBoardNotifications({
+      uuid,
+      firebaseId: currentUserId,
+    });
+
+    if (!dismissSuccessful) {
+      log(`Dismiss failed`);
+      return res.sendStatus(500);
+    }
+
+    info(`Dismiss successful`);
+
+    res.sendStatus(204);
   }
-  log(`Dismissing ${uuid} notifications for firebase id: ${currentUserId}`);
-  const dismissSuccessful = await dismissBoardNotifications({
-    uuid,
-    firebaseId: currentUserId,
-  });
-
-  if (!dismissSuccessful) {
-    log(`Dismiss failed`);
-    return res.sendStatus(500);
-  }
-
-  info(`Dismiss successful`);
-
-  res.sendStatus(204);
-});
+);
 
 export default router;

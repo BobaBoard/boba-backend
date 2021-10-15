@@ -1,14 +1,15 @@
-import express from "express";
-import { getUserActivity, getBoardActivityBySlug } from "./queries";
-import { ensureLoggedIn, isLoggedIn } from "../../handlers/auth";
 import {
   ensureNoIdentityLeakage,
   makeServerThreadSummary,
-} from "../../utils/response-utils";
-import { ServerFeedType } from "../../Types";
-import { canAccessBoard } from "../../utils/permissions-utils";
+} from "utils/response-utils";
+import { getBoardActivityBySlug, getUserActivity } from "./queries";
 
+import { ServerFeedType } from "Types";
+import { canAccessBoard } from "utils/permissions-utils";
 import debug from "debug";
+import { ensureLoggedIn } from "handlers/auth";
+import express from "express";
+
 const info = debug("bobaserver:feeds:routes-info");
 const log = debug("bobaserver:feeds:routes");
 
@@ -62,7 +63,7 @@ const router = express.Router();
  *               gore:
  *                 $ref: '#/components/examples/FeedBoardGore'
  */
-router.get("/boards/:slug", isLoggedIn, async (req, res) => {
+router.get("/boards/:slug", async (req, res) => {
   const { slug } = req.params;
   const { cursor, categoryFilter } = req.query;
   log(
@@ -71,6 +72,7 @@ router.get("/boards/:slug", isLoggedIn, async (req, res) => {
 
   if (!(await canAccessBoard({ slug, firebaseId: req.currentUser?.uid }))) {
     // TOOD: add error log
+    // TODO: make it 401 or 403 according to actual token presence.
     return res.sendStatus(403);
   }
 

@@ -1,3 +1,4 @@
+// import-sort-ignore
 import dotenv from "dotenv";
 import dotenvExpand from "dotenv-expand";
 dotenvExpand(dotenv.config());
@@ -12,13 +13,14 @@ if (process.env.NODE_ENV == "production") {
   });
 }
 
-import debug from "debug";
 import express from "express";
 import bodyParser from "body-parser";
-import initOpenApiDocs from "../handlers/open-api";
+import initOpenApiDocs from "handlers/open-api";
 import cors from "cors";
 import firebaseAuth from "firebase-admin";
 import { initCache } from "./cache";
+import { withLoggedIn } from "handlers/auth";
+import { applyRoutes } from "./all-routes";
 
 const serviceAccount = require(process.env.GOOGLE_APPLICATION_CREDENTIALS_PATH);
 
@@ -29,14 +31,14 @@ if (!firebaseAuth.apps.length) {
 }
 initCache();
 
-import { applyRoutes } from "./all-routes";
-
+import debug from "debug";
 const log = debug("bobaserver:main");
 
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
 initOpenApiDocs(app);
+app.use(withLoggedIn);
 
 const port = process.env.PORT || 4200;
 

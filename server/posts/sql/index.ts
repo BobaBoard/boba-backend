@@ -7,9 +7,13 @@ const getRandomIdentity = `
         display_name as secret_identity_name,
         avatar_reference_id as secret_identity_avatar
     FROM secret_identities
+    LEFT JOIN bobadex_season_secret_identities
+      ON bobadex_season_secret_identities.secret_identity_id = secret_identities.id
     LEFT JOIN user_thread_identities as uti
         ON secret_identities.id = uti.identity_id AND uti.thread_id = $/thread_id/
     WHERE uti.user_id is NULL
+        -- We only do Halloween right now
+        AND bobadex_season_secret_identities.bobadex_season_id = (SELECT id FROM bobadex_seasons WHERE external_id = '9b496931-ba27-43e0-953b-c38e01803879')
     ORDER BY RANDOM()
     LIMIT 1`;
 
