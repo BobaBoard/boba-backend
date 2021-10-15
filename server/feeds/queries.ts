@@ -2,7 +2,7 @@ import { decodeCursor, encodeCursor } from "utils/queries-utils";
 
 import { DbFeedType } from "Types";
 import debug from "debug";
-import pool from "../db-pool";
+import pool from "server/db-pool";
 import sql from "./sql";
 
 const info = debug("bobaserver:feeds:queries-info");

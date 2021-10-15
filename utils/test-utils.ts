@@ -1,10 +1,10 @@
-import { ensureLoggedIn, withLoggedIn } from "../handlers/auth";
+import { ensureLoggedIn, withLoggedIn } from "handlers/auth";
 import express, { Express, Router } from "express";
 
 import { ITask } from "pg-promise";
 import { Server } from "http";
 import { mocked } from "ts-jest/utils";
-import pool from "../server/db-pool";
+import pool from "server/db-pool";
 
 export const runWithinTransaction = async (
   test: (transaction: ITask<any>) => void

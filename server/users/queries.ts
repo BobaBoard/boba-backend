@@ -4,7 +4,7 @@ import { decodeCursor, encodeCursor } from "utils/queries-utils";
 import { DbActivityThreadType } from "Types";
 import debug from "debug";
 import { parseSettings } from "utils/settings";
-import pool from "../db-pool";
+import pool from "server/db-pool";
 import sql from "./sql";
 
 const log = debug("bobaserver:users:queries-log");

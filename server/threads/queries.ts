@@ -8,7 +8,7 @@ import {
 
 import debug from "debug";
 import { getBoardBySlug } from "../boards/queries";
-import pool from "../db-pool";
+import pool from "server/db-pool";
 import sql from "./sql";
 import { transformThreadPermissions } from "utils/permissions-utils";
 import { v4 as uuidv4 } from "uuid";

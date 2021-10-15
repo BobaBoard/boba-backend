@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import { ThreadPermissions } from "Types";
-import { getUserPermissionsForThread } from "../server/threads/queries";
+import { getUserPermissionsForThread } from "server/threads/queries";
 
 declare global {
   namespace Express {

@@ -1,5 +1,5 @@
 import debug from "debug";
-import { getBoardBySlug } from "../server/boards/queries";
+import { getBoardBySlug } from "server/boards/queries";
 
 import {
   DbRolePermissions,
