@@ -6,8 +6,9 @@ module.exports = {
   transform: {
     "\\.(ts|tsx)$": "ts-jest",
   },
-  setupFiles: ["./test/jestSetup.ts"],
+  setupFilesAfterEnv: ["./test/jestSetup.ts"],
   testPathIgnorePatterns: ["<rootDir>/dist/"],
+  modulePathIgnorePatterns: ["<rootDir>/dist/"],
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
     prefix: "<rootDir>/",
   }),

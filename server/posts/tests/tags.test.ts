@@ -1,4 +1,3 @@
-import chai, { expect } from "chai";
 import {
   getPostFromStringId,
   maybeAddCategoryTags,
@@ -9,10 +8,7 @@ import {
 } from "../queries";
 
 import debug from "debug";
-import deepEqualInAnyOrder from "deep-equal-in-any-order";
 import { runWithinTransaction } from "utils/test-utils";
-
-chai.use(deepEqualInAnyOrder);
 
 const log = debug("bobaserver:posts:queries-test-log");
 
@@ -33,14 +29,11 @@ describe("Tests posts queries", () => {
         postId: postStringId,
       });
 
-      expect(result.index_tags).to.deep.equalInAnyOrder([
+      expect(result.index_tags).toIncludeSameMembers([
         "leon kennedy",
         "resident evil",
       ]);
-      expect(addedTags).to.deep.equalInAnyOrder([
-        "resident evil",
-        "leon kennedy",
-      ]);
+      expect(addedTags).toIncludeSameMembers(["resident evil", "leon kennedy"]);
     });
   });
 
@@ -59,11 +52,8 @@ describe("Tests posts queries", () => {
         postId: postStringId,
       });
 
-      expect(result.content_warnings).to.deep.equalInAnyOrder([
-        "zombies",
-        "vore",
-      ]);
-      expect(addedTags).to.deep.equalInAnyOrder(["zombies", "vore"]);
+      expect(result.content_warnings).toIncludeSameMembers(["zombies", "vore"]);
+      expect(addedTags).toIncludeSameMembers(["zombies", "vore"]);
     });
   });
 
@@ -82,8 +72,8 @@ describe("Tests posts queries", () => {
         postId: postStringId,
       });
 
-      expect(result.category_tags).to.deep.equalInAnyOrder(["thirst"]);
-      expect(addedTags).to.deep.equalInAnyOrder(["thirst"]);
+      expect(result.category_tags).toIncludeSameMembers(["thirst"]);
+      expect(addedTags).toIncludeSameMembers(["thirst"]);
     });
   });
 
@@ -102,7 +92,7 @@ describe("Tests posts queries", () => {
         postId: postStringId,
       });
 
-      expect(result.index_tags).to.deep.equalInAnyOrder([
+      expect(result.index_tags).toIncludeSameMembers([
         "bobapost",
         "oddly specific",
       ]);
@@ -126,7 +116,7 @@ describe("Tests posts queries", () => {
         postId: postStringId,
       });
 
-      expect(result.whisper_tags).to.deep.equalInAnyOrder([
+      expect(result.whisper_tags).toIncludeSameMembers([
         "babble babble",
         "whisper whisper",
       ]);

@@ -1,11 +1,6 @@
-import chai, { expect } from "chai";
-
 import debug from "debug";
-import deepEqualInAnyOrder from "deep-equal-in-any-order";
 import { maybeAddIndexTags } from "../queries";
 import { runWithinTransaction } from "utils/test-utils";
-
-chai.use(deepEqualInAnyOrder);
 
 const log = debug("bobaserver:posts:queries-test-log");
 
@@ -25,14 +20,11 @@ describe("Tests posts queries", () => {
         { post_id: postId }
       );
 
-      expect(result.index_tags).to.deep.equalInAnyOrder([
+      expect(result.index_tags).toIncludeSameMembers([
         "leon kennedy",
         "resident evil",
       ]);
-      expect(addedTags).to.deep.equalInAnyOrder([
-        "resident evil",
-        "leon kennedy",
-      ]);
+      expect(addedTags).toIncludeSameMembers(["resident evil", "leon kennedy"]);
     });
   });
 });
