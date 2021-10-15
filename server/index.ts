@@ -13,25 +13,14 @@ if (process.env.NODE_ENV == "production") {
   });
 }
 
-import debug from "debug";
 import express from "express";
 import bodyParser from "body-parser";
-import initOpenApiDocs from "../handlers/open-api";
+import initOpenApiDocs from "handlers/open-api";
 import cors from "cors";
 import firebaseAuth from "firebase-admin";
 import { initCache } from "./cache";
-import { withLoggedIn } from "../handlers/auth";
+import { withLoggedIn } from "handlers/auth";
 import { applyRoutes } from "./all-routes";
-
-if (process.env.NODE_ENV == "production") {
-  require("honeycomb-beeline")({
-    // Get this via https://ui.honeycomb.io/account after signing up for Honeycomb
-    writeKey: process.env.HONEYCOMB_API_KEY,
-    // The name of your app is a good choice to start with
-    dataset: "bobaserver",
-    serviceName: "bobaboard-backend-service",
-  });
-}
 
 const serviceAccount = require(process.env.GOOGLE_APPLICATION_CREDENTIALS_PATH);
 
@@ -42,6 +31,7 @@ if (!firebaseAuth.apps.length) {
 }
 initCache();
 
+import debug from "debug";
 const log = debug("bobaserver:main");
 
 const app = express();

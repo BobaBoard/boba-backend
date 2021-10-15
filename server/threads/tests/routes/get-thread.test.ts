@@ -1,12 +1,10 @@
-import "mocha";
-
-import { ServerCommentType, ServerPostType } from "../../../../Types";
+import { ServerCommentType, ServerPostType } from "Types";
 import express, { Express } from "express";
 
 import { Server } from "http";
-import { expect } from "chai";
 import request from "supertest";
 import router from "../../routes";
+import { startTestServer } from "utils/test-utils";
 
 const CHARACTER_TO_MAIM_POST: ServerPostType = {
   id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
@@ -134,24 +132,15 @@ const KERMIT_COMMENTS: ServerCommentType[] = [
 ];
 
 describe("Tests threads REST API", () => {
-  let app: Express;
-  let listener: Server;
-  beforeEach(function (done) {
-    app = express();
-    app.use(router);
-    listener = app.listen(4000, () => {
-      done();
-    });
-  });
-  afterEach(function (done) {
-    listener.close(done);
-  });
+  const server = startTestServer(router);
 
-  it("should return threads data (logged out)", async () => {
-    const res = await request(app).get("/29d1b2da-3289-454a-9089-2ed47db4967b");
+  test("should return threads data (logged out)", async () => {
+    const res = await request(server.app).get(
+      "/29d1b2da-3289-454a-9089-2ed47db4967b"
+    );
 
-    expect(res.status).to.equal(200);
-    expect(res.body).to.eql({
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({
       id: "29d1b2da-3289-454a-9089-2ed47db4967b",
       parent_board_slug: "gore",
       default_view: "thread",
