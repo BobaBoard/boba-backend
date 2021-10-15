@@ -1,5 +1,5 @@
 import { CacheKeys, cache } from "server/cache";
-import { canAccessBoard, hasPermission } from "utils/permissions-utils";
+import { canAccessBoard, canAccessBoardByUuid, hasPermission } from "utils/permissions-utils";
 import {
   dismissBoardNotifications,
   getBoardBySlug,
