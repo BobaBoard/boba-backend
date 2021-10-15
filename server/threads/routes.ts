@@ -19,7 +19,7 @@ import {
   makeServerThread,
 } from "utils/response-utils";
 
-import { ThreadPermissions } from "../../Types";
+import { ThreadPermissions } from "Types";
 import axios from "axios";
 import debug from "debug";
 import { ensureLoggedIn } from "../../handlers/auth";

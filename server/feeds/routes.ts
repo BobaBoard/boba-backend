@@ -4,7 +4,7 @@ import {
 } from "utils/response-utils";
 import { getBoardActivityBySlug, getUserActivity } from "./queries";
 
-import { ServerFeedType } from "../../Types";
+import { ServerFeedType } from "Types";
 import { canAccessBoard } from "utils/permissions-utils";
 import debug from "debug";
 import { ensureLoggedIn } from "../../handlers/auth";

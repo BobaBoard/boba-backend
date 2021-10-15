@@ -14,6 +14,12 @@
     "skipLibCheck": true,
     "types": ["node", "jest"]
   },
-  "include": ["server/**/*", "extra-types.d.ts", "utils", "handlers"],
+  "include": [
+    "server/**/*",
+    "extra-types.d.ts",
+    "Types.ts",
+    "utils",
+    "handlers"
+  ],
   "exclude": ["node_modules"]
 }

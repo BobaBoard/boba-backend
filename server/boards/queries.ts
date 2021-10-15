@@ -1,9 +1,9 @@
+import { DbBoardMetadata } from "Types";
 import debug from "debug";
-import pool from "../db-pool";
-import sql from "./sql";
-import postsSQL from "../posts/sql";
-import { DbBoardMetadata, DbActivityThreadType } from "../../Types";
 import { getMetadataDelta } from "./utils";
+import pool from "../db-pool";
+import postsSQL from "../posts/sql";
+import sql from "./sql";
 
 const info = debug("bobaserver:board:queries-info");
 const log = debug("bobaserver:board:queries-log");
