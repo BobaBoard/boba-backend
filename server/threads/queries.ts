@@ -1,16 +1,17 @@
-import debug from "debug";
-import pool from "../db-pool";
-import { v4 as uuidv4 } from "uuid";
-import sql from "./sql";
+import { DbThreadType, ThreadPermissions } from "../../Types";
 import {
-  maybeAddIndexTags,
+  addNewIdentityToThread,
   maybeAddCategoryTags,
   maybeAddContentWarningTags,
-  addNewIdentityToThread,
+  maybeAddIndexTags,
 } from "../posts/queries";
-import { DbThreadType, ThreadPermissions } from "../../Types";
+
+import debug from "debug";
 import { getBoardBySlug } from "../boards/queries";
-import { transformThreadPermissions } from "../../utils/permissions-utils";
+import pool from "../db-pool";
+import sql from "./sql";
+import { transformThreadPermissions } from "utils/permissions-utils";
+import { v4 as uuidv4 } from "uuid";
 
 const log = debug("bobaserver:threads:queries-log");
 const error = debug("bobaserver:threads:queries-error");

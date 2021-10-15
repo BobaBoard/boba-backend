@@ -2,7 +2,7 @@ import {
   ensureNoIdentityLeakage,
   makeServerComment,
   makeServerPost,
-} from "../../utils/response-utils";
+} from "utils/response-utils";
 import {
   getPostFromStringId,
   getUserPermissionsForPost,
@@ -11,7 +11,7 @@ import {
   updatePostTags,
 } from "./queries";
 
-import { canDoTagsEdit } from "../../utils/permissions-utils";
+import { canDoTagsEdit } from "utils/permissions-utils";
 import debug from "debug";
 import { ensureLoggedIn } from "../../handlers/auth";
 import express from "express";

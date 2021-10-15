@@ -10,10 +10,9 @@ import {
 
 import debug from "debug";
 import deepEqualInAnyOrder from "deep-equal-in-any-order";
-import { runWithinTransaction } from "../../../utils/test-utils";
+import { runWithinTransaction } from "utils/test-utils";
+
 chai.use(deepEqualInAnyOrder);
-
-
 
 const log = debug("bobaserver:posts:queries-test-log");
 

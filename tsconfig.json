@@ -9,7 +9,7 @@
     "outDir": "dist",
     "baseUrl": ".",
     "paths": {
-      "*": ["node_modules/*"]
+      "utils/*": ["utils/*"]
     },
     "skipLibCheck": true,
     "types": ["node", "jest"]

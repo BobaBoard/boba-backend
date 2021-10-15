@@ -1,7 +1,7 @@
 import {
   canAccessBoard,
   transformThreadPermissions,
-} from "../../utils/permissions-utils";
+} from "utils/permissions-utils";
 import {
   createThread,
   getThreadByStringId,
@@ -17,7 +17,7 @@ import {
 import {
   ensureNoIdentityLeakage,
   makeServerThread,
-} from "../../utils/response-utils";
+} from "utils/response-utils";
 
 import { ThreadPermissions } from "../../Types";
 import axios from "axios";

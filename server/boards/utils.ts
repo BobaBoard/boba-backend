@@ -1,15 +1,16 @@
 import {
   BoardDescription,
-  restriction_types,
   DbBoardMetadata,
+  restriction_types,
 } from "../../Types";
-import { cache, CacheKeys } from "../cache";
-import { getBoardBySlug } from "./queries";
-import debug from "debug";
+import { CacheKeys, cache } from "../cache";
 import {
   processBoardMetadata,
   processBoardsSummary,
-} from "../../utils/response-utils";
+} from "utils/response-utils";
+
+import debug from "debug";
+import { getBoardBySlug } from "./queries";
 
 const info = debug("bobaserver:board:utils-info");
 const log = debug("bobaserver:board:utils-log");

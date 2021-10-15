@@ -1,5 +1,5 @@
 import { CacheKeys, cache } from "../../cache";
-import { setLoggedInUser, startTestServer } from "../../../utils/test-utils";
+import { setLoggedInUser, startTestServer } from "utils/test-utils";
 
 import debug from "debug";
 import { ensureLoggedIn } from "../../../handlers/auth";

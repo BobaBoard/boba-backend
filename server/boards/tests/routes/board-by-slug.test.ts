@@ -4,25 +4,16 @@ import { Server } from "http";
 import debug from "debug";
 import request from "supertest";
 import router from "../../routes";
+import { startTestServer } from "utils/test-utils";
 
 const log = debug("bobaserver:board:routes");
 jest.mock("../../../cache");
 
 describe("Tests boards REST API", () => {
-  let app: Express;
-  let listener: Server;
-  beforeEach((done) => {
-    app = express();
-    app.use(router);
-    listener = app.listen(4000, () => {
-      done();
-    });
-  });
-  afterEach((done) => {
-    listener.close(done);
-  });
+  const server = startTestServer(router);
+
   test("should return board data (logged out)", async () => {
-    const res = await request(app).get("/gore");
+    const res = await request(server.app).get("/gore");
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual({
