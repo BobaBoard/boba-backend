@@ -1,4 +1,4 @@
-import { DbThreadType, ThreadPermissions } from "../../Types";
+import { DbThreadType, ThreadPermissions } from "Types";
 import {
   addNewIdentityToThread,
   maybeAddCategoryTags,

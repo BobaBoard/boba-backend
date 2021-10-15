@@ -11,7 +11,7 @@ import {
   updateBoardMetadata,
 } from "./queries";
 
-import { DbRolePermissions } from "../../Types";
+import { DbRolePermissions } from "Types";
 import debug from "debug";
 import { ensureLoggedIn } from "../../handlers/auth";
 import express from "express";

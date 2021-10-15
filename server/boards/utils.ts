@@ -1,8 +1,4 @@
-import {
-  BoardDescription,
-  DbBoardMetadata,
-  restriction_types,
-} from "../../Types";
+import { BoardDescription, DbBoardMetadata, restriction_types } from "Types";
 import { CacheKeys, cache } from "../cache";
 import {
   processBoardMetadata,

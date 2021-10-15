@@ -3,7 +3,7 @@ import {
   DbPostType,
   PostPermissions,
   QueryTagsType,
-} from "../../Types";
+} from "Types";
 import { canPostAs, transformPostPermissions } from "utils/permissions-utils";
 
 import { ITask } from "pg-promise";

@@ -1,7 +1,7 @@
 import { SettingEntry, SettingValueTypes } from "../../types/settings";
 import { decodeCursor, encodeCursor } from "utils/queries-utils";
 
-import { DbActivityThreadType } from "../../Types";
+import { DbActivityThreadType } from "Types";
 import debug from "debug";
 import { parseSettings } from "utils/settings";
 import pool from "../db-pool";

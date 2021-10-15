@@ -9,7 +9,7 @@ import {
   BoardPermissions,
   UserBoardPermissions,
   restriction_types,
-} from "../Types";
+} from "Types";
 
 const log = debug("bobaserver::permissions-utils-log");
 

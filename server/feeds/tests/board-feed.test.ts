@@ -1,4 +1,4 @@
-import { DbThreadSummaryType } from "../../../Types";
+import { DbThreadSummaryType } from "Types";
 import { getBoardActivityBySlug } from "../queries";
 
 export const extractActivity = (thread: DbThreadSummaryType) => {

@@ -1,4 +1,4 @@
-import { ServerCommentType, ServerPostType } from "../../../../Types";
+import { ServerCommentType, ServerPostType } from "Types";
 import express, { Express } from "express";
 
 import { Server } from "http";

@@ -1,6 +1,6 @@
 import { decodeCursor, encodeCursor } from "utils/queries-utils";
 
-import { DbFeedType } from "../../Types";
+import { DbFeedType } from "Types";
 import debug from "debug";
 import pool from "../db-pool";
 import sql from "./sql";

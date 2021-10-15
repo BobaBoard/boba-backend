@@ -1,4 +1,4 @@
-import { DbFeedType, DbThreadSummaryType } from "../../../Types";
+import { DbFeedType, DbThreadSummaryType } from "Types";
 
 import { getUserActivity } from "../queries";
 
