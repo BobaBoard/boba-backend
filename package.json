@@ -15,6 +15,7 @@
     "test:watch": "yarn run test --watchAll",
     "test:file": "yarn run test:base --watchAll",
     "test:docker": "docker-compose -f docker-compose.test.yml run --rm test",
+    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --no-cache",
     "open-api:generate": "node -r dotenv/config -r ts-node/register -r tsconfig-paths/register utils/generate-spec-file.ts dotenv_config_path=./.env.prod",
     "open-api:validate": "yarn run open-api:generate && validate-api open-api-spec.json && openapi-examples-validator open-api-spec.json --ignore-formats color quill-delta",
     "open-api:docker": "docker-compose -f docker-compose.open-api.test.yml run --rm test",
