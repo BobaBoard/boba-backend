@@ -1,20 +1,21 @@
-import debug from "debug";
-import express from "express";
 import {
-  postNewContribution,
-  postNewCommentChain,
-  getUserPermissionsForPost,
+  ensureNoIdentityLeakage,
+  makeServerComment,
+  makeServerPost,
+} from "utils/response-utils";
+import {
   getPostFromStringId,
+  getUserPermissionsForPost,
+  postNewCommentChain,
+  postNewContribution,
   updatePostTags,
 } from "./queries";
-import { ensureLoggedIn, isLoggedIn } from "../../handlers/auth";
-import {
-  makeServerPost,
-  makeServerComment,
-  ensureNoIdentityLeakage,
-} from "../../utils/response-utils";
+
+import { canDoTagsEdit } from "utils/permissions-utils";
+import debug from "debug";
+import { ensureLoggedIn } from "handlers/auth";
+import express from "express";
 import { getTagsDelta } from "./utils";
-import { canDoTagsEdit } from "../../utils/permissions-utils";
 import { maybeUpdateSubscriptionsOnThreadChange } from "../subscriptions/utils";
 
 const info = debug("bobaserver:posts:routes-info");

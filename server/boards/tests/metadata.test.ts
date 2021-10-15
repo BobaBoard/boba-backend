@@ -1,10 +1,7 @@
-import "mocha";
-import { expect } from "chai";
-
 import { getMetadataDelta } from "../utils";
 
-describe("Tests delta metadata", async () => {
-  it("gets correct amounts with no visit", async () => {
+describe("Tests delta metadata", () => {
+  test("gets correct amounts with no visit", async () => {
     const delta = getMetadataDelta({
       oldMetadata: {
         slug: "gore",
@@ -97,7 +94,7 @@ describe("Tests delta metadata", async () => {
       },
     });
 
-    expect(delta).to.eql({
+    expect(delta).toEqual({
       accentColor: "blue",
       tagline: "The new tagline!",
       texts: {

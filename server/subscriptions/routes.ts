@@ -1,15 +1,15 @@
+import { CacheKeys, cache } from "../cache";
+
 import debug from "debug";
 import express from "express";
-import { cache, CacheKeys } from "../cache";
 import { getLatestSubscriptionData } from "./queries";
-import { isLoggedIn } from "../../handlers/auth";
 
 const info = debug("bobaserver:board:routes-info");
 const log = debug("bobaserver:board:routes");
 
 const router = express.Router();
 
-router.get("/:subscriptionId/latest", isLoggedIn, async (req, res) => {
+router.get("/:subscriptionId/latest", async (req, res) => {
   const { subscriptionId } = req.params;
   log(`Fetching data for subscription with id ${subscriptionId}`);
 

@@ -1,16 +1,13 @@
-import "mocha";
-import { expect } from "chai";
-
 import { getBoardByUuid } from "../queries";
 
 describe("Tests boards queries", () => {
-  it("fetches board by slug when slug present", async () => {
+  test("fetches board by uuid when uuid present", async () => {
     const board = await getBoardByUuid({ 
       uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec", 
       firebaseId: undefined 
     });
 
-    expect(board).to.eql({
+    expect(board).toEqual({
       settings: {
         accentColor: "#f96680",
       },
@@ -59,14 +56,14 @@ describe("Tests boards queries", () => {
     });
   });
 
-  it("fetches board by slug when slug present (logged in)", async () => {
+  test("fetches board by uuid when uuid present (logged in)", async () => {
     const board = await getBoardByUuid({
       uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
       // Bobatan
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
     });
 
-    expect(board).to.eql({
+    expect(board).toEqual({
       settings: {
         accentColor: "#f96680",
       },
@@ -136,12 +133,12 @@ describe("Tests boards queries", () => {
     });
   });
 
-  it("returns null board when slugs not found", async () => {
+  test("returns null board when uuid not found", async () => {
     const board = await getBoardByUuid({
       uuid: "00000000-0000-0000-0000-000000000000",
       firebaseId: undefined,
     });
 
-    expect(board).to.be.null;
+    expect(board).toBeNull();
   });
 });

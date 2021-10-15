@@ -9,9 +9,13 @@
     "outDir": "dist",
     "baseUrl": ".",
     "paths": {
-      "*": ["node_modules/*"]
+      "utils/*": ["utils/*"],
+      "handlers/*": ["handlers/*"],
+      "server/*": ["server/*"],
+      "Types": ["Types"]
     },
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": ["node", "jest", "jest-extended"]
   },
   "include": ["server/**/*", "extra-types.d.ts", "utils", "handlers"],
   "exclude": ["node_modules"]

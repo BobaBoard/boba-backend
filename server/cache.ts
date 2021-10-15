@@ -1,6 +1,6 @@
-import debug from "debug";
+import { RedisClient, createClient } from "redis";
 
-import { createClient, RedisClient } from "redis";
+import debug from "debug";
 import { promisify } from "util";
 
 const error = debug("bobaserver:cache-error");
@@ -21,6 +21,7 @@ export const initCache = (createClientMethod?: any) => {
     return;
   }
   // This is mostly used for testing so we can pass stubbed instances
+  // TODO: figure out if any of this is still useful after the swith to JEST
   if (createClientMethod) {
     client = createClientMethod();
     return;
