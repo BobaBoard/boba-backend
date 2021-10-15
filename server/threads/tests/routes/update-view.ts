@@ -1,12 +1,10 @@
-import "mocha";
-
-import { ServerCommentType, ServerPostType } from "../../../../Types";
+import { ServerCommentType, ServerPostType } from "Types";
 import express, { Express } from "express";
 
 import { Server } from "http";
-import { expect } from "chai";
 import request from "supertest";
 import router from "../../routes";
+import { startTestServer } from "utils/test-utils";
 
 const CHARACTER_TO_MAIM_POST: ServerPostType = {
   id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
@@ -152,33 +150,24 @@ const CHARACTER_TO_MAIM_THREAD = {
 };
 
 describe("Tests update view REST API", () => {
-  let app: Express;
-  let listener: Server;
-  beforeEach(function (done) {
-    app = express();
-    app.use(router);
-    listener = app.listen(4000, () => {
-      done();
-    });
-  });
-  afterEach(function (done) {
-    listener.close(done);
-  });
+  const server = startTestServer(router);
 
-  it("should update view data", async () => {
+  test("should update view data", async () => {
     const res = await (
-      await request(app).post(`${CHARACTER_TO_MAIM_THREAD.id}/update/view`)
+      await request(server.app).post(
+        `${CHARACTER_TO_MAIM_THREAD.id}/update/view`
+      )
     ).body({
       defaultView: "gallery",
     });
 
-    expect(res.status).to.equal(200);
+    expect(res.status).toBe(200);
 
-    const threadRes = await request(app).get(
+    const threadRes = await request(server.app).get(
       "/29d1b2da-3289-454a-9089-2ed47db4967b"
     );
 
-    expect(threadRes.status).to.equal(200);
-    expect(threadRes.body.default_view).to.eql("gallery");
+    expect(threadRes.status).toBe(200);
+    expect(threadRes.body.default_view).toEqual("gallery");
   });
 });

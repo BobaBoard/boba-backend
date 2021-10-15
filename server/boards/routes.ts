@@ -1,5 +1,5 @@
-import { CacheKeys, cache } from "../cache";
-import { canAccessBoard, hasPermission } from "../../utils/permissions-utils";
+import { CacheKeys, cache } from "server/cache";
+import { canAccessBoard, hasPermission } from "utils/permissions-utils";
 import {
   dismissBoardNotifications,
   getBoardBySlug,
@@ -11,12 +11,12 @@ import {
   updateBoardMetadata,
 } from "./queries";
 
-import { DbRolePermissions } from "../../Types";
+import { DbRolePermissions } from "Types";
 import debug from "debug";
-import { ensureLoggedIn } from "../../handlers/auth";
+import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
 import { getBoardMetadata } from "./utils";
-import { processBoardMetadata } from "../../utils/response-utils";
+import { processBoardMetadata } from "utils/response-utils";
 
 const info = debug("bobaserver:board:routes-info");
 const log = debug("bobaserver:board:routes");
