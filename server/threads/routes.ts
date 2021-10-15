@@ -22,7 +22,7 @@ import {
 import { ThreadPermissions } from "Types";
 import axios from "axios";
 import debug from "debug";
-import { ensureLoggedIn } from "../../handlers/auth";
+import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
 import { getBoardBySlug } from "../boards/queries";
 import { moveThread } from "./queries";

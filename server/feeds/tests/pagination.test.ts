@@ -1,4 +1,4 @@
-import { getBoardActivityBySlug } from "..//queries";
+import { getBoardActivityBySlug } from "../queries";
 
 describe("Tests boards queries", () => {
   test("fetches first page, gets cursor back", async () => {

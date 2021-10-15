@@ -2,14 +2,14 @@ import { CacheKeys, cache } from "../../cache";
 import { setLoggedInUser, startTestServer } from "utils/test-utils";
 
 import debug from "debug";
-import { ensureLoggedIn } from "../../../handlers/auth";
+import { ensureLoggedIn } from "handlers/auth";
 import { getUserFromFirebaseId } from "../queries";
 import { mocked } from "ts-jest/utils";
 import request from "supertest";
 import router from "../routes";
 
 jest.mock("../../cache");
-jest.mock("../../../handlers/auth");
+jest.mock("handlers/auth");
 const log = debug("bobaserver:test:users:routes-log");
 
 describe("Test users routes", () => {

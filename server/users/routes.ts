@@ -10,7 +10,7 @@ import {
   updateUserData,
   updateUserSettings,
 } from "./queries";
-import { ensureLoggedIn, withUserSettings } from "../../handlers/auth";
+import { ensureLoggedIn, withUserSettings } from "handlers/auth";
 import {
   processBoardsNotifications,
   processBoardsSummary,

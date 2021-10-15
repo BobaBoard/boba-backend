@@ -13,7 +13,7 @@ import {
 
 import { canDoTagsEdit } from "utils/permissions-utils";
 import debug from "debug";
-import { ensureLoggedIn } from "../../handlers/auth";
+import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
 import { getTagsDelta } from "./utils";
 import { maybeUpdateSubscriptionsOnThreadChange } from "../subscriptions/utils";

@@ -1,4 +1,4 @@
-import { CacheKeys, cache } from "../cache";
+import { CacheKeys, cache } from "server/cache";
 import { canAccessBoard, hasPermission } from "utils/permissions-utils";
 import {
   dismissBoardNotifications,
@@ -13,7 +13,7 @@ import {
 
 import { DbRolePermissions } from "Types";
 import debug from "debug";
-import { ensureLoggedIn } from "../../handlers/auth";
+import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
 import { getBoardMetadata } from "./utils";
 import { processBoardMetadata } from "utils/response-utils";

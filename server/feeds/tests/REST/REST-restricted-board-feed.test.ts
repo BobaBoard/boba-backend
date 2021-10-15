@@ -3,7 +3,7 @@ import { setLoggedInUser, startTestServer } from "utils/test-utils";
 import request from "supertest";
 import router from "../../routes";
 
-jest.mock("../../../../handlers/auth");
+jest.mock("handlers/auth");
 
 describe("Test feed of restricted boards REST API", () => {
   const server = startTestServer(router);
