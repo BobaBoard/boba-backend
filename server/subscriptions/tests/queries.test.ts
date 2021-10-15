@@ -1,10 +1,5 @@
-import chai, { expect } from "chai";
-
 import debug from "debug";
-import deepEqualInAnyOrder from "deep-equal-in-any-order";
 import { getLatestSubscriptionData } from "../queries";
-chai.use(deepEqualInAnyOrder);
-
 
 const log = debug("bobaserver:posts:queries-test-log");
 
@@ -15,7 +10,7 @@ describe("Tests posts queries", () => {
     });
     console.log(data);
 
-    expect(data).to.deep.equal([
+    expect(data).toIncludeSameMembers([
       {
         subscription_id: "3",
         subscription_name: "aiba!",
