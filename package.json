@@ -11,6 +11,7 @@
     "start:watch": "nodemon --watch . --exec node -r tsconfig-paths/register -r ts-node/register server/index.ts -e yaml,ts,sql",
     "start-db": "docker-compose down && docker-compose up",
     "test:base": "cross-env DEBUG=bobaserver:* jest --maxWorkers=1 --no-cache",
+    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --no-cache",
     "test": "yarn run test:base .test.ts$",
     "test:watch": "yarn run test --watchAll",
     "test:file": "yarn run test:base --watchAll",

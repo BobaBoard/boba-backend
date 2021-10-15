@@ -60,8 +60,7 @@ components:
           format: uuid
         name:
           type: string
-       #avatar: TODO update code to use avatar instead of avatar_url
-        avatar_url:
+        avatar:
           type: string
           format: uri-reference
         color:
@@ -77,4 +76,4 @@ components:
       required:
         - id
         - name
-        - avatar_url
+        - avatar
