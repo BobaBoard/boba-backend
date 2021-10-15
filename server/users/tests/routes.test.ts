@@ -15,7 +15,7 @@ const log = debug("bobaserver:test:users:routes-log");
 describe("Test users routes", () => {
   const server = startTestServer(router);
 
-  it("gets user from id", async () => {
+  test("gets user from id", async () => {
     const user = await getUserFromFirebaseId({ firebaseId: "fb2" });
 
     expect(user).toEqual({
@@ -28,7 +28,7 @@ describe("Test users routes", () => {
     });
   });
 
-  it("returns data logged in user (cached)", async function () {
+  test("returns data logged in user (cached)", async function () {
     const cachedData = {
       avatar_url: "/this_was_cached.png",
       username: "super_cached",
@@ -47,12 +47,12 @@ describe("Test users routes", () => {
     expect(cache().hget).toBeCalledWith(CacheKeys.USER, "fb2");
   });
 
-  it("Prevents unauthorized access", async () => {
+  test("Prevents unauthorized access", async () => {
     const res = await request(server.app).get("/@me");
     expect(res.status).toBe(401);
   });
 
-  it("Returns data for the logged in user", async () => {
+  test("Returns data for the logged in user", async () => {
     setLoggedInUser("fb2");
     const res = await request(server.app).get("/@me");
     expect(res.status).toBe(200);
@@ -65,7 +65,7 @@ describe("Test users routes", () => {
     mocked(ensureLoggedIn).mockRestore();
   });
 
-  it("caches logged in user data", async function () {
+  test("caches logged in user data", async function () {
     setLoggedInUser("fb2");
 
     const res = await request(server.app).get("/@me");
@@ -81,5 +81,5 @@ describe("Test users routes", () => {
     );
   });
 
-  it("Correctly updates the cache after user pins board", async function () {});
+  test("Correctly updates the cache after user pins board", async function () {});
 });

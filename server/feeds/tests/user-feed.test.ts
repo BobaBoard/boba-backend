@@ -2,7 +2,7 @@ import { extractActivity } from "./board-feed.test";
 import { getUserActivity } from "../queries";
 
 describe("feed activity queries", () => {
-  it("updated: TRUE, own: TRUE", async () => {
+  test("updated: TRUE, own: TRUE", async () => {
     const feed = await getUserActivity({
       // Bobatan
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
@@ -32,7 +32,7 @@ describe("feed activity queries", () => {
     ]);
   });
 
-  it("updated: FALSE, own: TRUE", async () => {
+  test("updated: FALSE, own: TRUE", async () => {
     const feed = await getUserActivity({
       // Bobatan
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
@@ -75,7 +75,7 @@ describe("feed activity queries", () => {
     ]);
   });
 
-  it("updated: TRUE, own: FALSE", async () => {
+  test("updated: TRUE, own: FALSE", async () => {
     const feed = await getUserActivity({
       // Bobatan
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
@@ -105,7 +105,7 @@ describe("feed activity queries", () => {
     ]);
   });
 
-  it("updated: FALSE, own: FALSE", async () => {
+  test("updated: FALSE, own: FALSE", async () => {
     const feed = await getUserActivity({
       // Bobatan
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
@@ -161,7 +161,7 @@ describe("feed activity queries", () => {
     ]);
   });
 
-  it("updated: FALSE, own: FALSE WITH CURSOR", async () => {
+  test("updated: FALSE, own: FALSE WITH CURSOR", async () => {
     const feed = await getUserActivity({
       // Bobatan
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
@@ -195,7 +195,7 @@ describe("feed activity queries", () => {
     ]);
   });
 
-  it("updated: FALSE, own: FALSE WITH CURSOR (PAGE 2)", async () => {
+  test("updated: FALSE, own: FALSE WITH CURSOR (PAGE 2)", async () => {
     const feed = await getUserActivity({
       // Bobatan
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
@@ -229,7 +229,7 @@ describe("feed activity queries", () => {
   });
 
   describe("correctly considers board notifications dismissal", () => {
-    it("updated: FALSE, own: FALSE", async () => {
+    test("updated: FALSE, own: FALSE", async () => {
       const feed = await getUserActivity({
         // oncest5evah
         firebaseId: "fb3",
@@ -264,7 +264,7 @@ describe("feed activity queries", () => {
   });
 
   describe("correctly considers board notifications dismissal", () => {
-    it("updated: true, own: FALSE", async () => {
+    test("updated: true, own: FALSE", async () => {
       const feed = await getUserActivity({
         // oncest5evah
         firebaseId: "fb3",

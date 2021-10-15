@@ -1,7 +1,7 @@
 import { getBoardActivityBySlug } from "..//queries";
 
 describe("Tests boards queries", () => {
-  it("fetches first page, gets cursor back", async () => {
+  test("fetches first page, gets cursor back", async () => {
     const boardActivity = await getBoardActivityBySlug({
       slug: "long",
       // Bobatan
@@ -17,13 +17,15 @@ describe("Tests boards queries", () => {
       "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDQtMTVUMDU6NDI6MDAuMDAwMDAwIiwicGFnZV9zaXplIjoxMH0="
     );
     expect(boardActivity.activity.length).toEqual(10);
-    expect(boardActivity.activity[0].content).toEqual('[{"insert":"Post 26!"}]');
+    expect(boardActivity.activity[0].content).toEqual(
+      '[{"insert":"Post 26!"}]'
+    );
     expect(
       boardActivity.activity[boardActivity.activity.length - 1].content
     ).toEqual('[{"insert":"Post 17!"}]');
   });
 
-  it("fetches second page, gets cursor back", async () => {
+  test("fetches second page, gets cursor back", async () => {
     const boardActivity = await getBoardActivityBySlug({
       slug: "long",
       // Bobatan
@@ -40,13 +42,15 @@ describe("Tests boards queries", () => {
       "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDQtMDVUMDU6NDI6MDAuMDAwMDAwIiwicGFnZV9zaXplIjoxMH0="
     );
     expect(boardActivity.activity.length).toEqual(10);
-    expect(boardActivity.activity[0].content).toEqual('[{"insert":"Post 16!"}]');
+    expect(boardActivity.activity[0].content).toEqual(
+      '[{"insert":"Post 16!"}]'
+    );
     expect(
       boardActivity.activity[boardActivity.activity.length - 1].content
     ).toEqual('[{"insert":"Post 7!"}]');
   });
 
-  it("fetches last page, gets no cursor back", async () => {
+  test("fetches last page, gets no cursor back", async () => {
     const boardActivity = await getBoardActivityBySlug({
       slug: "long",
       // Bobatan
@@ -67,7 +71,7 @@ describe("Tests boards queries", () => {
     ).toEqual('[{"insert":"Post 1!"}]');
   });
 
-  it("fetches correctly when only one result after current page", async () => {
+  test("fetches correctly when only one result after current page", async () => {
     const boardActivity = await getBoardActivityBySlug({
       slug: "long",
       // Bobatan
@@ -81,7 +85,9 @@ describe("Tests boards queries", () => {
     }
 
     expect(boardActivity.activity.length).toEqual(10);
-    expect(boardActivity.activity[0].content).toEqual('[{"insert":"Post 11!"}]');
+    expect(boardActivity.activity[0].content).toEqual(
+      '[{"insert":"Post 11!"}]'
+    );
     expect(
       boardActivity.activity[boardActivity.activity.length - 1].content
     ).toEqual('[{"insert":"Post 2!"}]');
@@ -98,30 +104,29 @@ describe("Tests boards queries", () => {
     }
 
     expect(boardActivity2.activity.length).toEqual(1);
-    expect(boardActivity2.activity[0].content).toEqual('[{"insert":"Post 1!"}]');
+    expect(boardActivity2.activity[0].content).toEqual(
+      '[{"insert":"Post 1!"}]'
+    );
   });
 
-  it(
-    "fetches correctly when no result after current page (outdated cursor)",
-    async () => {
-      const boardActivity = await getBoardActivityBySlug({
-        slug: "long",
-        // Bobatan
-        firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
-        cursor:
-          "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMTktMDQtMTBUMDU6NDI6MDAiLCJwYWdlX3NpemUiOjEwfQ==",
-      });
+  it("fetches correctly when no result after current page (outdated cursor)", async () => {
+    const boardActivity = await getBoardActivityBySlug({
+      slug: "long",
+      // Bobatan
+      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      cursor:
+        "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMTktMDQtMTBUMDU6NDI6MDAiLCJwYWdlX3NpemUiOjEwfQ==",
+    });
 
-      if (boardActivity === false) {
-        throw Error("Board activity fetching encountered an Error.");
-      }
-
-      expect(boardActivity.cursor).toBeNull();
-      expect(boardActivity.activity.length).toEqual(0);
+    if (boardActivity === false) {
+      throw Error("Board activity fetching encountered an Error.");
     }
-  );
 
-  it("fetches correctly when post includes microseconds", async () => {
+    expect(boardActivity.cursor).toBeNull();
+    expect(boardActivity.activity.length).toEqual(0);
+  });
+
+  test("fetches correctly when post includes microseconds", async () => {
     // This is to guard against the reintroduction of a bug that caused
     // posts to not be returned when the timestamp of their creation included
     // microseconds.
@@ -144,7 +149,9 @@ describe("Tests boards queries", () => {
     // skipped. To understand why note that timestamp + microseconds always occurs after timestamp,
     // unless microseconds is 0. Since the last activity cursor didn't include microseconds, posts
     // at the border would be considered older than themselves and not fetched with their cursor.
-    expect(boardActivityCursor.activity[4].content).toEqual('[{"insert":"Post 22!"}]');
+    expect(boardActivityCursor.activity[4].content).toEqual(
+      '[{"insert":"Post 22!"}]'
+    );
 
     const boardActivity = await getBoardActivityBySlug({
       slug: "long",
@@ -158,6 +165,8 @@ describe("Tests boards queries", () => {
     }
 
     // Expect the next returned post to be the correct one and have microseconds.
-    expect(boardActivity.activity[0].content).toEqual('[{"insert":"Post 21 (with microseconds)!"}]');
+    expect(boardActivity.activity[0].content).toEqual(
+      '[{"insert":"Post 21 (with microseconds)!"}]'
+    );
   });
 });

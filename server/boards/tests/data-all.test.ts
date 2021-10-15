@@ -31,7 +31,7 @@ const extractBoardUserSettings = (boardData: any) => {
 
 describe("Tests boards queries", () => {
   describe("Boards details", () => {
-    it("fetches boards details(with user)", async () => {
+    test("fetches boards details(with user)", async () => {
       const boards = await getBoards({
         // Bobatan
         firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
@@ -110,7 +110,7 @@ describe("Tests boards queries", () => {
   });
 
   describe("Boards updates", () => {
-    it("fetches all boards updates (with user)", async () => {
+    test("fetches all boards updates (with user)", async () => {
       const boards = await getBoards({
         // Bobatan
         firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
@@ -192,7 +192,7 @@ describe("Tests boards queries", () => {
         },
       ]);
     });
-    it("fetches all boards updates (no user)", async () => {
+    test("fetches all boards updates (no user)", async () => {
       const boards = await getBoards({ firebaseId: undefined });
 
       expect(boards.map(extractBoardUpdates)).toEqual([
@@ -271,7 +271,7 @@ describe("Tests boards queries", () => {
       ]);
     });
 
-    it("fetches all boards updates (dismissed notifications)", async () => {
+    test("fetches all boards updates (dismissed notifications)", async () => {
       const boards = await getBoards({
         // Zodiac Killer
         firebaseId: "fb5",
@@ -358,7 +358,7 @@ describe("Tests boards queries", () => {
   });
 
   describe("User settings", () => {
-    it("fetches all boards (with user)", async () => {
+    test("fetches all boards (with user)", async () => {
       const boards = await getBoards({
         // Bobatan
         firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
@@ -379,7 +379,7 @@ describe("Tests boards queries", () => {
         { slug: "delisted", muted: false, pinned_order: null },
       ]);
     });
-    it("fetches all boards user settings (no user)", async () => {
+    test("fetches all boards user settings (no user)", async () => {
       const boards = await getBoards({ firebaseId: undefined });
 
       expect(boards.map(extractBoardUserSettings)).toEqual([
@@ -403,7 +403,7 @@ describe("Tests boards queries", () => {
     // If this test fails it's because new fields have likely been added
     // that aren't tested by the above methods. Add the new field to the
     // appropriate "extration" method so it can be captured by the other tests.
-    it("fetches all boards (with user)", async () => {
+    test("fetches all boards (with user)", async () => {
       const boards = await getBoards({
         // Bobatan
         firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",

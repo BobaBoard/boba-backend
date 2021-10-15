@@ -48,7 +48,7 @@ const extractAuthorData = (thread: any) => {
 
 describe("Tests boards activity queries", () => {
   describe("tests activity metadata", () => {
-    it("fetches board activity when slug present (logged in)", async () => {
+    test("fetches board activity when slug present (logged in)", async () => {
       const board = await getBoardActivityBySlug({
         slug: "gore",
         // Oncest
@@ -103,7 +103,7 @@ describe("Tests boards activity queries", () => {
       ]);
     });
 
-    it("fetches board activity when slug present (logged out)", async () => {
+    test("fetches board activity when slug present (logged out)", async () => {
       const board = await getBoardActivityBySlug({
         slug: "gore",
         firebaseId: undefined,
@@ -157,7 +157,7 @@ describe("Tests boards activity queries", () => {
       ]);
     });
 
-    it("fetches empty board activity", async () => {
+    test("fetches empty board activity", async () => {
       const board = await getBoardActivityBySlug({
         slug: "main_street",
         // Bobatan
@@ -174,7 +174,7 @@ describe("Tests boards activity queries", () => {
   });
 
   describe("fetches metadata", () => {
-    it("fetches board activity when slug present (logged in)", async () => {
+    test("fetches board activity when slug present (logged in)", async () => {
       const board = await getBoardActivityBySlug({
         slug: "gore",
         // Oncest
@@ -233,7 +233,7 @@ describe("Tests boards activity queries", () => {
       ]);
     });
 
-    it("fetches board activity when slug present (logged out)", async () => {
+    test("fetches board activity when slug present (logged out)", async () => {
       const board = await getBoardActivityBySlug({
         slug: "gore",
         firebaseId: undefined,
@@ -293,7 +293,7 @@ describe("Tests boards activity queries", () => {
   });
 
   describe("fetches author data", () => {
-    it("fetches board activity when slug present (logged in)", async () => {
+    test("fetches board activity when slug present (logged in)", async () => {
       const board = await getBoardActivityBySlug({
         slug: "gore",
         // Oncest
@@ -339,7 +339,7 @@ describe("Tests boards activity queries", () => {
       ]);
     });
 
-    it("fetches board activity when slug present (logged out)", async () => {
+    test("fetches board activity when slug present (logged out)", async () => {
       const board = await getBoardActivityBySlug({
         slug: "gore",
         firebaseId: undefined,

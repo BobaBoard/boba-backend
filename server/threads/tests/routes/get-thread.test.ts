@@ -133,18 +133,18 @@ const KERMIT_COMMENTS: ServerCommentType[] = [
 describe("Tests threads REST API", () => {
   let app: Express;
   let listener: Server;
-  beforeEach(done => {
+  beforeEach((done) => {
     app = express();
     app.use(router);
     listener = app.listen(4000, () => {
       done();
     });
   });
-  afterEach(done => {
+  afterEach((done) => {
     listener.close(done);
   });
 
-  it("should return threads data (logged out)", async () => {
+  test("should return threads data (logged out)", async () => {
     const res = await request(app).get("/29d1b2da-3289-454a-9089-2ed47db4967b");
 
     expect(res.status).toBe(200);

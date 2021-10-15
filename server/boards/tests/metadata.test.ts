@@ -1,7 +1,7 @@
 import { getMetadataDelta } from "../utils";
 
 describe("Tests delta metadata", () => {
-  it("gets correct amounts with no visit", async () => {
+  test("gets correct amounts with no visit", async () => {
     const delta = getMetadataDelta({
       oldMetadata: {
         slug: "gore",

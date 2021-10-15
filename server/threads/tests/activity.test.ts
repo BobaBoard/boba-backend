@@ -18,7 +18,7 @@ const extractActivityFromThread = (thread: any) => {
 };
 
 describe("threads activity queries", () => {
-  it("gets correct amounts with no visit", async () => {
+  test("gets correct amounts with no visit", async () => {
     // Since there was no visit we expect every post/comment to be marked as new
     const thread = await getThreadByStringId({
       // Favorite character
@@ -63,7 +63,7 @@ describe("threads activity queries", () => {
       ],
     });
   });
-  it("gets correct amounts with new comments (self)", async () => {
+  test("gets correct amounts with new comments (self)", async () => {
     // The only new comments are from the user itself
     const thread = await getThreadByStringId({
       // Favorite character
@@ -109,7 +109,7 @@ describe("threads activity queries", () => {
     });
   });
 
-  it("gets correct amounts with new comments (not self)", async () => {
+  test("gets correct amounts with new comments (not self)", async () => {
     // The new comments are not from the user itself
     const thread = await getThreadByStringId({
       // Favorite character
@@ -155,7 +155,7 @@ describe("threads activity queries", () => {
     });
   });
 
-  it("gets correct amounts with new posts (self)", async () => {
+  test("gets correct amounts with new posts (self)", async () => {
     // Since we made the last posts since the visit we expect no new ones
     const thread = await getThreadByStringId({
       threadId: "a5c903df-35e8-43b2-a41a-208c43154671",
@@ -191,7 +191,7 @@ describe("threads activity queries", () => {
     });
   });
 
-  it("gets correct amounts with new posts (not self)", async () => {
+  test("gets correct amounts with new posts (not self)", async () => {
     // We expect new posts after the last visit
     const thread = await getThreadByStringId({
       threadId: "a5c903df-35e8-43b2-a41a-208c43154671",
@@ -227,7 +227,7 @@ describe("threads activity queries", () => {
     });
   });
 
-  it("gets correct amounts with no updates", async () => {
+  test("gets correct amounts with no updates", async () => {
     // Since the last visit was after the last post we expect no updates
     const thread = await getThreadByStringId({
       threadId: "a5c903df-35e8-43b2-a41a-208c43154671",
@@ -263,7 +263,7 @@ describe("threads activity queries", () => {
     });
   });
 
-  it("gets correct amounts (logged out)", async () => {
+  test("gets correct amounts (logged out)", async () => {
     const thread = await getThreadByStringId({
       // Favorite character
       threadId: "29d1b2da-3289-454a-9089-2ed47db4967b",
@@ -307,7 +307,7 @@ describe("threads activity queries", () => {
     });
   });
 
-  it("gets correct amounts with dismiss notifications (new)", async () => {
+  test("gets correct amounts with dismiss notifications (new)", async () => {
     // The only new comments are from the user itself
     const thread = await getThreadByStringId({
       // Favorite character
@@ -353,7 +353,7 @@ describe("threads activity queries", () => {
     });
   });
 
-  it("gets correct amounts with dismiss notifications (no new)", async () => {
+  test("gets correct amounts with dismiss notifications (no new)", async () => {
     // The only new comments are from the user itself
     const thread = await getThreadByStringId({
       // Anime board
@@ -388,7 +388,7 @@ describe("threads activity queries", () => {
   });
 
   describe("Test correct amounts with both dismiss and visit", () => {
-    it("Visited earlier than dismiss", async () => {
+    test("Visited earlier than dismiss", async () => {
       // The only new comments are from the user itself
       const thread = await getThreadByStringId({
         // Visited earlier than dismiss
@@ -413,7 +413,7 @@ describe("threads activity queries", () => {
       });
     });
 
-    it("Visited after dismiss", async () => {
+    test("Visited after dismiss", async () => {
       // The only new comments are from the user itself
       const thread = await getThreadByStringId({
         // Visited after dismiss
@@ -436,7 +436,7 @@ describe("threads activity queries", () => {
       });
     });
 
-    it("Never visited, created before dismiss", async () => {
+    test("Never visited, created before dismiss", async () => {
       // The only new comments are from the user itself
       const thread = await getThreadByStringId({
         // Never visited, before dismiss
@@ -459,7 +459,7 @@ describe("threads activity queries", () => {
       });
     });
 
-    it("Never visited, created after dismiss", async () => {
+    test("Never visited, created after dismiss", async () => {
       // The only new comments are from the user itself
       const thread = await getThreadByStringId({
         // Never visited, after dismiss

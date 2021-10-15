@@ -1,7 +1,7 @@
 import { getBoardBySlug } from "../queries";
 
 describe("Tests boards queries", () => {
-  it("fetches board by slug when slug present", async () => {
+  test("fetches board by slug when slug present", async () => {
     const board = await getBoardBySlug({ slug: "gore", firebaseId: undefined });
 
     expect(board).toEqual({
@@ -52,7 +52,7 @@ describe("Tests boards queries", () => {
     });
   });
 
-  it("fetches board by slug when slug present (logged in)", async () => {
+  test("fetches board by slug when slug present (logged in)", async () => {
     const board = await getBoardBySlug({
       slug: "gore",
       // Bobatan
@@ -128,7 +128,7 @@ describe("Tests boards queries", () => {
     });
   });
 
-  it("returns null board when slugs not found", async () => {
+  test("returns null board when slugs not found", async () => {
     const board = await getBoardBySlug({
       slug: "this_will_not_be_in_the_db",
       firebaseId: undefined,

@@ -151,18 +151,18 @@ const CHARACTER_TO_MAIM_THREAD = {
 describe("Tests update view REST API", () => {
   let app: Express;
   let listener: Server;
-  beforeEach(done => {
+  beforeEach((done) => {
     app = express();
     app.use(router);
     listener = app.listen(4000, () => {
       done();
     });
   });
-  afterEach(done => {
+  afterEach((done) => {
     listener.close(done);
   });
 
-  it("should update view data", async () => {
+  test("should update view data", async () => {
     const res = await (
       await request(app).post(`${CHARACTER_TO_MAIM_THREAD.id}/update/view`)
     ).body({

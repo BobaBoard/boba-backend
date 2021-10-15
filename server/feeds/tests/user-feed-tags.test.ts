@@ -1,5 +1,6 @@
-import { getUserActivity } from "../queries";
 import { DbFeedType, DbThreadSummaryType } from "../../../Types";
+
+import { getUserActivity } from "../queries";
 
 export const extractTags = (thread: DbThreadSummaryType | null | undefined) => {
   if (!thread) {
@@ -22,7 +23,7 @@ export const getThreadFromActivity = (
 };
 
 describe("feed activity tags", () => {
-  it("correctly fetches tags", async () => {
+  test("correctly fetches tags", async () => {
     const feed = await getUserActivity({
       // Bobatan
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
@@ -42,7 +43,7 @@ describe("feed activity tags", () => {
     ).toEqual(["evil", "bobapost"]);
   });
 
-  it("correctly fetches categories", async () => {
+  test("correctly fetches categories", async () => {
     const feed = await getUserActivity({
       // Bobatan
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
@@ -62,7 +63,7 @@ describe("feed activity tags", () => {
     ).toEqual(["blood", "bruises"]);
   });
 
-  it("correctly fetches whisper tags", async () => {
+  test("correctly fetches whisper tags", async () => {
     const feed = await getUserActivity({
       // Bobatan
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
@@ -82,7 +83,7 @@ describe("feed activity tags", () => {
     ).toEqual(["An announcement from your headmaster!"]);
   });
 
-  it("correctly fetches content warnings", async () => {
+  test("correctly fetches content warnings", async () => {
     const feed = await getUserActivity({
       // Bobatan
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
