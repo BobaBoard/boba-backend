@@ -8,7 +8,7 @@ const log = debug("bobaserver:board:routes");
 describe("Tests boards REST API", () => {
   const server = startTestServer(router);
 
-  it("should return activity data", async () => {
+  test("should return activity data", async () => {
     const res = await request(server.app).get("/boards/gore");
 
     expect(res.status).toBe(200);

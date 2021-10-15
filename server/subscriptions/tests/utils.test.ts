@@ -11,7 +11,7 @@ describe("Tests subscriptions updates", () => {
     jest.clearAllMocks();
   });
 
-  it("correctly triggers webhook on thread update", async function () {
+  test("correctly triggers webhook on thread update", async function () {
     await maybeUpdateSubscriptionsOnThreadChange({
       threadId: "2765f36a-b4f9-4efe-96f2-cb34f055d032",
       postId: "this_is_a_test_post",
@@ -37,7 +37,7 @@ describe("Tests subscriptions updates", () => {
     expect(axios.post).toBeCalledTimes(1);
   });
 
-  it("correctly triggers webhook on thread update 2", async function () {
+  test("correctly triggers webhook on thread update 2", async function () {
     expect(cache().hdel).not.toHaveBeenCalled();
     expect(axios.post).not.toHaveBeenCalled();
   });

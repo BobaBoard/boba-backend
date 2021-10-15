@@ -21,7 +21,7 @@ describe("Tests boards REST API", () => {
   afterEach((done) => {
     listener.close(done);
   });
-  it("should return board data (logged out)", async () => {
+  test("should return board data (logged out)", async () => {
     const res = await request(app).get("/gore");
 
     expect(res.status).toBe(200);

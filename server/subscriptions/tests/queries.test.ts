@@ -1,14 +1,15 @@
-import deepEqualInAnyOrder from "deep-equal-in-any-order";
 import chai, { expect } from "chai";
-chai.use(deepEqualInAnyOrder);
-
-import { getLatestSubscriptionData } from "../queries";
 
 import debug from "debug";
+import deepEqualInAnyOrder from "deep-equal-in-any-order";
+import { getLatestSubscriptionData } from "../queries";
+chai.use(deepEqualInAnyOrder);
+
+
 const log = debug("bobaserver:posts:queries-test-log");
 
 describe("Tests posts queries", () => {
-  it("adds index tags to post (and database)", async () => {
+  test("adds index tags to post (and database)", async () => {
     const data = await getLatestSubscriptionData({
       subscriptionId: "a87800a6-21e5-46dd-a979-a901cdcea563",
     });

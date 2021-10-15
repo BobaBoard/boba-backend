@@ -1,9 +1,4 @@
-import deepEqualInAnyOrder from "deep-equal-in-any-order";
 import chai, { expect } from "chai";
-chai.use(deepEqualInAnyOrder);
-
-import { runWithinTransaction } from "../../../utils/test-utils";
-
 import {
   getPostFromStringId,
   maybeAddCategoryTags,
@@ -14,11 +9,17 @@ import {
 } from "../queries";
 
 import debug from "debug";
+import deepEqualInAnyOrder from "deep-equal-in-any-order";
+import { runWithinTransaction } from "../../../utils/test-utils";
+chai.use(deepEqualInAnyOrder);
+
+
+
 const log = debug("bobaserver:posts:queries-test-log");
 
 //const GET_POST_STRING_ID = `SELECT string_id FROM posts WHERE id = $/post_id/`;
 describe("Tests posts queries", () => {
-  it("adds index tags to post (and database)", async () => {
+  test("adds index tags to post (and database)", async () => {
     await runWithinTransaction(async (transaction) => {
       // Himbo & zombies post
       const postId = 6;
@@ -44,7 +45,7 @@ describe("Tests posts queries", () => {
     });
   });
 
-  it("adds content warnings tags to post (and database)", async () => {
+  test("adds content warnings tags to post (and database)", async () => {
     await runWithinTransaction(async (transaction) => {
       // Himbo & zombies post
       const postId = 6;
@@ -67,7 +68,7 @@ describe("Tests posts queries", () => {
     });
   });
 
-  it("adds category tags to post (and database)", async () => {
+  test("adds category tags to post (and database)", async () => {
     await runWithinTransaction(async (transaction) => {
       // Himbo & zombies post
       const postId = 6;
@@ -87,7 +88,7 @@ describe("Tests posts queries", () => {
     });
   });
 
-  it("removes tags from post", async () => {
+  test("removes tags from post", async () => {
     await runWithinTransaction(async (transaction) => {
       // Revolver Ocelot post
       const postId = 2;
@@ -111,7 +112,7 @@ describe("Tests posts queries", () => {
 
   // TODO: do the same for categories and content warnings
 
-  it("updates whisper tags", async () => {
+  test("updates whisper tags", async () => {
     await runWithinTransaction(async (transaction) => {
       // Himbo & zombies post
       const postId = 6;

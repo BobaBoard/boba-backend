@@ -29,10 +29,10 @@ describe("Tests restricted board realm queries", () => {
   describe("tests logged-in-only board fetch", () => {
     describe("REST API", () => {
       // TODO: figure out mocking of firebase AUTH
-      //   it("fetches board details when logged in (REST)", async () => {
+      //   test("fetches board details when logged in (REST)", async () => {
       //   });
 
-      it("doesn't fetch restricted board details in realm query when logged out", async () => {
+      test("doesn't fetch restricted board details in realm query when logged out", async () => {
         const res = await request(app).get("/slug/v0");
 
         expect(res.status).toBe(200);

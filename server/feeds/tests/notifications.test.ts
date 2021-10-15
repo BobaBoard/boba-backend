@@ -1,7 +1,7 @@
 import { getBoardActivityBySlug } from "../queries";
 
 describe("Tests notifications", () => {
-  it("gets correct amounts with no visit", async () => {
+  test("gets correct amounts with no visit", async () => {
     // Since there was no visit we expect every post/comment to be marked as new
     const boardActivity = await getBoardActivityBySlug({
       slug: "gore",
@@ -37,7 +37,7 @@ describe("Tests notifications", () => {
       },
     ]);
   });
-  it("gets correct amounts with new comments (self)", async () => {
+  test("gets correct amounts with new comments (self)", async () => {
     // The only new comments are from the user itself
     const boardActivity = await getBoardActivityBySlug({
       slug: "gore",
@@ -74,7 +74,7 @@ describe("Tests notifications", () => {
     ]);
   });
 
-  it("gets correct amounts with new comments (not self)", async () => {
+  test("gets correct amounts with new comments (not self)", async () => {
     // The new comments are not from the user itself
     const boardActivity = await getBoardActivityBySlug({
       slug: "gore",
@@ -111,7 +111,7 @@ describe("Tests notifications", () => {
     ]);
   });
 
-  it("gets correct amounts with new posts (self)", async () => {
+  test("gets correct amounts with new posts (self)", async () => {
     // Since we made the last posts since the visit we expect no new ones
     const boardActivity = await getBoardActivityBySlug({
       slug: "gore",
@@ -148,7 +148,7 @@ describe("Tests notifications", () => {
     ]);
   });
 
-  it("gets correct amounts with new posts (not self)", async () => {
+  test("gets correct amounts with new posts (not self)", async () => {
     // We expect new posts after the last visit
     const boardActivity = await getBoardActivityBySlug({
       slug: "gore",
@@ -185,7 +185,7 @@ describe("Tests notifications", () => {
     ]);
   });
 
-  it("gets correct amounts with no updates", async () => {
+  test("gets correct amounts with no updates", async () => {
     // Since there was no visit we expect every post/comment to be marked as new
     const boardActivity = await getBoardActivityBySlug({
       slug: "gore",
@@ -221,7 +221,7 @@ describe("Tests notifications", () => {
       },
     ]);
   });
-  it("gets correct amounts (logged out)", async () => {
+  test("gets correct amounts (logged out)", async () => {
     const boardActivity = await getBoardActivityBySlug({
       slug: "gore",
       firebaseId: undefined,
@@ -262,7 +262,7 @@ describe("Tests notifications", () => {
     ]);
   });
 
-  it("gets correct amounts with dismissed notifs (new entries)", async () => {
+  test("gets correct amounts with dismissed notifs (new entries)", async () => {
     const boardActivity = await getBoardActivityBySlug({
       slug: "gore",
       // SexyDaddy69
@@ -304,7 +304,7 @@ describe("Tests notifications", () => {
     ]);
   });
 
-  it("gets correct amounts with dismissed notifs (no new entries)", async () => {
+  test("gets correct amounts with dismissed notifs (no new entries)", async () => {
     const boardActivity = await getBoardActivityBySlug({
       slug: "anime",
       // SexyDaddy69
@@ -334,7 +334,7 @@ describe("Tests notifications", () => {
     ]);
   });
 
-  it("gets correct amounts with dismissed notifs (mixed visits and dismiss)", async () => {
+  test("gets correct amounts with dismissed notifs (mixed visits and dismiss)", async () => {
     const boardActivity = await getBoardActivityBySlug({
       slug: "long",
       // The Zodiac Killer
@@ -573,7 +573,7 @@ describe("Tests notifications", () => {
     ]);
   });
 
-  it("gets correct amounts with dismissed BOARD notifs (only dismiss)", async () => {
+  test("gets correct amounts with dismissed BOARD notifs (only dismiss)", async () => {
     const boardActivity = await getBoardActivityBySlug({
       slug: "long",
       // oncest5evah
