@@ -15,9 +15,9 @@ import {
   processBoardsNotifications,
   processBoardsSummary,
   transformImageUrls,
-} from "../../utils/response-utils";
+} from "utils/response-utils";
 
-import { aggregateByType } from "../../utils/settings";
+import { aggregateByType } from "utils/settings";
 import debug from "debug";
 import express from "express";
 import firebaseAuth from "firebase-admin";

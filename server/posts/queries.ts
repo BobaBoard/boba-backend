@@ -1,20 +1,18 @@
+import {
+  DbCommentType,
+  DbPostType,
+  PostPermissions,
+  QueryTagsType,
+} from "../../Types";
+import { canPostAs, transformPostPermissions } from "utils/permissions-utils";
+
+import { ITask } from "pg-promise";
 import debug from "debug";
+import { getBoardBySlug } from "../boards/queries";
 import pool from "../db-pool";
-import { v4 as uuidv4 } from "uuid";
 import sql from "./sql";
 import threadsSql from "../threads/sql";
-import {
-  DbPostType,
-  DbCommentType,
-  QueryTagsType,
-  PostPermissions,
-} from "../../Types";
-import { ITask } from "pg-promise";
-import {
-  canPostAs,
-  transformPostPermissions,
-} from "../../utils/permissions-utils";
-import { getBoardBySlug } from "../boards/queries";
+import { v4 as uuidv4 } from "uuid";
 
 const log = debug("bobaserver:posts:queries-log");
 const error = debug("bobaserver:posts:queries-error");

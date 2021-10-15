@@ -1,4 +1,4 @@
-import { setLoggedInUser, startTestServer } from "../../../../utils/test-utils";
+import { setLoggedInUser, startTestServer } from "utils/test-utils";
 
 import request from "supertest";
 import router from "../../routes";

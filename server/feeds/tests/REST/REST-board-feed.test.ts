@@ -1,7 +1,7 @@
 import debug from "debug";
 import request from "supertest";
 import router from "../../routes";
-import { startTestServer } from "../../../../utils/test-utils";
+import { startTestServer } from "utils/test-utils";
 
 const log = debug("bobaserver:board:routes");
 

@@ -1,8 +1,9 @@
+import { decodeCursor, encodeCursor } from "utils/queries-utils";
+
+import { DbFeedType } from "../../Types";
 import debug from "debug";
 import pool from "../db-pool";
 import sql from "./sql";
-import { DbFeedType } from "../../Types";
-import { encodeCursor, decodeCursor } from "../../utils/queries-utils";
 
 const info = debug("bobaserver:feeds:queries-info");
 const log = debug("bobaserver:feeds:queries-log");

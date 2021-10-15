@@ -3,6 +3,7 @@ import express, { Express } from "express";
 import { Server } from "http";
 import request from "supertest";
 import router from "../routes";
+import { startTestServer } from "utils/test-utils";
 
 const extractRestrictions = (board: any) => {
   return {
@@ -12,20 +13,7 @@ const extractRestrictions = (board: any) => {
 };
 
 describe("Tests restricted board realm queries", () => {
-  let app: Express;
-  let listener: Server;
-  beforeEach((done) => {
-    app = express();
-    app.use(router);
-    listener = app.listen(4000, () => {
-      done();
-    });
-    process.env.FORCED_USER = undefined;
-  });
-  afterEach((done) => {
-    listener.close(done);
-    process.env.FORCED_USER = undefined;
-  });
+  const server = startTestServer(router);
   describe("tests logged-in-only board fetch", () => {
     describe("REST API", () => {
       // TODO: figure out mocking of firebase AUTH
@@ -33,7 +21,7 @@ describe("Tests restricted board realm queries", () => {
       //   });
 
       test("doesn't fetch restricted board details in realm query when logged out", async () => {
-        const res = await request(app).get("/slug/v0");
+        const res = await request(server.app).get("/slug/v0");
 
         expect(res.status).toBe(200);
         expect(
