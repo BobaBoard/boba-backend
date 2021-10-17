@@ -2,9 +2,9 @@ import debug from "debug";
 import express from "express";
 import { getBoards } from "../boards/queries";
 import { getSettingsBySlug } from "./queries";
-import { processBoardsSummary } from "../../utils/response-utils";
+import { processBoardsSummary } from "utils/response-utils";
 import { processRealmActivity } from "./utils";
-import { withUserSettings } from "../../handlers/auth";
+import { withUserSettings } from "handlers/auth";
 
 const info = debug("bobaserver:users:routes-info");
 const log = debug("bobaserver:users:routes-log");

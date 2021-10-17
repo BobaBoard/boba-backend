@@ -1,4 +1,4 @@
-import { QueryTagsType } from "../../Types";
+import { QueryTagsType } from "Types";
 
 export const getTagsDelta = ({
   oldTags,

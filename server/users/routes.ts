@@ -10,14 +10,14 @@ import {
   updateUserData,
   updateUserSettings,
 } from "./queries";
-import { ensureLoggedIn, withUserSettings } from "../../handlers/auth";
+import { ensureLoggedIn, withUserSettings } from "handlers/auth";
 import {
   processBoardsNotifications,
   processBoardsSummary,
   transformImageUrls,
-} from "../../utils/response-utils";
+} from "utils/response-utils";
 
-import { aggregateByType } from "../../utils/settings";
+import { aggregateByType } from "utils/settings";
 import debug from "debug";
 import express from "express";
 import firebaseAuth from "firebase-admin";
@@ -73,11 +73,12 @@ const router = express.Router();
  */
 router.get("/@me", ensureLoggedIn, async (req, res) => {
   let currentUserId: string = req.currentUser?.uid;
-  // const cachedData = await cache().hget(CacheKeys.USER, currentUserId);
-  // if (cachedData) {
-  //   log(`Returning cached data for user ${currentUserId}`);
-  //   return res.status(200).json(JSON.parse(cachedData));
-  // }
+  const cachedData = await cache().hget(CacheKeys.USER, currentUserId);
+
+  if (cachedData) {
+    log(`Returning cached data for user ${currentUserId}`);
+    return res.status(200).json(JSON.parse(cachedData));
+  }
 
   log(`Fetching user data for firebase id: ${currentUserId}`);
   const userData = transformImageUrls(

@@ -8,7 +8,7 @@ import {
 
 import axios from "axios";
 import debug from "debug";
-import { ensureLoggedIn } from "../../handlers/auth";
+import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
 import firebaseAuth from "firebase-admin";
 import { getUserFromFirebaseId } from "../users/queries";

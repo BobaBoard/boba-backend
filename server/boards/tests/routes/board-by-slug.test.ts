@@ -1,31 +1,22 @@
-import "mocha";
-import { expect } from "chai";
-import request from "supertest";
 import express, { Express } from "express";
-import router from "../../routes";
-import { Server } from "http";
 
+import { Server } from "http";
 import debug from "debug";
+import request from "supertest";
+import router from "../../routes";
+import { startTestServer } from "utils/test-utils";
+
 const log = debug("bobaserver:board:routes");
+jest.mock("../../../cache");
 
 describe("Tests boards REST API", () => {
-  let app: Express;
-  let listener: Server;
-  beforeEach(function (done) {
-    app = express();
-    app.use(router);
-    listener = app.listen(4000, () => {
-      done();
-    });
-  });
-  afterEach(function (done) {
-    listener.close(done);
-  });
-  it("should return board data (logged out)", async () => {
-    const res = await request(app).get("/gore");
+  const server = startTestServer(router);
 
-    expect(res.status).to.equal(200);
-    expect(res.body).to.eql({
+  test("should return board data (logged out)", async () => {
+    const res = await request(server.app).get("/gore");
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({
       descriptions: [
         {
           categories: ["blood", "bruises"],

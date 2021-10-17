@@ -1,7 +1,7 @@
 import {
   canAccessBoard,
   transformThreadPermissions,
-} from "../../utils/permissions-utils";
+} from "utils/permissions-utils";
 import {
   createThread,
   getThreadByStringId,
@@ -17,12 +17,12 @@ import {
 import {
   ensureNoIdentityLeakage,
   makeServerThread,
-} from "../../utils/response-utils";
+} from "utils/response-utils";
 
-import { ThreadPermissions } from "../../Types";
+import { ThreadPermissions } from "Types";
 import axios from "axios";
 import debug from "debug";
-import { ensureLoggedIn } from "../../handlers/auth";
+import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
 import { getBoardBySlug } from "../boards/queries";
 import { moveThread } from "./queries";

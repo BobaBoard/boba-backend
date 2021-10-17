@@ -1,21 +1,9 @@
-import "mocha";
+import { ServerCommentType, ServerPostType } from "Types";
 
-import { ServerCommentType, ServerPostType } from "../../../../Types";
-import express, { Express } from "express";
-import {
-  runWithinTransaction,
-  wrapWithTransaction,
-} from "../../../../utils/test-utils";
-
-import { Server } from "http";
-import bodyParser from "body-parser";
-import chai from "chai";
-import chaiAsPromised from "chai-as-promised";
 import request from "supertest";
 import router from "../../routes";
-
-chai.use(chaiAsPromised);
-const { expect } = chai;
+import { startTestServer } from "utils/test-utils";
+import { wrapWithTransaction } from "../../../../utils/test-utils";
 
 const CHARACTER_TO_MAIM_POST: ServerPostType = {
   id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
@@ -161,80 +149,26 @@ const CHARACTER_TO_MAIM_THREAD = {
 };
 
 describe("Tests update view REST API", () => {
-  let app: Express;
-  let listener: Server;
-  beforeEach(function (done) {
-    app = express();
-    app.use(bodyParser.json());
+  const server = startTestServer(router);
 
-    // @ts-expect-error
-    app.use((err, req, res, next) => {
-      console.log(err);
-      next();
-    });
-    app.use((req, res, next) => {
-      // @ts-ignore
-      req.currentUser = { uid: "fb3" };
-      next();
-    });
-    app.use(router);
-    listener = app.listen(4000, () => {
-      done();
-    });
-    process.on("uncaughtException", function (err) {
-      console.log("uncaughtException caught the error");
-    });
-  });
-  afterEach(function (done) {
-    listener.close(done);
-  });
+  test("should update view data", async () => {
+    wrapWithTransaction(async () => {
+      const res = await (
+        await request(server.app).post(
+          `${CHARACTER_TO_MAIM_THREAD.id}/update/view`
+        )
+      ).body({
+        defaultView: "gallery",
+      });
 
-  it("should update view data", async () => {
-    console.log("*************");
-    console.log("*************");
-    console.log("*************");
-    return wrapWithTransaction(async () => {
-      console.log("&&&&&&&&&&&&&&&&");
-      console.log("&&&&&&&&&&&&&&&&");
-      console.log("&&&&&&&&&&&&&&&&");
-      const threadRes2 = await request(app).get(
+      expect(res.status).toBe(200);
+
+      const threadRes = await request(server.app).get(
         "/29d1b2da-3289-454a-9089-2ed47db4967b"
       );
-      console.log("&&&&&&&&&&&&&&&&");
-      console.log("&&&&&&&&&&&&&&&&");
-      console.log("&&&&&&&&&&&&&&&&");
-      console.log(threadRes2.status);
-      console.log(threadRes2.body.default_view);
 
-      await expect(threadRes2.status).to.equal(200);
-      console.log(threadRes2.status);
-      console.log(threadRes2.body.default_view);
-      await expect(threadRes2.body.default_view).to.eql("thread");
-      console.log(threadRes2.status);
-      console.log(threadRes2.body.default_view);
-      console.log("&&&&&&&&&&&&&&&&");
-      console.log("&&&&&&&&&&&&&&&&");
-      console.log("&&&&&&&&&&&&&&&&");
-
-      const res = await request(app)
-        .post(`/${CHARACTER_TO_MAIM_THREAD.id}/update/view`)
-        .send({
-          defaultView: "gallery",
-        });
-
-      await expect(res.status).to.equal(200);
-
-      const threadRes = await request(app).get(
-        "/29d1b2da-3289-454a-9089-2ed47db4967b"
-      );
-      console.log(threadRes.body);
-
-      await expect(threadRes.status).to.equal(200);
-      //expect(threadRes.body.default_view).to.eql("gallery");
-      console.log("&&&&&&&&&&&&&&&&");
-      console.log("&&&&&&&&&&&&&&&&");
-      console.log("&&&&&&&&&&&&&&&&");
-      console.log("&&&&&&&&&&&&&&&&");
+      expect(threadRes.status).toBe(200);
+      expect(threadRes.body.default_view).toEqual("gallery");
     });
-  }).timeout(60000);
+  });
 });
