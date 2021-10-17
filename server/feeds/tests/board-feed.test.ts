@@ -1,8 +1,5 @@
-import "mocha";
-import { expect } from "chai";
-
+import { DbThreadSummaryType } from "Types";
 import { getBoardActivityBySlug } from "../queries";
-import { DbThreadSummaryType } from "../../../Types";
 
 export const extractActivity = (thread: DbThreadSummaryType) => {
   return {
@@ -50,8 +47,8 @@ const extractAuthorData = (thread: any) => {
 };
 
 describe("Tests boards activity queries", () => {
-  describe("tests activity metadata", async () => {
-    it("fetches board activity when slug present (logged in)", async () => {
+  describe("tests activity metadata", () => {
+    test("fetches board activity when slug present (logged in)", async () => {
       const board = await getBoardActivityBySlug({
         slug: "gore",
         // Oncest
@@ -63,7 +60,7 @@ describe("Tests boards activity queries", () => {
         throw Error("Board activity fetching encountered an Error.");
       }
 
-      expect(board.activity.map(extractActivity)).to.eql([
+      expect(board.activity.map(extractActivity)).toEqual([
         {
           comments_amount: 2,
           created: "2020-09-25T05:42:00.00Z",
@@ -106,7 +103,7 @@ describe("Tests boards activity queries", () => {
       ]);
     });
 
-    it("fetches board activity when slug present (logged out)", async () => {
+    test("fetches board activity when slug present (logged out)", async () => {
       const board = await getBoardActivityBySlug({
         slug: "gore",
         firebaseId: undefined,
@@ -117,7 +114,7 @@ describe("Tests boards activity queries", () => {
         throw Error("Board activity fetching encountered an Error.");
       }
 
-      expect(board.activity.map(extractActivity)).to.eql([
+      expect(board.activity.map(extractActivity)).toEqual([
         {
           comments_amount: 2,
           created: "2020-09-25T05:42:00.00Z",
@@ -160,7 +157,7 @@ describe("Tests boards activity queries", () => {
       ]);
     });
 
-    it("fetches empty board activity", async () => {
+    test("fetches empty board activity", async () => {
       const board = await getBoardActivityBySlug({
         slug: "main_street",
         // Bobatan
@@ -172,12 +169,12 @@ describe("Tests boards activity queries", () => {
         throw Error("Board activity fetching encountered an Error.");
       }
 
-      expect(board.activity).to.eql([]);
+      expect(board.activity).toEqual([]);
     });
   });
 
-  describe("fetches metadata", async () => {
-    it("fetches board activity when slug present (logged in)", async () => {
+  describe("fetches metadata", () => {
+    test("fetches board activity when slug present (logged in)", async () => {
       const board = await getBoardActivityBySlug({
         slug: "gore",
         // Oncest
@@ -189,7 +186,7 @@ describe("Tests boards activity queries", () => {
         throw Error("Board activity fetching encountered an Error.");
       }
 
-      expect(board.activity.map(extractsMetadata)).to.eql([
+      expect(board.activity.map(extractsMetadata)).toEqual([
         {
           parent_post_id: null,
           post_id: "ff9f2ae2-a254-4069-9791-3ac5e6dff5bb",
@@ -236,7 +233,7 @@ describe("Tests boards activity queries", () => {
       ]);
     });
 
-    it("fetches board activity when slug present (logged out)", async () => {
+    test("fetches board activity when slug present (logged out)", async () => {
       const board = await getBoardActivityBySlug({
         slug: "gore",
         firebaseId: undefined,
@@ -247,7 +244,7 @@ describe("Tests boards activity queries", () => {
         throw Error("Board activity fetching encountered an Error.");
       }
 
-      expect(board.activity.map(extractsMetadata)).to.eql([
+      expect(board.activity.map(extractsMetadata)).toEqual([
         {
           parent_post_id: null,
           post_id: "ff9f2ae2-a254-4069-9791-3ac5e6dff5bb",
@@ -295,8 +292,8 @@ describe("Tests boards activity queries", () => {
     });
   });
 
-  describe("fetches author data", async () => {
-    it("fetches board activity when slug present (logged in)", async () => {
+  describe("fetches author data", () => {
+    test("fetches board activity when slug present (logged in)", async () => {
       const board = await getBoardActivityBySlug({
         slug: "gore",
         // Oncest
@@ -308,7 +305,7 @@ describe("Tests boards activity queries", () => {
         throw Error("Board activity fetching encountered an Error.");
       }
 
-      expect(board.activity.map(extractAuthorData)).to.eql([
+      expect(board.activity.map(extractAuthorData)).toEqual([
         {
           author: "1",
           friend: true,
@@ -342,7 +339,7 @@ describe("Tests boards activity queries", () => {
       ]);
     });
 
-    it("fetches board activity when slug present (logged out)", async () => {
+    test("fetches board activity when slug present (logged out)", async () => {
       const board = await getBoardActivityBySlug({
         slug: "gore",
         firebaseId: undefined,
@@ -353,7 +350,7 @@ describe("Tests boards activity queries", () => {
         throw Error("Board activity fetching encountered an Error.");
       }
 
-      expect(board.activity.map(extractAuthorData)).to.eql([
+      expect(board.activity.map(extractAuthorData)).toEqual([
         {
           author: "1",
           friend: false,

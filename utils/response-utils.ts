@@ -9,7 +9,7 @@ import {
   ServerThreadSummaryType,
   ServerThreadType,
   restriction_types,
-} from "../Types";
+} from "Types";
 
 import debug from "debug";
 import { transformPermissions } from "./permissions-utils";

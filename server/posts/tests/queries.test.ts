@@ -1,17 +1,11 @@
-import "mocha";
-import deepEqualInAnyOrder from "deep-equal-in-any-order";
-import chai, { expect } from "chai";
-chai.use(deepEqualInAnyOrder);
-
-import { runWithinTransaction } from "../../../utils/test-utils";
-
-import { maybeAddIndexTags } from "../queries";
-
 import debug from "debug";
+import { maybeAddIndexTags } from "../queries";
+import { runWithinTransaction } from "utils/test-utils";
+
 const log = debug("bobaserver:posts:queries-test-log");
 
 describe("Tests posts queries", () => {
-  it("adds index tags to post (and database)", async () => {
+  test("adds index tags to post (and database)", async () => {
     await runWithinTransaction(async (transaction) => {
       // Himbo & zombies post
       const postId = 6;
@@ -26,14 +20,11 @@ describe("Tests posts queries", () => {
         { post_id: postId }
       );
 
-      expect(result.index_tags).to.deep.equalInAnyOrder([
+      expect(result.index_tags).toIncludeSameMembers([
         "leon kennedy",
         "resident evil",
       ]);
-      expect(addedTags).to.deep.equalInAnyOrder([
-        "resident evil",
-        "leon kennedy",
-      ]);
+      expect(addedTags).toIncludeSameMembers(["resident evil", "leon kennedy"]);
     });
   });
 });

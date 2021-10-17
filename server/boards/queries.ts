@@ -1,7 +1,7 @@
-import { DbBoardMetadata } from "../../Types";
+import { DbBoardMetadata } from "Types";
 import debug from "debug";
 import { getMetadataDelta } from "./utils";
-import pool from "../db-pool";
+import pool from "server/db-pool";
 import postsSQL from "../posts/sql";
 import sql from "./sql";
 

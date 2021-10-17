@@ -1,17 +1,14 @@
-import "mocha";
-import { expect } from "chai";
-
 import { getThreadByStringId } from "../queries";
 
 describe("threads queries", () => {
-  it("fetches threads by string id (with comments)", async () => {
+  test("fetches threads by string id (with comments)", async () => {
     const thread = await getThreadByStringId({
       threadId: "29d1b2da-3289-454a-9089-2ed47db4967b",
       // Bobatan
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
     });
 
-    expect(thread).to.eql({
+    expect(thread).toEqual({
       thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
       board_slug: "gore",
       thread_total_comments_amount: 2,
@@ -167,13 +164,13 @@ describe("threads queries", () => {
     });
   });
 
-  it("fetches threads by string id (no comments)", async () => {
+  test("fetches threads by string id (no comments)", async () => {
     const thread = await getThreadByStringId({
       threadId: "a5c903df-35e8-43b2-a41a-208c43154671",
       // Oncest
       firebaseId: "fb3",
     });
-    expect(thread).to.eql({
+    expect(thread).toEqual({
       thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
       board_slug: "gore",
       thread_total_comments_amount: 0,
@@ -279,16 +276,16 @@ describe("threads queries", () => {
     });
   });
 
-  it("fetches threads by string id (logged out)", async () => {
+  test("fetches threads by string id (logged out)", async () => {
     // TODO
   });
 
-  it("returns null thread when id not found", async () => {
+  test("returns null thread when id not found", async () => {
     const thread = await getThreadByStringId({
       threadId: "this_will_not_be_in_the_db",
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
     });
 
-    expect(thread).to.be.null;
+    expect(thread).toBeNull();
   });
 });

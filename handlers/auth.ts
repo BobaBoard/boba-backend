@@ -1,10 +1,10 @@
-import { CacheKeys, cache } from "../server/cache";
+import { CacheKeys, cache } from "server/cache";
 import { NextFunction, Request, Response } from "express";
 import firebaseAuth, { auth } from "firebase-admin";
 
 import { SettingEntry } from "../types/settings";
 import debug from "debug";
-import { getUserSettings } from "../server/users/queries";
+import { getUserSettings } from "server/users/queries";
 
 const log = debug("bobaserver:auth-log");
 const error = debug("bobaserver:auth-error");
@@ -76,6 +76,7 @@ export const ensureLoggedIn = (
   next: NextFunction
 ) => {
   withLoggedIn(req, res, async () => {
+    console.log(req.currentUser);
     const currentUserId = req.currentUser?.uid;
     if (!currentUserId) {
       error(
