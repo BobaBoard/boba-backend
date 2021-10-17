@@ -3,9 +3,10 @@ import {
   getTriggeredThreadsSubscriptions,
   getWebhooksForSubscriptions,
 } from "./queries";
-import axios from "axios";
 
+import axios from "axios";
 import debug from "debug";
+
 const error = debug("bobaserver:subscriptions:utils-error");
 const log = debug("bobaserver:subscriptions:utils-log");
 

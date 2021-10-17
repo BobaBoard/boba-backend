@@ -1,16 +1,17 @@
-import debug from "debug";
 import {
+  DbBoardMetadata,
+  DbCommentType,
   DbPostType,
+  DbThreadSummaryType,
   DbThreadType,
-  ServerThreadType,
   ServerCommentType,
   ServerPostType,
-  DbCommentType,
-  DbBoardMetadata,
-  restriction_types,
   ServerThreadSummaryType,
-  DbThreadSummaryType,
-} from "../Types";
+  ServerThreadType,
+  restriction_types,
+} from "Types";
+
+import debug from "debug";
 import { transformPermissions } from "./permissions-utils";
 
 const info = debug("bobaserver:response-utils-info");

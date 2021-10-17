@@ -1,5 +1,5 @@
 import debug from "debug";
-import { getBoardBySlug } from "../server/boards/queries";
+import { getBoardBySlug } from "server/boards/queries";
 
 import {
   DbRolePermissions,
@@ -9,7 +9,7 @@ import {
   BoardPermissions,
   UserBoardPermissions,
   restriction_types,
-} from "../Types";
+} from "Types";
 
 const log = debug("bobaserver::permissions-utils-log");
 
