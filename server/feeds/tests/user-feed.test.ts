@@ -210,7 +210,6 @@ describe("feed activity queries", () => {
       throw Error("User feed fetching encountered an Error.");
     }
 
-    console.log(feed.cursor);
     expect(feed.activity.map(extractActivity)).toEqual([
       {
         comments_amount: 2,
