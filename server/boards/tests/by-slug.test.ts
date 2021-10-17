@@ -1,13 +1,10 @@
-import "mocha";
-import { expect } from "chai";
-
 import { getBoardBySlug } from "../queries";
 
 describe("Tests boards queries", () => {
-  it("fetches board by slug when slug present", async () => {
+  test("fetches board by slug when slug present", async () => {
     const board = await getBoardBySlug({ slug: "gore", firebaseId: undefined });
 
-    expect(board).to.eql({
+    expect(board).toEqual({
       settings: {
         accentColor: "#f96680",
       },
@@ -55,14 +52,14 @@ describe("Tests boards queries", () => {
     });
   });
 
-  it("fetches board by slug when slug present (logged in)", async () => {
+  test("fetches board by slug when slug present (logged in)", async () => {
     const board = await getBoardBySlug({
       slug: "gore",
       // Bobatan
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
     });
 
-    expect(board).to.eql({
+    expect(board).toEqual({
       settings: {
         accentColor: "#f96680",
       },
@@ -131,12 +128,12 @@ describe("Tests boards queries", () => {
     });
   });
 
-  it("returns null board when slugs not found", async () => {
+  test("returns null board when slugs not found", async () => {
     const board = await getBoardBySlug({
       slug: "this_will_not_be_in_the_db",
       firebaseId: undefined,
     });
 
-    expect(board).to.be.null;
+    expect(board).toBeNull();
   });
 });

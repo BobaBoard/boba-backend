@@ -1,21 +1,16 @@
-import "mocha";
-import deepEqualInAnyOrder from "deep-equal-in-any-order";
-import chai, { expect } from "chai";
-chai.use(deepEqualInAnyOrder);
-
+import debug from "debug";
 import { getLatestSubscriptionData } from "../queries";
 
-import debug from "debug";
 const log = debug("bobaserver:posts:queries-test-log");
 
 describe("Tests posts queries", () => {
-  it("adds index tags to post (and database)", async () => {
+  test("adds index tags to post (and database)", async () => {
     const data = await getLatestSubscriptionData({
       subscriptionId: "a87800a6-21e5-46dd-a979-a901cdcea563",
     });
     console.log(data);
 
-    expect(data).to.deep.equal([
+    expect(data).toIncludeSameMembers([
       {
         subscription_id: "3",
         subscription_name: "aiba!",
