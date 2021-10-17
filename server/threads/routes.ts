@@ -278,11 +278,7 @@ router.post("/:boardSlug/create", ensureLoggedIn, async (req, res, next) => {
   }
 });
 
-router.post("/:thread_id/update/view", async (req, res) => {
-  console.log("########################");
-  console.log(req.body);
-  console.log(req.params);
-  console.log("########################");
+router.post("/:thread_id/update/view", ensureLoggedIn, async (req, res) => {
   const { thread_id } = req.params;
   const { defaultView } = req.body;
 
@@ -290,11 +286,9 @@ router.post("/:thread_id/update/view", async (req, res) => {
     res
       .send(500)
       .json({ message: "Missing default view in thread view update request." });
-    console.log("sent response");
     return;
   }
 
-  console.log("########################");
   // TODO: CHECK PERMISSIONS
   // NOTE: if updating this (and it makes sense) also update
   // the method for thread creation + retrieval.
@@ -313,7 +307,7 @@ router.post("/:thread_id/update/view", async (req, res) => {
     !permissions.length ||
     !permissions.includes(ThreadPermissions.editDefaultView)
   ) {
-    res.sendStatus(401);
+    res.sendStatus(403);
     return;
   }
 
@@ -348,7 +342,7 @@ router.post("/:threadId/move", ensureLoggedIn, async (req, res) => {
     !permissions.length ||
     !permissions.includes(ThreadPermissions.moveThread)
   ) {
-    res.sendStatus(401);
+    res.sendStatus(403);
     return;
   }
 

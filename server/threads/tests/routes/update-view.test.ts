@@ -1,9 +1,11 @@
 import { ServerCommentType, ServerPostType } from "Types";
+import { setLoggedInUser, startTestServer } from "utils/test-utils";
 
 import request from "supertest";
 import router from "../../routes";
-import { startTestServer } from "utils/test-utils";
 import { wrapWithTransaction } from "../../../../utils/test-utils";
+
+jest.mock("handlers/auth");
 
 const CHARACTER_TO_MAIM_POST: ServerPostType = {
   id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
@@ -151,22 +153,30 @@ const CHARACTER_TO_MAIM_THREAD = {
 describe("Tests update view REST API", () => {
   const server = startTestServer(router);
 
+  test("should prevent access if permissions missing", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser("fb2");
+      const res = await request(server.app)
+        .post(`/${CHARACTER_TO_MAIM_THREAD.id}/update/view`)
+        .send({
+          defaultView: "gallery",
+        });
+      expect(res.status).toBe(403);
+    });
+  });
+
   test("should update view data", async () => {
-    wrapWithTransaction(async () => {
-      const res = await (
-        await request(server.app).post(
-          `${CHARACTER_TO_MAIM_THREAD.id}/update/view`
-        )
-      ).body({
-        defaultView: "gallery",
-      });
-
+    await wrapWithTransaction(async () => {
+      setLoggedInUser("fb3");
+      const res = await request(server.app)
+        .post(`/${CHARACTER_TO_MAIM_THREAD.id}/update/view`)
+        .send({
+          defaultView: "gallery",
+        });
       expect(res.status).toBe(200);
-
       const threadRes = await request(server.app).get(
-        "/29d1b2da-3289-454a-9089-2ed47db4967b"
+        `/${CHARACTER_TO_MAIM_THREAD.id}`
       );
-
       expect(threadRes.status).toBe(200);
       expect(threadRes.body.default_view).toEqual("gallery");
     });
