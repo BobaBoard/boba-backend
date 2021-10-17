@@ -253,19 +253,13 @@ export const getUserPermissionsForThread = async ({
   threadId: string;
   firebaseId: string;
 }) => {
-  console.log("$$$$$$$$$$");
-  console.log("$$$$$$$$$$");
-  console.log("$$$$$$$$$$");
-  console.log("$$$$$$$$$$");
   try {
     const permissions = [];
-    console.log("$$$$$$$$$$");
     const threadDetails = await pool.one(sql.getThreadDetails, {
       firebase_id: firebaseId,
       thread_string_id: threadId,
     });
 
-    console.log("$$$$$$$$$$");
     if (threadDetails.is_thread_owner) {
       permissions.push(ThreadPermissions.editDefaultView);
     }
@@ -278,7 +272,6 @@ export const getUserPermissionsForThread = async ({
     permissions.push(...threadPermissions);
     return permissions;
   } catch (e) {
-    console.log("$$$$$$$$$$");
     error(`Error while getting user permissions for the thread.`);
     error(e);
     return false;
