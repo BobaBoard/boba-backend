@@ -184,7 +184,7 @@ router.get("/users/@me", ensureLoggedIn, async (req, res) => {
  *     parameters:
  *       - name: cursor
  *         in: query
- *         description: The cursor to start feeding the activity of the board from.
+ *         description: The cursor to start feeding the activity of the user star feed from.
  *         schema:
  *           type: string
  *     responses:

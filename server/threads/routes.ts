@@ -7,15 +7,13 @@ import {
   getThreadByStringId,
   getTriggeredWebhooks,
   getUserPermissionsForThread,
-  hideThread,
-  markThreadVisit,
-  muteThread,
-  unmuteThread,
   starThread,
   unstarThread,
   hideThread,
   unhideThread,
+  muteThread,
   unmuteThread,
+  markThreadVisit,
   updateThreadView,
 } from "./queries";
 import {
