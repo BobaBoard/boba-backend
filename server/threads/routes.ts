@@ -278,20 +278,27 @@ router.post("/:boardSlug/create", ensureLoggedIn, async (req, res, next) => {
   }
 });
 
-router.post("/:threadId/update/view", async (req, res) => {
-  const { threadId } = req.params;
+router.post("/:thread_id/update/view", ensureLoggedIn, async (req, res) => {
+  const { thread_id } = req.params;
   const { defaultView } = req.body;
+
+  if (!defaultView) {
+    res
+      .send(500)
+      .json({ message: "Missing default view in thread view update request." });
+    return;
+  }
 
   // TODO: CHECK PERMISSIONS
   // NOTE: if updating this (and it makes sense) also update
   // the method for thread creation + retrieval.
   const permissions = await getUserPermissionsForThread({
     firebaseId: req.currentUser.uid,
-    threadId,
+    threadId: thread_id,
   });
 
   if (!permissions) {
-    log(`Error while fetching permissions for post ${threadId}`);
+    log(`Error while fetching permissions for post ${thread_id}`);
     res.sendStatus(500);
     return;
   }
@@ -300,13 +307,13 @@ router.post("/:threadId/update/view", async (req, res) => {
     !permissions.length ||
     !permissions.includes(ThreadPermissions.editDefaultView)
   ) {
-    res.sendStatus(401);
+    res.sendStatus(403);
     return;
   }
 
   if (
     !(await updateThreadView({
-      threadId,
+      threadId: thread_id,
       defaultView,
     }))
   ) {
@@ -335,7 +342,7 @@ router.post("/:threadId/move", ensureLoggedIn, async (req, res) => {
     !permissions.length ||
     !permissions.includes(ThreadPermissions.moveThread)
   ) {
-    res.sendStatus(401);
+    res.sendStatus(403);
     return;
   }
 
