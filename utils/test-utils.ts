@@ -3,6 +3,7 @@ import express, { Express, Router } from "express";
 
 import { ITask } from "pg-promise";
 import { Server } from "http";
+import bodyParser from "body-parser";
 import { mocked } from "ts-jest/utils";
 import pool from "server/db-pool";
 
@@ -13,6 +14,12 @@ export const runWithinTransaction = async (
     await test(t);
     await t.none("ROLLBACK;");
   });
+};
+
+export const wrapWithTransaction = async (test: () => void) => {
+  await pool.none("BEGIN TRANSACTION;");
+  await test();
+  await pool.none("ROLLBACK;");
 };
 
 export const setLoggedInUser = (firebaseId: string) => {
@@ -33,6 +40,7 @@ export const startTestServer = (router: Router) => {
   let listener: Server;
   beforeEach((done) => {
     server.app = express();
+    server.app.use(bodyParser.json());
     // We add this middleware cause the server uses it in every request to check
     // logged in status.
     // TODO: extract middleware initialization in its own method and use it here
