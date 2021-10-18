@@ -118,7 +118,6 @@ router.post("/:slug/metadata/update", ensureLoggedIn, async (req, res) => {
     slug,
   });
   log(`Found board`, board);
-  console.log(board);
 
   if (!board) {
     // TOOD: add error log
