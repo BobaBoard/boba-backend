@@ -227,6 +227,27 @@ export const starThread = async ({
   }
 };
 
+/* REMOVE STAR THREAD TEST */
+export const unstarThread = async ({
+  threadId,
+  firebaseId,
+}: {
+  threadId: string;
+  firebaseId: string;
+}) => {
+  try {
+    await pool.none(sql.unstarThreadByStringId, {
+      firebase_id: firebaseId,
+      thread_string_id: threadId,
+    });
+    return true;
+  } catch (e) {
+    error(`Error while unstarring thread.`);
+    error(e);
+    return false;
+  }
+};
+
 export const hideThread = async ({
   threadId,
   firebaseId,

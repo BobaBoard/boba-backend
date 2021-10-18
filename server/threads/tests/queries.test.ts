@@ -20,6 +20,7 @@ describe("threads queries", () => {
       default_view: "thread",
       hidden: false,
       muted: false,
+      starred: true,
       posts: [
         {
           anonymity_type: "strangers",
@@ -182,6 +183,7 @@ describe("threads queries", () => {
       default_view: "thread",
       hidden: false,
       muted: false,
+      starred: false,
       posts: [
         {
           anonymity_type: "strangers",
