@@ -2,7 +2,7 @@ import { setLoggedInUser, startTestServer } from "utils/test-utils";
 
 import request from "supertest";
 import router from "../../routes";
-import { wrapWithTransaction } from "../../../../utils/test-utils";
+import { wrapWithTransaction } from "utils/test-utils";
 
 jest.mock("handlers/auth");
 
@@ -31,7 +31,7 @@ describe("Tests move thread REST API", () => {
         .send({
           destinationSlug: "long",
         });
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(204);
       const threadRes = await request(server.app).get(
         `/${CHARACTER_TO_MAIM_THREAD_ID}`
       );
