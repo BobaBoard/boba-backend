@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import { ThreadPermissions } from "Types";
+import { ThreadPermissions } from "types/permissions";
 import { getUserPermissionsForThread } from "server/threads/queries";
 
 declare global {

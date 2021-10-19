@@ -12,6 +12,7 @@
       "utils/*": ["utils/*"],
       "handlers/*": ["handlers/*"],
       "server/*": ["server/*"],
+      "types/*": ["types/*"],
       "Types": ["Types"]
     },
     "skipLibCheck": true,
