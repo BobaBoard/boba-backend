@@ -1,12 +1,7 @@
 import {
-  canAccessBoard,
-  transformThreadPermissions,
-} from "utils/permissions-utils";
-import {
   createThread,
   getThreadByStringId,
   getTriggeredWebhooks,
-  getUserPermissionsForThread,
   hideThread,
   markThreadVisit,
   muteThread,
@@ -19,13 +14,13 @@ import {
   makeServerThread,
 } from "utils/response-utils";
 
-import { ThreadPermissions } from "Types";
+import { ThreadPermissions } from "types/permissions";
 import axios from "axios";
+import { canAccessBoard } from "utils/permissions-utils";
 import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
 import { ensureThreadPermission } from "handlers/permissions";
 import express from "express";
-import { getBoardBySlug } from "../boards/queries";
 import { moveThread } from "./queries";
 
 const info = debug("bobaserver:threads:routes-info");

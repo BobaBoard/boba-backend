@@ -1,12 +1,10 @@
-import {
-  DbCommentType,
-  DbPostType,
-  PostPermissions,
-  QueryTagsType,
-} from "Types";
+import { DbCommentType, DbPostType, QueryTagsType } from "Types";
 import { canPostAs, transformPostPermissions } from "utils/permissions-utils";
 
 import { ITask } from "pg-promise";
+import {
+  PostPermissions,
+} from "types/permissions";
 import debug from "debug";
 import { getBoardBySlug } from "../boards/queries";
 import pool from "server/db-pool";

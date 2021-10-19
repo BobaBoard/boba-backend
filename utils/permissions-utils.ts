@@ -3,13 +3,12 @@ import { getBoardBySlug } from "server/boards/queries";
 
 import {
   DbRolePermissions,
-  QueryTagsType,
   PostPermissions,
   ThreadPermissions,
   BoardPermissions,
   UserBoardPermissions,
-  restriction_types,
-} from "Types";
+} from "types/permissions";
+import { QueryTagsType, restriction_types } from "Types";
 
 const log = debug("bobaserver::permissions-utils-log");
 

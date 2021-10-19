@@ -1,4 +1,3 @@
-import { DbThreadType, ThreadPermissions } from "Types";
 import {
   addNewIdentityToThread,
   maybeAddCategoryTags,
@@ -6,6 +5,8 @@ import {
   maybeAddIndexTags,
 } from "../posts/queries";
 
+import { DbThreadType } from "Types";
+import { ThreadPermissions } from "types/permissions";
 import debug from "debug";
 import { getBoardBySlug } from "../boards/queries";
 import pool from "server/db-pool";
