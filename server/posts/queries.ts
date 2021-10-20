@@ -1,10 +1,8 @@
 import { DbCommentType, DbPostType, QueryTagsType } from "Types";
-import { canPostAs, transformPostPermissions } from "utils/permissions-utils";
+import { POST_OWNER_PERMISSIONS, PostPermissions } from "types/permissions";
+import { canPostAs, extractPostPermissions } from "utils/permissions-utils";
 
 import { ITask } from "pg-promise";
-import {
-  PostPermissions,
-} from "types/permissions";
 import debug from "debug";
 import { getBoardBySlug } from "../boards/queries";
 import pool from "server/db-pool";
@@ -669,18 +667,13 @@ export const getUserPermissionsForPost = async ({
       return [];
     }
     if (post.is_own) {
-      return [
-        PostPermissions.editCategoryTags,
-        PostPermissions.editContentNotices,
-        PostPermissions.editIndexTags,
-        PostPermissions.editWhisperTags,
-      ];
+      return POST_OWNER_PERMISSIONS;
     }
     const board = await getBoardBySlug({
       firebaseId,
       slug: post.parent_board_slug,
     });
-    return transformPostPermissions(board.permissions);
+    return extractPostPermissions(board.permissions);
   } catch (e) {
     return false;
   }

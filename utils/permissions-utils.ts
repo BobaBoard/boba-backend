@@ -7,67 +7,48 @@ import {
   ThreadPermissions,
   BoardPermissions,
   UserBoardPermissions,
+  extractPermissions,
 } from "types/permissions";
 import { QueryTagsType, restriction_types } from "Types";
 
-const log = debug("bobaserver::permissions-utils-log");
+const info = debug("bobaserver::permissions-utils-info");
 
 export const hasPermission = (
   permission: DbRolePermissions,
   permissions?: string[]
 ) => {
-  return permissions.some(
-    (p) =>
-      (<any>DbRolePermissions)[p] == permission.toString() ||
-      (<any>DbRolePermissions)[p] == DbRolePermissions.all.toString()
-  );
+  return permissions.some((p) => p == permission || p == DbRolePermissions.all);
 };
 
 export const canPostAs = (permissions?: string[]) => {
   return permissions.some(
     (p) =>
-      (<any>DbRolePermissions)[p] ==
-        DbRolePermissions.post_as_role.toString() ||
-      (<any>DbRolePermissions)[p] == DbRolePermissions.all.toString()
+      (<any>Permissions)[p] == DbRolePermissions.post_as_role.toString() ||
+      (<any>Permissions)[p] == DbRolePermissions.all.toString()
   );
 };
 
-export const transformPostPermissions = (permissions?: string[]) => {
-  const postsPermissions = [];
-  if (hasPermission(DbRolePermissions.edit_category_tags, permissions)) {
-    postsPermissions.push(PostPermissions.editCategoryTags);
-  }
-  if (hasPermission(DbRolePermissions.edit_content_notices, permissions)) {
-    postsPermissions.push(PostPermissions.editContentNotices);
-  }
-  return postsPermissions;
+export const extractPostPermissions = (permissions?: string[]) => {
+  return extractPermissions(PostPermissions, permissions);
 };
 
-export const transformThreadPermissions = (permissions?: string[]) => {
-  const threadPermissions = [];
-  if (hasPermission(DbRolePermissions.move_thread, permissions)) {
-    threadPermissions.push(ThreadPermissions.moveThread);
-  }
-  return threadPermissions;
+export const extractThreadPermissions = (permissions?: string[]) => {
+  return extractPermissions(ThreadPermissions, permissions);
 };
 
-export const transformBoardPermissions = (permissions?: string[]) => {
-  const boardPermissions = [];
-  if (hasPermission(DbRolePermissions.edit_board_details, permissions)) {
-    boardPermissions.push(BoardPermissions.editMetadata);
-  }
-  return boardPermissions;
+export const extractBoardPermissions = (permissions?: string[]) => {
+  return extractPermissions(BoardPermissions, permissions);
 };
 
-export const transformPermissions = (
+export const getUserPermissionsForBoard = (
   permissions?: string[]
 ): UserBoardPermissions => {
-  log(`Transforming the following user permissions: ${permissions}`);
+  info(`Transforming the following user permissions: ${permissions}`);
 
   return {
-    board_permissions: transformBoardPermissions(permissions),
-    post_permissions: transformPostPermissions(permissions),
-    thread_permissions: transformThreadPermissions(permissions),
+    board_permissions: extractBoardPermissions(permissions),
+    post_permissions: extractPostPermissions(permissions),
+    thread_permissions: extractThreadPermissions(permissions),
   };
 };
 
