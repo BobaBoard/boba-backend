@@ -12,7 +12,7 @@ import {
 } from "Types";
 
 import debug from "debug";
-import { transformPermissions } from "./permissions-utils";
+import { getUserPermissionsForBoard } from "./permissions-utils";
 
 const info = debug("bobaserver:response-utils-info");
 const log = debug("bobaserver::response-utils-log");
@@ -242,7 +242,7 @@ export const processBoardMetadata = ({
     slug: metadata.slug,
     avatar_url: metadata.avatar_url,
     descriptions: metadata.descriptions || [],
-    permissions: transformPermissions(metadata.permissions),
+    permissions: getUserPermissionsForBoard(metadata.permissions),
     posting_identities: metadata.posting_identities.map((identity: any) =>
       transformImageUrls(identity)
     ),
