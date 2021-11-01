@@ -38,8 +38,9 @@ components:
       type: object
       properties:
         id:
-          type: string
-          format: uuid
+          #type: string TODO update code to use a uuid instead of database id
+          #format: uuid 
+          type: number
         name:
           type: string
         accessory:

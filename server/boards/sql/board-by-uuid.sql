@@ -4,6 +4,7 @@ WITH
   ordered_pinned_boards AS
     (SELECT row_number() OVER(ORDER BY id) AS index, board_id, user_id FROM user_pinned_boards)
 SELECT 
+    boards.string_id,
     boards.slug,
     boards.tagline,
     boards.avatar_reference_id as avatar_url,
@@ -78,5 +79,5 @@ FROM boards
         ON boards.id = br.board_id
     LEFT JOIN logged_in_user
         ON 1=1
-WHERE boards.slug=${board_slug}
+WHERE boards.string_id=${board_uuid}
 GROUP BY boards.id, umb.user_id, opb.index, br.logged_out_restrictions, br.logged_in_base_restrictions, logged_in_user.id

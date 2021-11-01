@@ -13,7 +13,7 @@ describe("Tests boards REST API", () => {
   const server = startTestServer(router);
 
   test("should return board data (logged out)", async () => {
-    const res = await request(server.app).get("/gore");
+    const res = await request(server.app).get("/c6d3d10e-8e49-4d73-b28a-9d652b41beec");
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual({
@@ -36,7 +36,7 @@ describe("Tests boards REST API", () => {
         },
       ],
       accent_color: "#f96680",
-      id: "gore",
+      id: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
       slug: "gore",
       realm_id: "v0-fake-id",
       tagline: "Blood! Blood! Blood!",

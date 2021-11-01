@@ -1,8 +1,11 @@
-import { getBoardBySlug } from "../queries";
+import { getBoardByUuid } from "../queries";
 
 describe("Tests boards queries", () => {
-  test("fetches board by slug when slug present", async () => {
-    const board = await getBoardBySlug({ slug: "gore", firebaseId: undefined });
+  test("fetches board by uuid when uuid present", async () => {
+    const board = await getBoardByUuid({ 
+      uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec", 
+      firebaseId: undefined 
+    });
 
     expect(board).toEqual({
       settings: {
@@ -27,6 +30,7 @@ describe("Tests boards queries", () => {
         },
       ],
       slug: "gore",
+      string_id: "c6d3d10e-8e49-4d73-b28a-9d652b41beec", 
       tagline: "Blood! Blood! Blood!",
       avatar_url: "gore.png",
       // TODO: do we want to surface accessories for
@@ -52,9 +56,9 @@ describe("Tests boards queries", () => {
     });
   });
 
-  test("fetches board by slug when slug present (logged in)", async () => {
-    const board = await getBoardBySlug({
-      slug: "gore",
+  test("fetches board by uuid when uuid present (logged in)", async () => {
+    const board = await getBoardByUuid({
+      uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
       // Bobatan
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
     });
@@ -82,6 +86,7 @@ describe("Tests boards queries", () => {
         },
       ],
       slug: "gore",
+      string_id: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
       tagline: "Blood! Blood! Blood!",
       avatar_url: "gore.png",
       muted: false,
@@ -128,9 +133,9 @@ describe("Tests boards queries", () => {
     });
   });
 
-  test("returns null board when slugs not found", async () => {
-    const board = await getBoardBySlug({
-      slug: "this_will_not_be_in_the_db",
+  test("returns null board when uuid not found", async () => {
+    const board = await getBoardByUuid({
+      uuid: "00000000-0000-0000-0000-000000000000",
       firebaseId: undefined,
     });
 

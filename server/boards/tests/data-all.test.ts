@@ -5,6 +5,7 @@ const extractBoardDetails = (boardData: any) => {
     avatar_reference_id: boardData.avatar_reference_id,
     settings: boardData.settings,
     slug: boardData.slug,
+    uuid: boardData.string_id,
     tagline: boardData.tagline,
   };
 };
@@ -12,6 +13,7 @@ const extractBoardDetails = (boardData: any) => {
 const extractBoardUpdates = (boardData: any) => {
   return {
     slug: boardData.slug,
+    uuid: boardData.string_id,
     has_updates: boardData.has_updates,
     last_comment: boardData.last_comment,
     last_post: boardData.last_post,
@@ -24,6 +26,7 @@ const extractBoardUpdates = (boardData: any) => {
 const extractBoardUserSettings = (boardData: any) => {
   return {
     slug: boardData.slug,
+    uuid: boardData.string_id,
     muted: boardData.muted,
     pinned_order: boardData.pinned_order,
   };
@@ -44,6 +47,7 @@ describe("Tests boards queries", () => {
             accentColor: "#ff5252",
           },
           slug: "main_street",
+          uuid: "2fb151eb-c600-4fe4-a542-4662487e5496",
           tagline: "For BobaBoard-related discussions.",
         },
         {
@@ -52,6 +56,7 @@ describe("Tests boards queries", () => {
             accentColor: "#f96680",
           },
           slug: "gore",
+          uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
           tagline: "Blood! Blood! Blood!",
         },
         {
@@ -60,6 +65,7 @@ describe("Tests boards queries", () => {
             accentColor: "#24d282",
           },
           slug: "anime",
+          uuid: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
           tagline: "I wish I had a funny one for this.",
         },
         {
@@ -68,6 +74,7 @@ describe("Tests boards queries", () => {
             accentColor: "#00b8ff",
           },
           slug: "long",
+          uuid: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
           tagline: "A board to test with many posts.",
         },
         {
@@ -76,6 +83,7 @@ describe("Tests boards queries", () => {
             accentColor: "#7b00ff",
           },
           slug: "memes",
+          uuid: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
           tagline: "A board to test collections view.",
         },
         {
@@ -85,6 +93,7 @@ describe("Tests boards queries", () => {
             accentColor: "#9b433b",
           },
           slug: "muted",
+          uuid: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
           tagline: "A board to test for muting.",
         },
         {
@@ -94,6 +103,7 @@ describe("Tests boards queries", () => {
             accentColor: "#234a69",
           },
           slug: "restricted",
+          uuid: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
           tagline: "A board to test for logged-in only view",
         },
         {
@@ -103,6 +113,7 @@ describe("Tests boards queries", () => {
             accentColor: "#fa8628",
           },
           slug: "delisted",
+          uuid: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
           tagline: "A board to test for link-only view",
         },
       ]);
@@ -119,6 +130,7 @@ describe("Tests boards queries", () => {
       expect(boards.map(extractBoardUpdates)).toEqual([
         {
           slug: "main_street",
+          uuid: "2fb151eb-c600-4fe4-a542-4662487e5496",
           has_updates: false,
           last_comment: null,
           last_post: null,
@@ -128,6 +140,7 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "gore",
+          uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
           has_updates: true,
           last_comment: new Date(Date.UTC(2020, 9, 4, 12, 44)),
           last_post: new Date(Date.UTC(2020, 8, 25, 12, 42)),
@@ -138,6 +151,7 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "anime",
+          uuid: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
           has_updates: true,
           last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
           last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
@@ -147,6 +161,7 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "long",
+          uuid: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
           has_updates: true,
           last_comment: new Date(Date.UTC(2020, 3, 1, 12, 22)),
           last_post: new Date(Date.UTC(2020, 3, 25, 12, 42)),
@@ -156,6 +171,7 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "memes",
+          uuid: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
           has_updates: false,
           last_comment: null,
           last_post: new Date(Date.UTC(2020, 7, 22, 10, 36, 55, 850)),
@@ -165,6 +181,7 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "muted",
+          uuid: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
           has_updates: false,
           last_comment: null,
           last_post: null,
@@ -174,6 +191,7 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "restricted",
+          uuid: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
           has_updates: false,
           last_comment: null,
           last_post: null,
@@ -183,6 +201,7 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "delisted",
+          uuid: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
           has_updates: false,
           last_comment: null,
           last_post: null,
@@ -198,6 +217,7 @@ describe("Tests boards queries", () => {
       expect(boards.map(extractBoardUpdates)).toEqual([
         {
           slug: "main_street",
+          uuid: "2fb151eb-c600-4fe4-a542-4662487e5496",
           has_updates: false,
           last_comment: null,
           last_post: null,
@@ -207,6 +227,7 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "gore",
+          uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
           has_updates: false,
           last_comment: new Date(Date.UTC(2020, 9, 4, 12, 44)),
           last_post: new Date(Date.UTC(2020, 8, 25, 12, 42)),
@@ -216,6 +237,7 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "anime",
+          uuid: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
           has_updates: false,
           last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
           last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
@@ -225,6 +247,7 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "long",
+          uuid: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
           has_updates: false,
           last_comment: new Date(Date.UTC(2020, 3, 1, 12, 22)),
           last_post: new Date(Date.UTC(2020, 3, 25, 12, 42)),
@@ -234,6 +257,7 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "memes",
+          uuid: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
           has_updates: false,
           last_comment: null,
           last_post: new Date(Date.UTC(2020, 7, 22, 10, 36, 55, 850)),
@@ -243,6 +267,7 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "muted",
+          uuid: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
           has_updates: false,
           last_comment: null,
           last_post: new Date(Date.UTC(2020, 0, 14, 8, 42)),
@@ -252,6 +277,7 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "restricted",
+          uuid: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
           has_updates: false,
           last_comment: null,
           last_post: null,
@@ -261,6 +287,7 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "delisted",
+          uuid: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
           has_updates: false,
           last_comment: null,
           last_post: null,
@@ -280,6 +307,7 @@ describe("Tests boards queries", () => {
       expect(boards.map(extractBoardUpdates)).toEqual([
         {
           slug: "main_street",
+          uuid: "2fb151eb-c600-4fe4-a542-4662487e5496",
           has_updates: false,
           last_comment: null,
           last_post: null,
@@ -289,6 +317,7 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "gore",
+          uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
           has_updates: true,
           last_comment: new Date(Date.UTC(2020, 9, 4, 12, 44)),
           last_post: new Date(Date.UTC(2020, 8, 25, 12, 42)),
@@ -299,6 +328,7 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "anime",
+          uuid: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
           has_updates: false,
           last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
           last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
@@ -308,6 +338,7 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "long",
+          uuid: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
           has_updates: true,
           last_comment: new Date(Date.UTC(2020, 3, 1, 12, 22)),
           last_post: new Date(Date.UTC(2020, 3, 25, 12, 42)),
@@ -317,6 +348,7 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "memes",
+          uuid: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
           has_updates: true,
           last_comment: null,
           last_post: new Date(Date.UTC(2020, 7, 22, 10, 36, 55, 850)),
@@ -328,6 +360,7 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "muted",
+          uuid: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
           has_updates: false,
           last_comment: null,
           last_post: new Date(Date.UTC(2020, 0, 14, 8, 42)),
@@ -337,6 +370,7 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "restricted",
+          uuid: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
           has_updates: false,
           last_comment: null,
           last_post: null,
@@ -346,6 +380,7 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "delisted",
+          uuid: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
           has_updates: false,
           last_comment: null,
           last_post: null,
@@ -367,16 +402,52 @@ describe("Tests boards queries", () => {
       expect(boards.map(extractBoardUserSettings)).toEqual([
         {
           slug: "main_street",
+          uuid: "2fb151eb-c600-4fe4-a542-4662487e5496",
           muted: false,
           pinned_order: null,
         },
-        { slug: "gore", muted: false, pinned_order: "1" },
-        { slug: "anime", muted: false, pinned_order: "2" },
-        { slug: "long", muted: false, pinned_order: null },
-        { slug: "memes", muted: false, pinned_order: null },
-        { slug: "muted", muted: false, pinned_order: null },
-        { slug: "restricted", muted: false, pinned_order: null },
-        { slug: "delisted", muted: false, pinned_order: null },
+        { 
+          slug: "gore",
+          uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
+          muted: false,
+          pinned_order: "1" 
+        },
+        { 
+          slug: "anime",
+          uuid: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
+          muted: false,
+          pinned_order: "2" 
+        },
+        { 
+          slug: "long",
+          uuid: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
+          muted: false,
+          pinned_order: null 
+        },
+        { 
+          slug: "memes",
+          uuid: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
+          muted: false,
+          pinned_order: null 
+        },
+        { 
+          slug: "muted",
+          uuid: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
+          muted: false,
+          pinned_order: null 
+        },
+        { 
+          slug: "restricted",
+          uuid: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
+          muted: false,
+          pinned_order: null 
+        },
+        { 
+          slug: "delisted",
+          uuid: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
+          muted: false,
+          pinned_order: null 
+        }
       ]);
     });
     test("fetches all boards user settings (no user)", async () => {
@@ -385,16 +456,52 @@ describe("Tests boards queries", () => {
       expect(boards.map(extractBoardUserSettings)).toEqual([
         {
           slug: "main_street",
+          uuid: "2fb151eb-c600-4fe4-a542-4662487e5496",
           muted: false,
           pinned_order: null,
         },
-        { slug: "gore", muted: false, pinned_order: null },
-        { slug: "anime", muted: false, pinned_order: null },
-        { slug: "long", muted: false, pinned_order: null },
-        { slug: "memes", muted: false, pinned_order: null },
-        { slug: "muted", muted: false, pinned_order: null },
-        { slug: "restricted", muted: false, pinned_order: null },
-        { slug: "delisted", muted: false, pinned_order: null },
+        {
+          slug: "gore",
+          uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
+          muted: false,
+          pinned_order: null 
+        },
+        {
+          slug: "anime",
+          uuid: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
+          muted: false,
+          pinned_order: null 
+        },
+        {
+          slug: "long",
+          uuid: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
+          muted: false,
+          pinned_order: null 
+        },
+        {
+          slug: "memes",
+          uuid: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
+          muted: false,
+          pinned_order: null 
+        },
+        {
+          slug: "muted",
+          uuid: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
+          muted: false,
+          pinned_order: null 
+        },
+        {
+          slug: "restricted",
+          uuid: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
+          muted: false,
+          pinned_order: null 
+        },
+        {
+          slug: "delisted",
+          uuid: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
+          muted: false,
+          pinned_order: null 
+        },
       ]);
     });
   });
@@ -423,6 +530,7 @@ describe("Tests boards queries", () => {
           accentColor: "#ff5252",
         },
         slug: "main_street",
+        string_id: "2fb151eb-c600-4fe4-a542-4662487e5496",
         tagline: "For BobaBoard-related discussions.",
         logged_in_base_restrictions: [],
         logged_out_restrictions: [],
