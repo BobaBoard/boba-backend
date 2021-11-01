@@ -178,7 +178,6 @@ router.post("/:uuid/metadata/update", ensureLoggedIn, async (req, res) => {
     uuid,
   });
   log(`Found board`, board);
-  console.log(board);
 
   if (!board) {
     // TOOD: add error log

@@ -23,6 +23,7 @@ import { ThreadPermissions } from "Types";
 import axios from "axios";
 import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
+import { ensureThreadPermission } from "handlers/permissions";
 import express from "express";
 import { getBoardBySlug } from "../boards/queries";
 import { moveThread } from "./queries";
@@ -278,92 +279,64 @@ router.post("/:boardSlug/create", ensureLoggedIn, async (req, res, next) => {
   }
 });
 
-router.post("/:threadId/update/view", async (req, res) => {
-  const { threadId } = req.params;
-  const { defaultView } = req.body;
+router.post(
+  "/:thread_id/update/view",
+  ensureLoggedIn,
+  ensureThreadPermission(ThreadPermissions.editDefaultView),
+  async (req, res) => {
+    const { thread_id } = req.params;
+    const { defaultView } = req.body;
 
-  // TODO: CHECK PERMISSIONS
-  // NOTE: if updating this (and it makes sense) also update
-  // the method for thread creation + retrieval.
-  const permissions = await getUserPermissionsForThread({
-    firebaseId: req.currentUser.uid,
-    threadId,
-  });
+    if (!defaultView) {
+      res.send(500).json({
+        message: "Missing default view in thread view update request.",
+      });
+      return;
+    }
 
-  if (!permissions) {
-    log(`Error while fetching permissions for post ${threadId}`);
-    res.sendStatus(500);
-    return;
+    if (
+      !(await updateThreadView({
+        threadId: thread_id,
+        defaultView,
+      }))
+    ) {
+      return res.sendStatus(500);
+    }
+
+    res.sendStatus(200);
   }
+);
 
-  if (
-    !permissions.length ||
-    !permissions.includes(ThreadPermissions.editDefaultView)
-  ) {
-    res.sendStatus(401);
-    return;
+router.post(
+  "/:thread_id/move",
+  ensureLoggedIn,
+  ensureThreadPermission(ThreadPermissions.moveThread),
+  async (req, res) => {
+    const { thread_id } = req.params;
+    const { destinationSlug } = req.body;
+
+    // TODO: add a test for this case
+    if (
+      !(await canAccessBoard({
+        slug: destinationSlug,
+        firebaseId: req.currentUser.uid,
+      }))
+    ) {
+      res.status(403).json({ message: "Cannot access destination board" });
+      return;
+    }
+
+    if (
+      !(await moveThread({
+        threadId: thread_id,
+        destinationSlug,
+      }))
+    ) {
+      return res.sendStatus(500);
+    }
+
+    res.sendStatus(204);
   }
-
-  if (
-    !(await updateThreadView({
-      threadId,
-      defaultView,
-    }))
-  ) {
-    return res.sendStatus(500);
-  }
-
-  res.sendStatus(200);
-});
-
-router.post("/:threadId/move", ensureLoggedIn, async (req, res) => {
-  const { threadId } = req.params;
-  const { destinationSlug } = req.body;
-
-  const permissions = await getUserPermissionsForThread({
-    firebaseId: req.currentUser.uid,
-    threadId,
-  });
-
-  if (!permissions) {
-    log(`Error while fetching permissions for post ${threadId}`);
-    res.sendStatus(500);
-    return;
-  }
-
-  if (
-    !permissions.length ||
-    !permissions.includes(ThreadPermissions.moveThread)
-  ) {
-    res.sendStatus(401);
-    return;
-  }
-
-  // Check that the user has access to the destination
-  const board = await getBoardBySlug({
-    firebaseId: req.currentUser.uid,
-    slug: destinationSlug,
-  });
-  if (
-    !board.permissions ||
-    !transformThreadPermissions(board.permissions).includes(
-      ThreadPermissions.moveThread
-    )
-  ) {
-    res.sendStatus(401);
-    return;
-  }
-
-  if (
-    !(await moveThread({
-      threadId,
-      destinationSlug,
-    }))
-  ) {
-    return res.sendStatus(500);
-  }
-
-  res.sendStatus(200);
-});
+);
 
 export default router;

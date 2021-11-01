@@ -167,11 +167,10 @@ router.post("/migrate_fb_data", ensureLoggedIn, async (req, res) => {
         const hasSignedIn = !!userRecord.metadata.lastSignInTime;
         // Add creation time
         //
-        console.log("user", userRecord.toJSON());
       });
     })
     .catch(function (error) {
-      console.log("Error listing users:", error);
+      log("Error listing users:", error);
     });
 
   log(await firebaseAuth.auth().getUser(user));

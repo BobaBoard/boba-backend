@@ -36,11 +36,11 @@ describe("Test users routes", () => {
         cached_board: {},
       },
     };
-
-    setLoggedInUser("fb2");
     mocked(cache().hget).mockResolvedValueOnce(JSON.stringify(cachedData));
+    setLoggedInUser("fb2");
 
     const res = await request(server.app).get("/@me");
+
     expect(res.status).toBe(200);
     expect(res.body).toEqual(cachedData);
     expect(cache().hget).toBeCalledTimes(1);
@@ -61,8 +61,6 @@ describe("Test users routes", () => {
       username: "jersey_devil_69",
       pinned_boards: {},
     });
-
-    mocked(ensureLoggedIn).mockRestore();
   });
 
   test("caches logged in user data", async function () {
