@@ -46,7 +46,7 @@ export const ensureThreadPermission = (permission: ThreadPermissions) => {
         !req.currentThreadPermissions ||
         !req.currentThreadPermissions.includes(permission)
       ) {
-        res.status(401).json({
+        res.status(403).json({
           message: "User does not have required permissions.",
         });
         return;

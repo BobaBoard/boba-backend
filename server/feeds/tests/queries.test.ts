@@ -203,7 +203,6 @@ describe("feed activity queries", () => {
       pageSize: 1,
     })) as DbFeedType;
 
-    console.log(feed.cursor);
     expect(feed.activity.map(extractActivity)).toEqual([
       {
         comments_amount: 2,
