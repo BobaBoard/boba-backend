@@ -5,6 +5,7 @@ describe("Tests delta metadata", () => {
     const delta = getMetadataDelta({
       oldMetadata: {
         slug: "gore",
+        string_id: "2fb151eb-c600-4fe4-a542-4662487e5496",
         settings: {
           accentColor: "red",
         },

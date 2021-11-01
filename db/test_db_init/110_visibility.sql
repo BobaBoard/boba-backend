@@ -1,9 +1,11 @@
-INSERT INTO boards(slug, tagline, avatar_reference_id, settings) VALUES
-    ('restricted',
+INSERT INTO boards(string_id, slug, tagline, avatar_reference_id, settings) VALUES
+    ('76ebaab0-6c3e-4d7b-900f-f450625a5ed3',
+     'restricted',
      'A board to test for logged-in only view',
      'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2Fe4e263cf-ee98-4902-9c14-c10299210e01.png?alt=media&token=7c170411-9401-4d4e-9f66-5d6dfee2fccd',
      '{ "accentColor": "#234a69"}'),
-    ('delisted',
+    ('bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b',
+     'delisted',
      'A board to test for link-only view',
      'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2Fc3b86805-4df7-4b1a-9fa2-b96b5165a636?alt=media&token=7652d44a-38cb-40cc-82ef-908cd4265840',
      '{ "accentColor": "#fa8628"}');
