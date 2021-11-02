@@ -17,7 +17,6 @@
     "test:changed": "yarn run test:base --watch --onlyChanged",
     "test:file": "yarn run test:base --watchAll",
     "test:docker": "docker-compose -f docker-compose.test.yml run --rm test",
-    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --no-cache",
     "open-api:generate": "node -r dotenv/config -r ts-node/register -r tsconfig-paths/register utils/generate-spec-file.ts dotenv_config_path=./.env.prod",
     "open-api:validate": "yarn run open-api:generate && validate-api open-api-spec.json && openapi-examples-validator open-api-spec.json --ignore-formats color quill-delta",
     "open-api:docker": "docker-compose -f docker-compose.open-api.test.yml run --rm test",
@@ -59,6 +58,7 @@
     "redoc-express": "^1.0.0",
     "swagger-jsdoc": "^6.1.0",
     "ts-node": "^8.9.1",
+    "tsconfig-paths": "^3.11.0",
     "uuid": "^8.1.0"
   },
   "devDependencies": {
@@ -71,7 +71,6 @@
     "openapi-examples-validator": "^4.4.0",
     "supertest": "^4.0.2",
     "ts-jest": "^27.0.5",
-    "tsconfig-paths": "^3.11.0",
     "typescript": "^3.8.3"
   }
 }
