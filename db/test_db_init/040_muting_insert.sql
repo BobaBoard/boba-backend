@@ -1,7 +1,7 @@
 
-INSERT INTO Boards(slug, tagline, avatar_reference_id, settings)
+INSERT INTO Boards(string_id, slug, tagline, avatar_reference_id, settings)
 VALUES
-    ('muted', 'A board to test for muting.', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2Feded338a-e0e5-4a97-a368-5ae525c0eec4?alt=media&token=914f84b7-a581-430e-bb09-695f653e8e02', '{ "accentColor": "#9b433b" }');
+    ('2bdce2fa-12e0-461b-b0fb-1a2e67227434', 'muted', 'A board to test for muting.', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2Feded338a-e0e5-4a97-a368-5ae525c0eec4?alt=media&token=914f84b7-a581-430e-bb09-695f653e8e02', '{ "accentColor": "#9b433b" }');
 
 WITH
   new_thread_id AS

@@ -238,7 +238,7 @@ export const processBoardMetadata = ({
   isLoggedIn: boolean;
 }) => {
   let finalMetadata = {
-    id: metadata.slug,
+    id: metadata.string_id,
     slug: metadata.slug,
     avatar_url: metadata.avatar_url,
     descriptions: metadata.descriptions || [],
@@ -315,7 +315,7 @@ export const processBoardsSummary = ({
 
   // TODO[cleanup]: get correct format from db
   return result.map((result) => ({
-    id: result.slug,
+    id: result.string_id,
     realm_id: "v0-fake-id",
     slug: result.slug,
     tagline: result.tagline,

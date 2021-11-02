@@ -4,11 +4,11 @@ import path from "path";
 const markBoardVisit = `
     INSERT INTO user_board_last_visits(user_id, board_id) VALUES (
         (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
-        (SELECT id from boards WHERE boards.slug = $/board_slug/))
+        (SELECT id from boards WHERE boards.string_id = $/board_uuid/))
     ON CONFLICT(user_id, board_id) DO UPDATE 
         SET last_visit_time = DEFAULT
         WHERE user_board_last_visits.user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
-            AND user_board_last_visits.board_id = (SELECT id from boards WHERE boards.slug = $/board_slug/)`;
+            AND user_board_last_visits.board_id = (SELECT id from boards WHERE boards.string_id = $/board_uuid/)`;
 
 const deleteSectionCategories = `
     DELETE FROM board_description_section_categories bdsc 
@@ -16,14 +16,14 @@ const deleteSectionCategories = `
     WHERE  
         bds.string_id = $/section_id/ AND 
         bds.id = bdsc.section_id AND 
-        bds.board_id = (SELECT id from boards WHERE boards.slug = $/board_slug/) AND
+        bds.board_id = (SELECT id from boards WHERE boards.string_id = $/board_uuid/) AND
         ($/category_names/ IS NULL OR bdsc.category_id IN (SELECT id FROM categories WHERE category = ANY($/category_names/)));`;
 
 const deleteSection = `
     DELETE FROM board_description_sections bds
     WHERE  
         bds.string_id = $/section_id/ AND
-        bds.board_id = (SELECT id from boards WHERE boards.slug = $/board_slug/);`;
+        bds.board_id = (SELECT id from boards WHERE boards.string_id = $/board_uuid/);`;
 
 const updateSection = `
     UPDATE board_description_sections bds
@@ -34,7 +34,7 @@ const updateSection = `
     FROM boards
     WHERE
         boards.id = bds.board_id 
-        AND bds.board_id  = (SELECT id from boards WHERE boards.slug = $/board_slug/)
+        AND bds.board_id  = (SELECT id from boards WHERE boards.string_id = $/board_uuid/)
         AND bds.string_id = $/section_id/
     RETURNING *;
 `;
@@ -43,7 +43,7 @@ const createSection = `
     INSERT INTO board_description_sections(string_id, board_id, title, description, index, type)
     VALUES(
         $/section_id/,
-        (SELECT id from boards WHERE boards.slug = $/board_slug/),
+        (SELECT id from boards WHERE boards.string_id = $/board_uuid/),
         $/title/,
         $/description/,
         $/index/,
@@ -74,53 +74,51 @@ const createAddCategoriesToFilterSectionQuery = (
   );
 };
 
-const muteBoardBySlug = `
+const muteBoardByUuid = `
     INSERT INTO user_muted_boards(user_id, board_id) VALUES (
         (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
-        (SELECT id from boards WHERE boards.slug = $/board_slug/))
+        (SELECT id from boards WHERE boards.string_id = $/board_uuid/))
     ON CONFLICT(user_id, board_id) DO NOTHING`;
 
-const unmuteBoardBySlug = `
+const unmuteBoardByUuid = `
     DELETE FROM user_muted_boards WHERE
         user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
         AND
-        board_id = (SELECT id from boards WHERE boards.slug = $/board_slug/)`;
+        board_id = (SELECT id from boards WHERE boards.string_id = $/board_uuid/)`;
 
-const pinBoardBySlug = `
+const pinBoardByUuid = `
     INSERT INTO user_pinned_boards(user_id, board_id) VALUES (
         (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
-        (SELECT id from boards WHERE boards.slug = $/board_slug/))
+        (SELECT id from boards WHERE boards.string_id = $/board_uuid/))
     ON CONFLICT(user_id, board_id) DO NOTHING`;
 
-const unpinBoardBySlug = `
+const unpinBoardByUuid = `
     DELETE FROM user_pinned_boards WHERE
         user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
         AND
-        board_id = (SELECT id from boards WHERE boards.slug = $/board_slug/)`;
+        board_id = (SELECT id from boards WHERE boards.string_id = $/board_uuid/)`;
 
-const dismissNotificationsBySlug = `
+const dismissNotificationsByUuid = `
     INSERT INTO dismiss_board_notifications_requests(user_id, board_id, dismiss_request_time) VALUES (
         (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
-        (SELECT id from boards WHERE boards.slug = $/board_slug/),
+        (SELECT id from boards WHERE boards.string_id = $/board_uuid/),
         DEFAULT)
     ON CONFLICT(user_id, board_id) DO UPDATE
         SET dismiss_request_time = DEFAULT
         WHERE
             dismiss_board_notifications_requests.user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
-            AND dismiss_board_notifications_requests.board_id = (SELECT id from boards WHERE boards.slug = $/board_slug/)`;
+            AND dismiss_board_notifications_requests.board_id = (SELECT id from boards WHERE boards.string_id = $/board_uuid/)`;
 
 const updateBoardSettings = `
     UPDATE boards
     SET tagline = $/tagline/,
         settings = $/settings/
-    WHERE boards.slug = $/slug/`;
+    WHERE boards.string_id = $/uuid/`;
 
 export default {
   getAllBoards: new QueryFile(path.join(__dirname, "all-boards.sql")),
-  getBoardActivityBySlug: new QueryFile(
-    path.join(__dirname, "board-activity-by-slug.sql")
-  ),
   getBoardBySlug: new QueryFile(path.join(__dirname, "board-by-slug.sql")),
+  getBoardByUuid: new QueryFile(path.join(__dirname, "board-by-uuid.sql")),
   markBoardVisit,
   deleteSectionCategories,
   deleteSection,
@@ -128,9 +126,9 @@ export default {
   createSection,
   updateBoardSettings,
   createAddCategoriesToFilterSectionQuery,
-  muteBoardBySlug,
-  unmuteBoardBySlug,
-  pinBoardBySlug,
-  unpinBoardBySlug,
-  dismissNotificationsBySlug,
+  muteBoardByUuid,
+  unmuteBoardByUuid,
+  pinBoardByUuid,
+  unpinBoardByUuid,
+  dismissNotificationsByUuid,
 };
