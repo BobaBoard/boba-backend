@@ -51,13 +51,41 @@ export const getBoardBySlug = async ({
   }
 };
 
+export const getBoardByUuid = async ({
+  firebaseId,
+  uuid,
+}: {
+  firebaseId: string | undefined;
+  uuid: string;
+}): Promise<DbBoardMetadata> => {
+  try {
+    const rows = await pool.oneOrNone(sql.getBoardByUuid, {
+      firebase_id: firebaseId,
+      board_uuid: uuid,
+    });
+
+    if (!rows) {
+      log(`Board not found: ${uuid}`);
+      return null;
+    }
+
+    info(`Got getBoardByUuid query result:`, rows);
+    log(`Fetched board ${uuid} for user ${firebaseId}`);
+    return rows;
+  } catch (e) {
+    error(`Error while fetching board by slug (${uuid}).`);
+    error(e);
+    return null;
+  }
+};
+
 export const updateBoardMetadata = async ({
-  slug,
+  uuid,
   firebaseId,
   oldMetadata,
   newMetadata,
 }: {
-  slug: string;
+  uuid: string;
   firebaseId: string;
   oldMetadata: DbBoardMetadata;
   newMetadata: Partial<DbBoardMetadata>;
@@ -68,7 +96,7 @@ export const updateBoardMetadata = async ({
       newMetadata,
     });
 
-    log(`Received metadata delta for update to board ${slug}`);
+    log(`Received metadata delta for update to board ${uuid}`);
     // TODO: print at depth (now seeing [Object])
     log(delta);
 
@@ -79,7 +107,7 @@ export const updateBoardMetadata = async ({
           delta.texts.deleted.map(async (text) => {
             await transaction.none(sql.deleteSection, {
               section_id: text.id,
-              board_slug: slug,
+              board_uuid: uuid,
             });
           })
         );
@@ -90,12 +118,12 @@ export const updateBoardMetadata = async ({
           delta.categoryFilters.deleted.map(async (filter) => {
             await transaction.none(sql.deleteSectionCategories, {
               section_id: filter.id,
-              board_slug: slug,
+              board_uuid: uuid,
               category_names: null,
             });
             await transaction.none(sql.deleteSection, {
               section_id: filter.id,
-              board_slug: slug,
+              board_uuid: uuid,
             });
           })
         );
@@ -110,7 +138,7 @@ export const updateBoardMetadata = async ({
                 title: text.title,
                 description: text.description,
                 index: text.index,
-                board_slug: slug,
+                board_uuid: uuid,
                 section_id: text.id,
               });
             } else {
@@ -119,7 +147,7 @@ export const updateBoardMetadata = async ({
                 title: text.title,
                 description: text.description,
                 index: text.index,
-                board_slug: slug,
+                board_uuid: uuid,
                 type: "text",
               });
             }
@@ -136,7 +164,7 @@ export const updateBoardMetadata = async ({
                 title: category.title,
                 description: category.description,
                 index: category.index,
-                board_slug: slug,
+                board_uuid: uuid,
                 section_id: category.id,
               });
             } else {
@@ -145,7 +173,7 @@ export const updateBoardMetadata = async ({
                 title: category.title,
                 description: category.description,
                 index: category.index,
-                board_slug: slug,
+                board_uuid: uuid,
                 type: "category_filter",
               });
             }
@@ -153,7 +181,7 @@ export const updateBoardMetadata = async ({
             if (category.categories.deleted.length > 0) {
               await transaction.none(sql.deleteSectionCategories, {
                 section_id: category.id,
-                board_slug: slug,
+                board_uuid: uuid,
                 category_names: category.categories.deleted,
               });
               log("Removed obsolete categories from filter.");
@@ -175,7 +203,7 @@ export const updateBoardMetadata = async ({
 
         if (delta.tagline || delta.accentColor) {
           await transaction.none(sql.updateBoardSettings, {
-            slug,
+            uuid,
             tagline: delta.tagline || oldMetadata.tagline,
             settings: {
               accentColor:
@@ -198,28 +226,28 @@ export const updateBoardMetadata = async ({
     }
 
     // Now return the new result
-    return await pool.oneOrNone(sql.getBoardBySlug, {
-      board_slug: slug,
+    return await pool.oneOrNone(sql.getBoardByUuid, {
+      board_uuid: uuid,
       firebase_id: firebaseId,
     });
   } catch (e) {
-    error(`Error while updating board (${slug}) metadata.`);
+    error(`Error while updating board (${uuid}) metadata.`);
     error(e);
     return false;
   }
 };
 
 export const markBoardVisit = async ({
-  slug,
+  uuid,
   firebaseId,
 }: {
-  slug: string;
+  uuid: string;
   firebaseId: string;
 }) => {
   try {
     await pool.none(sql.markBoardVisit, {
       firebase_id: firebaseId,
-      board_slug: slug,
+      board_uuid: uuid,
     });
     return true;
   } catch (e) {
@@ -230,16 +258,16 @@ export const markBoardVisit = async ({
 };
 
 export const muteBoard = async ({
-  slug,
+  uuid,
   firebaseId,
 }: {
-  slug: string;
+  uuid: string;
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.muteBoardBySlug, {
+    await pool.none(sql.muteBoardByUuid, {
       firebase_id: firebaseId,
-      board_slug: slug,
+      board_uuid: uuid,
     });
     return true;
   } catch (e) {
@@ -250,16 +278,16 @@ export const muteBoard = async ({
 };
 
 export const unmuteBoard = async ({
-  slug,
+  uuid,
   firebaseId,
 }: {
-  slug: string;
+  uuid: string;
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.unmuteBoardBySlug, {
+    await pool.none(sql.unmuteBoardByUuid, {
       firebase_id: firebaseId,
-      board_slug: slug,
+      board_uuid: uuid,
     });
     return true;
   } catch (e) {
@@ -270,16 +298,16 @@ export const unmuteBoard = async ({
 };
 
 export const pinBoard = async ({
-  slug,
+  uuid,
   firebaseId,
 }: {
-  slug: string;
+  uuid: string;
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.pinBoardBySlug, {
+    await pool.none(sql.pinBoardByUuid, {
       firebase_id: firebaseId,
-      board_slug: slug,
+      board_uuid: uuid,
     });
     return true;
   } catch (e) {
@@ -290,16 +318,16 @@ export const pinBoard = async ({
 };
 
 export const unpinBoard = async ({
-  slug,
+  uuid,
   firebaseId,
 }: {
-  slug: string;
+  uuid: string;
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.unpinBoardBySlug, {
+    await pool.none(sql.unpinBoardByUuid, {
       firebase_id: firebaseId,
-      board_slug: slug,
+      board_uuid: uuid,
     });
     return true;
   } catch (e) {
@@ -310,16 +338,16 @@ export const unpinBoard = async ({
 };
 
 export const dismissBoardNotifications = async ({
-  slug,
+  uuid,
   firebaseId,
 }: {
-  slug: string;
+  uuid: string;
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.dismissNotificationsBySlug, {
+    await pool.none(sql.dismissNotificationsByUuid, {
       firebase_id: firebaseId,
-      board_slug: slug,
+      board_uuid: uuid,
     });
     return true;
   } catch (e) {
