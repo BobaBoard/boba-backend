@@ -24,6 +24,14 @@ describe("Tests boards REST API", () => {
     expect(res.body).toEqual(GORE_BOARD_METADATA.LOGGED_OUT);
   });
 
+  test("should return board data (logged in)", async () => {
+    setLoggedInUser(BOBATAN_USER_ID);
+    const res = await request(server.app).get(`/${GORE_BOARD_ID}`);
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(GORE_BOARD_METADATA.BOBATAN);
+  }, 10000);
+
   test("should cache board data (logged out)", async () => {
     await request(server.app).get(`/${GORE_BOARD_ID}`);
 
@@ -50,13 +58,5 @@ describe("Tests boards REST API", () => {
     );
     expect(res.status).toBe(200);
     expect(res.body).toEqual(modifiedData);
-  });
-
-  test("should return board data (logged in)", async () => {
-    setLoggedInUser(BOBATAN_USER_ID);
-    const res = await request(server.app).get(`/${GORE_BOARD_ID}`);
-
-    expect(res.status).toBe(200);
-    expect(res.body).toEqual(GORE_BOARD_METADATA.BOBATAN);
   });
 });
