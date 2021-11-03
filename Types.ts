@@ -1,3 +1,4 @@
+import { BoardDescription } from "types/rest/boards";
 export interface UserIdentityType {
   name: string;
   // TODO[realms]: make this avatar_url
@@ -236,15 +237,6 @@ export enum PostPermissions {
   editContentNotices = "edit_content_notices",
 }
 
-export interface BoardDescription {
-  id?: string;
-  index: number;
-  title: string;
-  type: "text" | "category_filter";
-  description?: string;
-  categories?: string[];
-}
-
 export enum restriction_types {
   LOCK_ACCESS = "lock_access",
   DELIST = "delist",
@@ -259,9 +251,11 @@ export interface DbBoardMetadata {
     accentColor: string;
   };
   descriptions: BoardDescription[];
+  muted: boolean;
+  pinned_order: number | null;
   posting_identities: {
     id: string;
-    avatar_reference_id: string;
+    avatar_url: string;
     color: string | undefined;
     accessory: string | undefined;
     name: string;

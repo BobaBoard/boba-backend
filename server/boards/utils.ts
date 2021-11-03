@@ -1,12 +1,14 @@
-import { BoardDescription, DbBoardMetadata, restriction_types } from "Types";
 import { CacheKeys, cache } from "server/cache";
+import { getBoardBySlug, getBoardByUuid } from "./queries";
 import {
   processBoardMetadata,
   processBoardsSummary,
 } from "utils/response-utils";
 
+import { BoardDescription } from "types/rest/boards";
+import { DbBoardMetadata } from "Types";
 import debug from "debug";
-import { getBoardBySlug, getBoardByUuid } from "./queries";
+import stringify from "fast-json-stable-stringify";
 
 const info = debug("bobaserver:board:utils-info");
 const log = debug("bobaserver:board:utils-log");
@@ -128,50 +130,6 @@ export const getMetadataDelta = ({
   };
 };
 
-export const getBoardMetadata = async ({
-  slug,
-  firebaseId,
-}: {
-  slug: string;
-  firebaseId?: string;
-}) => {
-  if (!firebaseId) {
-    const cachedBoard = await cache().hget(CacheKeys.BOARD_METADATA, slug);
-    if (cachedBoard) {
-      log(`Found cached metadata for board ${slug}`);
-      return JSON.parse(cachedBoard);
-    }
-  }
-
-  const board = await getBoardBySlug({
-    firebaseId,
-    slug,
-  });
-  info(`Found board`, board);
-
-  if (!board) {
-    return;
-  }
-
-  const boardSummary = processBoardsSummary({
-    boards: [board],
-    isLoggedIn: !!firebaseId,
-  });
-  const boardMetadata = processBoardMetadata({
-    metadata: board,
-    isLoggedIn: !!firebaseId,
-  });
-  const finalMetadata = {
-    ...boardSummary[0],
-    ...boardMetadata,
-  };
-  if (!firebaseId) {
-    cache().hset(CacheKeys.BOARD_METADATA, slug, JSON.stringify(finalMetadata));
-  }
-  log(`Processed board metadata (${slug}) for user ${firebaseId}`);
-  return finalMetadata;
-};
-
 export const getBoardMetadataByUuid = async ({
   uuid,
   firebaseId,
@@ -210,9 +168,8 @@ export const getBoardMetadataByUuid = async ({
     ...boardMetadata,
   };
   if (!firebaseId) {
-    cache().hset(CacheKeys.BOARD_METADATA, uuid, JSON.stringify(finalMetadata));
+    cache().hset(CacheKeys.BOARD_METADATA, uuid, stringify(finalMetadata));
   }
   log(`Processed board metadata (${uuid}) for user ${firebaseId}`);
   return finalMetadata;
 };
-

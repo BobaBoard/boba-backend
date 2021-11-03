@@ -1,8 +1,11 @@
 import { CacheKeys, cache } from "server/cache";
-import { canAccessBoard, canAccessBoardByUuid, hasPermission } from "utils/permissions-utils";
+import {
+  canAccessBoard,
+  canAccessBoardByUuid,
+  hasPermission,
+} from "utils/permissions-utils";
 import {
   dismissBoardNotifications,
-  getBoardBySlug,
   getBoardByUuid,
   markBoardVisit,
   muteBoard,
@@ -16,8 +19,7 @@ import { DbRolePermissions } from "Types";
 import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
-import { getBoardMetadata, getBoardMetadataByUuid } from "./utils";
-import { processBoardMetadata } from "utils/response-utils";
+import { getBoardMetadataByUuid } from "./utils";
 
 const info = debug("bobaserver:board:routes-info");
 const log = debug("bobaserver:board:routes");
@@ -41,7 +43,7 @@ const router = express.Router();
  *         required: true
  *         schema:
  *           type: string
- *           # format: uuid
+ *           format: uuid
  *         examples:
  *           existing:
  *             summary: An existing board
@@ -120,9 +122,9 @@ router.get("/:uuid", async (req, res) => {
 
 /**
  * @openapi
- * /boards/{uuid}/metadata/update:
- *   post:
- *     summary: Update boards metadata
+ * /boards/{uuid}:
+ *   patch:
+ *     summary: Update board metadata
  *     tags:
  *       - /boards/
  *     security:
@@ -134,18 +136,18 @@ router.get("/:uuid", async (req, res) => {
  *         required: true
  *         schema:
  *           type: string
- *           # format: uuid
+ *           format: uuid
  *         examples:
  *           existing:
  *             summary: An existing board (gore)
  *             value: c6d3d10e-8e49-4d73-b28a-9d652b41beec
  *     requestBody:
  *       description: request body
- *       content: 
+ *       content:
  *         application/json:
- *           schema: 
+ *           schema:
  *             $ref: "#/components/schemas/BoardDescription"
- *           examples: 
+ *           examples:
  *             gore:
  *               $ref: "#/components/examples/GoreMetadataUpdateBody"
  *       required: false
@@ -169,7 +171,7 @@ router.get("/:uuid", async (req, res) => {
  *               existing:
  *                 $ref: '#/components/examples/GoreMetadataUpdateResponse'
  */
-router.post("/:uuid/metadata/update", ensureLoggedIn, async (req, res) => {
+router.patch("/:uuid/", ensureLoggedIn, async (req, res) => {
   const { uuid } = req.params;
   const { descriptions, accentColor, tagline } = req.body;
 
@@ -180,18 +182,19 @@ router.post("/:uuid/metadata/update", ensureLoggedIn, async (req, res) => {
   log(`Found board`, board);
 
   if (!board) {
-    // TOOD: add error log
-    return res.sendStatus(404);
+    return res
+      .status(404)
+      .send({ message: `The board with id "${uuid}" was not found.` });
   }
 
   if (!hasPermission(DbRolePermissions.edit_board_details, board.permissions)) {
-    // TOOD: add error log
-    return res.sendStatus(403);
+    return res
+      .status(403)
+      .send({ message: `User cannot access board with id "${uuid}".` });
   }
 
   const newMetadata = await updateBoardMetadata({
     uuid,
-    // @ts-ignore
     firebaseId: req.currentUser.uid,
     oldMetadata: board,
     newMetadata: { descriptions, settings: { accentColor }, tagline },
@@ -203,14 +206,13 @@ router.post("/:uuid/metadata/update", ensureLoggedIn, async (req, res) => {
   }
 
   await cache().hdel(CacheKeys.BOARD, uuid);
-  res.status(200).json(
-    processBoardMetadata({
-      metadata: newMetadata,
-      isLoggedIn: true,
-    })
-  );
+  await cache().hdel(CacheKeys.BOARD_METADATA, uuid);
+  const boardMetadata = await getBoardMetadataByUuid({
+    firebaseId: req.currentUser?.uid,
+    uuid,
+  });
+  res.status(200).json(boardMetadata);
 });
-
 /**
  * @openapi
  * /boards/{uuid}/visits:
@@ -355,7 +357,6 @@ router.delete("/:uuid/mute", ensureLoggedIn, async (req, res) => {
     return;
   }
 
-  // @ts-ignore
   info(`Unmuted board: ${uuid} for user ${req.currentUser.uid}.`);
   res.status(200).json();
 });
@@ -405,7 +406,6 @@ router.post("/:uuid/pin", ensureLoggedIn, async (req, res) => {
     return;
   }
 
-  // @ts-ignore
   info(`Pinned board: ${uuid} for user ${req.currentUser.uid}.`);
   res.status(200).json();
 });

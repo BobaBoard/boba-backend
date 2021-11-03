@@ -22,7 +22,7 @@ SELECT
             WHERE board_description_sections.id = bds.id
             GROUP BY bds.id ))) FILTER (WHERE bds.id IS NOT NULL) as descriptions,
     umb.user_id IS NOT NULL as muted,
-    COALESCE(opb.index, NULL) as pinned_order,
+    COALESCE(opb.index::int, NULL) as pinned_order,
     COALESCE(
         json_agg(DISTINCT jsonb_build_object(
             'id', p.role_id,
@@ -59,7 +59,7 @@ FROM boards
         ON realm_accessories.accessory_id = accessories.id
     LEFT JOIN LATERAL (
             SELECT 
-                string_id AS role_id, 
+                roles.string_id AS role_id, 
                 avatar_reference_id AS avatar_reference_id,
                 color AS role_color,
                 accessories.image_reference_id AS role_accessory,
