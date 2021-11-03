@@ -5,6 +5,7 @@ import router from "../../routes";
 import { wrapWithTransaction } from "utils/test-utils";
 
 jest.mock("handlers/auth");
+jest.mock("server/db-pool");
 
 const CHARACTER_TO_MAIM_THREAD_ID = "29d1b2da-3289-454a-9089-2ed47db4967b";
 
@@ -38,5 +39,5 @@ describe("Tests update view REST API", () => {
       expect(threadRes.status).toBe(200);
       expect(threadRes.body.default_view).toEqual("gallery");
     });
-  });
+  }, 10000);
 });

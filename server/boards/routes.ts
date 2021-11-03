@@ -208,6 +208,7 @@ router.patch("/:uuid/", ensureLoggedIn, async (req, res) => {
   }
 
   await cache().hdel(CacheKeys.BOARD, uuid);
+  await cache().hdel(CacheKeys.BOARD_METADATA, uuid);
   const boardMetadata = await getBoardMetadataByUuid({
     firebaseId: req.currentUser?.uid,
     uuid,
