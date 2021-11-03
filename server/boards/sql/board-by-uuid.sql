@@ -9,7 +9,7 @@ SELECT
     boards.tagline,
     boards.avatar_reference_id as avatar_url,
     boards.settings,
-    json_agg(DISTINCT jsonb_build_object(
+    COALESCE(json_agg(DISTINCT jsonb_build_object(
         'id', bds.string_id,
         'index', bds.index, 
         'title', bds.title,
@@ -21,9 +21,9 @@ SELECT
                 LEFT JOIN board_description_section_categories bdsc ON bds.id = bdsc.section_id
                 LEFT JOIN categories ON bdsc.category_id = categories.id 
             WHERE board_description_sections.id = bds.id
-            GROUP BY bds.id ))) FILTER (WHERE bds.id IS NOT NULL) as descriptions,
+            GROUP BY bds.id ))) FILTER (WHERE bds.id IS NOT NULL), '[]') as descriptions,
     umb.user_id IS NOT NULL as muted,
-    COALESCE(opb.index, NULL) as pinned_order,
+    COALESCE(opb.index::int, NULL) as pinned_order,
     COALESCE(
         json_agg(DISTINCT jsonb_build_object(
             'id', p.role_id,
@@ -34,7 +34,7 @@ SELECT
         )) FILTER (WHERE p.permissions = 'post_as_role' OR p.permissions = 'all'), '[]') AS posting_identities,
     COALESCE(
         json_agg(DISTINCT jsonb_build_object(
-            'id', accessories.id,
+            'id', accessories.string_id,
             'name', COALESCE(accessories.name, 'Unknown'),
             'accessory', accessories.image_reference_id
         )) FILTER (WHERE accessories.id IS NOT NULL), '[]') as accessories,
@@ -60,7 +60,7 @@ FROM boards
         ON realm_accessories.accessory_id = accessories.id
     LEFT JOIN LATERAL (
             SELECT 
-                string_id AS role_id, 
+                roles.string_id AS role_id, 
                 avatar_reference_id AS avatar_reference_id,
                 color AS role_color,
                 accessories.image_reference_id AS role_accessory,

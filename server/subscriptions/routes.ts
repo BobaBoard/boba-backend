@@ -3,6 +3,7 @@ import { CacheKeys, cache } from "../cache";
 import debug from "debug";
 import express from "express";
 import { getLatestSubscriptionData } from "./queries";
+import stringify from "fast-json-stable-stringify";
 
 const info = debug("bobaserver:board:routes-info");
 const log = debug("bobaserver:board:routes");
@@ -30,7 +31,7 @@ router.get("/:subscriptionId/latest", async (req, res) => {
   cache().hset(
     CacheKeys.SUBSCRIPTION,
     subscriptionId,
-    JSON.stringify(subscriptionData)
+    stringify(subscriptionData)
   );
 });
 

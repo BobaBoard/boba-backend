@@ -15,6 +15,7 @@ CREATE INDEX user_thread_identities_thread_id on user_thread_identities(thread_i
 CREATE TABLE IF NOT EXISTS accessories
 (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    string_id TEXT NOT NULL,
     name TEXT,
     image_reference_id TEXT NOT NULL
 );

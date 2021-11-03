@@ -241,7 +241,15 @@ export const processBoardMetadata = ({
     id: metadata.string_id,
     slug: metadata.slug,
     avatar_url: metadata.avatar_url,
-    descriptions: metadata.descriptions || [],
+    descriptions: metadata.descriptions.map((description) => ({
+      ...description,
+      description:
+        description.type == "text" ? description.description : undefined,
+      categories:
+        description.type == "category_filter"
+          ? description.categories
+          : undefined,
+    })),
     permissions: transformPermissions(metadata.permissions),
     posting_identities: metadata.posting_identities.map((identity: any) =>
       transformImageUrls(identity)
