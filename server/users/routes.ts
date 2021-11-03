@@ -22,6 +22,7 @@ import debug from "debug";
 import express from "express";
 import firebaseAuth from "firebase-admin";
 import { getBoards } from "../boards/queries";
+import stringify from "fast-json-stable-stringify";
 
 const info = debug("bobaserver:users:routes-info");
 const log = debug("bobaserver:users:routes-log");
@@ -118,7 +119,7 @@ router.get("/@me", ensureLoggedIn, async (req, res) => {
     pinned_boards: pins,
   };
   res.status(200).json(userDataResponse);
-  cache().hset(CacheKeys.USER, currentUserId, JSON.stringify(userDataResponse));
+  cache().hset(CacheKeys.USER, currentUserId, stringify(userDataResponse));
 });
 
 router.post("/me/update", ensureLoggedIn, async (req, res) => {
@@ -383,7 +384,7 @@ router.post("/settings/update", ensureLoggedIn, async (req, res) => {
     await cache().hset(
       CacheKeys.USER_SETTINGS,
       firebaseId,
-      JSON.stringify(settings)
+      stringify(settings)
     );
     res.status(200).json(aggregateByType(settings));
   } catch (e) {

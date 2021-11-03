@@ -1,5 +1,4 @@
 import { CacheKeys, cache } from "server/cache";
-import { DbBoardMetadata, restriction_types } from "Types";
 import { getBoardBySlug, getBoardByUuid } from "./queries";
 import {
   processBoardMetadata,
@@ -7,7 +6,9 @@ import {
 } from "utils/response-utils";
 
 import { BoardDescription } from "types/rest/boards";
+import { DbBoardMetadata } from "Types";
 import debug from "debug";
+import stringify from "fast-json-stable-stringify";
 
 const info = debug("bobaserver:board:utils-info");
 const log = debug("bobaserver:board:utils-log");
@@ -167,7 +168,7 @@ export const getBoardMetadata = async ({
     ...boardMetadata,
   };
   if (!firebaseId) {
-    cache().hset(CacheKeys.BOARD_METADATA, slug, JSON.stringify(finalMetadata));
+    cache().hset(CacheKeys.BOARD_METADATA, slug, stringify(finalMetadata));
   }
   log(`Processed board metadata (${slug}) for user ${firebaseId}`);
   return finalMetadata;
@@ -211,7 +212,7 @@ export const getBoardMetadataByUuid = async ({
     ...boardMetadata,
   };
   if (!firebaseId) {
-    cache().hset(CacheKeys.BOARD_METADATA, uuid, JSON.stringify(finalMetadata));
+    cache().hset(CacheKeys.BOARD_METADATA, uuid, stringify(finalMetadata));
   }
   log(`Processed board metadata (${uuid}) for user ${firebaseId}`);
   return finalMetadata;

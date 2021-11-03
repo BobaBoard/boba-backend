@@ -7,6 +7,7 @@ import { getUserFromFirebaseId } from "../queries";
 import { mocked } from "ts-jest/utils";
 import request from "supertest";
 import router from "../routes";
+import stringify from "fast-json-stable-stringify";
 
 jest.mock("../../cache");
 jest.mock("handlers/auth");
@@ -36,7 +37,7 @@ describe("Test users routes", () => {
         cached_board: {},
       },
     };
-    mocked(cache().hget).mockResolvedValueOnce(JSON.stringify(cachedData));
+    mocked(cache().hget).mockResolvedValueOnce(stringify(cachedData));
     setLoggedInUser("fb2");
 
     const res = await request(server.app).get("/@me");
@@ -74,8 +75,7 @@ describe("Test users routes", () => {
       "fb2",
       // TODO: this will fail if we change what we cache. We should not
       // rely on the whole response being cached, but declare the object ourselves.
-      // ISSUE: JSON.stringify is not deterministic. Might use: https://www.npmjs.com/package/json-stable-stringify
-      JSON.stringify(res.body)
+      stringify(res.body)
     );
   });
 
