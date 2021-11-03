@@ -1,5 +1,6 @@
 import { setLoggedInUser, startTestServer } from "utils/test-utils";
 
+import { BOBATAN_USER_ID } from "test/data/auth";
 import request from "supertest";
 import router from "../../routes";
 import { wrapWithTransaction } from "utils/test-utils";
@@ -25,7 +26,7 @@ describe("Tests move thread REST API", () => {
 
   test("should update view data", async () => {
     await wrapWithTransaction(async () => {
-      setLoggedInUser("c6HimTlg2RhVH3fC1psXZORdLcx2");
+      setLoggedInUser(BOBATAN_USER_ID);
       const res = await request(server.app)
         .post(`/${CHARACTER_TO_MAIM_THREAD_ID}/move`)
         .send({

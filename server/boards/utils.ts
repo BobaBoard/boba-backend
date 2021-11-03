@@ -1,12 +1,13 @@
-import { BoardDescription, DbBoardMetadata, restriction_types } from "Types";
 import { CacheKeys, cache } from "server/cache";
+import { DbBoardMetadata, restriction_types } from "Types";
+import { getBoardBySlug, getBoardByUuid } from "./queries";
 import {
   processBoardMetadata,
   processBoardsSummary,
 } from "utils/response-utils";
 
+import { BoardDescription } from "types/rest/boards";
 import debug from "debug";
-import { getBoardBySlug, getBoardByUuid } from "./queries";
 
 const info = debug("bobaserver:board:utils-info");
 const log = debug("bobaserver:board:utils-log");
@@ -215,4 +216,3 @@ export const getBoardMetadataByUuid = async ({
   log(`Processed board metadata (${uuid}) for user ${firebaseId}`);
   return finalMetadata;
 };
-
