@@ -130,50 +130,6 @@ export const getMetadataDelta = ({
   };
 };
 
-export const getBoardMetadata = async ({
-  slug,
-  firebaseId,
-}: {
-  slug: string;
-  firebaseId?: string;
-}) => {
-  if (!firebaseId) {
-    const cachedBoard = await cache().hget(CacheKeys.BOARD_METADATA, slug);
-    if (cachedBoard) {
-      log(`Found cached metadata for board ${slug}`);
-      return JSON.parse(cachedBoard);
-    }
-  }
-
-  const board = await getBoardBySlug({
-    firebaseId,
-    slug,
-  });
-  info(`Found board`, board);
-
-  if (!board) {
-    return;
-  }
-
-  const boardSummary = processBoardsSummary({
-    boards: [board],
-    isLoggedIn: !!firebaseId,
-  });
-  const boardMetadata = processBoardMetadata({
-    metadata: board,
-    isLoggedIn: !!firebaseId,
-  });
-  const finalMetadata = {
-    ...boardSummary[0],
-    ...boardMetadata,
-  };
-  if (!firebaseId) {
-    cache().hset(CacheKeys.BOARD_METADATA, slug, stringify(finalMetadata));
-  }
-  log(`Processed board metadata (${slug}) for user ${firebaseId}`);
-  return finalMetadata;
-};
-
 export const getBoardMetadataByUuid = async ({
   uuid,
   firebaseId,
