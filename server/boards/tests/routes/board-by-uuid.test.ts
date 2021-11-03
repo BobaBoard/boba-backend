@@ -1,8 +1,8 @@
-import { BOBATAN_USER_ID, JERSEY_DEVIL_USER_ID } from "test/data/auth";
 import { CacheKeys, cache } from "server/cache";
 import { GORE_BOARD_ID, GORE_BOARD_METADATA } from "test/data/boards";
 import { setLoggedInUser, startTestServer } from "utils/test-utils";
 
+import { BOBATAN_USER_ID } from "test/data/auth";
 import { BoardMetadata } from "types/rest/boards";
 import debug from "debug";
 import { mocked } from "ts-jest/utils";
