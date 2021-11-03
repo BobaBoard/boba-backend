@@ -67,7 +67,7 @@ describe("Tests boards REST API", () => {
         descriptions: [],
       });
     });
-  });
+  }, 10000);
 
   test("Should correctly handle cache", async () => {
     await wrapWithTransaction(async () => {
@@ -88,5 +88,5 @@ describe("Tests boards REST API", () => {
         GORE_BOARD_ID
       );
     });
-  });
+  }, 10000);
 });
