@@ -63,9 +63,9 @@ CREATE UNIQUE INDEX content_warnings_warning on content_warnings(warning);
 CREATE TABLE IF NOT EXISTS boards
 (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
-    /* Textual id of the board, e.g. "main", "anime", "memes". Used as part of the URL. */
-    string_id TEXT NOT NULL,
     /* The board's UUID. Used in backend requests. */
+    string_id TEXT NOT NULL,
+    /* Textual id of the board, e.g. "main", "anime", "memes". Used as part of the URL. */
     slug TEXT NOT NULL,
     tagline TEXT NOT NULL,
     /* Reference to the id of the image on external storage provider. */

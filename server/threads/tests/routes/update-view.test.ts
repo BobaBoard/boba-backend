@@ -2,7 +2,7 @@ import { setLoggedInUser, startTestServer } from "utils/test-utils";
 
 import request from "supertest";
 import router from "../../routes";
-import { wrapWithTransaction } from "../../../../utils/test-utils";
+import { wrapWithTransaction } from "utils/test-utils";
 
 jest.mock("handlers/auth");
 
