@@ -1,30 +1,30 @@
 components:
-  schemas:
+  responses:
     default401:
-     #description: Unauthorized
+      description: Unauthorized
       content:
-        text/plain:
+        application/json:
           schema:
             type: string
           example: Unauthorized
     default403:
-     #description: Forbidden
+      description: Forbidden
       content:
-        text/plain:
+        application/json:
           schema:
             type: string
           example: Forbidden
     default404:
-     #description: Not Found
+      description: Not Found
       content:
-        text/plain:
+        application/json:
           schema:
             type: string
           example: Not Found
     default500:
-     #description: Internal Server Error
+      description: Internal Server Error
       content:
-        text/plain:
+        application/json:
           schema:
             type: string
           example: Internal Server Error
@@ -37,7 +37,7 @@ components:
             properties:
               message:
                 type: string
-          example: 
+          example:
             message: No authenticated user found
     ensureLoggedIn403:
       description: User is not authorized to perform the action.
@@ -48,5 +48,5 @@ components:
             properties:
               message:
                 type: string
-          example: 
+          example:
             message: Authentication token expired

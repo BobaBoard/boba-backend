@@ -4,25 +4,30 @@ components:
       type: object
       properties:
         last_post_at:
-          type: string
-          format: date-time
-          nullable: true
+          oneOf:
+            - type: string
+              format: date-time
+            - type: "null"
         last_comment_at:
-          type: string
-          format: date-time
-          nullable: true
+          oneOf:
+            - type: string
+              format: date-time
+            - type: "null"
         last_activity_at:
-          type: string
-          format: date-time
-          nullable: true
+          oneOf:
+            - type: string
+              format: date-time
+            - type: "null"
         last_activity_from_others_at:
-          type: string
-          format: date-time
-          nullable: true
+          oneOf:
+            - type: string
+              format: date-time
+            - type: "null"
         last_visit_at:
-          type: string
-          format: date-time
-          nullable: true
+          oneOf:
+            - type: string
+              format: date-time
+            - type: "null"
       required:
         - id
         - last_post_at

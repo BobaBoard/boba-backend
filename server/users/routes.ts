@@ -35,6 +35,7 @@ const router = express.Router();
  * /users/@me:
  *   get:
  *     summary: Gets data for the current user.
+ *     operationId: getCurrentUser
  *     tags:
  *       - /users/
  *     security:
@@ -225,6 +226,7 @@ router.post("/invite/accept", async (req, res) => {
  * /users/@me/notifications:
  *   get:
  *     summary: Gets notifications data for the current user.
+ *     operationId: getCurrentUserNotifications
  *     description: |
  *       Gets notifications data for the current user, including pinned boards.
  *       If `realm_id` is present, also fetch notification data for the current realm.
@@ -324,6 +326,7 @@ router.get("/@me/notifications", ensureLoggedIn, async (req, res) => {
  * /users/@me/bobadex:
  *   get:
  *     summary: Gets bobadex data for the current user.
+ *     operationId: getCurrentUserBobadex
  *     tags:
  *       - /users/
  *     security:

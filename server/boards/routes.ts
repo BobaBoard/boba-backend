@@ -31,6 +31,7 @@ const router = express.Router();
  * /boards/{uuid}:
  *   get:
  *     summary: Fetches board metadata.
+ *     operationId: getBoardsByUuid
  *     tags:
  *       - /boards/
  *     security:
@@ -74,7 +75,7 @@ const router = express.Router();
  *             example: { message: "You don't have permission to access this board." }
  *       404:
  *         description: The board was not found.
- *         $ref: "#/components/schemas/default404"
+ *         $ref: "#/components/responses/default404"
  *       200:
  *         description: The board metadata.
  *         content:
@@ -125,6 +126,7 @@ router.get("/:uuid", async (req, res) => {
  * /boards/{uuid}:
  *   patch:
  *     summary: Update board metadata
+ *     operationId: patchBoardsByUuid
  *     tags:
  *       - /boards/
  *     security:
@@ -154,13 +156,13 @@ router.get("/:uuid", async (req, res) => {
  *     responses:
  *       401:
  *         description: User was not found.
- *         $ref: "#/components/schemas/default401"
+ *         $ref: "#/components/responses/default401"
  *       403:
  *         description: User is not authorized to update the metadata of this board.
- *         $ref: "#/components/schemas/default403"
+ *         $ref: "#/components/responses/default403"
  *       404:
  *         description: The board was not found.
- *         $ref: "#/components/schemas/default404"
+ *         $ref: "#/components/responses/default404"
  *       200:
  *         description: The board metadata.
  *         content:
@@ -218,6 +220,7 @@ router.patch("/:uuid/", ensureLoggedIn, async (req, res) => {
  * /boards/{uuid}/visits:
  *   get:
  *     summary: Sets last visited time for board
+ *     operationId: visitsBoardsByUuid
  *     tags:
  *       - /boards/
  *     security:
@@ -243,7 +246,7 @@ router.patch("/:uuid/", ensureLoggedIn, async (req, res) => {
  *             example: { "message" : "This board is unavailable to logged out users." }
  *       500:
  *         description: Internal Server Error
- *         $ref: "#/components/schemas/default500"
+ *         $ref: "#/components/responses/default500"
  *       200:
  *         description: The visit was successfully registered.
  */
@@ -270,6 +273,7 @@ router.post("/:uuid/visits", ensureLoggedIn, async (req, res) => {
  * /boards/{uuid}/mute:
  *   post:
  *     summary: Mutes a board.
+ *     operationId: mutesBoardsByUuid
  *     description: Mutes the specified board for the current user.
  *     tags:
  *       - /boards/
@@ -285,12 +289,12 @@ router.post("/:uuid/visits", ensureLoggedIn, async (req, res) => {
  *           # format: uuid
  *     responses:
  *       401:
- *         $ref: "#/components/schemas/ensureLoggedIn401"
+ *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
- *         $ref: "#/components/schemas/ensureLoggedIn403"
+ *         $ref: "#/components/responses/ensureLoggedIn403"
  *       500:
  *         description: Internal Server Error
- *         $ref: "#/components/schemas/default500"
+ *         $ref: "#/components/responses/default500"
  *       200:
  *         description: The board was successfully muted.
  */
@@ -318,6 +322,7 @@ router.post("/:uuid/mute", ensureLoggedIn, async (req, res) => {
  * /boards/{uuid}/mute:
  *   delete:
  *     summary: Unmutes a board.
+ *     operationId: unmutesBoardsByUuid
  *     description: Unmutes the specified board for the current user.
  *     tags:
  *       - /boards/
@@ -332,12 +337,12 @@ router.post("/:uuid/mute", ensureLoggedIn, async (req, res) => {
  *           type: string
  *     responses:
  *       401:
- *         $ref: "#/components/schemas/ensureLoggedIn401"
+ *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
- *         $ref: "#/components/schemas/ensureLoggedIn403"
+ *         $ref: "#/components/responses/ensureLoggedIn403"
  *       500:
  *         description: Internal Server Error
- *         $ref: "#/components/schemas/default500"
+ *         $ref: "#/components/responses/default500"
  *       200:
  *         description: The board was successfully unmuted.
  *
@@ -366,6 +371,7 @@ router.delete("/:uuid/mute", ensureLoggedIn, async (req, res) => {
  * /boards/{uuid}/pin:
  *   post:
  *     summary: Pins a board.
+ *     operationId: pinsBoardsByUuid
  *     description: Pins the specified board for the current user.
  *     tags:
  *       - /boards/
@@ -381,12 +387,12 @@ router.delete("/:uuid/mute", ensureLoggedIn, async (req, res) => {
  *           # format: uuid
  *     responses:
  *       401:
- *         $ref: "#/components/schemas/ensureLoggedIn401"
+ *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
- *         $ref: "#/components/schemas/ensureLoggedIn403"
+ *         $ref: "#/components/responses/ensureLoggedIn403"
  *       500:
  *         description: Internal Server Error
- *         $ref: "#/components/schemas/default500"
+ *         $ref: "#/components/responses/default500"
  *       200:
  *         description: The board was successfully pinned.
  *
@@ -415,6 +421,7 @@ router.post("/:uuid/pin", ensureLoggedIn, async (req, res) => {
  * /boards/{uuid}/pin:
  *   delete:
  *     summary: Unpins a board.
+ *     operationId: unpinsBoardsByUuid
  *     description: Unpins the specified board for the current user.
  *     tags:
  *       - /boards/
@@ -430,12 +437,12 @@ router.post("/:uuid/pin", ensureLoggedIn, async (req, res) => {
  *           # format: uuid
  *     responses:
  *       401:
- *         $ref: "#/components/schemas/ensureLoggedIn401"
+ *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
- *         $ref: "#/components/schemas/ensureLoggedIn403"
+ *         $ref: "#/components/responses/ensureLoggedIn403"
  *       500:
  *         description: Internal Server Error
- *         $ref: "#/components/schemas/default500"
+ *         $ref: "#/components/responses/default500"
  *       200:
  *         description: The board was successfully unpinned.
  *
@@ -464,6 +471,7 @@ router.delete("/:uuid/pin", ensureLoggedIn, async (req, res) => {
  * /boards/{uuid}/notifications/dismiss:
  *   post:
  *     summary: Dismiss all notifications for board
+ *     operationId: dismissBoardsByUuid
  *     tags:
  *       - /boards/
  *     security:
@@ -483,10 +491,10 @@ router.delete("/:uuid/pin", ensureLoggedIn, async (req, res) => {
  *     responses:
  *       401:
  *         description: User is not logged in.
- *         $ref: "#/components/schemas/default401"
+ *         $ref: "#/components/responses/default401"
  *       500:
  *         description: Internal Server Error
- *         $ref: "#/components/schemas/default500"
+ *         $ref: "#/components/responses/default500"
  *       204:
  *         description: Board notifications dismissed.
  */
