@@ -1,8 +1,8 @@
-import swaggerJsdoc from "swagger-jsdoc";
-import redoc from "redoc-express";
-import express from "express";
-
 import debug from "debug";
+import express from "express";
+import redoc from "redoc-express";
+import swaggerJsdoc from "swagger-jsdoc";
+
 const info = debug("bobaserver:handlers:open-api-log");
 
 const options = {
@@ -27,7 +27,7 @@ This is just to test that sections work. It will be written better later.
     },
     servers: [
       {
-        url: "http://localhost:4200/",
+        url: "http://localhost:4200",
         description: "Development server",
       },
     ],

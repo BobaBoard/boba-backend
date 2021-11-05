@@ -14,16 +14,22 @@ components:
           type: boolean
         last_activity_at:
           description: When the board was last updated.
-          type: date-time
-          nullable: true
+          oneOf:
+            - type: string
+              format: date-time
+            - type: "null"
         last_activity_from_others_at:
           description: When the board was last updated by someone other than the current user.
-          type: date-time
-          nullable: true
+          oneOf:
+            - type: string
+              format: date-time
+            - type: "null"
         last_visited at:
           description: When the board was last visited by the current user.
-          type: date-time
-          nullable: true
+          oneOf:
+            - type: string
+              format: date-time
+            - type: "null"
 
       required:
         - id

@@ -25,7 +25,6 @@ import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
 import { ensureThreadPermission } from "handlers/permissions";
 import express from "express";
-import { getBoardBySlug } from "../boards/queries";
 import { moveThread } from "./queries";
 
 const info = debug("bobaserver:threads:routes-info");
@@ -38,6 +37,7 @@ const router = express.Router();
  * /threads/{thread_id}:
  *   get:
  *     summary: Fetches thread data.
+ *     operationId: getThreadByUuid
  *     tags:
  *       - /threads/
  *     security:
