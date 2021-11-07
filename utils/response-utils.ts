@@ -338,7 +338,7 @@ export const processBoardsSummary = ({
 
 export const processBoardsNotifications = ({ boards }: { boards: any[] }) => {
   return boards.map((board) => ({
-    id: board.slug,
+    id: board.string_id,
     has_updates: board.has_updates,
     is_outdated:
       (board.last_activity_from_others &&

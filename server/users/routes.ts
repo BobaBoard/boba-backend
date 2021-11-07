@@ -287,7 +287,7 @@ router.get("/@me/notifications", ensureLoggedIn, async (req, res) => {
     .filter((notification: any) =>
       boards.find(
         (board: any) =>
-          board.slug == notification.id && board.pinned_order !== null
+          board.string_id == notification.id && board.pinned_order !== null
       )
     )
     .reduce((result: any, current: any) => {

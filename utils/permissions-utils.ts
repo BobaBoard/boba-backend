@@ -9,6 +9,7 @@ import {
   BoardPermissions,
   UserBoardPermissions,
   restriction_types,
+  DbBoardMetadata,
 } from "Types";
 
 const info = debug("bobaserver:board:utils-info");
@@ -120,7 +121,8 @@ export const canAccessBoard = async ({
   if (board.logged_out_restrictions.includes(restriction_types.LOCK_ACCESS)) {
     return !!firebaseId;
   }
-  return true;
+
+  return hasBoardAccessPermission({ boardMetadata: board, firebaseId });
 };
 
 export const canAccessBoardByUuid = async ({
@@ -139,8 +141,24 @@ export const canAccessBoardByUuid = async ({
   if (!board) {
     return false;
   }
-  if (board.logged_out_restrictions.includes(restriction_types.LOCK_ACCESS)) {
+
+  return hasBoardAccessPermission({ boardMetadata: board, firebaseId });
+};
+
+export const hasBoardAccessPermission = ({
+  boardMetadata,
+  firebaseId,
+}: {
+  boardMetadata: DbBoardMetadata;
+  firebaseId: string;
+}) => {
+  if (
+    boardMetadata.logged_out_restrictions.includes(
+      restriction_types.LOCK_ACCESS
+    )
+  ) {
     return !!firebaseId;
   }
+
   return true;
 };

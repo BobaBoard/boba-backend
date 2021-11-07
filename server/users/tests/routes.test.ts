@@ -1,6 +1,7 @@
 import { CacheKeys, cache } from "../../cache";
 import { setLoggedInUser, startTestServer } from "utils/test-utils";
 
+import { JERSEY_DEVIL_USER_ID } from "test/data/auth";
 import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
 import { getUserFromFirebaseId } from "../queries";
@@ -17,12 +18,14 @@ describe("Test users routes", () => {
   const server = startTestServer(router);
 
   test("gets user from id", async () => {
-    const user = await getUserFromFirebaseId({ firebaseId: "fb2" });
+    const user = await getUserFromFirebaseId({
+      firebaseId: JERSEY_DEVIL_USER_ID,
+    });
 
     expect(user).toEqual({
       avatar_reference_id: "hannibal.png",
       created_on: null,
-      firebase_id: "fb2",
+      firebase_id: JERSEY_DEVIL_USER_ID,
       id: "2",
       invited_by: "1",
       username: "jersey_devil_69",
@@ -38,14 +41,14 @@ describe("Test users routes", () => {
       },
     };
     mocked(cache().hget).mockResolvedValueOnce(stringify(cachedData));
-    setLoggedInUser("fb2");
+    setLoggedInUser(JERSEY_DEVIL_USER_ID);
 
     const res = await request(server.app).get("/@me");
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual(cachedData);
     expect(cache().hget).toBeCalledTimes(1);
-    expect(cache().hget).toBeCalledWith(CacheKeys.USER, "fb2");
+    expect(cache().hget).toBeCalledWith(CacheKeys.USER, JERSEY_DEVIL_USER_ID);
   });
 
   test("Prevents unauthorized access", async () => {
@@ -54,7 +57,7 @@ describe("Test users routes", () => {
   });
 
   test("Returns data for the logged in user", async () => {
-    setLoggedInUser("fb2");
+    setLoggedInUser(JERSEY_DEVIL_USER_ID);
     const res = await request(server.app).get("/@me");
     expect(res.status).toBe(200);
     expect(res.body).toEqual({
@@ -65,14 +68,14 @@ describe("Test users routes", () => {
   });
 
   test("caches logged in user data", async function () {
-    setLoggedInUser("fb2");
+    setLoggedInUser(JERSEY_DEVIL_USER_ID);
 
     const res = await request(server.app).get("/@me");
     expect(res.status).toBe(200);
     expect(cache().hset).toBeCalledTimes(1);
     expect(cache().hset).toBeCalledWith(
       CacheKeys.USER,
-      "fb2",
+      JERSEY_DEVIL_USER_ID,
       // TODO: this will fail if we change what we cache. We should not
       // rely on the whole response being cached, but declare the object ourselves.
       stringify(res.body)
