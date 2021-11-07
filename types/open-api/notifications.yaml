@@ -24,18 +24,16 @@ components:
             - type: string
               format: date-time
             - type: "null"
-        last_visited at:
+        last_visited_at:
           description: When the board was last visited by the current user.
           oneOf:
             - type: string
               format: date-time
             - type: "null"
-
       required:
         - id
-        - realm_id
-        - slug
-        - avatar_url
-        - accent_color
-        - logged_in_only
-        - delisted
+        - has_updates
+        - is_outdated
+        - last_activity_at
+        - last_activity_from_others_at
+        - last_visited_at

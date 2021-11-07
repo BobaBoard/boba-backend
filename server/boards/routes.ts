@@ -2,6 +2,7 @@ import { CacheKeys, cache } from "server/cache";
 import {
   canAccessBoard,
   canAccessBoardByUuid,
+  hasBoardAccessPermission,
   hasPermission,
 } from "utils/permissions-utils";
 import {
@@ -25,6 +26,43 @@ const info = debug("bobaserver:board:routes-info");
 const log = debug("bobaserver:board:routes");
 
 const router = express.Router();
+
+/**
+ * Make sure the user can access the board.
+ *
+ * TODO: turn this into a middleware or a better check.
+ */
+const ensureBoardAccess = async ({
+  firebaseId,
+  boardId,
+  res,
+}: {
+  firebaseId: string;
+  boardId: string;
+  res: express.Response;
+}) => {
+  const board = await getBoardByUuid({
+    firebaseId: firebaseId,
+    uuid: boardId,
+  });
+  log(`Found board`, board);
+
+  if (!board) {
+    res
+      .status(404)
+      .send({ message: `The board with id "${boardId}" was not found.` });
+    return;
+  }
+
+  // if (!hasBoardAccessPermission({ boardMetadata: board, firebaseId })) {
+  //   res
+  //     .status(403)
+  //     .send({ message: `User cannot access board with id "${boardId}".` });
+  //   return;
+  // }
+
+  return board;
+};
 
 /**
  * @openapi
@@ -173,30 +211,30 @@ router.get("/:uuid", async (req, res) => {
  *               existing:
  *                 $ref: '#/components/examples/GoreMetadataUpdateResponse'
  */
-router.patch("/:uuid/", ensureLoggedIn, async (req, res) => {
-  const { uuid } = req.params;
+router.patch("/:boardId/", ensureLoggedIn, async (req, res) => {
+  const { boardId } = req.params;
   const { descriptions, accentColor, tagline } = req.body;
 
-  const board = await getBoardByUuid({
-    firebaseId: req.currentUser?.uid,
-    uuid,
+  const board = await ensureBoardAccess({
+    firebaseId: req.currentUser.uid,
+    boardId: boardId,
+    res,
   });
-  log(`Found board`, board);
 
+  // TODO: Error is (temporarily) handled within ensureBoardAccess
   if (!board) {
-    return res
-      .status(404)
-      .send({ message: `The board with id "${uuid}" was not found.` });
+    return;
   }
 
   if (!hasPermission(DbRolePermissions.edit_board_details, board.permissions)) {
-    return res
+    res
       .status(403)
-      .send({ message: `User cannot access board with id "${uuid}".` });
+      .send({ message: `User cannot access board with id "${boardId}".` });
+    return;
   }
 
   const newMetadata = await updateBoardMetadata({
-    uuid,
+    uuid: boardId,
     firebaseId: req.currentUser.uid,
     oldMetadata: board,
     newMetadata: { descriptions, settings: { accentColor }, tagline },
@@ -207,11 +245,11 @@ router.patch("/:uuid/", ensureLoggedIn, async (req, res) => {
     return;
   }
 
-  await cache().hdel(CacheKeys.BOARD, uuid);
-  await cache().hdel(CacheKeys.BOARD_METADATA, uuid);
+  await cache().hdel(CacheKeys.BOARD, boardId);
+  await cache().hdel(CacheKeys.BOARD_METADATA, boardId);
   const boardMetadata = await getBoardMetadataByUuid({
     firebaseId: req.currentUser?.uid,
-    uuid,
+    uuid: boardId,
   });
   res.status(200).json(boardMetadata);
 });
@@ -250,22 +288,22 @@ router.patch("/:uuid/", ensureLoggedIn, async (req, res) => {
  *       200:
  *         description: The visit was successfully registered.
  */
-router.post("/:uuid/visits", ensureLoggedIn, async (req, res) => {
-  const { uuid } = req.params;
-  log(`Setting last visited time for board: ${uuid}`);
+router.post("/:boardId/visits", ensureLoggedIn, async (req, res) => {
+  const { boardId } = req.params;
+  log(`Setting last visited time for board: ${boardId}`);
 
   if (
     !(await markBoardVisit({
       firebaseId: req.currentUser.uid,
-      uuid,
+      uuid: boardId,
     }))
   ) {
     res.sendStatus(500);
     return;
   }
 
-  log(`Marked last visited time for board: ${uuid}.`);
-  res.sendStatus(200);
+  log(`Marked last visited time for board: ${boardId}.`);
+  res.sendStatus(204);
 });
 
 /**
@@ -286,35 +324,59 @@ router.post("/:uuid/visits", ensureLoggedIn, async (req, res) => {
  *         required: true
  *         schema:
  *           type: string
- *           # format: uuid
+ *           format: uuid
+ *         examples:
+ *           existing:
+ *             summary: An existing board
+ *             value: c6d3d10e-8e49-4d73-b28a-9d652b41beec
  *     responses:
+ *       204:
+ *         description: The board was successfully muted.
+ *         content:
+ *           application/json:
+ *             examples:
+ *               existing:
+ *                 $ref: "#/components/examples/PinnedBoardResponse"
  *       401:
  *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
  *         $ref: "#/components/responses/ensureLoggedIn403"
+ *       404:
+ *         $ref: "#/components/responses/default404"
  *       500:
  *         description: Internal Server Error
  *         $ref: "#/components/responses/default500"
- *       200:
- *         description: The board was successfully muted.
  */
-router.post("/:uuid/mute", ensureLoggedIn, async (req, res) => {
-  const { uuid } = req.params;
+router.post("/:boardId/mute", ensureLoggedIn, async (req, res) => {
+  const { boardId } = req.params;
 
-  log(`Setting board muted: ${uuid}`);
+  const board = await ensureBoardAccess({
+    firebaseId: req.currentUser.uid,
+    boardId,
+    res,
+  });
+
+  // TODO: Error is (temporarily) handled within ensureBoardAccess
+  if (!board) {
+    return;
+  }
 
   if (
     !(await muteBoard({
       firebaseId: req.currentUser.uid,
-      uuid,
+      uuid: boardId,
     }))
   ) {
+    // TODO: figure out how to do a proper 404.
     res.sendStatus(500);
     return;
   }
 
-  info(`Muted board: ${uuid} for user ${req.currentUser.uid}.`);
-  res.status(200).json();
+  await cache().hdel(CacheKeys.BOARD, boardId);
+  await cache().hdel(CacheKeys.USER, req.currentUser.uid);
+
+  info(`Muted board: ${boardId} for user ${req.currentUser.uid}.`);
+  res.status(204).json();
 });
 
 /**
@@ -340,6 +402,8 @@ router.post("/:uuid/mute", ensureLoggedIn, async (req, res) => {
  *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
  *         $ref: "#/components/responses/ensureLoggedIn403"
+ *       404:
+ *         $ref: "#/components/responses/default404"
  *       500:
  *         description: Internal Server Error
  *         $ref: "#/components/responses/default500"
@@ -347,23 +411,35 @@ router.post("/:uuid/mute", ensureLoggedIn, async (req, res) => {
  *         description: The board was successfully unmuted.
  *
  */
-router.delete("/:uuid/mute", ensureLoggedIn, async (req, res) => {
-  const { uuid } = req.params;
+router.delete("/:boardId/mute", ensureLoggedIn, async (req, res) => {
+  const { boardId } = req.params;
 
-  log(`Setting board unmuted: ${uuid}`);
+  const board = await ensureBoardAccess({
+    firebaseId: req.currentUser.uid,
+    boardId,
+    res,
+  });
+
+  // TODO: Error is (temporarily) handled within ensureBoardAccess
+  if (!board) {
+    return;
+  }
 
   if (
     !(await unmuteBoard({
       firebaseId: req.currentUser.uid,
-      uuid,
+      uuid: boardId,
     }))
   ) {
     res.sendStatus(500);
     return;
   }
 
-  info(`Unmuted board: ${uuid} for user ${req.currentUser.uid}.`);
-  res.status(200).json();
+  await cache().hdel(CacheKeys.BOARD, boardId);
+  await cache().hdel(CacheKeys.USER, req.currentUser.uid);
+
+  info(`Unmuted board: ${boardId} for user ${req.currentUser.uid}.`);
+  res.status(204).json();
 });
 
 /**
@@ -390,6 +466,8 @@ router.delete("/:uuid/mute", ensureLoggedIn, async (req, res) => {
  *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
  *         $ref: "#/components/responses/ensureLoggedIn403"
+ *       404:
+ *         $ref: "#/components/responses/default404"
  *       500:
  *         description: Internal Server Error
  *         $ref: "#/components/responses/default500"
@@ -397,23 +475,35 @@ router.delete("/:uuid/mute", ensureLoggedIn, async (req, res) => {
  *         description: The board was successfully pinned.
  *
  */
-router.post("/:uuid/pin", ensureLoggedIn, async (req, res) => {
-  const { uuid } = req.params;
+router.post("/:boardId/pin", ensureLoggedIn, async (req, res) => {
+  const { boardId } = req.params;
 
-  log(`Setting board pinned: ${uuid}`);
+  const board = await ensureBoardAccess({
+    firebaseId: req.currentUser.uid,
+    boardId,
+    res,
+  });
+
+  // TODO: Error is (temporarily) handled within ensureBoardAccess
+  if (!board) {
+    return;
+  }
 
   if (
     !(await pinBoard({
       firebaseId: req.currentUser.uid,
-      uuid,
+      uuid: boardId,
     }))
   ) {
     res.sendStatus(500);
     return;
   }
 
-  info(`Pinned board: ${uuid} for user ${req.currentUser.uid}.`);
-  res.status(200).json();
+  await cache().hdel(CacheKeys.BOARD, boardId);
+  await cache().hdel(CacheKeys.USER, req.currentUser.uid);
+
+  info(`Pinned board: ${boardId} for user ${req.currentUser.uid}.`);
+  res.status(204).json();
 });
 
 /**
@@ -434,12 +524,14 @@ router.post("/:uuid/pin", ensureLoggedIn, async (req, res) => {
  *         required: true
  *         schema:
  *           type: string
- *           # format: uuid
+ *           format: uuid
  *     responses:
  *       401:
  *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
  *         $ref: "#/components/responses/ensureLoggedIn403"
+ *       404:
+ *         $ref: "#/components/responses/default404"
  *       500:
  *         description: Internal Server Error
  *         $ref: "#/components/responses/default500"
@@ -447,23 +539,37 @@ router.post("/:uuid/pin", ensureLoggedIn, async (req, res) => {
  *         description: The board was successfully unpinned.
  *
  */
-router.delete("/:uuid/pin", ensureLoggedIn, async (req, res) => {
-  const { uuid } = req.params;
+router.delete("/:boardId/pin", ensureLoggedIn, async (req, res) => {
+  const { boardId } = req.params;
 
-  log(`Setting board unpinned: ${uuid}`);
+  log(`Setting board unpinned: ${boardId}`);
+
+  const board = await ensureBoardAccess({
+    firebaseId: req.currentUser.uid,
+    boardId,
+    res,
+  });
+
+  // TODO: Error is (temporarily) handled within ensureBoardAccess
+  if (!board) {
+    return;
+  }
 
   if (
     !(await unpinBoard({
       firebaseId: req.currentUser.uid,
-      uuid,
+      uuid: boardId,
     }))
   ) {
     res.sendStatus(500);
     return;
   }
 
-  info(`Unpinned board: ${uuid} for user ${req.currentUser?.uid}.`);
-  res.status(200).json();
+  await cache().hdel(CacheKeys.BOARD, boardId);
+  await cache().hdel(CacheKeys.USER, req.currentUser.uid);
+
+  info(`Unpinned board: ${boardId} for user ${req.currentUser?.uid}.`);
+  res.status(204).json();
 });
 
 /**
@@ -483,7 +589,7 @@ router.delete("/:uuid/pin", ensureLoggedIn, async (req, res) => {
  *         required: true
  *         schema:
  *           type: string
- *           # format: uuid
+ *           format: uuid
  *         examples:
  *           existing:
  *             summary: An existing board
@@ -492,6 +598,10 @@ router.delete("/:uuid/pin", ensureLoggedIn, async (req, res) => {
  *       401:
  *         description: User is not logged in.
  *         $ref: "#/components/responses/default401"
+ *       403:
+ *         $ref: "#/components/responses/ensureLoggedIn403"
+ *       404:
+ *         $ref: "#/components/responses/default404"
  *       500:
  *         description: Internal Server Error
  *         $ref: "#/components/responses/default500"
@@ -499,14 +609,27 @@ router.delete("/:uuid/pin", ensureLoggedIn, async (req, res) => {
  *         description: Board notifications dismissed.
  */
 router.post(
-  "/:uuid/notifications/dismiss",
+  "/:boardId/notifications/dismiss",
   ensureLoggedIn,
   async (req, res) => {
-    const { uuid } = req.params;
-    let currentUserId: string = req.currentUser?.uid;
-    log(`Dismissing ${uuid} notifications for firebase id: ${currentUserId}`);
+    const { boardId } = req.params;
+
+    let currentUserId: string = req.currentUser.uid;
+    const board = await ensureBoardAccess({
+      firebaseId: currentUserId,
+      boardId,
+      res,
+    });
+
+    // TODO: Error is (temporarily) handled within ensureBoardAccess
+    if (!board) {
+      return;
+    }
+    log(
+      `Dismissing ${boardId} notifications for firebase id: ${currentUserId}`
+    );
     const dismissSuccessful = await dismissBoardNotifications({
-      uuid,
+      uuid: boardId,
       firebaseId: currentUserId,
     });
 
@@ -517,7 +640,7 @@ router.post(
 
     info(`Dismiss successful`);
 
-    res.sendStatus(204);
+    res.status(204).json();
   }
 );
 

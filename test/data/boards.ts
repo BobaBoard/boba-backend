@@ -2,6 +2,9 @@ import { BoardMetadata, LoggedInBoardMetadata } from "types/rest/boards";
 import { BoardPermissions, PostPermissions, ThreadPermissions } from "Types";
 
 export const GORE_BOARD_ID = "c6d3d10e-8e49-4d73-b28a-9d652b41beec";
+export const MAIN_STREET_BOARD_ID = "2fb151eb-c600-4fe4-a542-4662487e5496";
+export const MUTED_BOARD_ID = "2bdce2fa-12e0-461b-b0fb-1a2e67227434";
+export const RESTRICTED_BOARD_ID = "76ebaab0-6c3e-4d7b-900f-f450625a5ed3";
 
 const GORE_LOGGED_OUT_METADATA: BoardMetadata = {
   descriptions: [
@@ -73,6 +76,7 @@ const GORE_WITH_ROLE_METADATA: LoggedInBoardMetadata = {
     },
   ],
 };
+
 export const GORE_BOARD_METADATA = {
   LOGGED_OUT: GORE_LOGGED_OUT_METADATA,
   BOBATAN: GORE_WITH_ROLE_METADATA,

@@ -1,10 +1,13 @@
-INSERT INTO Boards(string_id, slug, tagline, avatar_reference_id, settings)
-VALUES
-    ('2fb151eb-c600-4fe4-a542-4662487e5496', 'main_street', 'For BobaBoard-related discussions.', 'villains.png', '{ "accentColor": "#ff5252" }'),
-    ('c6d3d10e-8e49-4d73-b28a-9d652b41beec', 'gore', 'Blood! Blood! Blood!', 'gore.png', '{ "accentColor": "#f96680" }'),
-    ('4b30fb7c-2aca-4333-aa56-ae8623a92b65', 'anime', 'I wish I had a funny one for this.', 'anime.png', '{ "accentColor": "#24d282"}'),
-    ('db8dc5b3-5b4a-4bfe-a303-e176c9b00b83', 'long', 'A board to test with many posts.', 'onceler-board.png', '{ "accentColor": "#00b8ff"}'),
-    ('0e0d1ee6-f996-4415-89c1-c9dc1fe991dc', 'memes', 'A board to test collections view.', 'kink-meme.png', '{ "accentColor": "#7b00ff"}');
+INSERT INTO Boards(id, string_id, slug, tagline, avatar_reference_id, settings)
+OVERRIDING SYSTEM VALUE VALUES
+    (1, '2fb151eb-c600-4fe4-a542-4662487e5496', 'main_street', 'For BobaBoard-related discussions.', 'villains.png', '{ "accentColor": "#ff5252" }'),
+    (2, 'c6d3d10e-8e49-4d73-b28a-9d652b41beec', 'gore', 'Blood! Blood! Blood!', 'gore.png', '{ "accentColor": "#f96680" }'),
+    (3, '4b30fb7c-2aca-4333-aa56-ae8623a92b65', 'anime', 'I wish I had a funny one for this.', 'anime.png', '{ "accentColor": "#24d282"}'),
+    (4, 'db8dc5b3-5b4a-4bfe-a303-e176c9b00b83', 'long', 'A board to test with many posts.', 'onceler-board.png', '{ "accentColor": "#00b8ff"}'),
+    (5, '0e0d1ee6-f996-4415-89c1-c9dc1fe991dc', 'memes', 'A board to test collections view.', 'kink-meme.png', '{ "accentColor": "#7b00ff"}'),
+    (6, '2bdce2fa-12e0-461b-b0fb-1a2e67227434', 'muted', 'A board to test for muting.', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2Feded338a-e0e5-4a97-a368-5ae525c0eec4?alt=media&token=914f84b7-a581-430e-bb09-695f653e8e02', '{ "accentColor": "#9b433b" }'),
+    (7, '76ebaab0-6c3e-4d7b-900f-f450625a5ed3','restricted', 'A board to test for logged-in only view', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2Fe4e263cf-ee98-4902-9c14-c10299210e01.png?alt=media&token=7c170411-9401-4d4e-9f66-5d6dfee2fccd', '{ "accentColor": "#234a69"}'),
+    (8, 'bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b','delisted', 'A board to test for link-only view', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2Fc3b86805-4df7-4b1a-9fa2-b96b5165a636?alt=media&token=7652d44a-38cb-40cc-82ef-908cd4265840', '{ "accentColor": "#fa8628"}');
 
 INSERT INTO board_description_sections (string_id, board_id,title,description,"type","index") VALUES 
 ('id1', 2,'Gore Categories',NULL,'category_filter',2),('id2', 2,'Gore description','[{"insert": "pls b nice"}]','text',1)

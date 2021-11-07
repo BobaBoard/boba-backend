@@ -12,7 +12,7 @@
     "start-db": "docker-compose down && docker-compose up",
     "test:base": "cross-env DEBUG=bobaserver:*,-*info jest --runInBand --no-cache",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --no-cache",
-    "test": "yarn run test:base .test.ts$",
+    "test": "yarn run test:base",
     "test:watch": "yarn run test --watchAll",
     "test:changed": "yarn run test:base --watch --onlyChanged",
     "test:file": "yarn run test:base --watchAll",
