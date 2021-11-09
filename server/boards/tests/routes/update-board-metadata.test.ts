@@ -1,4 +1,8 @@
 import { BOBATAN_USER_ID, JERSEY_DEVIL_USER_ID } from "test/data/auth";
+import {
+  BoardCategoryDescription,
+  BoardTextDescription,
+} from "types/rest/boards";
 import { CacheKeys, cache } from "server/cache";
 import { GORE_BOARD_ID, GORE_BOARD_METADATA } from "test/data/boards";
 import {
@@ -13,6 +17,22 @@ import router from "../../routes";
 jest.mock("server/cache");
 jest.mock("handlers/auth");
 jest.mock("server/db-pool");
+
+const UPDATED_TEXT_DESCRIPTION: BoardTextDescription = {
+  id: "d92b0008-36d6-47a2-b4b1-21dce0027588",
+  index: 1,
+  title: "this is a new text description",
+  type: "text",
+  description: '[{"insert":"this is an updated text description\n"}]',
+};
+
+const UPDATED_CATEGORY_DESCRIPTION: BoardCategoryDescription = {
+  id: "6dd1becf-b846-4b58-8c62-444ccf6951dc",
+  index: 2,
+  title: "this is a new text description",
+  type: "category_filter",
+  categories: ["blood", "bruises", "viscera"],
+};
 
 describe("Tests boards REST API", () => {
   const server = startTestServer(router);
@@ -52,13 +72,6 @@ describe("Tests boards REST API", () => {
         tagline: "a new tagline",
       });
 
-      // Ensure that the board metadata was removed from the cache.
-      expect(cache().hdel).toBeCalledTimes(2);
-      expect(cache().hdel).toBeCalledWith(
-        CacheKeys.BOARD_METADATA,
-        GORE_BOARD_ID
-      );
-      expect(cache().hdel).toBeCalledWith(CacheKeys.BOARD, GORE_BOARD_ID);
       expect(res.status).toBe(200);
       expect(res.body).toEqual({
         ...GORE_BOARD_METADATA.BOBATAN,
@@ -86,6 +99,29 @@ describe("Tests boards REST API", () => {
       expect(cache().hdel).toBeCalledWith(
         CacheKeys.BOARD_METADATA,
         GORE_BOARD_ID
+      );
+    });
+  }, 10000);
+
+  test("Should update board descriptions", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(BOBATAN_USER_ID);
+      const res = await request(server.app)
+        .patch(`/${GORE_BOARD_ID}`)
+        .send({
+          descriptions: [
+            UPDATED_CATEGORY_DESCRIPTION,
+            UPDATED_TEXT_DESCRIPTION,
+          ],
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.body.descriptions.length).toEqual(2);
+      expect(res.body.descriptions).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining(UPDATED_CATEGORY_DESCRIPTION),
+          expect.objectContaining(UPDATED_TEXT_DESCRIPTION),
+        ])
       );
     });
   }, 10000);
