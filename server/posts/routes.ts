@@ -29,6 +29,7 @@ const router = express.Router();
  * /posts/{post_id}/contribution:
  *   post:
  *     summary: Replies to a contribution.
+ *     operationId: postContribution
  *     description: Posts a contribution replying to the one with id {postId}.
  *     tags:
  *       - /posts/
@@ -52,11 +53,12 @@ const router = express.Router();
  *               - type: object
  *                 properties:
  *                   content:
- *                     required: true
  *                     type: string
  *                     format: quill-delta
  *               - $ref: "#/components/schemas/Tags"
  *               - $ref: "#/components/schemas/IdentityParams"
+ *             required:
+ *               - content
  *     responses:
  *       401:
  *         description: User was not found in request that requires authentication.
@@ -131,6 +133,7 @@ router.post("/:post_id/contribution", ensureLoggedIn, async (req, res) => {
  * /posts/{post_id}/comment:
  *   post:
  *     summary: Add comments to a contribution, optionally nested under another comment.
+ *     operationId: postComment
  *     description: Creates a comment nested under the contribution with id {post_id}.
  *     tags:
  *       - /posts/
@@ -158,9 +161,10 @@ router.post("/:post_id/contribution", ensureLoggedIn, async (req, res) => {
  *                     items:
  *                       $ref: "#/components/schemas/Comment"
  *                   reply_to_comment_id:
- *                     nullable: true
- *                     type: string
- *                     format: uuid
+ *                     oneOf:
+ *                       - type: string
+ *                         format: uuid
+ *                       - type: "null"
  *               - $ref: "#/components/schemas/IdentityParams"
  *     responses:
  *       401:
@@ -230,6 +234,7 @@ router.post("/:post_id/comment", ensureLoggedIn, async (req, res) => {
  * /posts/{post_id}/contribution:
  *   patch:
  *     summary: Edits a contribution.
+ *     operationId: editContribution
  *     description: Edits a contribution (for now just its tags).
  *     tags:
  *       - /posts/

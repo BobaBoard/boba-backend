@@ -22,6 +22,7 @@ import debug from "debug";
 import express from "express";
 import firebaseAuth from "firebase-admin";
 import { getBoards } from "../boards/queries";
+import stringify from "fast-json-stable-stringify";
 
 const info = debug("bobaserver:users:routes-info");
 const log = debug("bobaserver:users:routes-log");
@@ -34,6 +35,7 @@ const router = express.Router();
  * /users/@me:
  *   get:
  *     summary: Gets data for the current user.
+ *     operationId: getCurrentUser
  *     tags:
  *       - /users/
  *     security:
@@ -118,7 +120,7 @@ router.get("/@me", ensureLoggedIn, async (req, res) => {
     pinned_boards: pins,
   };
   res.status(200).json(userDataResponse);
-  cache().hset(CacheKeys.USER, currentUserId, JSON.stringify(userDataResponse));
+  cache().hset(CacheKeys.USER, currentUserId, stringify(userDataResponse));
 });
 
 router.post("/me/update", ensureLoggedIn, async (req, res) => {
@@ -224,6 +226,7 @@ router.post("/invite/accept", async (req, res) => {
  * /users/@me/notifications:
  *   get:
  *     summary: Gets notifications data for the current user.
+ *     operationId: getCurrentUserNotifications
  *     description: |
  *       Gets notifications data for the current user, including pinned boards.
  *       If `realm_id` is present, also fetch notification data for the current realm.
@@ -284,7 +287,7 @@ router.get("/@me/notifications", ensureLoggedIn, async (req, res) => {
     .filter((notification: any) =>
       boards.find(
         (board: any) =>
-          board.slug == notification.id && board.pinned_order !== null
+          board.string_id == notification.id && board.pinned_order !== null
       )
     )
     .reduce((result: any, current: any) => {
@@ -323,6 +326,7 @@ router.get("/@me/notifications", ensureLoggedIn, async (req, res) => {
  * /users/@me/bobadex:
  *   get:
  *     summary: Gets bobadex data for the current user.
+ *     operationId: getCurrentUserBobadex
  *     tags:
  *       - /users/
  *     security:
@@ -383,7 +387,7 @@ router.post("/settings/update", ensureLoggedIn, async (req, res) => {
     await cache().hset(
       CacheKeys.USER_SETTINGS,
       firebaseId,
-      JSON.stringify(settings)
+      stringify(settings)
     );
     res.status(200).json(aggregateByType(settings));
   } catch (e) {

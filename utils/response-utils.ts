@@ -238,10 +238,18 @@ export const processBoardMetadata = ({
   isLoggedIn: boolean;
 }) => {
   let finalMetadata = {
-    id: metadata.slug,
+    id: metadata.string_id,
     slug: metadata.slug,
     avatar_url: metadata.avatar_url,
-    descriptions: metadata.descriptions || [],
+    descriptions: metadata.descriptions.map((description) => ({
+      ...description,
+      description:
+        description.type == "text" ? description.description : undefined,
+      categories:
+        description.type == "category_filter"
+          ? description.categories
+          : undefined,
+    })),
     permissions: getUserPermissionsForBoard(metadata.permissions),
     posting_identities: metadata.posting_identities.map((identity: any) =>
       transformImageUrls(identity)
@@ -315,7 +323,7 @@ export const processBoardsSummary = ({
 
   // TODO[cleanup]: get correct format from db
   return result.map((result) => ({
-    id: result.slug,
+    id: result.string_id,
     realm_id: "v0-fake-id",
     slug: result.slug,
     tagline: result.tagline,
@@ -330,7 +338,7 @@ export const processBoardsSummary = ({
 
 export const processBoardsNotifications = ({ boards }: { boards: any[] }) => {
   return boards.map((board) => ({
-    id: board.slug,
+    id: board.string_id,
     has_updates: board.has_updates,
     is_outdated:
       (board.last_activity_from_others &&
