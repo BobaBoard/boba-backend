@@ -17,12 +17,12 @@ const GORE_BOARD_LOGGED_OUT: DbBoardMetadata = {
       type: "category_filter",
     },
     {
-      categories: null,
       description: '[{"insert": "pls b nice"}]',
       id: "id2",
       index: 1,
       title: "Gore description",
       type: "text",
+      categories: null,
     },
   ],
   slug: "gore",
@@ -123,7 +123,7 @@ const GORE_BOARD_LOGGED_IN: DbBoardMetadata = {
 describe("Tests boards queries", () => {
   test("fetches board by uuid when uuid present", async () => {
     const board = await getBoardByUuid({
-      uuid: GORE_BOARD_ID,
+      boardId: GORE_BOARD_ID,
       firebaseId: undefined,
     });
 
@@ -132,7 +132,7 @@ describe("Tests boards queries", () => {
 
   test("fetches board by uuid when uuid present (logged in)", async () => {
     const board = await getBoardByUuid({
-      uuid: GORE_BOARD_ID,
+      boardId: GORE_BOARD_ID,
       firebaseId: BOBATAN_USER_ID,
     });
 
@@ -141,7 +141,7 @@ describe("Tests boards queries", () => {
 
   test("returns null board when uuid not found", async () => {
     const board = await getBoardByUuid({
-      uuid: "00000000-0000-0000-0000-000000000000",
+      boardId: "00000000-0000-0000-0000-000000000000",
       firebaseId: undefined,
     });
 
