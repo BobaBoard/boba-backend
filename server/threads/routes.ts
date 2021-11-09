@@ -33,6 +33,7 @@ const router = express.Router();
  * /threads/{thread_id}:
  *   get:
  *     summary: Fetches thread data.
+ *     operationId: getThreadByUuid
  *     tags:
  *       - /threads/
  *     security:

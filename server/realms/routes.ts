@@ -14,9 +14,10 @@ const router = express.Router();
 
 /**
  * @openapi
- * /realms/slug/{realm_slug}/:
+ * /realms/slug/{realm_slug}:
  *   get:
  *     summary: Fetches the top-level realm metadata by slug.
+ *     operationId: getRealmsBySlug
  *     tags:
  *       - /realms/
  *     parameters:
@@ -26,6 +27,10 @@ const router = express.Router();
  *         required: true
  *         schema:
  *           type: string
+ *         examples:
+ *           v0:
+ *             summary: the v0 realm
+ *             value: v0
  *     responses:
  *       200:
  *         description: The realm metadata.
@@ -33,6 +38,9 @@ const router = express.Router();
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/Realm"
+ *             examples:
+ *               v0:
+ *                 $ref: '#/components/examples/V0RealmResponse'
  */
 router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
   try {
@@ -74,6 +82,7 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
  * /realms/{realm_id}/activity:
  *   get:
  *     summary: Fetches latest activity summary for the realm.
+ *     operationId: getRealmsActivityByUuid
  *     tags:
  *       - /realms/
  *     security:

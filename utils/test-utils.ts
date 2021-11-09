@@ -4,8 +4,11 @@ import express, { Express, Router } from "express";
 import { ITask } from "pg-promise";
 import { Server } from "http";
 import bodyParser from "body-parser";
+import debug from "debug";
 import { mocked } from "ts-jest/utils";
 import pool from "server/db-pool";
+
+const log = debug("bobaserver:tests:test-utils");
 
 export const runWithinTransaction = async (
   test: (transaction: ITask<any>) => void
@@ -17,12 +20,33 @@ export const runWithinTransaction = async (
 };
 
 export const wrapWithTransaction = async (test: () => void) => {
-  await pool.none("BEGIN TRANSACTION;");
-  await test();
-  await pool.none("ROLLBACK;");
+  if (!jest.isMockFunction(pool.tx)) {
+    throw Error(
+      "wrapWithTransaction requires 'server/db-pool' to be explicitly mocked."
+    );
+  }
+  try {
+    log("starting transaction");
+    await pool.none("BEGIN TRANSACTION;");
+    await test();
+  } finally {
+    log("running cleanup");
+    //   await pool.none("ROLLBACK;");
+    //   jest.mock("server/db-pool", () => ({
+    //     ...jest.requireActual("server/db-pool").default,
+    //   }));
+  }
 };
 
 export const setLoggedInUser = (firebaseId: string) => {
+  if (
+    !jest.isMockFunction(withLoggedIn) ||
+    !jest.isMockFunction(ensureLoggedIn)
+  ) {
+    throw Error(
+      "setLoggedInUser requires 'handlers/auth' to be explicitly mocked."
+    );
+  }
   mocked(withLoggedIn).mockImplementation((req, res, next) => {
     // @ts-ignore
     req.currentUser = { uid: firebaseId };

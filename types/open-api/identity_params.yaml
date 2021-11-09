@@ -5,11 +5,13 @@ components:
       properties:
         accessory_id:
           description: The accessory to associate with the attached entity.
-          nullable: true
-          type: string
-          format: uuid
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"
         identity_id:
           description: The identity to associate with the attached entity, if fixed.
-          nullable: true
-          type: string
-          format: uuid
+          oneOf:
+            - type: string
+              format: uuid
+            - type: "null"

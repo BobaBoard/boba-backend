@@ -1,8 +1,13 @@
 import { CacheKeys, cache } from "server/cache";
-import { canAccessBoard, hasPermission } from "utils/permissions-utils";
+import {
+  canAccessBoard,
+  canAccessBoardByUuid,
+  hasBoardAccessPermission,
+  hasPermission,
+} from "utils/permissions-utils";
 import {
   dismissBoardNotifications,
-  getBoardBySlug,
+  getBoardByUuid,
   markBoardVisit,
   muteBoard,
   pinBoard,
@@ -15,8 +20,7 @@ import { DbRolePermissions } from "types/permissions";
 import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
-import { getBoardMetadata } from "./utils";
-import { processBoardMetadata } from "utils/response-utils";
+import { getBoardMetadataByUuid } from "./utils";
 
 const info = debug("bobaserver:board:routes-info");
 const log = debug("bobaserver:board:routes");
@@ -24,37 +28,92 @@ const log = debug("bobaserver:board:routes");
 const router = express.Router();
 
 /**
+ * Make sure the user can access the board.
+ *
+ * TODO: turn this into a middleware or a better check.
+ */
+const ensureBoardAccess = async ({
+  firebaseId,
+  boardId,
+  res,
+}: {
+  firebaseId: string;
+  boardId: string;
+  res: express.Response;
+}) => {
+  const board = await getBoardByUuid({
+    firebaseId: firebaseId,
+    uuid: boardId,
+  });
+  log(`Found board`, board);
+
+  if (!board) {
+    res
+      .status(404)
+      .send({ message: `The board with id "${boardId}" was not found.` });
+    return;
+  }
+
+  // if (!hasBoardAccessPermission({ boardMetadata: board, firebaseId })) {
+  //   res
+  //     .status(403)
+  //     .send({ message: `User cannot access board with id "${boardId}".` });
+  //   return;
+  // }
+
+  return board;
+};
+
+/**
  * @openapi
- * /boards/{slug}:
+ * /boards/{uuid}:
  *   get:
  *     summary: Fetches board metadata.
+ *     operationId: getBoardsByUuid
  *     tags:
  *       - /boards/
  *     security:
  *       - firebase: []
  *       - {}
  *     parameters:
- *       - name: slug
+ *       - name: uuid
  *         in: path
- *         description: The slug of the board to update.
+ *         description: The uuid of the board to retrieve metadata for.
  *         required: true
  *         schema:
  *           type: string
- *           # format: uuid
+ *           format: uuid
  *         examples:
  *           existing:
  *             summary: An existing board
- *             value: gore
+ *             value: c6d3d10e-8e49-4d73-b28a-9d652b41beec
  *           locked:
  *             summary: A board for logged in users only
- *             value: restricted
+ *             value: 76ebaab0-6c3e-4d7b-900f-f450625a5ed3
  *     responses:
  *       401:
  *         description: User was not found and board requires authentication.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             example: { message: "This board is unavailable to logged out users." }
  *       403:
  *         description: User is not authorized to fetch the metadata of this board.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             example: { message: "You don't have permission to access this board." }
  *       404:
  *         description: The board was not found.
+ *         $ref: "#/components/responses/default404"
  *       200:
  *         description: The board metadata.
  *         content:
@@ -69,16 +128,16 @@ const router = express.Router();
  *               locked:
  *                 $ref: '#/components/examples/BoardsRestrictedResponse'
  */
-router.get("/:slug", async (req, res) => {
-  const { slug } = req.params;
-  log(`Fetching data for board with slug ${slug}.`);
+router.get("/:uuid", async (req, res) => {
+  const { uuid } = req.params;
+  log(`Fetching data for board with uuid ${uuid}.`);
 
-  const boardMetadata = await getBoardMetadata({
+  const boardMetadata = await getBoardMetadataByUuid({
     firebaseId: req.currentUser?.uid,
-    slug,
+    uuid,
   });
 
-  if (!canAccessBoard({ slug, firebaseId: req.currentUser?.uid })) {
+  if (!canAccessBoardByUuid({ uuid, firebaseId: req.currentUser?.uid })) {
     if (!req.currentUser?.uid) {
       // TODO: is this WORKING????
       res
@@ -96,42 +155,86 @@ router.get("/:slug", async (req, res) => {
     return;
   }
 
-  log(`Returning data for board ${slug} for user ${req.currentUser?.uid}.`);
+  log(`Returning data for board ${uuid} for user ${req.currentUser?.uid}.`);
   res.status(200).json(boardMetadata);
 });
 
 /**
  * @openapi
- * /boards/{slug}/metadata/update:
- *   post:
- *     summary: Update boards metadata
+ * /boards/{uuid}:
+ *   patch:
+ *     summary: Update board metadata
+ *     operationId: patchBoardsByUuid
  *     tags:
  *       - /boards/
- *       - todo
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: uuid
+ *         in: path
+ *         description: The uuid of the board to update metadata for.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         examples:
+ *           existing:
+ *             summary: An existing board (gore)
+ *             value: c6d3d10e-8e49-4d73-b28a-9d652b41beec
+ *     requestBody:
+ *       description: request body
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/BoardDescription"
+ *           examples:
+ *             gore:
+ *               $ref: "#/components/examples/GoreMetadataUpdateBody"
+ *       required: false
+ *     responses:
+ *       401:
+ *         description: User was not found.
+ *         $ref: "#/components/responses/default401"
+ *       403:
+ *         description: User is not authorized to update the metadata of this board.
+ *         $ref: "#/components/responses/default403"
+ *       404:
+ *         description: The board was not found.
+ *         $ref: "#/components/responses/default404"
+ *       200:
+ *         description: The board metadata.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/UpdatedBoardDescription"
+ *             examples:
+ *               existing:
+ *                 $ref: '#/components/examples/GoreMetadataUpdateResponse'
  */
-router.post("/:slug/metadata/update", ensureLoggedIn, async (req, res) => {
-  const { slug } = req.params;
+router.patch("/:boardId/", ensureLoggedIn, async (req, res) => {
+  const { boardId } = req.params;
   const { descriptions, accentColor, tagline } = req.body;
 
-  const board = await getBoardBySlug({
-    firebaseId: req.currentUser?.uid,
-    slug,
+  const board = await ensureBoardAccess({
+    firebaseId: req.currentUser.uid,
+    boardId: boardId,
+    res,
   });
-  log(`Found board`, board);
 
+  // TODO: Error is (temporarily) handled within ensureBoardAccess
   if (!board) {
-    // TOOD: add error log
-    return res.sendStatus(404);
+    return;
   }
 
   if (!hasPermission(DbRolePermissions.edit_board_details, board.permissions)) {
-    // TOOD: add error log
-    return res.sendStatus(403);
+    res
+      .status(403)
+      .send({ message: `User cannot access board with id "${boardId}".` });
+    return;
   }
 
   const newMetadata = await updateBoardMetadata({
-    slug,
-    // @ts-ignore
+    uuid: boardId,
     firebaseId: req.currentUser.uid,
     oldMetadata: board,
     newMetadata: { descriptions, settings: { accentColor }, tagline },
@@ -142,29 +245,28 @@ router.post("/:slug/metadata/update", ensureLoggedIn, async (req, res) => {
     return;
   }
 
-  await cache().hdel(CacheKeys.BOARD, slug);
-  res.status(200).json(
-    processBoardMetadata({
-      metadata: newMetadata,
-      isLoggedIn: true,
-    })
-  );
+  await cache().hdel(CacheKeys.BOARD, boardId);
+  await cache().hdel(CacheKeys.BOARD_METADATA, boardId);
+  const boardMetadata = await getBoardMetadataByUuid({
+    firebaseId: req.currentUser?.uid,
+    uuid: boardId,
+  });
+  res.status(200).json(boardMetadata);
 });
-
 /**
  * @openapi
- * /boards/{slug}/visits:
+ * /boards/{uuid}/visits:
  *   get:
  *     summary: Sets last visited time for board
+ *     operationId: visitsBoardsByUuid
  *     tags:
  *       - /boards/
  *     security:
  *       - firebase: []
- *       - {}
  *     parameters:
- *       - name: slug
+ *       - name: uuid
  *         in: path
- *         description: The slug of the board to update.
+ *         description: The uuid of the board to mark as visited.
  *         required: true
  *         schema:
  *           type: string
@@ -172,83 +274,124 @@ router.post("/:slug/metadata/update", ensureLoggedIn, async (req, res) => {
  *     responses:
  *       401:
  *         description: User was not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *             example: { "message" : "This board is unavailable to logged out users." }
+ *       500:
+ *         description: Internal Server Error
+ *         $ref: "#/components/responses/default500"
  *       200:
  *         description: The visit was successfully registered.
  */
-router.post("/:slug/visits", ensureLoggedIn, async (req, res) => {
-  const { slug } = req.params;
-  log(`Setting last visited time for board: ${slug}`);
+router.post("/:boardId/visits", ensureLoggedIn, async (req, res) => {
+  const { boardId } = req.params;
+  log(`Setting last visited time for board: ${boardId}`);
 
   if (
     !(await markBoardVisit({
       firebaseId: req.currentUser.uid,
-      slug,
+      uuid: boardId,
     }))
   ) {
     res.sendStatus(500);
     return;
   }
 
-  log(`Marked last visited time for board: ${slug}.`);
-  res.sendStatus(200);
+  log(`Marked last visited time for board: ${boardId}.`);
+  res.sendStatus(204);
 });
 
 /**
  * @openapi
- * /boards/{slug}/mute:
+ * /boards/{uuid}/mute:
  *   post:
  *     summary: Mutes a board.
+ *     operationId: mutesBoardsByUuid
  *     description: Mutes the specified board for the current user.
  *     tags:
  *       - /boards/
  *     security:
  *       - firebase: []
  *     parameters:
- *       - name: slug
+ *       - name: uuid
  *         in: path
- *         description: The name of the board to mute.
+ *         description: The uuid of the board to mute.
  *         required: true
  *         schema:
  *           type: string
+ *           format: uuid
+ *         examples:
+ *           existing:
+ *             summary: An existing board
+ *             value: c6d3d10e-8e49-4d73-b28a-9d652b41beec
  *     responses:
- *       401:
- *         description: User was not found in request that requires authentication.
- *       403:
- *         description: User is not authorized to perform the action.
- *       200:
+ *       204:
  *         description: The board was successfully muted.
+ *         content:
+ *           application/json:
+ *             examples:
+ *               existing:
+ *                 $ref: "#/components/examples/PinnedBoardResponse"
+ *       401:
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         $ref: "#/components/responses/ensureLoggedIn403"
+ *       404:
+ *         $ref: "#/components/responses/default404"
+ *       500:
+ *         description: Internal Server Error
+ *         $ref: "#/components/responses/default500"
  */
-router.post("/:slug/mute", ensureLoggedIn, async (req, res) => {
-  const { slug } = req.params;
+router.post("/:boardId/mute", ensureLoggedIn, async (req, res) => {
+  const { boardId } = req.params;
 
-  log(`Setting board muted: ${slug}`);
+  const board = await ensureBoardAccess({
+    firebaseId: req.currentUser.uid,
+    boardId,
+    res,
+  });
+
+  // TODO: Error is (temporarily) handled within ensureBoardAccess
+  if (!board) {
+    return;
+  }
 
   if (
     !(await muteBoard({
       firebaseId: req.currentUser.uid,
-      slug,
+      uuid: boardId,
     }))
   ) {
+    // TODO: figure out how to do a proper 404.
     res.sendStatus(500);
     return;
   }
 
-  info(`Muted board: ${slug} for user ${req.currentUser.uid}.`);
-  res.status(200).json();
+  await cache().hdel(CacheKeys.BOARD, boardId);
+  await cache().hdel(CacheKeys.USER, req.currentUser.uid);
+
+  info(`Muted board: ${boardId} for user ${req.currentUser.uid}.`);
+  res.status(204).json();
 });
 
 /**
  * @openapi
- * /boards/{slug}/mute:
+ * /boards/{uuid}/mute:
  *   delete:
  *     summary: Unmutes a board.
+ *     operationId: unmutesBoardsByUuid
  *     description: Unmutes the specified board for the current user.
  *     tags:
  *       - /boards/
  *     security:
  *       - firebase: []
  *     parameters:
- *       - name: slug
+ *       - name: uuid
  *         in: path
  *         description: The name of the board to unmute.
  *         required: true
@@ -256,142 +399,237 @@ router.post("/:slug/mute", ensureLoggedIn, async (req, res) => {
  *           type: string
  *     responses:
  *       401:
- *         description: User was not found in request that requires authentication.
+ *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
- *         description: User is not authorized to perform the action.
+ *         $ref: "#/components/responses/ensureLoggedIn403"
+ *       404:
+ *         $ref: "#/components/responses/default404"
+ *       500:
+ *         description: Internal Server Error
+ *         $ref: "#/components/responses/default500"
  *       200:
  *         description: The board was successfully unmuted.
  *
  */
-router.delete("/:slug/mute", ensureLoggedIn, async (req, res) => {
-  const { slug } = req.params;
+router.delete("/:boardId/mute", ensureLoggedIn, async (req, res) => {
+  const { boardId } = req.params;
 
-  log(`Setting board unmuted: ${slug}`);
+  const board = await ensureBoardAccess({
+    firebaseId: req.currentUser.uid,
+    boardId,
+    res,
+  });
+
+  // TODO: Error is (temporarily) handled within ensureBoardAccess
+  if (!board) {
+    return;
+  }
 
   if (
     !(await unmuteBoard({
       firebaseId: req.currentUser.uid,
-      slug,
+      uuid: boardId,
     }))
   ) {
     res.sendStatus(500);
     return;
   }
 
-  // @ts-ignore
-  info(`Unmuted board: ${slug} for user ${req.currentUser.uid}.`);
-  res.status(200).json();
+  await cache().hdel(CacheKeys.BOARD, boardId);
+  await cache().hdel(CacheKeys.USER, req.currentUser.uid);
+
+  info(`Unmuted board: ${boardId} for user ${req.currentUser.uid}.`);
+  res.status(204).json();
 });
 
 /**
  * @openapi
- * /boards/{slug}/pin:
+ * /boards/{uuid}/pin:
  *   post:
  *     summary: Pins a board.
+ *     operationId: pinsBoardsByUuid
  *     description: Pins the specified board for the current user.
  *     tags:
  *       - /boards/
  *     security:
  *       - firebase: []
  *     parameters:
- *       - name: slug
+ *       - name: uuid
  *         in: path
  *         description: The name of the board to pin.
  *         required: true
  *         schema:
  *           type: string
+ *           # format: uuid
  *     responses:
  *       401:
- *         description: User was not found in request that requires authentication.
+ *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
- *         description: User is not authorized to perform the action.
+ *         $ref: "#/components/responses/ensureLoggedIn403"
+ *       404:
+ *         $ref: "#/components/responses/default404"
+ *       500:
+ *         description: Internal Server Error
+ *         $ref: "#/components/responses/default500"
  *       200:
  *         description: The board was successfully pinned.
  *
  */
-router.post("/:slug/pin", ensureLoggedIn, async (req, res) => {
-  const { slug } = req.params;
+router.post("/:boardId/pin", ensureLoggedIn, async (req, res) => {
+  const { boardId } = req.params;
 
-  log(`Setting board pinned: ${slug}`);
+  const board = await ensureBoardAccess({
+    firebaseId: req.currentUser.uid,
+    boardId,
+    res,
+  });
+
+  // TODO: Error is (temporarily) handled within ensureBoardAccess
+  if (!board) {
+    return;
+  }
 
   if (
     !(await pinBoard({
       firebaseId: req.currentUser.uid,
-      slug,
+      uuid: boardId,
     }))
   ) {
     res.sendStatus(500);
     return;
   }
 
-  // @ts-ignore
-  info(`Pinned board: ${slug} for user ${req.currentUser.uid}.`);
-  res.status(200).json();
+  await cache().hdel(CacheKeys.BOARD, boardId);
+  await cache().hdel(CacheKeys.USER, req.currentUser.uid);
+
+  info(`Pinned board: ${boardId} for user ${req.currentUser.uid}.`);
+  res.status(204).json();
 });
 
 /**
  * @openapi
- * /boards/{slug}/pin:
+ * /boards/{uuid}/pin:
  *   delete:
  *     summary: Unpins a board.
+ *     operationId: unpinsBoardsByUuid
  *     description: Unpins the specified board for the current user.
  *     tags:
  *       - /boards/
  *     security:
  *       - firebase: []
  *     parameters:
- *       - name: slug
+ *       - name: uuid
  *         in: path
  *         description: The name of the board to unpin.
  *         required: true
  *         schema:
  *           type: string
+ *           format: uuid
  *     responses:
  *       401:
- *         description: User was not found in request that requires authentication.
+ *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
- *         description: User is not authorized to perform the action.
+ *         $ref: "#/components/responses/ensureLoggedIn403"
+ *       404:
+ *         $ref: "#/components/responses/default404"
+ *       500:
+ *         description: Internal Server Error
+ *         $ref: "#/components/responses/default500"
  *       200:
  *         description: The board was successfully unpinned.
  *
  */
-router.delete("/:slug/pin", ensureLoggedIn, async (req, res) => {
-  const { slug } = req.params;
+router.delete("/:boardId/pin", ensureLoggedIn, async (req, res) => {
+  const { boardId } = req.params;
 
-  log(`Setting board unpinned: ${slug}`);
+  log(`Setting board unpinned: ${boardId}`);
+
+  const board = await ensureBoardAccess({
+    firebaseId: req.currentUser.uid,
+    boardId,
+    res,
+  });
+
+  // TODO: Error is (temporarily) handled within ensureBoardAccess
+  if (!board) {
+    return;
+  }
 
   if (
     !(await unpinBoard({
       firebaseId: req.currentUser.uid,
-      slug,
+      uuid: boardId,
     }))
   ) {
     res.sendStatus(500);
     return;
   }
 
-  info(`Unpinned board: ${slug} for user ${req.currentUser?.uid}.`);
-  res.status(200).json();
+  await cache().hdel(CacheKeys.BOARD, boardId);
+  await cache().hdel(CacheKeys.USER, req.currentUser.uid);
+
+  info(`Unpinned board: ${boardId} for user ${req.currentUser?.uid}.`);
+  res.status(204).json();
 });
 
 /**
  * @openapi
- * /boards/{slug}/notifications/dismiss:
+ * /boards/{uuid}/notifications/dismiss:
  *   post:
- *     summary: Dismiss all notifications for board {slug}
+ *     summary: Dismiss all notifications for board
+ *     operationId: dismissBoardsByUuid
  *     tags:
  *       - /boards/
- *       - todo
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: uuid
+ *         in: path
+ *         description: The uuid of the board to dismiss notifications for.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         examples:
+ *           existing:
+ *             summary: An existing board
+ *             value: c6d3d10e-8e49-4d73-b28a-9d652b41beec
+ *     responses:
+ *       401:
+ *         description: User is not logged in.
+ *         $ref: "#/components/responses/default401"
+ *       403:
+ *         $ref: "#/components/responses/ensureLoggedIn403"
+ *       404:
+ *         $ref: "#/components/responses/default404"
+ *       500:
+ *         description: Internal Server Error
+ *         $ref: "#/components/responses/default500"
+ *       204:
+ *         description: Board notifications dismissed.
  */
 router.post(
-  "/:slug/notifications/dismiss",
+  "/:boardId/notifications/dismiss",
   ensureLoggedIn,
   async (req, res) => {
-    const { slug } = req.params;
+    const { boardId } = req.params;
+
     let currentUserId: string = req.currentUser.uid;
-    log(`Dismissing ${slug} notifications for firebase id: ${currentUserId}`);
+    const board = await ensureBoardAccess({
+      firebaseId: currentUserId,
+      boardId,
+      res,
+    });
+
+    // TODO: Error is (temporarily) handled within ensureBoardAccess
+    if (!board) {
+      return;
+    }
+    log(
+      `Dismissing ${boardId} notifications for firebase id: ${currentUserId}`
+    );
     const dismissSuccessful = await dismissBoardNotifications({
-      slug,
+      uuid: boardId,
       firebaseId: currentUserId,
     });
 
@@ -402,7 +640,7 @@ router.post(
 
     info(`Dismiss successful`);
 
-    res.sendStatus(204);
+    res.status(204).json();
   }
 );
 

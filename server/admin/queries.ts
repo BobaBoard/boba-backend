@@ -82,6 +82,9 @@ export const createIdentitiesIfNotExist = async (
   }
 };
 
+/*
+ * @deprecated
+ */
 export const createBoardsIfNotExist = async (
   boards: {
     slug?: string;

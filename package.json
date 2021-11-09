@@ -11,12 +11,12 @@
     "start:watch": "nodemon --watch . --exec node -r tsconfig-paths/register -r ts-node/register server/index.ts -e yaml,ts,sql",
     "start-db": "docker-compose down && docker-compose up",
     "test:base": "cross-env DEBUG=bobaserver:*,-*info jest --runInBand --no-cache",
-    "test": "yarn run test:base .test.ts$",
+    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --no-cache",
+    "test": "yarn run test:base",
     "test:watch": "yarn run test --watchAll",
     "test:changed": "yarn run test:base --watch --onlyChanged",
     "test:file": "yarn run test:base --watchAll",
     "test:docker": "docker-compose -f docker-compose.test.yml run --rm test",
-    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --no-cache",
     "open-api:generate": "node -r dotenv/config -r ts-node/register -r tsconfig-paths/register utils/generate-spec-file.ts dotenv_config_path=./.env.prod",
     "open-api:validate": "yarn run open-api:generate && validate-api open-api-spec.json && openapi-examples-validator open-api-spec.json --ignore-formats color quill-delta",
     "open-api:docker": "docker-compose -f docker-compose.open-api.test.yml run --rm test",
@@ -51,13 +51,15 @@
     "dotenv": "^8.2.0",
     "dotenv-expand": "^5.1.0",
     "express": "^4.17.1",
+    "fast-json-stable-stringify": "^2.1.0",
     "firebase-admin": "^8.12.1",
     "honeycomb-beeline": "^2.7.2",
-    "pg-promise": "^10.5.6",
+    "pg-promise": "^10.11.1",
     "redis": "^3.0.2",
     "redoc-express": "^1.0.0",
     "swagger-jsdoc": "^6.1.0",
     "ts-node": "^8.9.1",
+    "tsconfig-paths": "^3.11.0",
     "uuid": "^8.1.0"
   },
   "devDependencies": {
@@ -70,7 +72,6 @@
     "openapi-examples-validator": "^4.4.0",
     "supertest": "^4.0.2",
     "ts-jest": "^27.0.5",
-    "tsconfig-paths": "^3.11.0",
     "typescript": "^3.8.3"
   }
 }

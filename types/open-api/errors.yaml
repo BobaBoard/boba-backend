@@ -1,0 +1,52 @@
+components:
+  responses:
+    default401:
+      description: Unauthorized
+      content:
+        application/json:
+          schema:
+            type: string
+          example: Unauthorized
+    default403:
+      description: Forbidden
+      content:
+        application/json:
+          schema:
+            type: string
+          example: Forbidden
+    default404:
+      description: Not Found
+      content:
+        application/json:
+          schema:
+            type: string
+          example: Not Found
+    default500:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            type: string
+          example: Internal Server Error
+    ensureLoggedIn401:
+      description: User was not found in request that requires authentication.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+          example:
+            message: No authenticated user found
+    ensureLoggedIn403:
+      description: User is not authorized to perform the action.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+          example:
+            message: Authentication token expired
