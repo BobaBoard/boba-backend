@@ -1,4 +1,5 @@
 import pg, { QueryFile } from "pg-promise";
+
 import path from "path";
 
 const markBoardVisit = `
@@ -113,7 +114,7 @@ const updateBoardSettings = `
     UPDATE boards
     SET tagline = $/tagline/,
         settings = $/settings/
-    WHERE boards.string_id = $/uuid/`;
+    WHERE boards.string_id = $/board_uuid/`;
 
 export default {
   getAllBoards: new QueryFile(path.join(__dirname, "all-boards.sql")),

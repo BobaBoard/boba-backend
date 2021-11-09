@@ -43,7 +43,7 @@ const ensureBoardAccess = async ({
 }) => {
   const board = await getBoardByUuid({
     firebaseId: firebaseId,
-    uuid: boardId,
+    boardId,
   });
   log(`Found board`, board);
 
@@ -129,15 +129,15 @@ const ensureBoardAccess = async ({
  *                 $ref: '#/components/examples/BoardsRestrictedResponse'
  */
 router.get("/:uuid", async (req, res) => {
-  const { uuid } = req.params;
-  log(`Fetching data for board with uuid ${uuid}.`);
+  const { uuid: boardId } = req.params;
+  log(`Fetching data for board with uuid ${boardId}.`);
 
   const boardMetadata = await getBoardMetadataByUuid({
     firebaseId: req.currentUser?.uid,
-    uuid,
+    boardId,
   });
 
-  if (!canAccessBoardByUuid({ uuid, firebaseId: req.currentUser?.uid })) {
+  if (!canAccessBoardByUuid({ boardId, firebaseId: req.currentUser?.uid })) {
     if (!req.currentUser?.uid) {
       // TODO: is this WORKING????
       res
@@ -155,7 +155,7 @@ router.get("/:uuid", async (req, res) => {
     return;
   }
 
-  log(`Returning data for board ${uuid} for user ${req.currentUser?.uid}.`);
+  log(`Returning data for board ${boardId} for user ${req.currentUser?.uid}.`);
   res.status(200).json(boardMetadata);
 });
 
@@ -234,7 +234,7 @@ router.patch("/:boardId/", ensureLoggedIn, async (req, res) => {
   }
 
   const newMetadata = await updateBoardMetadata({
-    uuid: boardId,
+    boardId,
     firebaseId: req.currentUser.uid,
     oldMetadata: board,
     newMetadata: { descriptions, settings: { accentColor }, tagline },
@@ -249,7 +249,7 @@ router.patch("/:boardId/", ensureLoggedIn, async (req, res) => {
   await cache().hdel(CacheKeys.BOARD_METADATA, boardId);
   const boardMetadata = await getBoardMetadataByUuid({
     firebaseId: req.currentUser?.uid,
-    uuid: boardId,
+    boardId,
   });
   res.status(200).json(boardMetadata);
 });
@@ -295,7 +295,7 @@ router.post("/:boardId/visits", ensureLoggedIn, async (req, res) => {
   if (
     !(await markBoardVisit({
       firebaseId: req.currentUser.uid,
-      uuid: boardId,
+      boardId,
     }))
   ) {
     res.sendStatus(500);
@@ -364,7 +364,7 @@ router.post("/:boardId/mute", ensureLoggedIn, async (req, res) => {
   if (
     !(await muteBoard({
       firebaseId: req.currentUser.uid,
-      uuid: boardId,
+      boardId,
     }))
   ) {
     // TODO: figure out how to do a proper 404.
@@ -428,7 +428,7 @@ router.delete("/:boardId/mute", ensureLoggedIn, async (req, res) => {
   if (
     !(await unmuteBoard({
       firebaseId: req.currentUser.uid,
-      uuid: boardId,
+      boardId,
     }))
   ) {
     res.sendStatus(500);
@@ -492,7 +492,7 @@ router.post("/:boardId/pin", ensureLoggedIn, async (req, res) => {
   if (
     !(await pinBoard({
       firebaseId: req.currentUser.uid,
-      uuid: boardId,
+      boardId,
     }))
   ) {
     res.sendStatus(500);
@@ -558,7 +558,7 @@ router.delete("/:boardId/pin", ensureLoggedIn, async (req, res) => {
   if (
     !(await unpinBoard({
       firebaseId: req.currentUser.uid,
-      uuid: boardId,
+      boardId,
     }))
   ) {
     res.sendStatus(500);
@@ -629,7 +629,7 @@ router.post(
       `Dismissing ${boardId} notifications for firebase id: ${currentUserId}`
     );
     const dismissSuccessful = await dismissBoardNotifications({
-      uuid: boardId,
+      boardId,
       firebaseId: currentUserId,
     });
 
