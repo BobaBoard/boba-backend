@@ -1,5 +1,9 @@
 import { BoardMetadata, LoggedInBoardMetadata } from "types/rest/boards";
-import { BoardPermissions, PostPermissions, ThreadPermissions } from "Types";
+import {
+  BoardPermissions,
+  PostPermissions,
+  ThreadPermissions,
+} from "types/permissions";
 
 export const GORE_BOARD_ID = "c6d3d10e-8e49-4d73-b28a-9d652b41beec";
 export const MAIN_STREET_BOARD_ID = "2fb151eb-c600-4fe4-a542-4662487e5496";
