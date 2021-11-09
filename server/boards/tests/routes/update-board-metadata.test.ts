@@ -31,7 +31,7 @@ const UPDATED_CATEGORY_DESCRIPTION: BoardCategoryDescription = {
   index: 2,
   title: "this is a new text description",
   type: "category_filter",
-  categories: ["blood", "viscera", "bruises"],
+  categories: ["blood", "bruises", "viscera"],
 };
 
 describe("Tests boards REST API", () => {
