@@ -1,4 +1,8 @@
-import { BoardDescription } from "types/rest/boards";
+import {
+  BoardCategoryDescription,
+  BoardDescription,
+  BoardTextDescription,
+} from "types/rest/boards";
 export interface UserIdentityType {
   name: string;
   // TODO[realms]: make this avatar_url
@@ -242,6 +246,14 @@ export enum restriction_types {
   DELIST = "delist",
 }
 
+export interface DbBoardTextDescription extends BoardTextDescription {
+  categories: null;
+}
+
+export interface DbBoardCategoryDescription extends BoardCategoryDescription {
+  description: null;
+}
+
 export interface DbBoardMetadata {
   slug: string;
   string_id: string;
@@ -250,7 +262,7 @@ export interface DbBoardMetadata {
   settings: {
     accentColor: string;
   };
-  descriptions: BoardDescription[];
+  descriptions: (DbBoardTextDescription | DbBoardCategoryDescription)[];
   muted: boolean;
   pinned_order: number | null;
   posting_identities: {
