@@ -2,14 +2,23 @@ import { Accessory, Role } from "./identity";
 
 import { UserBoardPermissions } from "Types";
 
-export interface BoardDescription {
-  id?: string;
+export interface BoardTextDescription {
+  id: string;
   index: number;
   title: string;
-  type: "text" | "category_filter";
-  description?: string;
-  categories?: string[];
+  type: "text";
+  description: string;
 }
+
+export interface BoardCategoryDescription {
+  id: string;
+  index: number;
+  title: string;
+  type: "category_filter";
+  categories: string[];
+}
+
+export type BoardDescription = BoardCategoryDescription | BoardTextDescription;
 
 export interface BoardSummary {
   id: string;
