@@ -1,3 +1,4 @@
+import { GORE_BOARD_ID } from "test/data/boards";
 import { getThreadByStringId } from "../queries";
 
 describe("threads queries", () => {
@@ -11,6 +12,7 @@ describe("threads queries", () => {
     expect(thread).toEqual({
       thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
       board_slug: "gore",
+      board_id: GORE_BOARD_ID,
       thread_total_comments_amount: 2,
       thread_new_comments_amount: 0,
       thread_total_posts_amount: 3,
@@ -173,6 +175,7 @@ describe("threads queries", () => {
     expect(thread).toEqual({
       thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
       board_slug: "gore",
+      board_id: GORE_BOARD_ID,
       thread_total_comments_amount: 0,
       thread_new_comments_amount: 0,
       thread_total_posts_amount: 3,

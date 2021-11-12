@@ -3,20 +3,24 @@ import {
   BoardRestrictions,
   ThreadPermissions,
 } from "types/permissions";
+import { DbBoardMetadata, DbThreadType } from "Types";
 import { NextFunction, Request, Response } from "express";
 import {
   extractBoardPermissions,
   getBoardRestrictions,
 } from "utils/permissions-utils";
+import {
+  getThreadByStringId,
+  getUserPermissionsForThread,
+} from "server/threads/queries";
 
-import { DbBoardMetadata } from "Types";
 import { getBoardByUuid } from "server/boards/queries";
-import { getUserPermissionsForThread } from "server/threads/queries";
 
 declare global {
   namespace Express {
     export interface Request {
       currentThreadPermissions?: ThreadPermissions[];
+      currentThreadData?: DbThreadType;
       currentBoardPermissions?: BoardPermissions[];
       currentBoardMetadata?: DbBoardMetadata;
       currentBoardRestrictions?: {
@@ -71,6 +75,28 @@ export const ensureThreadPermission = (permission: ThreadPermissions) => {
       next();
     });
   };
+};
+
+export const ensureThreadAccess = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const threadId = req.params.thread_id;
+  const thread = await getThreadByStringId({
+    threadId,
+    firebaseId: req.currentUser?.uid,
+  });
+
+  if (!thread) {
+    res
+      .status(404)
+      .send({ message: `The thread with id "${threadId}" was not found.` });
+    return;
+  }
+  req.params.board_id = thread.board_id;
+  req.currentThreadData = thread;
+  ensureBoardAccess(req, res, next);
 };
 
 export const withBoardMetadata = async (

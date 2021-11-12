@@ -114,6 +114,7 @@ WITH
 SELECT 
     threads.string_id as thread_id, 
     boards.slug as board_slug,
+    boards.string_id as board_id,
     TO_CHAR(thread_details.last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as thread_last_activity,
     json_agg(row_to_json(thread_posts) ORDER BY thread_posts.created ASC) as posts,
     COALESCE(threads.OPTIONS ->> 'default_view', 'thread')::view_types AS default_view,
@@ -138,4 +139,4 @@ LEFT JOIN user_muted_threads umt
 LEFT JOIN user_hidden_threads uht
     ON  ${firebase_id} IS NOT NULL AND uht.user_id = (SELECT id FROM users WHERE firebase_id = ${firebase_id}) AND uht.thread_id = threads.id
 WHERE threads.string_id = ${thread_string_id}
-GROUP BY threads.id, boards.slug, uht.user_id, umt.user_id, thread_details.last_update_timestamp
+GROUP BY threads.id, boards.slug, uht.user_id, umt.user_id, thread_details.last_update_timestamp,  boards.string_id;

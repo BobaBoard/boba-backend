@@ -59,7 +59,7 @@ export interface ThreadSummary extends ThreadActivitySummary {
 
 export interface Thread extends ThreadSummary {
   posts: Post[];
-  comments: { [contribution_id: string]: Comment };
+  comments: { [contribution_id: string]: Comment[] };
 }
 
 export interface Feed {
