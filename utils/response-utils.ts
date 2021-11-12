@@ -140,7 +140,7 @@ export const makeServerThread = (thread: DbThreadType): Thread => {
     ...makeServerThreadSummary(thread),
     posts: postsWithoutComments,
     comments: posts.reduce(
-      (agg: { [contribution_id: string]: Comment }, post: Post) => {
+      (agg: { [contribution_id: string]: Comment[] }, post: Post) => {
         // @ts-expect-error
         log(post.comments);
         // @ts-expect-error

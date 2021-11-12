@@ -13,13 +13,16 @@ import {
   ensureNoIdentityLeakage,
   makeServerThread,
 } from "utils/response-utils";
+import {
+  ensureThreadAccess,
+  ensureThreadPermission,
+} from "handlers/permissions";
 
 import { ThreadPermissions } from "types/permissions";
 import axios from "axios";
 import { canAccessBoard } from "utils/permissions-utils";
 import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
-import { ensureThreadPermission } from "handlers/permissions";
 import express from "express";
 import { moveThread } from "./queries";
 
@@ -68,42 +71,14 @@ const router = express.Router();
  *               withcommentsthread:
  *                 $ref: '#/components/examples/ThreadWithCommentsThreadResponse'
  */
-router.get("/:id", async (req, res) => {
-  const { id } = req.params;
-  log(`Fetching data for thread with id ${id}`);
+router.get("/:thread_id", ensureThreadAccess, async (req, res) => {
+  const { thread_id: threadId } = req.params;
+  log(`Fetching data for thread with id ${threadId}`);
 
-  // NOTE: if updating this (and it makes sense) also update
-  // the method for thread creation + retrieval.
-  // TODO: check if this has already been unified
-  const thread = await getThreadByStringId({
-    threadId: id,
-    firebaseId: req.currentUser?.uid,
-  });
-  info(`Found thread: `, thread);
-
-  if (
-    thread &&
-    !(await canAccessBoard({
-      slug: thread.board_slug,
-      firebaseId: req.currentUser?.uid,
-    }))
-  ) {
-    return req.currentUser ? res.sendStatus(403) : res.sendStatus(401);
-  }
-
-  if (thread === false) {
-    res.sendStatus(500);
-    return;
-  }
-  if (!thread) {
-    res.sendStatus(404);
-    return;
-  }
-
-  const serverThread = makeServerThread(thread);
+  const serverThread = makeServerThread(req.currentThreadData);
   ensureNoIdentityLeakage(serverThread);
 
-  info(`sending back data for thread ${id}.`);
+  info(`sending back data for thread ${serverThread.id}.`);
   res.status(200).json(serverThread);
 });
 

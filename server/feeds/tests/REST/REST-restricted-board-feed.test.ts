@@ -2,6 +2,7 @@ import { setLoggedInUser, startTestServer } from "utils/test-utils";
 
 import { BOBATAN_USER_ID } from "test/data/auth";
 import { RESTRICTED_BOARD_ID } from "test/data/boards";
+import { RESTRICTED_THREAD_SUMMARY } from "test/data/threads";
 import request from "supertest";
 import router from "../../routes";
 
@@ -23,7 +24,12 @@ describe("Test feed of restricted boards REST API", () => {
     setLoggedInUser(BOBATAN_USER_ID);
     const res = await request(server.app).get(`/boards/${RESTRICTED_BOARD_ID}`);
 
-    expect(res.status).toBe(204);
-    expect(res.body).toEqual({});
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({
+      activity: [RESTRICTED_THREAD_SUMMARY],
+      cursor: {
+        next: null,
+      },
+    });
   });
 });

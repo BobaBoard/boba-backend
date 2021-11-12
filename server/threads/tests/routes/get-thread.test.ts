@@ -5,6 +5,8 @@ import {
   REVOLVER_OCELOT_POST,
 } from "test/data/posts";
 
+import { GORE_BOARD_ID } from "test/data/boards";
+import { Thread } from "types/rest/threads";
 import request from "supertest";
 import router from "../../routes";
 import { startTestServer } from "utils/test-utils";
@@ -18,9 +20,10 @@ describe("Tests threads REST API", () => {
     );
 
     expect(res.status).toBe(200);
-    expect(res.body).toEqual({
+    expect(res.body).toEqual<Thread>({
       id: "29d1b2da-3289-454a-9089-2ed47db4967b",
       parent_board_slug: "gore",
+      parent_board_id: GORE_BOARD_ID,
       default_view: "thread",
       hidden: false,
       muted: false,
