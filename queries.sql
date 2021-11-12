@@ -67,7 +67,7 @@ VALUES
      'roleAvatar',
      'roleColor',
      'roleDescription.',
-     ARRAY['post_as_role'::role_permissions, 'edit_board_details'::role_permissions]);
+     ARRAY['post_as_role'::role_permissions_type, 'edit_board_details'::role_permissions_type]);
 insert into board_user_roles(user_id, board_id, role_id) VALUES(userId, boardId, roleId);
 INSERT INTO realm_user_roles(user_id, role_id) VALUES(user_id, 'role_id');
 
@@ -82,11 +82,11 @@ INSERT INTO role_accessories(role_id, accessory_id) VALUES (
 );
 
 --- ADD NEW PERMISSIONS (+ TYPES) --
-ALTER TYPE role_permissions ADD VALUE 'edit_category_tags';
-ALTER TYPE role_permissions ADD VALUE 'edit_content_notices';
+ALTER TYPE role_permissions_type ADD VALUE 'edit_category_tags';
+ALTER TYPE role_permissions_type ADD VALUE 'edit_content_notices';
 
 UPDATE roles
-    SET permissions = array_cat(permissions, ARRAY['edit_category_tags'::role_permissions, 'edit_content_notices'::role_permissions])
+    SET permissions = array_cat(permissions, ARRAY['edit_category_tags'::role_permissions_type, 'edit_content_notices'::role_permissions_type])
     WHERE roles.id = 3;
 
 --UPDATE BOARD AVATAR--
@@ -124,7 +124,7 @@ INSERT INTO boards(slug, tagline, avatar_reference_id, settings) VALUES
 -- LOCK BOARD --
 INSERT INTO board_restrictions(board_id, logged_out_restrictions) VALUES 
 ((SELECT id FROM boards WHERE slug='volunteers'),
-     ARRAY['lock_access'::restriction_type]);
+     ARRAY['lock_access'::board_restrictions_type]);
 
 -- ADD NEW ACCESSORY --
 INSERT INTO accessories(image_reference_id) VALUES ('https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F7c6c9459-7fa1-4d06-8dc0-ebb5b1bd76a8.png?alt=media&token=78d812a5-b217-4afb-99f3-41b9ed7b7ed5') RETURNING id;

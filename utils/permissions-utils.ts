@@ -8,8 +8,10 @@ import {
   BoardPermissions,
   UserBoardPermissions,
   extractPermissions,
+  BoardRestrictions,
+  extractBoardRestrictions,
 } from "types/permissions";
-import { DbBoardMetadata, QueryTagsType, restriction_types } from "Types";
+import { DbBoardMetadata, QueryTagsType } from "Types";
 
 const info = debug("bobaserver:board:utils-info");
 const log = debug("bobaserver::permissions-utils-log");
@@ -82,6 +84,21 @@ export const canDoTagsEdit = (
   );
 };
 
+export const getBoardRestrictions = ({
+  loggedOutRestrictions,
+  loggedInBaseRestrictions,
+}: {
+  loggedOutRestrictions: string[];
+  loggedInBaseRestrictions: string[];
+}) => {
+  return {
+    loggedOutRestrictions: extractBoardRestrictions(loggedOutRestrictions),
+    loggedInBaseRestrictions: extractBoardRestrictions(
+      loggedInBaseRestrictions
+    ),
+  };
+};
+
 export const canAccessBoard = async ({
   slug,
   firebaseId,
@@ -97,7 +114,7 @@ export const canAccessBoard = async ({
   if (!board) {
     return false;
   }
-  if (board.logged_out_restrictions.includes(restriction_types.LOCK_ACCESS)) {
+  if (board.logged_out_restrictions.includes(BoardRestrictions.LOCK_ACCESS)) {
     return !!firebaseId;
   }
 
@@ -133,7 +150,7 @@ export const hasBoardAccessPermission = ({
 }) => {
   if (
     boardMetadata.logged_out_restrictions.includes(
-      restriction_types.LOCK_ACCESS
+      BoardRestrictions.LOCK_ACCESS
     )
   ) {
     return !!firebaseId;
