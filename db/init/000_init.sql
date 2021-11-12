@@ -288,7 +288,7 @@ CREATE TABLE IF NOT EXISTS board_description_sections(
     index BIGINT NOT NULL
 );
 CREATE INDEX board_description_sections_board_id on board_description_sections(board_id);
-CREATE INDEX board_description_sections_string_id on board_description_sections(string_id);
+CREATE UNIQUE INDEX board_description_sections_string_id on board_description_sections(string_id);
 
 CREATE TABLE IF NOT EXISTS board_description_section_categories(
     section_id BIGINT REFERENCES board_description_sections(id) ON DELETE RESTRICT NOT NULL,
