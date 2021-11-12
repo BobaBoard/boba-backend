@@ -4,6 +4,7 @@ SELECT
     -- Thread details (DbThreadType)
     thread_string_id as thread_id,
     board_slug,
+    board_string_id as board_id,
     TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as thread_last_activity,
     thread_details.default_view,
     -- Amount details
@@ -19,6 +20,7 @@ SELECT
     thread_string_id as parent_thread_id,
     NULL as parent_post_id,
     board_slug as parent_board_slug,
+    board_string_id as parent_board_id,
     -- Author details
     author,
     author_identity.username,

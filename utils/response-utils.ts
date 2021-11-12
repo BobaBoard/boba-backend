@@ -1,13 +1,10 @@
+import { Comment, Post, Thread, ThreadSummary } from "types/rest/threads";
 import {
   DbBoardMetadata,
   DbCommentType,
   DbPostType,
   DbThreadSummaryType,
   DbThreadType,
-  ServerCommentType,
-  ServerPostType,
-  ServerThreadSummaryType,
-  ServerThreadType,
 } from "Types";
 
 import { BoardRestrictions } from "types/permissions";
@@ -105,16 +102,18 @@ export const mergeObjectIdentity = <T>(
 
 export const makeServerThreadSummary = (
   thread: DbThreadType | DbThreadSummaryType
-): ServerThreadSummaryType => {
+): ThreadSummary => {
   const starter =
     "posts" in thread
       ? makeServerPost(thread.posts[0])
       : makeServerPost(thread);
   // TODO[realms]: remove comments from post in db
+  // @ts-expect-error
   delete starter.comments;
   return {
     id: thread.thread_id,
     parent_board_slug: thread.board_slug,
+    parent_board_id: thread.board_id,
     starter: starter,
     default_view: thread.default_view,
     muted: thread.muted,
@@ -129,10 +128,11 @@ export const makeServerThreadSummary = (
   };
 };
 
-export const makeServerThread = (thread: DbThreadType): ServerThreadType => {
+export const makeServerThread = (thread: DbThreadType): Thread => {
   const posts = thread.posts?.map(makeServerPost) || [];
   // TODO[realms]: remove this
   const postsWithoutComments = posts.map((post) => {
+    // @ts-expect-error
     const { comments, ...rest } = post;
     return rest;
   });
@@ -140,9 +140,12 @@ export const makeServerThread = (thread: DbThreadType): ServerThreadType => {
     ...makeServerThreadSummary(thread),
     posts: postsWithoutComments,
     comments: posts.reduce(
-      (agg: Record<string, ServerCommentType[]>, post: ServerPostType) => {
+      (agg: { [contribution_id: string]: Comment }, post: Post) => {
+        // @ts-expect-error
         log(post.comments);
+        // @ts-expect-error
         if (post.comments) {
+          // @ts-expect-error
           agg[post.id] = post.comments;
         }
         return agg;
@@ -154,7 +157,7 @@ export const makeServerThread = (thread: DbThreadType): ServerThreadType => {
 
 export const makeServerPost = (
   post: DbPostType | DbThreadSummaryType
-): ServerPostType => {
+): Post => {
   const oldPost = mergeObjectIdentity<DbPostType | DbThreadSummaryType>(post);
   const serverPost = {
     id: post.post_id,
@@ -184,9 +187,7 @@ export const makeServerPost = (
   return serverPost;
 };
 
-export const makeServerComment = (
-  comment: DbCommentType
-): ServerCommentType => {
+export const makeServerComment = (comment: DbCommentType): Comment => {
   const identityPost = mergeObjectIdentity<DbCommentType>(comment);
   return {
     id: comment.comment_id,
