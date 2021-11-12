@@ -2,11 +2,11 @@ import {
   ensureNoIdentityLeakage,
   makeServerThreadSummary,
 } from "utils/response-utils";
-import { getBoardActivityBySlug, getUserActivity } from "./queries";
+import { getBoardActivityByUuid, getUserActivity } from "./queries";
 
-import { ServerFeedType } from "Types";
-import { canAccessBoard } from "utils/permissions-utils";
+import { Feed } from "types/rest/threads";
 import debug from "debug";
+import { ensureBoardAccess } from "handlers/permissions";
 import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
 
@@ -17,7 +17,7 @@ const router = express.Router();
 
 /**
  * @openapi
- * /feeds/boards/{slug}:
+ * /feeds/boards/{board_id}:
  *   get:
  *     summary: Get the feed for the given boards' activity.
  *     operationId: getBoardsFeedByUuid
@@ -25,19 +25,19 @@ const router = express.Router();
  *       - /feeds/
  *       - todo
  *     parameters:
- *       - name: slug
+ *       - name: board_id
  *         in: path
- *         description: The slug of the board to fetch the activity of.
+ *         description: The id of the board to fetch the activity of.
  *         required: true
  *         schema:
  *           type: string
  *         examples:
  *           gore:
  *             summary: The feed for the gore board.
- *             value: gore
+ *             value: c6d3d10e-8e49-4d73-b28a-9d652b41beec
  *           cursor:
  *             summary: The feed for a board with a cursor.
- *             value: long
+ *             value: db8dc5b3-5b4a-4bfe-a303-e176c9b00b83
  *       - name: cursor
  *         in: query
  *         description: The cursor to start feeding the activity of the board from.
@@ -64,26 +64,20 @@ const router = express.Router();
  *               gore:
  *                 $ref: '#/components/examples/FeedBoardGore'
  */
-router.get("/boards/:slug", async (req, res) => {
-  const { slug } = req.params;
+router.get("/boards/:board_id", ensureBoardAccess, async (req, res) => {
+  const { board_id: boardId } = req.params;
   const { cursor, categoryFilter } = req.query;
   log(
-    `Fetching activity data for board with slug ${slug} with cursor ${cursor} and filtered category "${categoryFilter}"`
+    `Fetching activity data for board with slug ${boardId} with cursor ${cursor} and filtered category "${categoryFilter}"`
   );
 
-  if (!(await canAccessBoard({ slug, firebaseId: req.currentUser?.uid }))) {
-    // TOOD: add error log
-    // TODO: make it 401 or 403 according to actual token presence.
-    return res.sendStatus(403);
-  }
-
-  const result = await getBoardActivityBySlug({
-    slug,
+  const result = await getBoardActivityByUuid({
+    boardId,
     firebaseId: req.currentUser?.uid,
     filterCategory: (categoryFilter as string) || null,
     cursor: (cursor as string) || null,
   });
-  info(`Found activity for board ${slug}:`, result);
+  info(`Found activity for board ${boardId}:`, result);
 
   if (result === false) {
     res.sendStatus(500);
@@ -99,7 +93,7 @@ router.get("/boards/:slug", async (req, res) => {
   }
 
   const threadsWithIdentity = result.activity.map(makeServerThreadSummary);
-  const response: ServerFeedType = {
+  const response: Feed = {
     cursor: {
       next: result.cursor,
     },
@@ -108,7 +102,7 @@ router.get("/boards/:slug", async (req, res) => {
 
   response.activity.map((post) => ensureNoIdentityLeakage(post));
   log(
-    `Returning board activity data for board ${slug} for user ${req.currentUser?.uid}.`
+    `Returning board activity data for board ${boardId} for user ${req.currentUser?.uid}.`
   );
   res.status(200).json(response);
 });
@@ -163,7 +157,7 @@ router.get("/users/@me", ensureLoggedIn, async (req, res) => {
   const threadsWithIdentity = userActivity.activity.map(
     makeServerThreadSummary
   );
-  const response: ServerFeedType = {
+  const response: Feed = {
     cursor: {
       next: userActivity.cursor,
     },

@@ -89,7 +89,7 @@ export const extractBoardRestrictions = (restrictions: string[]) => {
       ([_, value]) => value === restriction
     );
     if (foundRestriction) {
-      restrictions.push(foundRestriction[1]);
+      extractedRestrictions.push(foundRestriction[1]);
     }
   });
   return extractedRestrictions;

@@ -25,10 +25,14 @@ components:
           format: quill-delta
         secret_identity:
           description: The public-facing identity associated with the comment.
-          $ref: "#/components/schemas/SecretIdentity"
+          oneOf:
+            - $ref: "#/components/schemas/SecretIdentity"
+            - type: "null"
         user_identity:
           description: The identity of the original poster, if visible to the requester.
-          $ref: "#/components/schemas/Identity"
+          oneOf:
+            - $ref: "#/components/schemas/Identity"
+            - type: "null"
         created_at:
           type: string
           format: date-time
@@ -42,6 +46,7 @@ components:
         - id
         - parent_post_id
         - content
+        - secret_identity
         - created_at
         - secret_identity
         - new

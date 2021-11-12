@@ -346,6 +346,8 @@ export const postNewContribution = async ({
           parent_thread_id: thread_string_id,
           parent_post_id: parentPostId,
           parent_board_slug: board_slug,
+          // TODO: fill this
+          parent_board_id: "",
           author: user_id,
           username,
           user_avatar,

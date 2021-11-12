@@ -5,6 +5,7 @@ import {
 } from "types/rest/boards";
 
 import { BoardRestrictions } from "types/permissions";
+
 export interface UserIdentityType {
   name: string;
   // TODO[realms]: make this avatar_url
@@ -18,73 +19,6 @@ export interface SecretIdentityType {
   color?: string;
   accessory?: string;
 }
-
-export interface ServerCommentType {
-  id: string;
-  parent_comment_id: string;
-  parent_post_id: string;
-  created_at: string;
-  content: string;
-  secret_identity: SecretIdentityType;
-  user_identity?: UserIdentityType;
-  accessory_avatar?: string;
-  chain_parent_id: string | null;
-  own: boolean;
-  friend: boolean;
-  new: boolean;
-}
-
-export interface ServerPostType {
-  id: string;
-  parent_thread_id: string;
-  parent_post_id: string;
-  secret_identity: SecretIdentityType;
-  user_identity?: UserIdentityType;
-  accessory_avatar?: string;
-  created_at: string;
-  own: boolean;
-  friend: boolean;
-  new: boolean;
-  content: string;
-  tags?: {
-    index_tags: string[];
-    whisper_tags: string[];
-    category_tags: string[];
-    content_warnings: string[];
-  };
-  comments?: ServerCommentType[];
-  total_comments_amount: number;
-  new_comments_amount: number;
-}
-
-export interface ServerThreadSummaryType {
-  starter: ServerPostType;
-  id: string;
-  parent_board_slug: string;
-  direct_threads_amount: number;
-  new_posts_amount: number;
-  new_comments_amount: number;
-  total_comments_amount: number;
-  total_posts_amount: number;
-  last_activity_at: string;
-  muted: boolean;
-  default_view: "thread" | "gallery" | "timeline";
-  hidden: boolean;
-  new: boolean;
-}
-
-export interface ServerThreadType extends ServerThreadSummaryType {
-  posts: ServerPostType[];
-  comments: Record<string, ServerCommentType[]>;
-}
-
-export interface ServerFeedType {
-  cursor: {
-    next: string | null;
-  };
-  activity: ServerThreadSummaryType[];
-}
-
 export interface DbIdentityType {
   id: string;
   username: string;
@@ -99,6 +33,7 @@ export interface DbPostType {
   post_id: string;
   parent_thread_id: string;
   parent_post_id: string;
+  parent_board_id: string;
   parent_board_slug: string;
   author: number;
   username: string;
@@ -150,6 +85,7 @@ export interface DbCommentType {
 export interface DbThreadType {
   thread_id: string;
   board_slug: string;
+  board_id: string;
   thread_last_activity: string;
   posts: DbPostType[];
   default_view: "thread" | "gallery" | "timeline";
@@ -243,8 +179,8 @@ export interface DbBoardMetadata {
     accessory: string;
   }[];
   permissions: string[];
-  logged_out_restrictions: BoardRestrictions[];
-  logged_in_base_restrictions: BoardRestrictions[];
+  logged_out_restrictions: string[];
+  logged_in_base_restrictions: string[];
 }
 
 export interface QueryTagsType {
