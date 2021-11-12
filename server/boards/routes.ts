@@ -206,7 +206,7 @@ router.get("/:uuid", async (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/UpdatedBoardDescription"
+ *               $ref: "#/components/schemas/LoggedInBoardMetadata"
  *             examples:
  *               existing:
  *                 $ref: '#/components/examples/GoreMetadataUpdateResponse'
