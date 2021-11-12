@@ -1,5 +1,5 @@
 /**
- * This table should be exactly the same as the role_permissions enum declared
+ * This enum should be exactly the same as the role_permissions type declared
  * in `db/init/020_roles.sql`.
  *
  * Keep them in sync.
@@ -46,7 +46,7 @@ export const extractPermissions = <T>(
   targetEnum: T,
   permissions: string[]
 ): T[keyof T][] => {
-  const postsPermissions = [] as T[keyof T][];
+  const extractedPermissions = [] as T[keyof T][];
   permissions.forEach((permission) => {
     // Check in the target enum for the key that has the permission
     // string as the value.
@@ -54,10 +54,10 @@ export const extractPermissions = <T>(
       ([_, value]) => value === permission
     );
     if (foundPermission) {
-      postsPermissions.push(foundPermission[1] as T[keyof T]);
+      extractedPermissions.push(foundPermission[1] as T[keyof T]);
     }
   });
-  return postsPermissions;
+  return extractedPermissions;
 };
 
 /**
@@ -74,3 +74,23 @@ export const POST_OWNER_PERMISSIONS = [
  * The set of thread permissions associated with every thread owner.
  */
 export const THREAD_OWNER_PERMISSIONS = [ThreadPermissions.editDefaultView];
+
+export enum BoardRestrictions {
+  LOCK_ACCESS = "lock_access",
+  DELIST = "delist",
+}
+
+export const extractBoardRestrictions = (restrictions: string[]) => {
+  const extractedRestrictions = [] as BoardRestrictions[];
+  restrictions.forEach((restriction) => {
+    // Check in the target enum for the key that has the permission
+    // string as the value.
+    const foundRestriction = Object.entries(BoardRestrictions).find(
+      ([_, value]) => value === restriction
+    );
+    if (foundRestriction) {
+      restrictions.push(foundRestriction[1]);
+    }
+  });
+  return extractedRestrictions;
+};

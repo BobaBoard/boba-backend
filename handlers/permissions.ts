@@ -1,12 +1,28 @@
+import {
+  BoardPermissions,
+  BoardRestrictions,
+  ThreadPermissions,
+} from "types/permissions";
 import { NextFunction, Request, Response } from "express";
+import {
+  extractBoardPermissions,
+  getBoardRestrictions,
+} from "utils/permissions-utils";
 
-import { ThreadPermissions } from "types/permissions";
+import { DbBoardMetadata } from "Types";
+import { getBoardByUuid } from "server/boards/queries";
 import { getUserPermissionsForThread } from "server/threads/queries";
 
 declare global {
   namespace Express {
     export interface Request {
       currentThreadPermissions?: ThreadPermissions[];
+      currentBoardPermissions?: BoardPermissions[];
+      currentBoardMetadata?: DbBoardMetadata;
+      currentBoardRestrictions?: {
+        loggedOutRestrictions: BoardRestrictions[];
+        loggedInBaseRestrictions: BoardRestrictions[];
+      };
     }
   }
 }
@@ -18,7 +34,7 @@ export const withThreadPermissions = async (
 ) => {
   if (!req.params.thread_id) {
     throw new Error(
-      "Thread permissions can only be fetched on a route that includes a thread id"
+      "Thread permissions can only be fetched on a route that includes a thread id."
     );
   }
   if (!req.currentUser) {
@@ -47,7 +63,80 @@ export const ensureThreadPermission = (permission: ThreadPermissions) => {
         !req.currentThreadPermissions.includes(permission)
       ) {
         res.status(403).json({
-          message: "User does not have required permissions.",
+          message:
+            "User does not have required permissions for thread operation.",
+        });
+        return;
+      }
+      next();
+    });
+  };
+};
+
+export const withBoardMetadata = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.params.board_id) {
+    throw new Error(
+      "Board permissions can only be fetched on a route that includes a board id."
+    );
+  }
+
+  const boardId = req.params.board_id;
+  const board = await getBoardByUuid({
+    firebaseId: req.currentUser?.uid,
+    boardId,
+  });
+
+  if (!board) {
+    res
+      .status(404)
+      .send({ message: `The board with id "${boardId}" was not found.` });
+    return;
+  }
+
+  req.currentBoardMetadata = board;
+  req.currentBoardPermissions = extractBoardPermissions(board.permissions);
+  req.currentBoardRestrictions = getBoardRestrictions({
+    loggedOutRestrictions: board.logged_out_restrictions,
+    loggedInBaseRestrictions: board.logged_in_base_restrictions,
+  });
+  next();
+};
+
+export const ensureBoardAccess = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  withBoardMetadata(req, res, async () => {
+    if (
+      !req.currentUser &&
+      req.currentBoardRestrictions.loggedOutRestrictions.includes(
+        BoardRestrictions.LOCK_ACCESS
+      )
+    ) {
+      res.status(403).json({
+        message: "User does not have required permissions to access board.",
+      });
+      return;
+    }
+    next();
+  });
+};
+
+export const ensureBoardPermission = (permission: BoardPermissions) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    withBoardMetadata(req, res, async () => {
+      if (
+        !req.currentBoardPermissions ||
+        !req.currentBoardPermissions.includes(permission)
+      ) {
+        res.status(403).json({
+          message:
+            "User does not have required permissions for board operation.",
         });
         return;
       }

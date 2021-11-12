@@ -8,9 +8,9 @@ import {
   ServerPostType,
   ServerThreadSummaryType,
   ServerThreadType,
-  restriction_types,
 } from "Types";
 
+import { BoardRestrictions } from "types/permissions";
 import debug from "debug";
 import { getUserPermissionsForBoard } from "./permissions-utils";
 
@@ -284,9 +284,9 @@ export const processBoardsMetadata = ({
     // Remove from list if the board shouldn't be visible in the sidebar
     boardResult.delisted =
       (!isLoggedIn &&
-        board.logged_out_restrictions.includes(restriction_types.DELIST)) ||
+        board.logged_out_restrictions.includes(BoardRestrictions.DELIST)) ||
       (isLoggedIn &&
-        board.logged_in_base_restrictions.includes(restriction_types.DELIST));
+        board.logged_in_base_restrictions.includes(BoardRestrictions.DELIST));
     // Pinned boards should still return their value here, even if delisted.
     // Note that the existence of a pinned order implies that the user is
     // logged in.
@@ -295,7 +295,7 @@ export const processBoardsMetadata = ({
     }
 
     boardResult.loggedInOnly = board.logged_out_restrictions.includes(
-      restriction_types.LOCK_ACCESS
+      BoardRestrictions.LOCK_ACCESS
     );
 
     // Remove details from list if the board is locked and the user doesn't have access

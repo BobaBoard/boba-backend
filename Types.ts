@@ -3,6 +3,8 @@ import {
   BoardDescription,
   BoardTextDescription,
 } from "types/rest/boards";
+
+import { BoardRestrictions } from "types/permissions";
 export interface UserIdentityType {
   name: string;
   // TODO[realms]: make this avatar_url
@@ -209,11 +211,6 @@ export interface DbFeedType {
   activity: DbThreadSummaryType[];
 }
 
-export enum restriction_types {
-  LOCK_ACCESS = "lock_access",
-  DELIST = "delist",
-}
-
 export interface DbBoardTextDescription extends BoardTextDescription {
   categories: null;
 }
@@ -246,8 +243,8 @@ export interface DbBoardMetadata {
     accessory: string;
   }[];
   permissions: string[];
-  logged_out_restrictions: restriction_types[];
-  logged_in_base_restrictions: restriction_types[];
+  logged_out_restrictions: BoardRestrictions[];
+  logged_in_base_restrictions: BoardRestrictions[];
 }
 
 export interface QueryTagsType {
