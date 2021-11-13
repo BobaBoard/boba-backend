@@ -82,8 +82,8 @@ router.get("/:thread_id", ensureThreadAccess, async (req, res) => {
   res.status(200).json(serverThread);
 });
 
-router.post("/:threadId/mute", ensureLoggedIn, async (req, res) => {
-  const { threadId } = req.params;
+router.post("/:thread_id/mute", ensureLoggedIn, async (req, res) => {
+  const { thread_id: threadId } = req.params;
   log(`Setting thread muted: ${threadId}`);
 
   if (
@@ -100,77 +100,97 @@ router.post("/:threadId/mute", ensureLoggedIn, async (req, res) => {
   res.status(200).json();
 });
 
-router.post("/:threadId/unmute", ensureLoggedIn, async (req, res) => {
-  const { threadId } = req.params;
-  log(`Setting thread unmuted: ${threadId}`);
+router.post(
+  "/:thread_id/unmute",
+  ensureLoggedIn,
+  ensureThreadAccess,
+  async (req, res) => {
+    const { thread_id: threadId } = req.params;
+    log(`Setting thread unmuted: ${threadId}`);
 
-  if (
-    !(await unmuteThread({
-      firebaseId: req.currentUser.uid,
-      threadId,
-    }))
-  ) {
-    res.sendStatus(500);
-    return;
+    if (
+      !(await unmuteThread({
+        firebaseId: req.currentUser.uid,
+        threadId,
+      }))
+    ) {
+      res.sendStatus(500);
+      return;
+    }
+
+    info(`Marked last visited time for thread: ${threadId}.`);
+    res.status(200).json();
   }
+);
 
-  info(`Marked last visited time for thread: ${threadId}.`);
-  res.status(200).json();
-});
+router.post(
+  "/:thread_id/hide",
+  ensureLoggedIn,
+  ensureThreadAccess,
+  async (req, res) => {
+    const { thread_id: threadId } = req.params;
+    log(`Setting thread hidden: ${threadId}`);
 
-router.post("/:threadId/hide", ensureLoggedIn, async (req, res) => {
-  const { threadId } = req.params;
-  log(`Setting thread hidden: ${threadId}`);
+    if (
+      !(await hideThread({
+        firebaseId: req.currentUser.uid,
+        threadId,
+      }))
+    ) {
+      res.sendStatus(500);
+      return;
+    }
 
-  if (
-    !(await hideThread({
-      firebaseId: req.currentUser.uid,
-      threadId,
-    }))
-  ) {
-    res.sendStatus(500);
-    return;
+    info(`Marked last visited time for thread: ${threadId}.`);
+    res.status(200).json();
   }
+);
 
-  info(`Marked last visited time for thread: ${threadId}.`);
-  res.status(200).json();
-});
+router.post(
+  "/:thread_id/unhide",
+  ensureLoggedIn,
+  ensureThreadAccess,
+  async (req, res) => {
+    const { thread_id: threadId } = req.params;
+    log(`Setting thread visible: ${threadId}`);
 
-router.post("/:threadId/unhide", ensureLoggedIn, async (req, res) => {
-  const { threadId } = req.params;
-  log(`Setting thread visible: ${threadId}`);
+    if (
+      !(await unhideThread({
+        firebaseId: req.currentUser.uid,
+        threadId,
+      }))
+    ) {
+      res.sendStatus(500);
+      return;
+    }
 
-  if (
-    !(await unhideThread({
-      firebaseId: req.currentUser.uid,
-      threadId,
-    }))
-  ) {
-    res.sendStatus(500);
-    return;
+    info(`Marked last visited time for thread: ${threadId}.`);
+    res.status(200).json();
   }
+);
 
-  info(`Marked last visited time for thread: ${threadId}.`);
-  res.status(200).json();
-});
+router.get(
+  "/:thread_id/visit",
+  ensureLoggedIn,
+  ensureThreadAccess,
+  async (req, res) => {
+    const { thread_id: threadId } = req.params;
+    log(`Setting last visited time for thread: ${threadId}`);
 
-router.get("/:threadId/visit", ensureLoggedIn, async (req, res) => {
-  const { threadId } = req.params;
-  log(`Setting last visited time for thread: ${threadId}`);
+    if (
+      !(await markThreadVisit({
+        firebaseId: req.currentUser.uid,
+        threadId,
+      }))
+    ) {
+      res.sendStatus(500);
+      return;
+    }
 
-  if (
-    !(await markThreadVisit({
-      firebaseId: req.currentUser.uid,
-      threadId,
-    }))
-  ) {
-    res.sendStatus(500);
-    return;
+    info(`Marked last visited time for thread: ${threadId}.`);
+    res.status(200).json();
   }
-
-  info(`Marked last visited time for thread: ${threadId}.`);
-  res.status(200).json();
-});
+);
 
 router.post("/:boardSlug/create", ensureLoggedIn, async (req, res, next) => {
   const { boardSlug } = req.params;

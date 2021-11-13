@@ -124,3 +124,29 @@ export const KERMIT_COMMENTS: Comment[] = [
     },
   },
 ];
+
+export const CANT_SEE_ME_POST: Post = {
+  content: '[{"insert":"You can\'t see me!"}]',
+  created_at: "2020-04-24T05:42:00.00Z",
+  friend: false,
+  id: "d1c0784b-0b72-40d0-801d-eb718b5ad011",
+  new: true,
+  new_comments_amount: 1,
+  own: false,
+  parent_post_id: null,
+  parent_thread_id: "b3f4174e-c9e2-4f79-9d22-7232aa48744e",
+  secret_identity: {
+    accessory: null,
+    avatar:
+      "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F1237fd9e-cd40-41b8-8ee7-11c865f27b6b?alt=media&token=4bb418a6-cb45-435c-85ed-7bdcb294f5b5",
+    color: null,
+    name: "The OG OG Komaeda",
+  },
+  tags: {
+    category_tags: [],
+    content_warnings: [],
+    index_tags: [],
+    whisper_tags: ["this is a test post"],
+  },
+  total_comments_amount: 1,
+};

@@ -1,5 +1,12 @@
-import { GORE_BOARD_ID } from "./boards";
-import { ThreadSummary } from "../../types/rest/threads";
+import {
+  CANT_SEE_ME_POST,
+  CHARACTER_TO_MAIM_POST,
+  KERMIT_COMMENTS,
+  KERMIT_POST,
+  REVOLVER_OCELOT_POST,
+} from "./posts";
+import { GORE_BOARD_ID, RESTRICTED_BOARD_ID } from "./boards";
+import { Thread, ThreadSummary } from "../../types/rest/threads";
 
 export const EXCELLENT_THREAD_ID = "8b2646af-2778-487e-8e44-7ae530c2549c";
 export const FAVORITE_CHARACTER_THREAD_ID =
@@ -54,38 +61,12 @@ export const FAVORITE_CHARACTER_THREAD_SUMMARY: ThreadSummary = {
   id: FAVORITE_CHARACTER_THREAD_ID,
   parent_board_slug: "gore",
   parent_board_id: GORE_BOARD_ID,
-  starter: {
-    id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
-    parent_thread_id: FAVORITE_CHARACTER_THREAD_ID,
-    parent_post_id: null,
-    created_at: "2020-04-30T03:23:00.00Z",
-    content: '[{"insert":"Favorite character to maim?"}]',
-    tags: {
-      index_tags: ["evil", "bobapost"],
-      whisper_tags: [],
-      category_tags: ["bruises"],
-      content_warnings: [],
-    },
-    // TODO[realms]: this is not accurate and should be rethought
-    total_comments_amount: 0,
-    new_comments_amount: 0,
-    secret_identity: {
-      name: "DragonFucker",
-      avatar:
-        "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
-      accessory:
-        "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F989f4b40-c1b8-4793-93dd-57e93df3e7ec.png?alt=media&token=cabdd8d5-b6a9-4914-bb59-eda4629f151b",
-      color: null,
-    },
-    own: false,
-    friend: false,
-    new: false,
-  },
+  starter: CHARACTER_TO_MAIM_POST,
   new_posts_amount: 0,
   new_comments_amount: 0,
   total_comments_amount: 2,
   total_posts_amount: 3,
-  last_activity_at: "2020-05-23T05:52:00.00Z",
+  last_activity_at: KERMIT_COMMENTS[1].created_at,
   direct_threads_amount: 2,
   muted: false,
   hidden: false,
@@ -144,33 +125,46 @@ export const RESTRICTED_THREAD_SUMMARY: ThreadSummary = {
   new: true,
   new_comments_amount: 1,
   new_posts_amount: 1,
-  parent_board_id: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
+  parent_board_id: RESTRICTED_BOARD_ID,
   parent_board_slug: "restricted",
-  starter: {
-    content: '[{"insert":"You can\'t see me!"}]',
-    created_at: "2020-04-24T05:42:00.00Z",
-    friend: false,
-    id: "d1c0784b-0b72-40d0-801d-eb718b5ad011",
-    new: true,
-    new_comments_amount: 0,
-    own: false,
-    parent_post_id: null,
-    parent_thread_id: "b3f4174e-c9e2-4f79-9d22-7232aa48744e",
-    secret_identity: {
-      accessory: null,
-      avatar:
-        "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F1237fd9e-cd40-41b8-8ee7-11c865f27b6b?alt=media&token=4bb418a6-cb45-435c-85ed-7bdcb294f5b5",
-      color: null,
-      name: "The OG OG Komaeda",
-    },
-    tags: {
-      category_tags: [],
-      content_warnings: [],
-      index_tags: [],
-      whisper_tags: ["this is a test post"],
-    },
-    total_comments_amount: 0,
-  },
+  starter: CANT_SEE_ME_POST,
   total_comments_amount: 1,
   total_posts_amount: 1,
+};
+
+export const FAVORITE_CHARACTER_THREAD: Thread = {
+  ...FAVORITE_CHARACTER_THREAD_SUMMARY,
+  posts: [CHARACTER_TO_MAIM_POST, REVOLVER_OCELOT_POST, KERMIT_POST],
+  comments: {
+    [CHARACTER_TO_MAIM_POST.id]: [],
+    [REVOLVER_OCELOT_POST.id]: [],
+    [KERMIT_POST.id]: KERMIT_COMMENTS,
+  },
+};
+
+export const RESTRICTED_THREAD: Thread = {
+  ...RESTRICTED_THREAD_SUMMARY,
+  posts: [CANT_SEE_ME_POST],
+  comments: {
+    [CANT_SEE_ME_POST.id]: [
+      {
+        chain_parent_id: null,
+        content: '[{"insert":"MWAHAHAHAHAHAHHAHAHAHAHAHHAHAH!!!!!"}]',
+        created_at: "2020-04-24T05:44:00.00Z",
+        friend: false,
+        id: "9c0300d9-b9f5-4dcf-874b-754b5f4e8ba9",
+        new: true,
+        own: false,
+        parent_comment_id: null,
+        parent_post_id: "b3f4174e-c9e2-4f79-9d22-7232aa48744e",
+        secret_identity: {
+          accessory: null,
+          avatar:
+            "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F1237fd9e-cd40-41b8-8ee7-11c865f27b6b?alt=media&token=4bb418a6-cb45-435c-85ed-7bdcb294f5b5",
+          color: null,
+          name: "The OG OG Komaeda",
+        },
+      },
+    ],
+  },
 };

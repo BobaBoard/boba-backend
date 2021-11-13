@@ -144,7 +144,7 @@ export const ensureBoardAccess = async (
         BoardRestrictions.LOCK_ACCESS
       )
     ) {
-      res.status(403).json({
+      res.status(401).json({
         message: "User does not have required permissions to access board.",
       });
       return;
