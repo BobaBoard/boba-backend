@@ -58,7 +58,9 @@ CREATE VIEW thread_details AS (
 SELECT
     threads.id as thread_id,
     threads.string_id as thread_string_id,
-    slug as board_slug,
+    boards.id as board_id,
+    boards.string_id as board_string_id,
+    boards.slug as board_slug,
     first_post.id as first_post_id,
     first_post.string_id AS first_post_string_id,
     first_post.content AS content,

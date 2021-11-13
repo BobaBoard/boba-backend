@@ -1,0 +1,5 @@
+components:
+  examples:
+    PinnedBoardResponse:
+      summary: Empty response for a pinned board
+      value:

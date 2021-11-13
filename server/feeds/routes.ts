@@ -20,6 +20,7 @@ const router = express.Router();
  * /feeds/boards/{slug}:
  *   get:
  *     summary: Get the feed for the given boards' activity.
+ *     operationId: getBoardsFeedByUuid
  *     tags:
  *       - /feeds/
  *       - todo
@@ -117,6 +118,7 @@ router.get("/boards/:slug", async (req, res) => {
  * /feeds/users/@me:
  *   get:
  *     summary: Get the feed for the current user activity activity.
+ *     operationId: getPersonalFeed
  *     tags:
  *       - /feeds/
  *       - todo

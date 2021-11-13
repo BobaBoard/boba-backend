@@ -28,7 +28,11 @@ const API_KEY = "AIzaSyA2KQh1wqrLwsrWvKQvFWeWoWMR8KOyTD4";
 const getSheetUrl = (url: string) =>
   `https://sheets.googleapis.com/v4/spreadsheets/${url}/?key=${API_KEY}&includeGridData=true`;
 
+/*
+ * @deprecated
+ */
 router.post("/generate/boards", ensureLoggedIn, async (req, res) => {
+  // @ts-ignore
   if (req.currentUser?.uid !== ADMIN_ID) {
     return res.sendStatus(403);
   }
@@ -163,11 +167,10 @@ router.post("/migrate_fb_data", ensureLoggedIn, async (req, res) => {
         const hasSignedIn = !!userRecord.metadata.lastSignInTime;
         // Add creation time
         //
-        console.log("user", userRecord.toJSON());
       });
     })
     .catch(function (error) {
-      console.log("Error listing users:", error);
+      log("Error listing users:", error);
     });
 
   log(await firebaseAuth.auth().getUser(user));

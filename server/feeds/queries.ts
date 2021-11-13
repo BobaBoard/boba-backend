@@ -103,7 +103,7 @@ export const getUserActivity = async ({
 
     let result = rows;
     let nextCursor = null;
-    log(`Got getBoardActivityBySlug query result`, result);
+    info(`Got getBoardActivityBySlug query result`, result);
     if (result.length > finalPageSize) {
       nextCursor = encodeCursor({
         last_activity_cursor:

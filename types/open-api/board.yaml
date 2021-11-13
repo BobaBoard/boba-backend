@@ -5,7 +5,7 @@ components:
       properties:
         id:
           type: string
-          # format: uuid
+          format: uuid
         realm_id:
           type: string
           # format: uuid
@@ -49,15 +49,12 @@ components:
         - $ref: "#/components/schemas/BoardSummary"
         - type: object
           properties:
-            id:
-              type: string
-              # format: uuid
-            slug:
-              type: string
             descriptions:
               type: array
               items:
                 $ref: "#/components/schemas/Description"
+      required:
+        - descriptions
     LoggedInBoardMetadata:
       allOf:
         - $ref: "#/components/schemas/LoggedInBoardSummary"
@@ -74,3 +71,7 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/PostingIdentity"
+      required:
+        - accessories
+        - permissions
+        - posting_identities

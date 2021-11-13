@@ -63,14 +63,17 @@ CREATE UNIQUE INDEX content_warnings_warning on content_warnings(warning);
 CREATE TABLE IF NOT EXISTS boards
 (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
-    /* Textual id of the board, e.g. "main", "anime", "memes". Used as part of the url. */
+    /* The board's UUID. Used in backend requests. */
+    string_id TEXT NOT NULL,
+    /* Textual id of the board, e.g. "main", "anime", "memes". Used as part of the URL. */
     slug TEXT NOT NULL,
     tagline TEXT NOT NULL,
     /* Reference to the id of the image on external storage provider. */
     avatar_reference_id TEXT,
     settings JSONB NOT NULL
 );
-CREATE UNIQUE INDEX boards_string_id on boards(slug);
+CREATE UNIQUE INDEX boards_string_id on boards(string_id);
+CREATE INDEX boards_slug on boards(slug);
 
 CREATE TABLE IF NOT EXISTS board_tags
 (
@@ -291,7 +294,7 @@ CREATE TABLE IF NOT EXISTS board_description_sections(
     index BIGINT NOT NULL
 );
 CREATE INDEX board_description_sections_board_id on board_description_sections(board_id);
-CREATE INDEX board_description_sections_string_id on board_description_sections(string_id);
+CREATE UNIQUE INDEX board_description_sections_string_id on board_description_sections(string_id);
 
 CREATE TABLE IF NOT EXISTS board_description_section_categories(
     section_id BIGINT REFERENCES board_description_sections(id) ON DELETE RESTRICT NOT NULL,
