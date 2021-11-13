@@ -48,7 +48,6 @@ components:
         - content
         - secret_identity
         - created_at
-        - secret_identity
         - new
         - own
         - friend
