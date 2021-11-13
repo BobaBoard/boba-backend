@@ -2,7 +2,7 @@ import {
   ensureNoIdentityLeakage,
   makeServerThreadSummary,
 } from "utils/response-utils";
-import { getBoardActivityBySlug, getUserActivity } from "./queries";
+import { getBoardActivityBySlug, getUserActivity, getUserStarFeed } from "./queries";
 
 import { ServerFeedType } from "Types";
 import { canAccessBoard } from "utils/permissions-utils";
@@ -201,33 +201,33 @@ router.get("/users/@me", ensureLoggedIn, async (req, res) => {
  */
 
 router.get("/users/@me/stars", ensureLoggedIn, async (req, res) => {
-  const { cursor, showRead, ownOnly } = req.query;
+  const { cursor, starred } = req.query;
   const currentUserId: string = req.currentUser?.uid;
 
-  const userActivity = await getUserActivity({
+ // get user star feed activity
+  const userStarFeed = await getUserStarFeed({
     firebaseId: currentUserId,
     cursor: (cursor as string) || null,
-    updatedOnly: showRead !== "true",
-    ownOnly: ownOnly === "true",
+    starredOnly: starred === "true",
   });
 
-  if (!userActivity) {
+  if (!userStarFeed) {
     res.sendStatus(404);
     return;
   }
-  if (!userActivity.activity.length) {
+  if (!userStarFeed.activity.length) {
     res.sendStatus(204);
     return;
   }
 
-  const threadsWithIdentity = userActivity.activity.map(
-    makeServerThreadSummary
+const threadsStarred = userStarFeed.activity.map(
+  makeServerThreadSummary
   );
   const response: ServerFeedType = {
     cursor: {
-      next: userActivity.cursor,
+      next: userStarFeed.cursor,
     },
-    activity: threadsWithIdentity,
+    activity: threadsStarred,
   };
 
   response.activity.map((post) => ensureNoIdentityLeakage(post));

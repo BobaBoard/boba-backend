@@ -56,6 +56,7 @@ describe("Tests boards REST API", () => {
           muted: false,
           new: false,
           hidden: false,
+          starred: false,
           default_view: "thread",
         },
         {
@@ -96,6 +97,7 @@ describe("Tests boards REST API", () => {
           direct_threads_amount: 2,
           muted: false,
           hidden: false,
+          starred: false,
           new: false,
           default_view: "thread",
         },
@@ -135,6 +137,7 @@ describe("Tests boards REST API", () => {
           direct_threads_amount: 2,
           muted: false,
           hidden: false,
+          starred: false,
           new: false,
           default_view: "thread",
         },

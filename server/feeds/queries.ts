@@ -121,3 +121,53 @@ export const getUserActivity = async ({
     return false;
   }
 };
+
+export const getUserStarFeed = async ({
+  firebaseId,
+  cursor,
+  pageSize,
+  starredOnly,
+}: {
+  firebaseId: string;
+  starredOnly: boolean;
+  cursor: string | null;
+  pageSize?: number;
+}): Promise<DbFeedType | false> => {
+  try {
+    const decodedCursor = cursor && decodeCursor(cursor);
+
+    const finalPageSize =
+      decodedCursor?.page_size || pageSize || DEFAULT_PAGE_SIZE;
+    const rows = await pool.manyOrNone(sql.getUserStarThreads, {
+      firebase_id: firebaseId,
+      last_activity_cursor: decodedCursor?.last_activity_cursor || null,
+      page_size: finalPageSize,
+      starred: starredOnly,
+    });
+
+    if (rows.length == 1 && rows[0].thread_id == null) {
+      // Only one row with just the null thread)
+      log(`Feed empty.`);
+      return { cursor: undefined, activity: [] };
+    }
+
+    let result = rows;
+    let nextCursor = null;
+    log(`Got getBoardActivityBySlug query result`, result);
+    if (result.length > finalPageSize) {
+      nextCursor = encodeCursor({
+        last_activity_cursor:
+          result[result.length - 1].thread_last_activity_at_micro,
+        page_size: finalPageSize,
+      });
+      // remove last element from array
+      result.pop();
+    }
+
+    return { cursor: nextCursor, activity: rows };
+  } catch (e) {
+    error(`Error while fetching star feed for user (${firebaseId}).`);
+    error(e);
+    return false;
+  }
+};

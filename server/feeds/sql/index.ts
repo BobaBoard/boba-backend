@@ -8,4 +8,7 @@ export default {
   getBoardActivityBySlug: new QueryFile(
     path.join(__dirname, "board-activity-by-slug.sql")
   ),
+  getUserStarThreads: new QueryFile(
+    path.join(__dirname, "star-feed-activity.sql")
+  ),
 };

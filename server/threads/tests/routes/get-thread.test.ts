@@ -146,6 +146,7 @@ describe("Tests threads REST API", () => {
       default_view: "thread",
       hidden: false,
       muted: false,
+      starred: false,
       starter: CHARACTER_TO_MAIM_POST,
       posts: [CHARACTER_TO_MAIM_POST, REVOLVER_OCELOT_POST, KERMIT_POST],
       comments: {

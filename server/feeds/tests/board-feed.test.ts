@@ -17,12 +17,13 @@ export const extractActivity = (thread: DbThreadSummaryType) => {
   };
 };
 
-const extractsMetadata = (thread: any) => {
+export const extractsMetadata = (thread: any) => {
   return {
     content: thread.content,
     hidden: thread.hidden,
     default_view: thread.default_view,
     muted: thread.muted,
+    starred: thread.starred,
     options: thread.options,
     parent_post_id: thread.parent_post_id,
     post_id: thread.post_id,
@@ -197,6 +198,7 @@ describe("Tests boards activity queries", () => {
           options: {},
           muted: false,
           hidden: false,
+          starred: false,
           index_tags: [],
           category_tags: [],
           content_warnings: ["harassment PSA"],
@@ -211,6 +213,7 @@ describe("Tests boards activity queries", () => {
           options: {},
           muted: false,
           hidden: false,
+          starred: false,
           index_tags: ["evil", "bobapost"],
           category_tags: ["bruises"],
           content_warnings: [],
@@ -225,6 +228,7 @@ describe("Tests boards activity queries", () => {
           options: {},
           muted: false,
           hidden: false,
+          starred: false,
           index_tags: [],
           whisper_tags: ["mwehehehehe"],
           category_tags: ["blood", "bruises"],
@@ -255,6 +259,7 @@ describe("Tests boards activity queries", () => {
           options: {},
           muted: false,
           hidden: false,
+          starred: false,
           index_tags: [],
           category_tags: [],
           content_warnings: ["harassment PSA"],
@@ -269,6 +274,7 @@ describe("Tests boards activity queries", () => {
           options: {},
           muted: false,
           hidden: false,
+          starred: false,
           index_tags: ["evil", "bobapost"],
           category_tags: ["bruises"],
           content_warnings: [],
@@ -283,6 +289,7 @@ describe("Tests boards activity queries", () => {
           options: {},
           muted: false,
           hidden: false,
+          starred: false,
           index_tags: [],
           whisper_tags: ["mwehehehehe"],
           category_tags: ["blood", "bruises"],

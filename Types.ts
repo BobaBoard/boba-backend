@@ -63,6 +63,7 @@ export interface ServerThreadSummaryType {
   muted: boolean;
   default_view: "thread" | "gallery" | "timeline";
   hidden: boolean;
+  starred: boolean;
   new: boolean;
 }
 
@@ -153,6 +154,7 @@ export interface DbThreadType {
   thread_total_posts_amount: number;
   muted: boolean;
   hidden: boolean;
+  starred: boolean;
 }
 
 // TODO[realms]: deprecate this
@@ -175,6 +177,7 @@ export interface DbActivityThreadType {
   content_warnings: string[];
   muted: boolean;
   hidden: boolean;
+  starred: boolean;
   options: {
     wide?: boolean;
   };

@@ -4,7 +4,7 @@ SELECT
     -- Thread details (DbThreadType)
     thread_string_id as thread_id,
     board_slug,
-    TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z') as thread_last_activity,
+    TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as thread_last_activity,
     thread_details.default_view,
     -- Amount details
     COALESCE(posts_amount, 0) as thread_total_posts_amount,
@@ -22,12 +22,12 @@ SELECT
     board_slug as parent_board_slug,
     -- Author details
     author,
-    username,
-    user_avatar,
-    secret_identity_name,
-    secret_identity_avatar,
-    secret_identity_color,
-    accessory_avatar,
+    author_identity.username,
+    author_identity.user_avatar,
+    author_identity.secret_identity_name,
+    author_identity.secret_identity_avatar,
+    author_identity.secret_identity_color,
+    author_identity.accessory_avatar,
     COALESCE(friend_thread, FALSE) as friend,
     COALESCE(own_thread, FALSE) as self,
     TO_CHAR(first_post_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as created,
@@ -47,19 +47,23 @@ SELECT
     -- where some posts are skipped by the last activity cursor.
     -- See documentation on the queries JS file.
     TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.US') as thread_last_activity_at_micro
-FROM threads
+FROM (
+  SELECT * FROM threads
+  INNER JOIN user_thread_identities uti
+  ON uti.thread_id = threads.id AND uti.user_id = (SELECT id FROM users WHERE users.firebase_id = ${firebase_id} LIMIT 1)
+) AS threads
 INNER JOIN thread_details
-  ON threads.id = thread_details.thread_id AND thread_details.board_slug = ${board_slug}
-LEFT JOIN thread_identities
-    ON thread_identities.user_id = thread_details.author AND thread_identities.thread_id = thread_details.thread_id
+   ON threads.id = thread_details.thread_id
+LEFT JOIN thread_identities author_identity
+    ON author_identity.user_id = thread_details.author AND author_identity.thread_id = thread_details.thread_id
 LEFT JOIN thread_user_details
    ON ${firebase_id} IS NOT NULL AND thread_user_details.user_id = (SELECT id FROM users WHERE users.firebase_id = ${firebase_id} LIMIT 1)
          AND thread_details.thread_id = thread_user_details.thread_id
 WHERE
-   thread_details.board_slug = ${board_slug}
    -- activity cursor condition
-   AND last_update_timestamp <= COALESCE(${last_activity_cursor}, NOW())
-   -- categories condition
-    AND ${filtered_category} IS NULL OR (SELECT id FROM categories WHERE categories.category = ${filtered_category}) IN (SELECT category_id FROM post_categories WHERE post_categories.post_id = first_post_id)
+   last_update_timestamp <= COALESCE(${last_activity_cursor}, NOW())
+   AND muted IS FALSE
+   AND hidden IS FALSE
+   AND starred IS TRUE
 ORDER BY thread_last_activity DESC
 LIMIT ${page_size} + 1
