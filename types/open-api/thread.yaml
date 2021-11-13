@@ -27,7 +27,7 @@ components:
     ThreadSummary:
       allOf:
         - type: object
-          properties:`
+          properties:
             id:
               type: string
               format: uuid
