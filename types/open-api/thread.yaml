@@ -58,6 +58,7 @@ components:
             - new
             - muted
             - hidden
+            - starred
         - $ref: "#/components/schemas/ThreadActivitySummary"
 
     Thread:

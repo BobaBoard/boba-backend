@@ -28,18 +28,18 @@ SELECT
     author_identity.secret_identity_color,
     author_identity.accessory_avatar,
     COALESCE(friend_thread, FALSE) as friend,
-    COALESCE(own_thread, FALSE) as self,    
+    COALESCE(own_thread, FALSE) as self,
     TO_CHAR(first_post_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as created,
     -- Generic details
     content,
-    -- TODO[realms]: deprecated   
+    -- TODO[realms]: deprecated
     thread_details.options,
     -- post tags
     index_tags,
     category_tags,
     content_warnings,
     whisper_tags,
-    -- TODO[realms]: likely deprecated   
+    -- TODO[realms]: likely deprecated
     COALESCE(own_thread, FALSE) as is_own,
     COALESCE(is_new_board, FALSE) as is_new,
     -- This last activity must have the .US at the end or it will trigger a bug
@@ -48,7 +48,7 @@ SELECT
     TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.US') as thread_last_activity_at_micro
 FROM (
   SELECT * FROM threads
-  INNER JOIN user_thread_identities uti 
+  INNER JOIN user_thread_identities uti
   ON uti.thread_id = threads.id AND uti.user_id = (SELECT id FROM users WHERE users.firebase_id = ${firebase_id} LIMIT 1)
 ) AS threads
 INNER JOIN thread_details
