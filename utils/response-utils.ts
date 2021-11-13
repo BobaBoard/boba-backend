@@ -89,7 +89,7 @@ export const mergeObjectIdentity = <T>(
   let secret_identity = transformImageUrls({
     name: secret_identity_name,
     avatar: secret_identity_avatar,
-    color: secret_identity_color,
+    color: secret_identity_color || null,
     accessory: accessory_avatar,
   });
 
@@ -163,7 +163,7 @@ export const makeServerPost = (
     id: post.post_id,
     parent_thread_id: post.parent_thread_id,
     parent_post_id: post.parent_post_id,
-    created_at: post.created,
+    created_at: post.created_at,
     content: post.content,
     secret_identity: oldPost.secret_identity,
     user_identity: oldPost.user_identity,
@@ -194,7 +194,7 @@ export const makeServerComment = (comment: DbCommentType): Comment => {
     parent_comment_id: comment.parent_comment,
     chain_parent_id: comment.chain_parent_id,
     parent_post_id: comment.parent_post,
-    created_at: comment.created,
+    created_at: comment.created_at,
     content: comment.content,
     secret_identity: identityPost.secret_identity,
     user_identity: identityPost.user_identity,

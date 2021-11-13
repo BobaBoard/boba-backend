@@ -355,7 +355,7 @@ export const postNewContribution = async ({
           secret_identity_avatar,
           secret_identity_color,
           accessory_avatar,
-          created: result.created_string,
+          created_at: result.created_at,
           content: result.content,
           options: result.options,
           type: result.type,
@@ -454,7 +454,7 @@ const postNewCommentWithTransaction = async ({
       chain_parent_id: result.chain_parent_comment,
       author: user_id,
       content: result.content,
-      created: result.created_string,
+      created_at: result.created_at,
       anonymity_type: result.anonymity_type,
       username,
       user_avatar,
@@ -651,34 +651,6 @@ export const addNewIdentityToThread = async (
     accessory_avatar,
     secret_identity_color,
   };
-};
-
-export const getUserPermissionsForPost = async ({
-  firebaseId,
-  postId,
-}: {
-  firebaseId: string;
-  postId: string;
-}) => {
-  try {
-    const post = await getPostFromStringId(null, {
-      firebaseId,
-      postId,
-    });
-    if (!post) {
-      return [];
-    }
-    if (post.is_own) {
-      return POST_OWNER_PERMISSIONS;
-    }
-    const board = await getBoardBySlug({
-      firebaseId,
-      slug: post.parent_board_slug,
-    });
-    return extractPostPermissions(board.permissions);
-  } catch (e) {
-    return false;
-  }
 };
 
 export const getPostFromStringId = async (

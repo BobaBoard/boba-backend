@@ -31,7 +31,7 @@ SELECT
     author_identity.accessory_avatar,
     COALESCE(friend_thread, FALSE) as friend,
     COALESCE(own_thread, FALSE) as self,    
-    TO_CHAR(first_post_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as created,
+    TO_CHAR(first_post_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as created_at,
     -- Generic details
     content,
     -- TODO[realms]: deprecated   

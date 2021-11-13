@@ -1,12 +1,15 @@
 import {
   BoardPermissions,
   BoardRestrictions,
+  POST_OWNER_PERMISSIONS,
+  PostPermissions,
   ThreadPermissions,
 } from "types/permissions";
 import { DbBoardMetadata, DbThreadType } from "Types";
 import { NextFunction, Request, Response } from "express";
 import {
   extractBoardPermissions,
+  extractPostPermissions,
   getBoardRestrictions,
 } from "utils/permissions-utils";
 import {
@@ -15,6 +18,7 @@ import {
 } from "server/threads/queries";
 
 import { getBoardByUuid } from "server/boards/queries";
+import { getPostFromStringId } from "server/posts/queries";
 
 declare global {
   namespace Express {
@@ -27,6 +31,7 @@ declare global {
         loggedOutRestrictions: BoardRestrictions[];
         loggedInBaseRestrictions: BoardRestrictions[];
       };
+      currentPostPermissions?: PostPermissions[];
     }
   }
 }
@@ -169,4 +174,42 @@ export const ensureBoardPermission = (permission: BoardPermissions) => {
       next();
     });
   };
+};
+
+export const withPostPermissions = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.params.post_id) {
+    throw new Error(
+      "Thread permissions can only be fetched on a route that includes a thread id."
+    );
+  }
+  if (!req.currentUser) {
+    next();
+    return;
+  }
+
+  const post = await getPostFromStringId(null, {
+    firebaseId: req.currentUser.uid,
+    postId: req.params.post_id,
+  });
+  if (!post) {
+    res.status(404).send({
+      message: `The post with id "${req.params.post_id}" was not found.`,
+    });
+    return;
+  }
+  if (post.is_own) {
+    req.currentPostPermissions = POST_OWNER_PERMISSIONS;
+    next();
+    return;
+  }
+  const board = await getBoardByUuid({
+    firebaseId: req.currentUser.uid,
+    boardId: post.parent_board_id,
+  });
+  req.currentPostPermissions = extractPostPermissions(board.permissions);
+  next();
 };

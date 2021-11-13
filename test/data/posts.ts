@@ -1,7 +1,9 @@
 import { Comment, Post } from "types/rest/threads";
 
+export const CHARACTER_TO_MAIM_POST_ID = "11b85dac-e122-40e0-b09a-8829c5e0250e";
+
 export const CHARACTER_TO_MAIM_POST: Post = {
-  id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
+  id: CHARACTER_TO_MAIM_POST_ID,
   content: '[{"insert":"Favorite character to maim?"}]',
   created_at: "2020-04-30T03:23:00.00Z",
   new: false,
@@ -35,7 +37,7 @@ export const REVOLVER_OCELOT_POST: Post = {
   own: false,
   friend: false,
   new_comments_amount: 0,
-  parent_post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
+  parent_post_id: CHARACTER_TO_MAIM_POST_ID,
   parent_thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
   secret_identity: {
     avatar: "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
@@ -61,7 +63,7 @@ export const KERMIT_POST: Post = {
   own: false,
   friend: false,
   new_comments_amount: 0,
-  parent_post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
+  parent_post_id: CHARACTER_TO_MAIM_POST_ID,
   parent_thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
   secret_identity: {
     avatar:

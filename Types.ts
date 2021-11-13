@@ -1,10 +1,7 @@
 import {
   BoardCategoryDescription,
-  BoardDescription,
   BoardTextDescription,
 } from "types/rest/boards";
-
-import { BoardRestrictions } from "types/permissions";
 
 export interface UserIdentityType {
   name: string;
@@ -44,7 +41,7 @@ export interface DbPostType {
   accessory_avatar?: string;
   self: boolean;
   friend: boolean;
-  created: string;
+  created_at: string;
   content: string;
   options: {
     wide?: boolean;
@@ -74,7 +71,7 @@ export interface DbCommentType {
   secret_identity_color: string | null;
   accessory_avatar?: string;
   content: string;
-  created: string;
+  created_at: string;
   anonymity_type: "everyone" | "strangers";
   self: boolean;
   friend: boolean;

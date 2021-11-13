@@ -6,7 +6,7 @@ import { getBoardActivityByUuid } from "../queries";
 export const extractActivity = (thread: DbThreadSummaryType) => {
   return {
     thread_id: thread.thread_id,
-    created: thread.created,
+    created: thread.created_at,
     thread_last_activity: thread.thread_last_activity,
     thread_last_activity_micro: thread.thread_last_activity_at_micro,
     post_id: thread.post_id,
