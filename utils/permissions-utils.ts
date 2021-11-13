@@ -1,5 +1,5 @@
 import debug from "debug";
-import { getBoardBySlug } from "server/boards/queries";
+import { getBoardBySlug, getBoardByUuid } from "server/boards/queries";
 
 import {
   DbRolePermissions,
@@ -9,8 +9,10 @@ import {
   BoardPermissions,
   UserBoardPermissions,
   restriction_types,
+  DbBoardMetadata,
 } from "Types";
 
+const info = debug("bobaserver:board:utils-info");
 const log = debug("bobaserver::permissions-utils-log");
 
 export const hasPermission = (
@@ -119,5 +121,44 @@ export const canAccessBoard = async ({
   if (board.logged_out_restrictions.includes(restriction_types.LOCK_ACCESS)) {
     return !!firebaseId;
   }
+
+  return hasBoardAccessPermission({ boardMetadata: board, firebaseId });
+};
+
+export const canAccessBoardByUuid = async ({
+  boardId,
+  firebaseId,
+}: {
+  boardId: string;
+  firebaseId?: string;
+}) => {
+  const board = await getBoardByUuid({
+    firebaseId,
+    boardId,
+  });
+  info(`Found board`, board);
+
+  if (!board) {
+    return false;
+  }
+
+  return hasBoardAccessPermission({ boardMetadata: board, firebaseId });
+};
+
+export const hasBoardAccessPermission = ({
+  boardMetadata,
+  firebaseId,
+}: {
+  boardMetadata: DbBoardMetadata;
+  firebaseId: string;
+}) => {
+  if (
+    boardMetadata.logged_out_restrictions.includes(
+      restriction_types.LOCK_ACCESS
+    )
+  ) {
+    return !!firebaseId;
+  }
+
   return true;
 };

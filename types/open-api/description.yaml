@@ -14,7 +14,7 @@ components:
       properties:
         id:
           type: string
-          #format: uuid
+          format: uuid
         index:
           type: number
         title:
@@ -51,3 +51,41 @@ components:
           required:
             - type
             - categories
+    BoardDescription:
+      type: object
+      properties:
+        descriptions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Description"
+          description: Array of updated description objects.
+        accentColor:
+          type: string
+          description: Board accent color.
+        tagline:
+          type: string
+          description: Board tagline.
+    UpdatedBoardDescription:
+      type: object
+      properties:
+        id:
+          type: string
+        slug:
+          type: string
+        avatar_url:
+          type: string
+          format: uri-reference
+        descriptions:
+          type: array
+          items:
+            $ref: "#/components/schemas/Description"
+        permissions:
+          $ref: "#/components/schemas/Permissions"
+        posting_identities:
+          type: array
+          items:
+            $ref: "#/components/schemas/PostingIdentity"
+        accessories:
+          type: array
+          items:
+            $ref: "#/components/schemas/Accessory"

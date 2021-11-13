@@ -4,7 +4,7 @@ components:
       type: object
       properties:
         root:
-          type: obect
+          type: object
           properties:
             cursor:
               type: object
@@ -36,7 +36,9 @@ components:
         settings:
           $ref: "#/components/schemas/RealmSettings"
         boards:
-          $ref: "#/components/schemas/BoardSummary"
+          type: array
+          items:
+            $ref: "#/components/schemas/BoardSummary"
       required:
         - id
         - slug

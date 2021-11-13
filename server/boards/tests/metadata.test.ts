@@ -5,6 +5,7 @@ describe("Tests delta metadata", () => {
     const delta = getMetadataDelta({
       oldMetadata: {
         slug: "gore",
+        string_id: "2fb151eb-c600-4fe4-a542-4662487e5496",
         settings: {
           accentColor: "red",
         },
@@ -17,6 +18,7 @@ describe("Tests delta metadata", () => {
             title: "title1",
             type: "text",
             description: "desc1",
+            categories: null,
           },
           {
             id: "2",
@@ -24,6 +26,7 @@ describe("Tests delta metadata", () => {
             title: "title2",
             type: "category_filter",
             categories: ["cat21", "cat22"],
+            description: null,
           },
           {
             id: "3",
@@ -31,6 +34,7 @@ describe("Tests delta metadata", () => {
             title: "title3",
             type: "category_filter",
             categories: ["cat31", "cat32", "cat33"],
+            description: null,
           },
           {
             id: "4",
@@ -38,6 +42,7 @@ describe("Tests delta metadata", () => {
             title: "title4",
             type: "text",
             description: "desc4",
+            categories: null,
           },
           {
             id: "5",
@@ -45,6 +50,7 @@ describe("Tests delta metadata", () => {
             title: "title5",
             type: "category_filter",
             categories: ["cat51", "cat52", "cat53"],
+            description: null,
           },
         ],
       },
@@ -60,6 +66,7 @@ describe("Tests delta metadata", () => {
             title: "title1",
             type: "text",
             description: "desc1",
+            categories: null,
           },
           {
             id: "6",
@@ -67,6 +74,7 @@ describe("Tests delta metadata", () => {
             title: "title6",
             type: "text",
             description: "desc6",
+            categories: null,
           },
           {
             id: "3",
@@ -74,13 +82,15 @@ describe("Tests delta metadata", () => {
             title: "title3",
             type: "category_filter",
             categories: ["cat31", "cat33"],
+            description: null,
           },
           {
             id: "4",
             index: 4,
             title: "title4",
             type: "text",
-            description: "a new description",
+            description: "a new description for an existing section",
+            categories: null,
           },
           {
             id: "5",
@@ -88,6 +98,7 @@ describe("Tests delta metadata", () => {
             title: "title5",
             type: "category_filter",
             categories: ["cat51", "cat52", "cat53", "cat54"],
+            description: null,
           },
         ],
       },
@@ -105,6 +116,8 @@ describe("Tests delta metadata", () => {
             title: "title1",
             type: "text",
             description: "desc1",
+            categories: null,
+            updated: true,
           },
           {
             id: "6",
@@ -112,13 +125,17 @@ describe("Tests delta metadata", () => {
             title: "title6",
             type: "text",
             description: "desc6",
+            categories: null,
+            updated: false,
           },
           {
             id: "4",
             index: 4,
             title: "title4",
             type: "text",
-            description: "a new description",
+            description: "a new description for an existing section",
+            categories: null,
+            updated: true,
           },
         ],
       },
@@ -130,20 +147,24 @@ describe("Tests delta metadata", () => {
             index: 3,
             title: "title3",
             type: "category_filter",
+            description: null,
             categories: {
               deleted: ["cat32"],
               new: [],
             },
+            updated: true,
           },
           {
             id: "5",
             index: 5,
             title: "title5",
             type: "category_filter",
+            description: null,
             categories: {
               deleted: [],
               new: ["cat54"],
             },
+            updated: true,
           },
         ],
       },

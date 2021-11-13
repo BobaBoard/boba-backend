@@ -5,6 +5,7 @@ import firebaseAuth, { auth } from "firebase-admin";
 import { SettingEntry } from "../types/settings";
 import debug from "debug";
 import { getUserSettings } from "server/users/queries";
+import stringify from "fast-json-stable-stringify";
 
 const log = debug("bobaserver:auth-log");
 const error = debug("bobaserver:auth-error");
@@ -76,7 +77,6 @@ export const ensureLoggedIn = (
   next: NextFunction
 ) => {
   withLoggedIn(req, res, async () => {
-    console.log(req.currentUser);
     const currentUserId = req.currentUser?.uid;
     if (!currentUserId) {
       error(
@@ -128,7 +128,7 @@ export const withUserSettings = (
       await cache().hset(
         CacheKeys.USER_SETTINGS,
         currentUserId,
-        JSON.stringify(userSettings)
+        stringify(userSettings)
       );
     }
     next();

@@ -1,12 +1,17 @@
-import { BoardDescription, DbBoardMetadata, restriction_types } from "Types";
 import { CacheKeys, cache } from "server/cache";
+import {
+  DbBoardCategoryDescription,
+  DbBoardMetadata,
+  DbBoardTextDescription,
+} from "Types";
 import {
   processBoardMetadata,
   processBoardsSummary,
 } from "utils/response-utils";
 
 import debug from "debug";
-import { getBoardBySlug } from "./queries";
+import { getBoardByUuid } from "./queries";
+import stringify from "fast-json-stable-stringify";
 
 const info = debug("bobaserver:board:utils-info");
 const log = debug("bobaserver:board:utils-log");
@@ -25,7 +30,7 @@ export const getMetadataDelta = ({
   accentColor?: string;
   texts: {
     deleted: { id: string }[];
-    newAndUpdated: BoardDescription[];
+    newAndUpdated: (DbBoardTextDescription & { updated: boolean })[];
   };
   categoryFilters: {
     deleted: { id: string }[];
@@ -39,28 +44,34 @@ export const getMetadataDelta = ({
         deleted: string[];
         new: string[];
       };
+      updated: boolean;
     }[];
   };
 } => {
   const oldTexts =
-    oldMetadata.descriptions?.filter((desc) => desc.type == "text") || [];
+    oldMetadata.descriptions?.filter(
+      (desc): desc is DbBoardTextDescription => desc.type == "text"
+    ) || [];
   const oldCategoryFilters =
     oldMetadata.descriptions?.filter(
-      (desc) => desc.type == "category_filter"
+      (desc): desc is DbBoardCategoryDescription =>
+        desc.type == "category_filter"
     ) || [];
   const newTexts = newMetadata.descriptions.filter(
-    (desc) => desc.type == "text"
+    (desc): desc is DbBoardTextDescription => desc.type == "text"
   );
   const newCategoryFilters = newMetadata.descriptions.filter(
-    (desc) => desc.type == "category_filter"
+    (desc): desc is DbBoardCategoryDescription => desc.type == "category_filter"
   );
 
   // Deleted texts will be in oldTexts but not newTexts
   const deletedTexts = oldTexts.filter(
     (oldText) => !newTexts.some((newText) => newText.id == oldText.id)
   );
-  // There's no special handling needed for new and updated texts.
-  const newAndUpdatedTexts = newTexts;
+  const newAndUpdatedTexts = newTexts.map((text) => ({
+    ...text,
+    updated: oldTexts.some((oldText) => oldText.id === text.id),
+  }));
 
   // Deleted filters will be in oldCategoryFilters but not newCategoryFilters
   const deletedFilters = oldCategoryFilters.filter(
@@ -103,6 +114,7 @@ export const getMetadataDelta = ({
         deleted: deletedCategories,
         new: newCategories,
       },
+      updated: !!oldFilter,
     };
   });
 
@@ -121,31 +133,29 @@ export const getMetadataDelta = ({
     },
     categoryFilters: {
       deleted: deletedFilters.map((filter) => ({ id: filter.id })),
-      // TODO: type this correctly
-      // @ts-ignore
       newAndUpdated: newAndUpdatedFilters,
     },
   };
 };
 
-export const getBoardMetadata = async ({
-  slug,
+export const getBoardMetadataByUuid = async ({
+  boardId,
   firebaseId,
 }: {
-  slug: string;
+  boardId: string;
   firebaseId?: string;
 }) => {
   if (!firebaseId) {
-    const cachedBoard = await cache().hget(CacheKeys.BOARD_METADATA, slug);
+    const cachedBoard = await cache().hget(CacheKeys.BOARD_METADATA, boardId);
     if (cachedBoard) {
-      log(`Found cached metadata for board ${slug}`);
+      log(`Found cached metadata for board ${boardId}`);
       return JSON.parse(cachedBoard);
     }
   }
 
-  const board = await getBoardBySlug({
+  const board = await getBoardByUuid({
     firebaseId,
-    slug,
+    boardId,
   });
   info(`Found board`, board);
 
@@ -166,8 +176,8 @@ export const getBoardMetadata = async ({
     ...boardMetadata,
   };
   if (!firebaseId) {
-    cache().hset(CacheKeys.BOARD_METADATA, slug, JSON.stringify(finalMetadata));
+    cache().hset(CacheKeys.BOARD_METADATA, boardId, stringify(finalMetadata));
   }
-  log(`Processed board metadata (${slug}) for user ${firebaseId}`);
+  log(`Processed board metadata (${boardId}) for user ${firebaseId}`);
   return finalMetadata;
 };

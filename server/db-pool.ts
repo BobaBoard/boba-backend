@@ -31,6 +31,6 @@ const pgLib = pgp({
     info("executing query: ", q.query);
   },
 });
-const pool = pgLib(databaseConfig);
+const pool = pgLib({ ...databaseConfig, max: 1 });
 
 export default pool;

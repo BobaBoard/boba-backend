@@ -2,6 +2,7 @@ import { CacheKeys, cache } from "../../cache";
 
 import axios from "axios";
 import { maybeUpdateSubscriptionsOnThreadChange } from "../utils";
+import { mocked } from "ts-jest/utils";
 
 jest.mock("../../cache");
 jest.mock("axios");
@@ -12,6 +13,7 @@ describe("Tests subscriptions updates", () => {
   });
 
   test("correctly triggers webhook on thread update", async function () {
+    mocked(axios.post).mockReturnValueOnce(Promise.resolve());
     await maybeUpdateSubscriptionsOnThreadChange({
       threadId: "2765f36a-b4f9-4efe-96f2-cb34f055d032",
       postId: "this_is_a_test_post",
@@ -38,6 +40,7 @@ describe("Tests subscriptions updates", () => {
   });
 
   test("correctly triggers webhook on thread update 2", async function () {
+    // TODO: this is testing nothing. Figure out what my intention was.
     expect(cache().hdel).not.toHaveBeenCalled();
     expect(axios.post).not.toHaveBeenCalled();
   });
