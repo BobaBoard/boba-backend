@@ -59,6 +59,10 @@ export const canDoTagsEdit = (
   tagsDelta: { added: QueryTagsType; removed: QueryTagsType },
   permissions: PostPermissions[]
 ) => {
+  if (permissions.length == 0) {
+    return false;
+  }
+
   const isEditingContentWarnings =
     tagsDelta.added.contentWarnings.length > 0 ||
     tagsDelta.removed.contentWarnings.length > 0;
