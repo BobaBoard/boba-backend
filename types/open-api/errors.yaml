@@ -68,6 +68,24 @@ components:
               summary: Not logged in.
               value:
                 message: No authenticated user found
+    ensureThreadPermission:
+      description: User does not have required permissions for thread operation.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+          examples:
+            badPermissions:
+              summary: Insufficent permissions.
+              value: 
+                message: User does not have required permissions for thread operation.
+            authTokenExpired:
+              summary: Authorization token expired.
+              value:
+                message: Authentication token expired
     threadNotFound404:
       description: The thread with {thread_id} was not found.
       content:
@@ -78,4 +96,5 @@ components:
               message:
                 type: string
           example:
-            message: The thread with id 29d1b2da-3289-454a-9089-2ed47db4967b was not found.
+            message: The thread with id 29d1b2da-3289-454a-9089-2ed47db4967b was not found. 
+    
