@@ -96,7 +96,7 @@ router.get("/:thread_id", ensureThreadAccess, async (req, res) => {
  *     security:
  *       - firebase: []
  *     parameters:
- *       - name: thread-id
+ *       - name: thread_id
  *         in: path
  *         description: The id of the thread to mute.
  *         required: true
@@ -153,7 +153,7 @@ router.post("/:thread_id/mute", ensureLoggedIn, async (req, res) => {
  *     parameters:
  *       - name: thread_id
  *         in: path
- *         description: The thread of the id to unmute.
+ *         description: The id of the thread to unmute.
  *         required: true
  *         schema:
  *           type: string
@@ -211,7 +211,7 @@ router.delete(
  *     security:
  *       - firebase: []
  *     parameters:
- *       - name: thread-id
+ *       - name: thread_id
  *         in: path
  *         description: The id of the thread to unhide.
  *         required: true
@@ -271,7 +271,7 @@ router.post(
  *     security:
  *       - firebase: []
  *     parameters:
- *       - name: thread-id
+ *       - name: thread_id
  *         in: path
  *         description: The id of the thread to unhide.
  *         required: true
@@ -321,44 +321,40 @@ router.delete(
 
 /**
  * @openapi
- * /threads/<FILL-IN>:
- *   <OPERATION>:
- *     summary: 
- *     operationId: 
- *     description:
+ * /threads/{thread_id}/visit:
+ *   # Note: Should this be POST rather than GET?
+ *   get:
+ *     summary: Records a visit to a thread by the current user.
+ *     operationId: visitThreadByStringId
+ *     description: Records a visit to a thread by the current user.
  *     tags:
  *       - /threads/
  *     security:
  *       - firebase: []
- *       - {}
  *     parameters:
- *       - name: 
+ *       - name: thread_id
  *         in: path
- *         description: 
- *         required: 
+ *         description: The id of the thread that is being visited.
+ *         required: true
  *         schema:
- *           type: 
- *           format: 
+ *           type: string
+ *           format: uuid
  *         examples:
- *           <FILL-IN>:
- *             summary: 
- *             value: 
+ *           goreThreadId:
+ *             summary: A thread from the gore board.
+ *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
  *     responses:
  *       401:
  *         description: 
+ *         $ref: "#/components/responses/ensureBoardAccess"
  *       403:
- *         description: 
+ *         description: Authentication token expired.
+ *         $ref: "#/components/responses/ensureLoggedIn403"
  *       404:
- *         description: 
+ *         description: Thread not found. 
+ *         $ref: "#/components/responses/threadNotFound404"
  *       200:
- *         description: 
- *         content:
- *           application/json:
- *             schema:
- *               $ref: 
- *             examples:
- *               <FILL-IN>:
- *                 $ref: 
+ *         description: Thread has been marked as visited.
  */
 router.get(
   "/:thread_id/visit",
@@ -385,44 +381,38 @@ router.get(
 
 /**
  * @openapi
- * /threads/<FILL-IN>:
- *   <OPERATION>:
- *     summary: 
+ * /threads/{board_slug}/create:
+ *   post:
+ *     summary: Create a new thread.
  *     operationId: 
- *     description:
+ *     description: Creates a new thread in the specified board.
  *     tags:
  *       - /threads/
  *     security:
  *       - firebase: []
- *       - {}
  *     parameters:
- *       - name: 
+ *       - name: board_slug
  *         in: path
- *         description: 
- *         required: 
+ *         description: The slug specifying which board the thread should be created in.
+ *         required: true
  *         schema:
- *           type: 
- *           format: 
+ *           type: string
  *         examples:
- *           <FILL-IN>:
- *             summary: 
- *             value: 
+ *           goreBoardSlug:
+ *             summary: The slug for the gore board
+ *             value: gore
  *     responses:
  *       401:
- *         description: 
+ *         description: No authenticated user found.
+ *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
- *         description: 
+ *         description: Authentication token expired.
+ *         $ref: "#/components/responses/ensureLoggedIn403"
  *       404:
- *         description: 
+ *         description: Thread not found. 
+ *         $ref: "#/components/responses/threadNotFound404"
  *       200:
- *         description: 
- *         content:
- *           application/json:
- *             schema:
- *               $ref: 
- *             examples:
- *               <FILL-IN>:
- *                 $ref: 
+ *         description: Thread has been marked as visited.
  */
 router.post("/:boardSlug/create", ensureLoggedIn, async (req, res, next) => {
   const { boardSlug } = req.params;
@@ -504,26 +494,25 @@ router.post("/:boardSlug/create", ensureLoggedIn, async (req, res, next) => {
 
 /**
  * @openapi
- * /threads/<FILL-IN>:
- *   <OPERATION>:
- *     summary: 
+ * /threads/{thread_id}/update/view:
+ *   post:
+ *     summary: Update thread view
  *     operationId: 
  *     description:
  *     tags:
  *       - /threads/
  *     security:
  *       - firebase: []
- *       - {}
  *     parameters:
- *       - name: 
+ *       - name: thread_id
  *         in: path
- *         description: 
- *         required: 
+ *         description: The id of the thread whose view should be updated
+ *         required: true
  *         schema:
- *           type: 
- *           format: 
+ *           type: string
+ *           format: uuid
  *         examples:
- *           <FILL-IN>:
+ *           goreThreadId:
  *             summary: 
  *             value: 
  *     responses:
@@ -573,26 +562,25 @@ router.post(
 
 /**
  * @openapi
- * /threads/<FILL-IN>:
- *   <OPERATION>:
- *     summary: 
+ * /threads/{thread_id}/move:
+ *   post:
+ *     summary: Move the thread to another board
  *     operationId: 
  *     description:
  *     tags:
  *       - /threads/
  *     security:
  *       - firebase: []
- *       - {}
  *     parameters:
- *       - name: 
+ *       - name: thread_id
  *         in: path
- *         description: 
- *         required: 
+ *         description: The id of the thread to be moved.
+ *         required: true
  *         schema:
- *           type: 
- *           format: 
+ *           type: string
+ *           format: uuid
  *         examples:
- *           <FILL-IN>:
+ *           goreThreadId:
  *             summary: 
  *             value: 
  *     responses:
