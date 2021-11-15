@@ -36,7 +36,8 @@ const router = express.Router();
  * /threads/{thread_id}:
  *   get:
  *     summary: Fetches thread data.
- *     operationId: getThreadByUuid
+ *     operationId: getThreadByStringId
+ *     description: Fetches data for the specified thread.
  *     tags:
  *       - /threads/
  *     security:
@@ -58,9 +59,10 @@ const router = express.Router();
  *       401:
  *         description: User was not found and thread requires authentication.
  *       403:
- *         description: User is not authorized to fetch this thread.
+ *         description: User is not authorized to fetch this thread. 
  *       404:
  *         description: The thread was not found.
+ *         $ref: "#/components/responses/threadNotFound404"
  *       200:
  *         description: The thread data.
  *         content:
@@ -82,6 +84,43 @@ router.get("/:thread_id", ensureThreadAccess, async (req, res) => {
   res.status(200).json(serverThread);
 });
 
+/**
+ * @openapi
+ * /threads/{thread_id}/mute:
+ *   post:
+ *     summary: Mutes a thread.
+ *     operationId: muteThreadByStringId
+ *     description: Mutes the specified thread for the current user.
+ *     tags:
+ *       - /threads/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: thread-id
+ *         in: path
+ *         description: The id of the thread to mute.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         examples:
+ *           goreThreadId:
+ *             summary: A thread from the gore board.
+ *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
+ *     responses:
+ *       401:
+ *         description: No authenticated user found.
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         description: Authentication token expired.
+ *         $ref: "#/components/responses/ensureLoggedIn403"
+ *         # Note: can a user mute a thread they don't have access to?
+ *       404:
+ *         description: Thread not found. 
+ *         # TODO If a thread can't be found, returns 500
+ *       200:
+ *         description: The thread was succesfully muted.
+ */
 router.post("/:thread_id/mute", ensureLoggedIn, async (req, res) => {
   const { thread_id: threadId } = req.params;
   log(`Setting thread muted: ${threadId}`);
@@ -100,8 +139,45 @@ router.post("/:thread_id/mute", ensureLoggedIn, async (req, res) => {
   res.status(200).json();
 });
 
-router.post(
-  "/:thread_id/unmute",
+/**
+ * @openapi
+ * /threads/{thread_id}/mute:
+ *   delete:
+ *     summary: Unmutes a thread.
+ *     operationId: unmuteThreadByStringId
+ *     description: Unmutes a specified thread.
+ *     tags:
+ *       - /threads/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: thread_id
+ *         in: path
+ *         description: The thread of the id to unmute.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         examples:
+ *           goreThreadId:
+ *             summary: A thread from the gore board.
+ *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
+ *     responses:
+ *       401:
+ *         description: No authenticated user found.
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         description: Authentication token expired.
+ *         # Note: can a user unmute a thread they don't have access to?
+ *         $ref: "#/components/responses/ensureLoggedIn403"
+ *       404:
+ *         description: Thread not found.
+ *         $ref: "#/components/responses/threadNotFound404"
+ *       200:
+ *         description: The thread was successfully unmuted.
+ */
+router.delete(
+  "/:thread_id/mute",
   ensureLoggedIn,
   ensureThreadAccess,
   async (req, res) => {
@@ -123,6 +199,43 @@ router.post(
   }
 );
 
+/**
+ * @openapi
+ * /threads/{thread_id}/hide:
+ *   post:
+ *     summary: Hides a thread.
+ *     operationId: hideThreadByStringId
+ *     description: Hides the specified thread for the current user.
+ *     tags:
+ *       - /threads/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: thread-id
+ *         in: path
+ *         description: The id of the thread to unhide.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         examples:
+ *           goreThreadId:
+ *             summary: A thread from the gore board.
+ *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
+ *     responses:
+ *       401:
+ *         description: No authenticated user found.
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         description: Authentication token expired.
+ *         $ref: "#/components/responses/ensureLoggedIn403"
+ *         # Note: can a user mute a thread they don't have access to?
+ *       404:
+ *         description: Thread not found. 
+ *         $ref: "#/components/responses/threadNotFound404"
+ *       200:
+ *         description: The thread was succesfully hidden.
+ */
 router.post(
   "/:thread_id/hide",
   ensureLoggedIn,
@@ -146,8 +259,45 @@ router.post(
   }
 );
 
-router.post(
-  "/:thread_id/unhide",
+/**
+ * @openapi
+ * /threads/{thread_id}/hide:
+ *   delete:
+ *     summary: Unhides a thread.
+ *     operationId: hideThreadByStringId
+ *     description: Unhides the specified thread for the current user.
+ *     tags:
+ *       - /threads/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: thread-id
+ *         in: path
+ *         description: The id of the thread to unhide.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         examples:
+ *           goreThreadId:
+ *             summary: A thread from the gore board.
+ *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
+ *     responses:
+ *       401:
+ *         description: No authenticated user found.
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         description: Authentication token expired.
+ *         $ref: "#/components/responses/ensureLoggedIn403"
+ *         # Note: can a user mute a thread they don't have access to?
+ *       404:
+ *         description: Thread not found. 
+ *         $ref: "#/components/responses/threadNotFound404"
+ *       200:
+ *         description: The thread was succesfully unhidden.
+ */
+router.delete(
+  "/:thread_id/hide",
   ensureLoggedIn,
   ensureThreadAccess,
   async (req, res) => {
@@ -169,6 +319,47 @@ router.post(
   }
 );
 
+/**
+ * @openapi
+ * /threads/<FILL-IN>:
+ *   <OPERATION>:
+ *     summary: 
+ *     operationId: 
+ *     description:
+ *     tags:
+ *       - /threads/
+ *     security:
+ *       - firebase: []
+ *       - {}
+ *     parameters:
+ *       - name: 
+ *         in: path
+ *         description: 
+ *         required: 
+ *         schema:
+ *           type: 
+ *           format: 
+ *         examples:
+ *           <FILL-IN>:
+ *             summary: 
+ *             value: 
+ *     responses:
+ *       401:
+ *         description: 
+ *       403:
+ *         description: 
+ *       404:
+ *         description: 
+ *       200:
+ *         description: 
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: 
+ *             examples:
+ *               <FILL-IN>:
+ *                 $ref: 
+ */
 router.get(
   "/:thread_id/visit",
   ensureLoggedIn,
@@ -192,6 +383,47 @@ router.get(
   }
 );
 
+/**
+ * @openapi
+ * /threads/<FILL-IN>:
+ *   <OPERATION>:
+ *     summary: 
+ *     operationId: 
+ *     description:
+ *     tags:
+ *       - /threads/
+ *     security:
+ *       - firebase: []
+ *       - {}
+ *     parameters:
+ *       - name: 
+ *         in: path
+ *         description: 
+ *         required: 
+ *         schema:
+ *           type: 
+ *           format: 
+ *         examples:
+ *           <FILL-IN>:
+ *             summary: 
+ *             value: 
+ *     responses:
+ *       401:
+ *         description: 
+ *       403:
+ *         description: 
+ *       404:
+ *         description: 
+ *       200:
+ *         description: 
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: 
+ *             examples:
+ *               <FILL-IN>:
+ *                 $ref: 
+ */
 router.post("/:boardSlug/create", ensureLoggedIn, async (req, res, next) => {
   const { boardSlug } = req.params;
   log(`Creating thread in board with slug ${boardSlug}`);
@@ -270,6 +502,47 @@ router.post("/:boardSlug/create", ensureLoggedIn, async (req, res, next) => {
   }
 });
 
+/**
+ * @openapi
+ * /threads/<FILL-IN>:
+ *   <OPERATION>:
+ *     summary: 
+ *     operationId: 
+ *     description:
+ *     tags:
+ *       - /threads/
+ *     security:
+ *       - firebase: []
+ *       - {}
+ *     parameters:
+ *       - name: 
+ *         in: path
+ *         description: 
+ *         required: 
+ *         schema:
+ *           type: 
+ *           format: 
+ *         examples:
+ *           <FILL-IN>:
+ *             summary: 
+ *             value: 
+ *     responses:
+ *       401:
+ *         description: 
+ *       403:
+ *         description: 
+ *       404:
+ *         description: 
+ *       200:
+ *         description: 
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: 
+ *             examples:
+ *               <FILL-IN>:
+ *                 $ref: 
+ */
 router.post(
   "/:thread_id/update/view",
   ensureLoggedIn,
@@ -298,6 +571,47 @@ router.post(
   }
 );
 
+/**
+ * @openapi
+ * /threads/<FILL-IN>:
+ *   <OPERATION>:
+ *     summary: 
+ *     operationId: 
+ *     description:
+ *     tags:
+ *       - /threads/
+ *     security:
+ *       - firebase: []
+ *       - {}
+ *     parameters:
+ *       - name: 
+ *         in: path
+ *         description: 
+ *         required: 
+ *         schema:
+ *           type: 
+ *           format: 
+ *         examples:
+ *           <FILL-IN>:
+ *             summary: 
+ *             value: 
+ *     responses:
+ *       401:
+ *         description: 
+ *       403:
+ *         description: 
+ *       404:
+ *         description: 
+ *       200:
+ *         description: 
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: 
+ *             examples:
+ *               <FILL-IN>:
+ *                 $ref: 
+ */
 router.post(
   "/:thread_id/move",
   ensureLoggedIn,
