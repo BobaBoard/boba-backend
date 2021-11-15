@@ -144,8 +144,11 @@ export const ensureBoardAccess = async (
 ) => {
   withBoardMetadata(req, res, async () => {
     if (
-      !req.currentUser &&
+      (!req.currentUser &&
       req.currentBoardRestrictions.loggedOutRestrictions.includes(
+        BoardRestrictions.LOCK_ACCESS
+      )) ||
+      req.currentBoardRestrictions.loggedInBaseRestrictions.includes(
         BoardRestrictions.LOCK_ACCESS
       )
     ) {

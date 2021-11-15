@@ -50,6 +50,24 @@ components:
                 type: string
           example:
             message: Authentication token expired
+    ensureBoardAccess:
+      description: User does not have required permissions to access board.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+          examples:
+            badPermissions:
+              summary: Insufficent permissions.
+              value: 
+                message: User does not have required permissions to access board.
+            notLoggedIn:
+              summary: Not logged in.
+              value:
+                message: No authenticated user found
     threadNotFound404:
       description: The thread with {thread_id} was not found.
       content:
