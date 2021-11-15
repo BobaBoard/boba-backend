@@ -80,3 +80,51 @@ components:
             - posts
             - comments
         - $ref: "#/components/schemas/ThreadSummary"
+
+    CreateThread:
+      type: object
+      properties:
+        content:
+          type: string
+          format: quill-delta
+          description: The content of the first post in the thread.
+        forceAnonymous:
+          type: boolean
+          description: TODO presumably whether anonymity is forced
+        defaultView:
+          type: string
+          enum: [thread, gallery, timeline]
+          description: The default view that the thread will display as.
+        large:
+          type: boolean
+          description: TODO ...whether the thread will need more space to display properly?
+        identityId:
+          type: string
+          format: uuid
+          description: The identity the original poster will use to create the thread.
+        accessoryId:
+          type: string
+          format: uuid
+          description: The accessory that the original poster will use in the thread.
+        whisper_tags:
+          type: array
+          items:
+            type: string
+          description: The whisper tags associated with the thread.
+        index_tags:
+          type: array
+          items:
+            type: string
+          description: The searchable tags associated with the thread.
+        content_warnings:
+          type: array
+          items:
+            type: string
+          description: The content warnings associated with the thread.
+        category_tags:
+          type: array
+          items:
+            type: string
+          description: The categories associated with the thread.
+      required:
+       - content

@@ -393,14 +393,23 @@ router.get(
  *     parameters:
  *       - name: board_slug
  *         in: path
- *         description: The slug specifying which board the thread should be created in.
+ *         description: The slug for the board in which the thread will be created.
  *         required: true
  *         schema:
  *           type: string
  *         examples:
  *           goreBoardSlug:
- *             summary: The slug for the gore board
+ *             summary: The slug for the gore board.
  *             value: gore
+ *     requestBody:
+ *       description: request body
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/CreateThread"
+ *           example:
+ *             $ref: "#/components/examples/createGoreTestThread"
+ *       required: true
  *     responses:
  *       401:
  *         description: No authenticated user found.
@@ -409,10 +418,16 @@ router.get(
  *         description: Authentication token expired.
  *         $ref: "#/components/responses/ensureLoggedIn403"
  *       404:
- *         description: Thread not found. 
+ *         description: Board not found. 
  *         $ref: "#/components/responses/threadNotFound404"
  *       200:
  *         description: Thread has been marked as visited.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Thread"
+ *             example:
+ *               $ref: "#/components/examples/createGoreTestThreadResponse"
  */
 router.post("/:boardSlug/create", ensureLoggedIn, async (req, res, next) => {
   const { boardSlug } = req.params;
@@ -496,7 +511,7 @@ router.post("/:boardSlug/create", ensureLoggedIn, async (req, res, next) => {
  * @openapi
  * /threads/{thread_id}/update/view:
  *   post:
- *     summary: Update thread view
+ *     summary: Update default thread view.
  *     operationId: 
  *     description:
  *     tags:
@@ -506,31 +521,45 @@ router.post("/:boardSlug/create", ensureLoggedIn, async (req, res, next) => {
  *     parameters:
  *       - name: thread_id
  *         in: path
- *         description: The id of the thread whose view should be updated
+ *         description: The id of the thread whose default view should be updated.
  *         required: true
  *         schema:
  *           type: string
  *           format: uuid
  *         examples:
  *           goreThreadId:
- *             summary: 
- *             value: 
+ *             summary: A thread from the gore board.
+ *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
+ *     requestBody:
+ *       description: request body
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties: 
+ *               defaultView:
+ *                 type: string
+ *                 enum: [thread, gallery, timeline]
+ *             required: 
+ *               - defaultView
+ *           example:
+ *             defaultView: gallery
  *     responses:
  *       401:
- *         description: 
+ *         description: No authenticated user found.
+ *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
- *         description: 
+ *         description: User does not have required permissions for thread operation.
+ *         $ref: "#/components/responses/ensureThreadPermission"
  *       404:
  *         description: 
  *       200:
- *         description: 
+ *         description: Default thread view changed.
  *         content:
- *           application/json:
+ *           text/plain:
  *             schema:
- *               $ref: 
- *             examples:
- *               <FILL-IN>:
- *                 $ref: 
+ *               type: string
+ *             example: OK
  */
 router.post(
   "/:thread_id/update/view",
@@ -564,7 +593,7 @@ router.post(
  * @openapi
  * /threads/{thread_id}/move:
  *   post:
- *     summary: Move the thread to another board
+ *     summary: Move the thread to another board.
  *     operationId: 
  *     description:
  *     tags:
@@ -581,24 +610,32 @@ router.post(
  *           format: uuid
  *         examples:
  *           goreThreadId:
- *             summary: 
- *             value: 
+ *             summary: A thread from the gore board.
+ *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
+ *     requestBody:
+ *       description: request body
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties: 
+ *               destinationSlug:
+ *                 type: string
+ *             required: 
+ *               - destinationSlug
+ *           example:
+ *             destinationSlug: main_street
  *     responses:
  *       401:
- *         description: 
+ *         description: No authenticated user found.
+ *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
- *         description: 
+ *         description: User does not have required permissions for thread operation.
+ *         $ref: "#/components/responses/ensureThreadPermission"
  *       404:
  *         description: 
- *       200:
- *         description: 
- *         content:
- *           application/json:
- *             schema:
- *               $ref: 
- *             examples:
- *               <FILL-IN>:
- *                 $ref: 
+ *       204:
+ *         description: Thread successfully moved.
  */
 router.post(
   "/:thread_id/move",
