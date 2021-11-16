@@ -33,6 +33,8 @@ components:
               format: uuid
             parent_board_slug:
               type: string
+            parent_board_id:
+              type: string
             starter:
               description: "The contribution that starts the thread."
               $ref: "#/components/schemas/Contribution"
@@ -51,6 +53,8 @@ components:
           required:
             - id
             - parent_board_slug
+            - parent_board_id
+            - starter
             - default_view
             - new
             - muted

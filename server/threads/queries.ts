@@ -1,4 +1,4 @@
-import { DbThreadType, ThreadPermissions } from "Types";
+import { THREAD_OWNER_PERMISSIONS, ThreadPermissions } from "types/permissions";
 import {
   addNewIdentityToThread,
   maybeAddCategoryTags,
@@ -6,11 +6,12 @@ import {
   maybeAddIndexTags,
 } from "../posts/queries";
 
+import { DbThreadType } from "Types";
 import debug from "debug";
+import { extractThreadPermissions } from "utils/permissions-utils";
 import { getBoardBySlug } from "../boards/queries";
 import pool from "server/db-pool";
 import sql from "./sql";
-import { transformThreadPermissions } from "utils/permissions-utils";
 import { v4 as uuidv4 } from "uuid";
 
 const log = debug("bobaserver:threads:queries-log");
@@ -261,14 +262,14 @@ export const getUserPermissionsForThread = async ({
     });
 
     if (threadDetails.is_thread_owner) {
-      permissions.push(ThreadPermissions.editDefaultView);
+      permissions.push(...THREAD_OWNER_PERMISSIONS);
     }
 
     const board = await getBoardBySlug({
       firebaseId,
       slug: threadDetails.parent_board_slug,
     });
-    const threadPermissions = transformThreadPermissions(board.permissions);
+    const threadPermissions = extractThreadPermissions(board.permissions);
     permissions.push(...threadPermissions);
     return permissions;
   } catch (e) {

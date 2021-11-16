@@ -31,10 +31,7 @@ export const wrapWithTransaction = async (test: () => void) => {
     await test();
   } finally {
     log("running cleanup");
-    //   await pool.none("ROLLBACK;");
-    //   jest.mock("server/db-pool", () => ({
-    //     ...jest.requireActual("server/db-pool").default,
-    //   }));
+    await pool.none("ROLLBACK;");
   }
 };
 

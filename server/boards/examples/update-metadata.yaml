@@ -28,8 +28,15 @@ components:
       summary: Updated metadata for the gore board.
       value:
         id: c6d3d10e-8e49-4d73-b28a-9d652b41beec
+        realm_id: f377afb3-5c62-40cc-8f07-1f4749a780eb
         slug: gore
-        avatar: gore.png
+        accent_color: "#f68298"
+        tagline: Blood! Blood! BLOOD.
+        avatar_url: /gore.png
+        delisted: false
+        logged_in_only: false
+        muted: false
+        pinned: false
         descriptions:
           - id: 68f77b6b-3ac9-40f2-8507-7fed90c0da82
             type: text

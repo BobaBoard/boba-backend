@@ -1,12 +1,21 @@
-import { getBoardActivityBySlug } from "../queries";
+import { ANIME_BOARD_ID, GORE_BOARD_ID, LONG_BOARD_ID } from "test/data/boards";
+import {
+  BOBATAN_USER_ID,
+  JERSEY_DEVIL_USER_ID,
+  ONCEST_USER_ID,
+  SEXY_DADDY_USER_ID,
+  ZODIAC_KILLER_USER_ID,
+} from "test/data/auth";
+
+import { getBoardActivityByUuid } from "../queries";
 
 describe("Tests notifications", () => {
   test("gets correct amounts with no visit", async () => {
     // Since there was no visit we expect every post/comment to be marked as new
-    const boardActivity = await getBoardActivityBySlug({
-      slug: "gore",
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: GORE_BOARD_ID,
       // Jersey Devil
-      firebaseId: "fb2",
+      firebaseId: JERSEY_DEVIL_USER_ID,
       cursor: null,
     });
 
@@ -39,10 +48,10 @@ describe("Tests notifications", () => {
   });
   test("gets correct amounts with new comments (self)", async () => {
     // The only new comments are from the user itself
-    const boardActivity = await getBoardActivityBySlug({
-      slug: "gore",
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: GORE_BOARD_ID,
       // Bobatan
-      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      firebaseId: BOBATAN_USER_ID,
       cursor: null,
     });
 
@@ -76,10 +85,10 @@ describe("Tests notifications", () => {
 
   test("gets correct amounts with new comments (not self)", async () => {
     // The new comments are not from the user itself
-    const boardActivity = await getBoardActivityBySlug({
-      slug: "gore",
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: GORE_BOARD_ID,
       // Oncest
-      firebaseId: "fb3",
+      firebaseId: ONCEST_USER_ID,
       cursor: null,
     });
 
@@ -113,10 +122,9 @@ describe("Tests notifications", () => {
 
   test("gets correct amounts with new posts (self)", async () => {
     // Since we made the last posts since the visit we expect no new ones
-    const boardActivity = await getBoardActivityBySlug({
-      slug: "gore",
-      // Jersey Devil
-      firebaseId: "fb2",
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: GORE_BOARD_ID,
+      firebaseId: JERSEY_DEVIL_USER_ID,
       cursor: null,
     });
 
@@ -150,10 +158,10 @@ describe("Tests notifications", () => {
 
   test("gets correct amounts with new posts (not self)", async () => {
     // We expect new posts after the last visit
-    const boardActivity = await getBoardActivityBySlug({
-      slug: "gore",
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: GORE_BOARD_ID,
       // Oncest
-      firebaseId: "fb3",
+      firebaseId: ONCEST_USER_ID,
       cursor: null,
     });
 
@@ -187,10 +195,10 @@ describe("Tests notifications", () => {
 
   test("gets correct amounts with no updates", async () => {
     // Since there was no visit we expect every post/comment to be marked as new
-    const boardActivity = await getBoardActivityBySlug({
-      slug: "gore",
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: GORE_BOARD_ID,
       // Bobatan
-      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      firebaseId: BOBATAN_USER_ID,
       cursor: null,
     });
 
@@ -222,8 +230,8 @@ describe("Tests notifications", () => {
     ]);
   });
   test("gets correct amounts (logged out)", async () => {
-    const boardActivity = await getBoardActivityBySlug({
-      slug: "gore",
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: GORE_BOARD_ID,
       firebaseId: undefined,
       cursor: null,
     });
@@ -263,10 +271,10 @@ describe("Tests notifications", () => {
   });
 
   test("gets correct amounts with dismissed notifs (new entries)", async () => {
-    const boardActivity = await getBoardActivityBySlug({
-      slug: "gore",
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: GORE_BOARD_ID,
       // SexyDaddy69
-      firebaseId: "fb4",
+      firebaseId: SEXY_DADDY_USER_ID,
       cursor: null,
     });
 
@@ -305,10 +313,10 @@ describe("Tests notifications", () => {
   });
 
   test("gets correct amounts with dismissed notifs (no new entries)", async () => {
-    const boardActivity = await getBoardActivityBySlug({
-      slug: "anime",
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: ANIME_BOARD_ID,
       // SexyDaddy69
-      firebaseId: "fb4",
+      firebaseId: SEXY_DADDY_USER_ID,
       cursor: null,
     });
 
@@ -335,10 +343,10 @@ describe("Tests notifications", () => {
   });
 
   test("gets correct amounts with dismissed notifs (mixed visits and dismiss)", async () => {
-    const boardActivity = await getBoardActivityBySlug({
-      slug: "long",
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: LONG_BOARD_ID,
       // The Zodiac Killer
-      firebaseId: "fb5",
+      firebaseId: ZODIAC_KILLER_USER_ID,
       cursor: null,
       pageSize: 50,
     });
@@ -574,10 +582,10 @@ describe("Tests notifications", () => {
   });
 
   test("gets correct amounts with dismissed BOARD notifs (only dismiss)", async () => {
-    const boardActivity = await getBoardActivityBySlug({
-      slug: "long",
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: LONG_BOARD_ID,
       // oncest5evah
-      firebaseId: "fb3",
+      firebaseId: ONCEST_USER_ID,
       cursor: null,
       pageSize: 50,
     });
