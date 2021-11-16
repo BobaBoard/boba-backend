@@ -1,10 +1,6 @@
-import {
-  DbCommentType,
-  DbPostType,
-  PostPermissions,
-  QueryTagsType,
-} from "Types";
-import { canPostAs, transformPostPermissions } from "utils/permissions-utils";
+import { DbCommentType, DbPostType, QueryTagsType } from "Types";
+import { POST_OWNER_PERMISSIONS, PostPermissions } from "types/permissions";
+import { canPostAs, extractPostPermissions } from "utils/permissions-utils";
 
 import { ITask } from "pg-promise";
 import debug from "debug";
@@ -350,6 +346,8 @@ export const postNewContribution = async ({
           parent_thread_id: thread_string_id,
           parent_post_id: parentPostId,
           parent_board_slug: board_slug,
+          // TODO: fill this
+          parent_board_id: "",
           author: user_id,
           username,
           user_avatar,
@@ -357,7 +355,7 @@ export const postNewContribution = async ({
           secret_identity_avatar,
           secret_identity_color,
           accessory_avatar,
-          created: result.created_string,
+          created_at: result.created_at,
           content: result.content,
           options: result.options,
           type: result.type,
@@ -456,7 +454,7 @@ const postNewCommentWithTransaction = async ({
       chain_parent_id: result.chain_parent_comment,
       author: user_id,
       content: result.content,
-      created: result.created_string,
+      created_at: result.created_at,
       anonymity_type: result.anonymity_type,
       username,
       user_avatar,
@@ -653,39 +651,6 @@ export const addNewIdentityToThread = async (
     accessory_avatar,
     secret_identity_color,
   };
-};
-
-export const getUserPermissionsForPost = async ({
-  firebaseId,
-  postId,
-}: {
-  firebaseId: string;
-  postId: string;
-}) => {
-  try {
-    const post = await getPostFromStringId(null, {
-      firebaseId,
-      postId,
-    });
-    if (!post) {
-      return [];
-    }
-    if (post.is_own) {
-      return [
-        PostPermissions.editCategoryTags,
-        PostPermissions.editContentNotices,
-        PostPermissions.editIndexTags,
-        PostPermissions.editWhisperTags,
-      ];
-    }
-    const board = await getBoardBySlug({
-      firebaseId,
-      slug: post.parent_board_slug,
-    });
-    return transformPostPermissions(board.permissions);
-  } catch (e) {
-    return false;
-  }
 };
 
 export const getPostFromStringId = async (

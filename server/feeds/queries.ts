@@ -10,14 +10,14 @@ const log = debug("bobaserver:feeds:queries-log");
 const error = debug("bobaserver:feeds:queries-error");
 
 const DEFAULT_PAGE_SIZE = 10;
-export const getBoardActivityBySlug = async ({
-  slug,
+export const getBoardActivityByUuid = async ({
+  boardId,
   firebaseId,
   filterCategory,
   cursor,
   pageSize,
 }: {
-  slug: string;
+  boardId: string;
   firebaseId: string;
   filterCategory?: string | null;
   cursor: string;
@@ -28,8 +28,8 @@ export const getBoardActivityBySlug = async ({
 
     const finalPageSize =
       decodedCursor?.page_size || pageSize || DEFAULT_PAGE_SIZE;
-    const rows = await pool.manyOrNone(sql.getBoardActivityBySlug, {
-      board_slug: slug,
+    const rows = await pool.manyOrNone(sql.getBoardActivityByUuid, {
+      board_id: boardId,
       firebase_id: firebaseId,
       filtered_category: filterCategory || null,
       last_activity_cursor: decodedCursor?.last_activity_cursor || null,
@@ -37,19 +37,19 @@ export const getBoardActivityBySlug = async ({
     });
 
     if (!rows) {
-      log(`Board not found: ${slug}`);
+      log(`Board not found: ${boardId}`);
       return null;
     }
 
     if (rows.length == 1 && rows[0].thread_id == null) {
       // Only one row with just the null thread)
-      log(`Board empty: ${slug}`);
+      log(`Board empty: ${boardId}`);
       return { cursor: undefined, activity: [] };
     }
 
     let result = rows;
     let nextCursor = null;
-    info(`Got getBoardActivityBySlug query result`, result);
+    info(`Got getBoardActivityByUuid query result`, result);
     if (result.length > finalPageSize) {
       nextCursor = encodeCursor({
         last_activity_cursor:
@@ -60,10 +60,10 @@ export const getBoardActivityBySlug = async ({
       result.pop();
     }
 
-    log(`Fetched board ${slug} activity data for user ${firebaseId}`);
+    log(`Fetched board ${boardId} activity data for user ${firebaseId}`);
     return { cursor: nextCursor, activity: rows };
   } catch (e) {
-    error(`Error while fetching board by slug (${slug}).`);
+    error(`Error while fetching board by slug (${boardId}).`);
     error(e);
     return false;
   }
@@ -103,7 +103,7 @@ export const getUserActivity = async ({
 
     let result = rows;
     let nextCursor = null;
-    info(`Got getBoardActivityBySlug query result`, result);
+    info(`Got getUserActivity query result`, result);
     if (result.length > finalPageSize) {
       nextCursor = encodeCursor({
         last_activity_cursor:

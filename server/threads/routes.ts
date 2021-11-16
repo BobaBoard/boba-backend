@@ -1,12 +1,7 @@
 import {
-  canAccessBoard,
-  transformThreadPermissions,
-} from "utils/permissions-utils";
-import {
   createThread,
   getThreadByStringId,
   getTriggeredWebhooks,
-  getUserPermissionsForThread,
   hideThread,
   markThreadVisit,
   muteThread,
@@ -18,12 +13,16 @@ import {
   ensureNoIdentityLeakage,
   makeServerThread,
 } from "utils/response-utils";
+import {
+  ensureThreadAccess,
+  ensureThreadPermission,
+} from "handlers/permissions";
 
-import { ThreadPermissions } from "Types";
+import { ThreadPermissions } from "types/permissions";
 import axios from "axios";
+import { canAccessBoard } from "utils/permissions-utils";
 import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
-import { ensureThreadPermission } from "handlers/permissions";
 import express from "express";
 import { moveThread } from "./queries";
 
@@ -72,47 +71,19 @@ const router = express.Router();
  *               withcommentsthread:
  *                 $ref: '#/components/examples/ThreadWithCommentsThreadResponse'
  */
-router.get("/:id", async (req, res) => {
-  const { id } = req.params;
-  log(`Fetching data for thread with id ${id}`);
+router.get("/:thread_id", ensureThreadAccess, async (req, res) => {
+  const { thread_id: threadId } = req.params;
+  log(`Fetching data for thread with id ${threadId}`);
 
-  // NOTE: if updating this (and it makes sense) also update
-  // the method for thread creation + retrieval.
-  // TODO: check if this has already been unified
-  const thread = await getThreadByStringId({
-    threadId: id,
-    firebaseId: req.currentUser?.uid,
-  });
-  info(`Found thread: `, thread);
-
-  if (
-    thread &&
-    !(await canAccessBoard({
-      slug: thread.board_slug,
-      firebaseId: req.currentUser?.uid,
-    }))
-  ) {
-    return req.currentUser ? res.sendStatus(403) : res.sendStatus(401);
-  }
-
-  if (thread === false) {
-    res.sendStatus(500);
-    return;
-  }
-  if (!thread) {
-    res.sendStatus(404);
-    return;
-  }
-
-  const serverThread = makeServerThread(thread);
+  const serverThread = makeServerThread(req.currentThreadData);
   ensureNoIdentityLeakage(serverThread);
 
-  info(`sending back data for thread ${id}.`);
+  info(`sending back data for thread ${serverThread.id}.`);
   res.status(200).json(serverThread);
 });
 
-router.post("/:threadId/mute", ensureLoggedIn, async (req, res) => {
-  const { threadId } = req.params;
+router.post("/:thread_id/mute", ensureLoggedIn, async (req, res) => {
+  const { thread_id: threadId } = req.params;
   log(`Setting thread muted: ${threadId}`);
 
   if (
@@ -129,77 +100,97 @@ router.post("/:threadId/mute", ensureLoggedIn, async (req, res) => {
   res.status(200).json();
 });
 
-router.post("/:threadId/unmute", ensureLoggedIn, async (req, res) => {
-  const { threadId } = req.params;
-  log(`Setting thread unmuted: ${threadId}`);
+router.post(
+  "/:thread_id/unmute",
+  ensureLoggedIn,
+  ensureThreadAccess,
+  async (req, res) => {
+    const { thread_id: threadId } = req.params;
+    log(`Setting thread unmuted: ${threadId}`);
 
-  if (
-    !(await unmuteThread({
-      firebaseId: req.currentUser.uid,
-      threadId,
-    }))
-  ) {
-    res.sendStatus(500);
-    return;
+    if (
+      !(await unmuteThread({
+        firebaseId: req.currentUser.uid,
+        threadId,
+      }))
+    ) {
+      res.sendStatus(500);
+      return;
+    }
+
+    info(`Marked last visited time for thread: ${threadId}.`);
+    res.status(200).json();
   }
+);
 
-  info(`Marked last visited time for thread: ${threadId}.`);
-  res.status(200).json();
-});
+router.post(
+  "/:thread_id/hide",
+  ensureLoggedIn,
+  ensureThreadAccess,
+  async (req, res) => {
+    const { thread_id: threadId } = req.params;
+    log(`Setting thread hidden: ${threadId}`);
 
-router.post("/:threadId/hide", ensureLoggedIn, async (req, res) => {
-  const { threadId } = req.params;
-  log(`Setting thread hidden: ${threadId}`);
+    if (
+      !(await hideThread({
+        firebaseId: req.currentUser.uid,
+        threadId,
+      }))
+    ) {
+      res.sendStatus(500);
+      return;
+    }
 
-  if (
-    !(await hideThread({
-      firebaseId: req.currentUser.uid,
-      threadId,
-    }))
-  ) {
-    res.sendStatus(500);
-    return;
+    info(`Marked last visited time for thread: ${threadId}.`);
+    res.status(200).json();
   }
+);
 
-  info(`Marked last visited time for thread: ${threadId}.`);
-  res.status(200).json();
-});
+router.post(
+  "/:thread_id/unhide",
+  ensureLoggedIn,
+  ensureThreadAccess,
+  async (req, res) => {
+    const { thread_id: threadId } = req.params;
+    log(`Setting thread visible: ${threadId}`);
 
-router.post("/:threadId/unhide", ensureLoggedIn, async (req, res) => {
-  const { threadId } = req.params;
-  log(`Setting thread visible: ${threadId}`);
+    if (
+      !(await unhideThread({
+        firebaseId: req.currentUser.uid,
+        threadId,
+      }))
+    ) {
+      res.sendStatus(500);
+      return;
+    }
 
-  if (
-    !(await unhideThread({
-      firebaseId: req.currentUser.uid,
-      threadId,
-    }))
-  ) {
-    res.sendStatus(500);
-    return;
+    info(`Marked last visited time for thread: ${threadId}.`);
+    res.status(200).json();
   }
+);
 
-  info(`Marked last visited time for thread: ${threadId}.`);
-  res.status(200).json();
-});
+router.get(
+  "/:thread_id/visit",
+  ensureLoggedIn,
+  ensureThreadAccess,
+  async (req, res) => {
+    const { thread_id: threadId } = req.params;
+    log(`Setting last visited time for thread: ${threadId}`);
 
-router.get("/:threadId/visit", ensureLoggedIn, async (req, res) => {
-  const { threadId } = req.params;
-  log(`Setting last visited time for thread: ${threadId}`);
+    if (
+      !(await markThreadVisit({
+        firebaseId: req.currentUser.uid,
+        threadId,
+      }))
+    ) {
+      res.sendStatus(500);
+      return;
+    }
 
-  if (
-    !(await markThreadVisit({
-      firebaseId: req.currentUser.uid,
-      threadId,
-    }))
-  ) {
-    res.sendStatus(500);
-    return;
+    info(`Marked last visited time for thread: ${threadId}.`);
+    res.status(200).json();
   }
-
-  info(`Marked last visited time for thread: ${threadId}.`);
-  res.status(200).json();
-});
+);
 
 router.post("/:boardSlug/create", ensureLoggedIn, async (req, res, next) => {
   const { boardSlug } = req.params;

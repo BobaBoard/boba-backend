@@ -192,11 +192,11 @@ describe("Tests boards queries", () => {
         {
           slug: "restricted",
           uuid: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
-          has_updates: false,
-          last_comment: null,
-          last_post: null,
-          last_activity: null,
-          last_activity_from_others: null,
+          has_updates: true,
+          last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
+          last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
+          last_activity: new Date(Date.UTC(2020, 3, 24, 12, 44)),
+          last_activity_from_others: new Date(Date.UTC(2020, 3, 24, 12, 44)),
           last_visit: null,
         },
         {
@@ -279,9 +279,9 @@ describe("Tests boards queries", () => {
           slug: "restricted",
           uuid: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
           has_updates: false,
-          last_comment: null,
-          last_post: null,
-          last_activity: null,
+          last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
+          last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
+          last_activity: new Date(Date.UTC(2020, 3, 24, 12, 44)),
           last_activity_from_others: null,
           last_visit: null,
         },
@@ -371,11 +371,11 @@ describe("Tests boards queries", () => {
         {
           slug: "restricted",
           uuid: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
-          has_updates: false,
-          last_comment: null,
-          last_post: null,
-          last_activity: null,
-          last_activity_from_others: null,
+          has_updates: true,
+          last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
+          last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
+          last_activity: new Date(Date.UTC(2020, 3, 24, 12, 44)),
+          last_activity_from_others: new Date(Date.UTC(2020, 3, 24, 12, 44)),
           last_visit: null,
         },
         {
@@ -406,48 +406,48 @@ describe("Tests boards queries", () => {
           muted: false,
           pinned_order: null,
         },
-        { 
+        {
           slug: "gore",
           uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
           muted: false,
-          pinned_order: "1" 
+          pinned_order: "1",
         },
-        { 
+        {
           slug: "anime",
           uuid: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
           muted: false,
-          pinned_order: "2" 
+          pinned_order: "2",
         },
-        { 
+        {
           slug: "long",
           uuid: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
           muted: false,
-          pinned_order: null 
+          pinned_order: null,
         },
-        { 
+        {
           slug: "memes",
           uuid: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
           muted: false,
-          pinned_order: null 
+          pinned_order: null,
         },
-        { 
+        {
           slug: "muted",
           uuid: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
           muted: false,
-          pinned_order: null 
+          pinned_order: null,
         },
-        { 
+        {
           slug: "restricted",
           uuid: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
           muted: false,
-          pinned_order: null 
+          pinned_order: null,
         },
-        { 
+        {
           slug: "delisted",
           uuid: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
           muted: false,
-          pinned_order: null 
-        }
+          pinned_order: null,
+        },
       ]);
     });
     test("fetches all boards user settings (no user)", async () => {
@@ -464,43 +464,43 @@ describe("Tests boards queries", () => {
           slug: "gore",
           uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
           muted: false,
-          pinned_order: null 
+          pinned_order: null,
         },
         {
           slug: "anime",
           uuid: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
           muted: false,
-          pinned_order: null 
+          pinned_order: null,
         },
         {
           slug: "long",
           uuid: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
           muted: false,
-          pinned_order: null 
+          pinned_order: null,
         },
         {
           slug: "memes",
           uuid: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
           muted: false,
-          pinned_order: null 
+          pinned_order: null,
         },
         {
           slug: "muted",
           uuid: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
           muted: false,
-          pinned_order: null 
+          pinned_order: null,
         },
         {
           slug: "restricted",
           uuid: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
           muted: false,
-          pinned_order: null 
+          pinned_order: null,
         },
         {
           slug: "delisted",
           uuid: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
           muted: false,
-          pinned_order: null 
+          pinned_order: null,
         },
       ]);
     });
