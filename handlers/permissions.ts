@@ -150,7 +150,7 @@ export const ensureBoardAccess = async (
       )
     ) {
       res.status(401).json({
-        message: "User does not have required permissions to access board.",
+        message: "User must be authenticated to access board.",
       });
       return;
     }

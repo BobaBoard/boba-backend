@@ -209,6 +209,8 @@ router.patch(
  *                 message:
  *                   type: string
  *             example: { "message" : "This board is unavailable to logged out users." }
+ *       403:
+ *         $ref: "#/components/responses/ensureBoardAccess403"
  *       500:
  *         description: Internal Server Error
  *         $ref: "#/components/responses/default500"
@@ -272,7 +274,7 @@ router.post(
  *       401:
  *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
- *         $ref: "#/components/responses/ensureLoggedIn403"
+ *         $ref: "#/components/responses/ensureBoardAccess403"
  *       404:
  *         $ref: "#/components/responses/default404"
  *       500:
@@ -326,7 +328,7 @@ router.post(
  *       401:
  *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
- *         $ref: "#/components/responses/ensureLoggedIn403"
+ *         $ref: "#/components/responses/ensureBoardAccess403"
  *       404:
  *         $ref: "#/components/responses/default404"
  *       500:
@@ -384,7 +386,7 @@ router.delete(
  *       401:
  *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
- *         $ref: "#/components/responses/ensureLoggedIn403"
+ *         $ref: "#/components/responses/ensureBoardAccess403"
  *       404:
  *         $ref: "#/components/responses/default404"
  *       500:
@@ -442,7 +444,7 @@ router.post(
  *       401:
  *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
- *         $ref: "#/components/responses/ensureLoggedIn403"
+ *         $ref: "#/components/responses/ensureBoardAccess403"
  *       404:
  *         $ref: "#/components/responses/default404"
  *       500:
@@ -506,7 +508,7 @@ router.delete(
  *         description: User is not logged in.
  *         $ref: "#/components/responses/default401"
  *       403:
- *         $ref: "#/components/responses/ensureLoggedIn403"
+ *         $ref: "#/components/responses/ensureBoardAccess403"
  *       404:
  *         $ref: "#/components/responses/default404"
  *       500:
