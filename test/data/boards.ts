@@ -42,18 +42,18 @@ export const extractBoardSummary = (metadata: BoardMetadata): BoardSummary => {
 const GORE_LOGGED_OUT_METADATA: BoardMetadata = {
   descriptions: [
     {
-      categories: ["blood", "bruises"],
-      id: "id1",
-      index: 2,
-      title: "Gore Categories",
-      type: "category_filter",
-    },
-    {
       description: '[{"insert": "pls b nice"}]',
-      id: "id2",
+      id: "51be2abf-d191-4269-830a-e0c51b9fd8e7",
       index: 1,
       title: "Gore description",
       type: "text",
+    },
+    {
+      categories: ["blood", "bruises"],
+      id: "e541f259-8e6a-42c9-84c3-9c8991945930",
+      index: 2,
+      title: "Gore Categories",
+      type: "category_filter",
     },
   ],
   accent_color: "#f96680",
