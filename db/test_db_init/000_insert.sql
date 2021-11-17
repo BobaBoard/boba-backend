@@ -9,16 +9,33 @@ OVERRIDING SYSTEM VALUE VALUES
     (7, '76ebaab0-6c3e-4d7b-900f-f450625a5ed3','restricted', 'A board to test for logged-in only view', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2Fe4e263cf-ee98-4902-9c14-c10299210e01.png?alt=media&token=7c170411-9401-4d4e-9f66-5d6dfee2fccd', '{ "accentColor": "#234a69"}'),
     (8, 'bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b','delisted', 'A board to test for link-only view', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2Fc3b86805-4df7-4b1a-9fa2-b96b5165a636?alt=media&token=7652d44a-38cb-40cc-82ef-908cd4265840', '{ "accentColor": "#fa8628"}');
 
-INSERT INTO board_description_sections (string_id, board_id,title,description,"type","index") VALUES 
-('id1', 2,'Gore Categories',NULL,'category_filter',2),('id2', 2,'Gore description','[{"insert": "pls b nice"}]','text',1)
-;
-INSERT INTO categories(category) VALUES 
-  ('blood'),
-  ('bruises');
+INSERT INTO board_description_sections (id, string_id, board_id,title, description, "type", "index")
+OVERRIDING SYSTEM VALUE VALUES 
+    (1, 'e541f259-8e6a-42c9-84c3-9c8991945930', 2,'Gore Categories' ,NULL, 'category_filter', 2),
+    (2, '51be2abf-d191-4269-830a-e0c51b9fd8e7', 2,'Gore description' ,'[{"insert": "pls b nice"}]', 'text', 1);
+
+INSERT INTO categories(id, category) 
+OVERRIDING SYSTEM VALUE VALUES 
+    (1, 'blood'),
+    (2, 'bruises');
 
 INSERT INTO board_description_section_categories(section_id,category_id) VALUES 
-  (1,1),
-  (1,2);
+    (1, 1),
+    (1, 2);
+
+INSERT INTO categories(id, category)
+OVERRIDING SYSTEM VALUE VALUES
+    (3, 'odd'),
+    (4, 'even');
+
+INSERT INTO board_description_sections (id, string_id, board_id,title, description, "type", "index")
+OVERRIDING SYSTEM VALUE VALUES 
+    (3, 'db814c12-c530-46d2-b1a3-22ab958886f5', 4,'Long, long filter', NULL, 'category_filter', 1);
+;
+INSERT INTO board_description_section_categories(section_id,category_id) VALUES 
+    (3, 3),
+    (3, 4);
+
 INSERT INTO Users(firebase_id, username, avatar_reference_id, invited_by)
 VALUES
     ('c6HimTlg2RhVH3fC1psXZORdLcx2', 'bobatan', 'bobatan.png', NULL);
@@ -32,3 +49,9 @@ INSERT INTO Users(firebase_id, username, avatar_reference_id, invited_by)
 VALUES
     ('fb4', 'SexyDaddy69', 'mamoru.png', (SELECT id FROM users WHERE username='oncest5evah')),
     ('fb5', 'The Zodiac Killer', 'villains.png', (SELECT id FROM users WHERE username='oncest5evah'));
+
+-- Set the incremental values of the tables we have overrode the system values of
+-- See: https://stackoverflow.com/questions/9108833/postgres-autoincrement-not-updated-on-explicit-id-inserts
+SELECT setval('boards_id_seq', (SELECT MAX(id) from "boards"));
+SELECT setval('categories_id_seq', (SELECT MAX(id) from "categories"));
+SELECT setval('board_description_sections_id_seq', (SELECT MAX(id) from "board_description_sections"));
