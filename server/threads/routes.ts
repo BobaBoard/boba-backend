@@ -57,11 +57,11 @@ const router = express.Router();
  *             value: 8b2646af-2778-487e-8e44-7ae530c2549c
  *     responses:
  *       401:
- *         description: User was not found and thread requires authentication.
+ *         description: User was not found and thread requires authentication
+ *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
- *         description: User is not authorized to fetch this thread. 
+ *         $ref: "#/components/responses/ensureThreadAccess403"
  *       404:
- *         description: The thread was not found.
  *         $ref: "#/components/responses/threadNotFound404"
  *       200:
  *         description: The thread data.
@@ -109,15 +109,11 @@ router.get("/:thread_id", ensureThreadAccess, async (req, res) => {
  *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
  *     responses:
  *       401:
- *         description: No authenticated user found.
  *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
- *         description: Authentication token expired.
- *         $ref: "#/components/responses/ensureLoggedIn403"
- *         # Note: can a user mute a thread they don't have access to?
+ *         $ref: "#/components/responses/ensureThreadAccess403"
  *       404:
- *         description: Thread not found. 
- *         # TODO If a thread can't be found, returns 500
+ *         $ref: "#/components/responses/threadNotFound404"
  *       200:
  *         description: The thread was succesfully muted.
  */
@@ -164,14 +160,10 @@ router.post("/:thread_id/mute", ensureLoggedIn, async (req, res) => {
  *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
  *     responses:
  *       401:
- *         description: No authenticated user found.
  *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
- *         description: Authentication token expired.
- *         # Note: can a user unmute a thread they don't have access to?
- *         $ref: "#/components/responses/ensureLoggedIn403"
+ *         $ref: "#/components/responses/ensureThreadAccess403"
  *       404:
- *         description: Thread not found.
  *         $ref: "#/components/responses/threadNotFound404"
  *       200:
  *         description: The thread was successfully unmuted.
@@ -224,14 +216,10 @@ router.delete(
  *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
  *     responses:
  *       401:
- *         description: No authenticated user found.
  *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
- *         description: Authentication token expired.
- *         $ref: "#/components/responses/ensureLoggedIn403"
- *         # Note: can a user mute a thread they don't have access to?
+ *         $ref: "#/components/responses/ensureThreadAccess403"
  *       404:
- *         description: Thread not found. 
  *         $ref: "#/components/responses/threadNotFound404"
  *       200:
  *         description: The thread was succesfully hidden.
@@ -264,7 +252,7 @@ router.post(
  * /threads/{thread_id}/hide:
  *   delete:
  *     summary: Unhides a thread.
- *     operationId: hideThreadByStringId
+ *     operationId: unhideThreadByStringId
  *     description: Unhides the specified thread for the current user.
  *     tags:
  *       - /threads/
@@ -284,14 +272,10 @@ router.post(
  *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
  *     responses:
  *       401:
- *         description: No authenticated user found.
  *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
- *         description: Authentication token expired.
- *         $ref: "#/components/responses/ensureLoggedIn403"
- *         # Note: can a user mute a thread they don't have access to?
+ *         $ref: "#/components/responses/ensureThreadAccess403"
  *       404:
- *         description: Thread not found. 
  *         $ref: "#/components/responses/threadNotFound404"
  *       200:
  *         description: The thread was succesfully unhidden.
@@ -322,8 +306,7 @@ router.delete(
 /**
  * @openapi
  * /threads/{thread_id}/visit:
- *   # Note: Should this be POST rather than GET?
- *   get:
+ *   post:
  *     summary: Records a visit to a thread by the current user.
  *     operationId: visitThreadByStringId
  *     description: Records a visit to a thread by the current user.
@@ -345,18 +328,15 @@ router.delete(
  *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
  *     responses:
  *       401:
- *         description: 
- *         $ref: "#/components/responses/ensureBoardAccess"
+ *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
- *         description: Authentication token expired.
- *         $ref: "#/components/responses/ensureLoggedIn403"
+ *         $ref: "#/components/responses/ensureThreadAccess403"
  *       404:
- *         description: Thread not found. 
  *         $ref: "#/components/responses/threadNotFound404"
  *       200:
  *         description: Thread has been marked as visited.
  */
-router.get(
+router.post(
   "/:thread_id/visit",
   ensureLoggedIn,
   ensureThreadAccess,
@@ -384,7 +364,7 @@ router.get(
  * /threads/{board_slug}/create:
  *   post:
  *     summary: Create a new thread.
- *     operationId: 
+ *     operationId: createThread
  *     description: Creates a new thread in the specified board.
  *     tags:
  *       - /threads/
@@ -412,13 +392,10 @@ router.get(
  *       required: true
  *     responses:
  *       401:
- *         description: No authenticated user found.
  *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
- *         description: Authentication token expired.
- *         $ref: "#/components/responses/ensureLoggedIn403"
+ *         $ref: "#/components/responses/ensureBoardPermission403"
  *       404:
- *         description: Board not found. 
  *         $ref: "#/components/responses/threadNotFound404"
  *       200:
  *         description: Thread has been marked as visited.
@@ -512,7 +489,7 @@ router.post("/:boardSlug/create", ensureLoggedIn, async (req, res, next) => {
  * /threads/{thread_id}/update/view:
  *   post:
  *     summary: Update default thread view.
- *     operationId: 
+ *     operationId: updateThreadViewByStringId
  *     description:
  *     tags:
  *       - /threads/
@@ -546,20 +523,14 @@ router.post("/:boardSlug/create", ensureLoggedIn, async (req, res, next) => {
  *             defaultView: gallery
  *     responses:
  *       401:
- *         description: No authenticated user found.
  *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
- *         description: User does not have required permissions for thread operation.
- *         $ref: "#/components/responses/ensureThreadPermission"
+ *         $ref: "#/components/responses/ensureThreadPermission403"
  *       404:
- *         description: 
+ *         $ref: "#/components/responses/threadNotFound404"
  *       200:
  *         description: Default thread view changed.
- *         content:
- *           text/plain:
- *             schema:
- *               type: string
- *             example: OK
+ *         $ref: "#/components/responses/default200"
  */
 router.post(
   "/:thread_id/update/view",
@@ -594,7 +565,7 @@ router.post(
  * /threads/{thread_id}/move:
  *   post:
  *     summary: Move the thread to another board.
- *     operationId: 
+ *     operationId: moveThread
  *     description:
  *     tags:
  *       - /threads/
@@ -627,13 +598,24 @@ router.post(
  *             destinationSlug: main_street
  *     responses:
  *       401:
- *         description: No authenticated user found.
  *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
- *         description: User does not have required permissions for thread operation.
- *         $ref: "#/components/responses/ensureThreadPermission"
+ *         description: User is unauthorized to perform operation.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/genericResponse"
+ *             examples:
+ *               insufficientThreadPermissions:
+ *                 summary: Insufficient thread permissions.
+ *                 value: 
+ *                   message: User does not have required permissions for thread operation.
+ *               insufficientBoardPermissions:
+ *                 summary: Insufficient board permissions.
+ *                 value: 
+ *                   message: User does not have required permissions on destination board.
  *       404:
- *         description: 
+ *         $ref: "#/components/responses/threadNotFound404"
  *       204:
  *         description: Thread successfully moved.
  */
