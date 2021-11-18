@@ -141,6 +141,9 @@ export const canAccessBoardByUuid = async ({
   if (!board) {
     return false;
   }
+  if (board.logged_out_restrictions.includes(BoardRestrictions.LOCK_ACCESS)) {
+    return !!firebaseId;
+  }
 
   return hasBoardAccessPermission({ boardMetadata: board, firebaseId });
 };

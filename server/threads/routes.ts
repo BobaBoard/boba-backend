@@ -61,7 +61,7 @@ const router = express.Router();
  *             value: 8b2646af-2778-487e-8e44-7ae530c2549c
  *     responses:
  *       401:
- *         description: User was not found and thread requires authentication
+ *         description: User was not found and thread requires authentication.
  *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
  *         $ref: "#/components/responses/ensureThreadAccess403"
@@ -657,8 +657,6 @@ router.post(
     const { destinationId } = req.body;
 
     // TODO: add a test for this case
-    // Note: canAccessBoardByUuid will return false if board doesn't exist...
-    // should it be 403 or 404?
     if (
       !(await canAccessBoardByUuid({
         boardId: destinationId,
