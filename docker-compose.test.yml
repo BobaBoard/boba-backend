@@ -10,6 +10,7 @@ services:
       - ./db:/docker-entrypoint-initdb.d
     environment:
       TZ: "America/Los_Angeles"
+      JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
   test:
     image: "bobaserver"
     network_mode: "host"
