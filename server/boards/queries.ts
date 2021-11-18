@@ -74,7 +74,7 @@ export const getBoardByUuid = async ({
     log(`Fetched board ${boardId} for user ${firebaseId}`);
     return rows;
   } catch (e) {
-    error(`Error while fetching board by slug (${boardId}).`);
+    error(`Error while fetching board by uuid (${boardId}).`);
     error(e);
     return null;
   }

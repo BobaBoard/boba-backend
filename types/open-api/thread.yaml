@@ -89,15 +89,21 @@ components:
           format: quill-delta
           description: The content of the first post in the thread.
         forceAnonymous:
-          type: boolean
-          description: TODO presumably whether anonymity is forced
+          deprecated: true
+          description: Force anonymity even among friends.
+          oneOf:
+            - type: boolean
+            - type: null
         defaultView:
           type: string
           enum: [thread, gallery, timeline]
           description: The default view that the thread will display as.
         large:
-          type: boolean
-          description: TODO ...whether the thread will need more space to display properly?
+          deprecated: true
+          description: Whether the thread will contain large posts.
+          oneOf:
+            - type: boolean
+            - type: null
         identityId:
           type: string
           format: uuid

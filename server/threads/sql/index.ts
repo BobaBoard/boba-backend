@@ -5,7 +5,7 @@ const createThread = `
     INSERT INTO threads(string_id, parent_board, options)
     VALUES (
       $/thread_string_id/,
-      (SELECT id FROM boards WHERE slug = $/board_slug/),
+      (SELECT id FROM boards WHERE boards.string_id = $/board_string_id/),
       $/thread_options/)
     RETURNING id`;
 
@@ -56,6 +56,27 @@ const getRoleByStringId = `
     WHERE
       roles.string_id = $/role_id/
       AND (rur.role_id IS NOT NULL OR bur.board_id  = (SELECT id FROM boards WHERE boards.slug = $/board_slug/))
+      AND users.firebase_id = $/firebase_id/
+    LIMIT 1`;
+
+// TODO: update getRoleByStringId to use board string id rather than board slug
+const getRoleByStringIdAndBoardId = `
+    SELECT 
+      roles.id,
+      roles.name,
+      roles.avatar_reference_id,
+      roles.color,
+      to_json(roles.permissions) as permissions
+    FROM roles
+    LEFT JOIN board_user_roles bur
+      ON roles.id = bur.role_id
+    LEFT JOIN realm_user_roles rur
+      ON roles.id = rur.role_id
+    INNER JOIN users 
+      ON users.id = bur.user_id  OR users.id = rur.user_id
+    WHERE
+      roles.string_id = $/role_id/
+      AND (rur.role_id IS NOT NULL OR bur.board_id  = (SELECT id FROM boards WHERE boards.string_id = $/board_string_id/))
       AND users.firebase_id = $/firebase_id/
     LIMIT 1`;
 
@@ -127,7 +148,7 @@ const getTriggeredWebhooks = `
 
 const moveThread = `
     UPDATE threads 
-    SET parent_board = (SELECT id FROM boards WHERE slug = $/board_slug/)
+    SET parent_board = (SELECT id FROM boards WHERE boards.string_id = $/board_string_id/)
     WHERE string_id = $/thread_string_id/;
 `;
 
@@ -148,6 +169,7 @@ export default {
   unhideThreadByStringId,
   updateThreadViewByStringId,
   getRoleByStringId,
+  getRoleByStringIdAndBoardId,
   getThreadDetails,
   getTriggeredWebhooks,
   moveThread,
