@@ -8,9 +8,6 @@ jobs:
           name: create env file
           command: env > .env
       - run:
-          name: Install JUnit coverage reporter
-          command: yarn add --dev jest-junit
-      - run:
           name: see files
           command: ls -la
       - run:
