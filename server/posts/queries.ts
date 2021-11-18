@@ -653,6 +653,97 @@ export const addNewIdentityToThread = async (
   };
 };
 
+// TODO: delete and change addNewIdentityToThread to use string id
+export const addNewIdentityToThreadByBoardId = async (
+  transaction: ITask<any>,
+  {
+    user_id,
+    accessory_id,
+    identityId,
+    thread_id,
+    firebaseId,
+    board_string_id,
+  }: {
+    identityId: string;
+    firebaseId: string;
+    user_id: any;
+    accessory_id?: string;
+    board_string_id: any;
+    thread_id: any;
+  }
+) => {
+  let secret_identity_id = null;
+  let role_identity_id = null;
+  let secret_identity_name;
+  let secret_identity_avatar;
+  let secret_identity_color;
+
+  if (identityId) {
+    // An identity was passed to this method, which means we don't need to randomize it.
+    // The only thing we need to check is whether the user is *actually able* to post
+    // as that identity.
+    const roleResult = await transaction.one(threadsSql.getRoleByStringIdAndBoardId, {
+      role_id: identityId,
+      firebase_id: firebaseId,
+      board_string_id,
+    });
+    if (!canPostAs(roleResult.permissions)) {
+      throw new Error(
+        "Attempted to post on thread with identity without post as permissions"
+      );
+    }
+    role_identity_id = roleResult.id;
+    secret_identity_name = roleResult.name;
+    secret_identity_avatar = roleResult.avatar_reference_id;
+    secret_identity_color = roleResult.color;
+  } else {
+    const randomIdentityResult = await transaction.one(sql.getRandomIdentity, {
+      thread_id,
+    });
+    secret_identity_id = randomIdentityResult.secret_identity_id;
+    secret_identity_name = randomIdentityResult.secret_identity_name;
+    secret_identity_avatar = randomIdentityResult.secret_identity_avatar;
+  }
+
+  // The secret identity id is not currently in the thread data.
+  // Add it.
+  log(`Adding identity to thread:`);
+  log({
+    role_identity_id,
+    secret_identity_id,
+    secret_identity_name,
+    secret_identity_avatar,
+    secret_identity_color,
+    accessory_id,
+  });
+
+  await transaction.one(sql.addIdentityToThread, {
+    user_id,
+    thread_id,
+    secret_identity_id,
+    role_identity_id,
+  });
+
+  let accessory_avatar = null;
+  if (accessory_id) {
+    ({ accessory_avatar } = await addAccessoryToIdentity(transaction, {
+      identity_id: secret_identity_id,
+      role_identity_id,
+      thread_id,
+      accessory_id,
+    }));
+  }
+
+  return {
+    secret_identity_id,
+    secret_identity_name,
+    secret_identity_avatar,
+    role_identity_id,
+    accessory_avatar,
+    secret_identity_color,
+  };
+};
+
 export const getPostFromStringId = async (
   transaction: ITask<any> | null,
   {

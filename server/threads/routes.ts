@@ -16,11 +16,15 @@ import {
 import {
   ensureThreadAccess,
   ensureThreadPermission,
+  ensureBoardAccess,
+  ensureBoardPermission
 } from "handlers/permissions";
+
+import { getBoardMetadataByUuid } from "../boards/utils";
 
 import { ThreadPermissions } from "types/permissions";
 import axios from "axios";
-import { canAccessBoard } from "utils/permissions-utils";
+import { canAccessBoard, canAccessBoardByUuid } from "utils/permissions-utils";
 import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
@@ -117,23 +121,28 @@ router.get("/:thread_id", ensureThreadAccess, async (req, res) => {
  *       200:
  *         description: The thread was succesfully muted.
  */
-router.post("/:thread_id/mute", ensureLoggedIn, async (req, res) => {
-  const { thread_id: threadId } = req.params;
-  log(`Setting thread muted: ${threadId}`);
+router.post(
+  "/:thread_id/mute", 
+  ensureLoggedIn, 
+  ensureThreadAccess, 
+  async (req, res) => {
+    const { thread_id: threadId } = req.params;
+    log(`Setting thread muted: ${threadId}`);
 
-  if (
-    !(await muteThread({
-      firebaseId: req.currentUser.uid,
-      threadId,
-    }))
-  ) {
-    res.sendStatus(500);
-    return;
+    if (
+      !(await muteThread({
+        firebaseId: req.currentUser.uid,
+        threadId,
+      }))
+    ) {
+      res.sendStatus(500);
+      return;
+    }
+
+    info(`Marked last visited time for thread: ${threadId}.`);
+    res.status(200).json();
   }
-
-  info(`Marked last visited time for thread: ${threadId}.`);
-  res.status(200).json();
-});
+);
 
 /**
  * @openapi
@@ -305,7 +314,7 @@ router.delete(
 
 /**
  * @openapi
- * /threads/{thread_id}/visit:
+ * /threads/{thread_id}/visits:
  *   post:
  *     summary: Records a visit to a thread by the current user.
  *     operationId: visitThreadByStringId
@@ -337,7 +346,7 @@ router.delete(
  *         description: Thread has been marked as visited.
  */
 router.post(
-  "/:thread_id/visit",
+  "/:thread_id/visits",
   ensureLoggedIn,
   ensureThreadAccess,
   async (req, res) => {
@@ -371,16 +380,17 @@ router.post(
  *     security:
  *       - firebase: []
  *     parameters:
- *       - name: board_slug
+ *       - name: board_id
  *         in: path
- *         description: The slug for the board in which the thread will be created.
+ *         description: The id for the board in which the thread will be created.
  *         required: true
  *         schema:
  *           type: string
+ *           format: uuid
  *         examples:
- *           goreBoardSlug:
- *             summary: The slug for the gore board.
- *             value: gore
+ *           goreBoardId:
+ *             summary: The id for the gore board.
+ *             value: c6d3d10e-8e49-4d73-b28a-9d652b41beec
  *     requestBody:
  *       description: request body
  *       content:
@@ -406,83 +416,99 @@ router.post(
  *             example:
  *               $ref: "#/components/examples/createGoreTestThreadResponse"
  */
-router.post("/:boardSlug/create", ensureLoggedIn, async (req, res, next) => {
-  const { boardSlug } = req.params;
-  log(`Creating thread in board with slug ${boardSlug}`);
-  const {
-    content,
-    forceAnonymous,
-    defaultView,
-    large,
-    whisperTags,
-    indexTags,
-    categoryTags,
-    contentWarnings,
-    identityId,
-    accessoryId,
-  } = req.body;
+router.post(
+  "/:board_id/create", 
+  ensureLoggedIn, 
+  ensureBoardAccess,
+  //TODO: ensureBoardPermission(BoardPermissions.createThread),
+  async (req, res, next) => {
+    const { board_id: boardId } = req.params;
 
-  const threadStringId = await createThread({
-    firebaseId: req.currentUser.uid,
-    content,
-    defaultView,
-    anonymityType: "everyone",
-    isLarge: !!large,
-    boardSlug: boardSlug,
-    whisperTags,
-    indexTags,
-    categoryTags,
-    contentWarnings,
-    identityId,
-    accessoryId,
-  });
-  info(`Created new thread`, threadStringId);
-
-  if (threadStringId === false) {
-    res.sendStatus(500);
-    return;
-  }
-
-  const thread = await getThreadByStringId({
-    threadId: threadStringId as string,
-    // @ts-ignore
-    firebaseId: req.currentUser?.uid,
-  });
-  info(`Found thread: `, thread);
-
-  if (thread === false) {
-    res.sendStatus(500);
-    return;
-  }
-  if (!thread) {
-    res.sendStatus(404);
-    return;
-  }
-
-  const serverThread = makeServerThread(thread);
-  ensureNoIdentityLeakage(serverThread);
-
-  info(`sending back data for thread ${threadStringId}.`);
-  res.status(200).json(serverThread);
-
-  const webhooks = await getTriggeredWebhooks({
-    slug: boardSlug,
-    categories: serverThread.posts[0].tags?.category_tags,
-  });
-  if (webhooks && webhooks.length > 0) {
-    const threadUrl = `https://v0.boba.social/!${boardSlug}/thread/${threadStringId}`;
-    webhooks.forEach(({ webhook, subscriptionNames }) => {
-      const message = `Your "${subscriptionNames.join(
-        ", "
-      )}" subscription has updated!\n ${threadUrl}`;
-      axios.post(webhook, {
-        content: message,
-        username: serverThread.posts[0].secret_identity.name,
-        avatar_url: serverThread.posts[0].secret_identity.avatar,
-      });
+    log(`Fetching metadata for board with id ${boardId}`);
+    const boardMetadata = await getBoardMetadataByUuid({
+      firebaseId: req.currentUser?.uid,
+      boardId,
     });
+    const boardSlug = boardMetadata.slug;
+
+    log(`Creating thread in board with id ${boardId}`);
+    const {
+      content,
+      forceAnonymous,
+      defaultView,
+      large,
+      whisperTags,
+      indexTags,
+      categoryTags,
+      contentWarnings,
+      identityId,
+      accessoryId,
+    } = req.body;
+
+    const threadStringId = await createThread({
+      firebaseId: req.currentUser.uid,
+      content,
+      defaultView,
+      anonymityType: "everyone",
+      isLarge: !!large,
+      boardStringId: boardId,
+      whisperTags,
+      indexTags,
+      categoryTags,
+      contentWarnings,
+      identityId,
+      accessoryId,
+    });
+    info(`Created new thread`, threadStringId);
+
+    if (threadStringId === false) {
+      res.sendStatus(500);
+      return;
+    }
+
+    const thread = await getThreadByStringId({
+      threadId: threadStringId as string,
+      // @ts-ignore
+      firebaseId: req.currentUser?.uid,
+    });
+    info(`Found thread: `, thread);
+
+    if (thread === false) {
+      res.sendStatus(500);
+      return;
+    }
+    if (!thread) {
+      res.sendStatus(404);
+      return;
+    }
+
+    const serverThread = makeServerThread(thread);
+    ensureNoIdentityLeakage(serverThread);
+
+    info(`sending back data for thread ${threadStringId}.`);
+    res.status(200).json(serverThread);
+
+    info(`generating webhook for thread ${threadStringId} in board ${boardSlug}`);
+
+    const webhooks = await getTriggeredWebhooks({
+      slug: boardSlug,
+      categories: serverThread.posts[0].tags?.category_tags,
+    });
+    if (webhooks && webhooks.length > 0) {
+      const threadUrl = `https://v0.boba.social/!${boardSlug}/thread/${threadStringId}`;
+      webhooks.forEach(({ webhook, subscriptionNames }) => {
+        const message = `Your "${subscriptionNames.join(
+          ", "
+        )}" subscription has updated!\n ${threadUrl}`;
+        axios.post(webhook, {
+          content: message,
+          username: serverThread.posts[0].secret_identity.name,
+          avatar_url: serverThread.posts[0].secret_identity.avatar,
+        });
+      });
+    }
   }
-});
+);
 
 /**
  * @openapi
@@ -623,14 +649,15 @@ router.post(
   "/:thread_id/move",
   ensureLoggedIn,
   ensureThreadPermission(ThreadPermissions.moveThread),
+  //ensureBoardPermission(BoardPermissions.createThread),
   async (req, res) => {
     const { thread_id } = req.params;
-    const { destinationSlug } = req.body;
+    const { destinationId } = req.body;
 
     // TODO: add a test for this case
     if (
-      !(await canAccessBoard({
-        slug: destinationSlug,
+      !(await canAccessBoardByUuid({
+        boardId: destinationId,
         firebaseId: req.currentUser.uid,
       }))
     ) {
@@ -641,7 +668,7 @@ router.post(
     if (
       !(await moveThread({
         threadId: thread_id,
-        destinationSlug,
+        destinationId,
       }))
     ) {
       return res.sendStatus(500);
