@@ -397,8 +397,9 @@ router.post(
  *         application/json:
  *           schema:
  *             $ref: "#/components/schemas/CreateThread"
- *           example:
- *             $ref: "#/components/examples/createGoreTestThread"
+ *           examples:
+ *             requestBody:
+ *               $ref: "#/components/examples/createGoreTestThread"
  *       required: true
  *     responses:
  *       401:
@@ -413,8 +414,9 @@ router.post(
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/Thread"
- *             example:
- *               $ref: "#/components/examples/createGoreTestThreadResponse"
+ *             examples:
+ *               response:
+ *                 $ref: "#/components/examples/createGoreTestThreadResponse"
  */
 router.post(
   "/:board_id/create", 
@@ -516,7 +518,7 @@ router.post(
  *   post:
  *     summary: Update default thread view.
  *     operationId: updateThreadViewByStringId
- *     description:
+ *     description: Updates the default view that the thread uses.
  *     tags:
  *       - /threads/
  *     security:
@@ -590,9 +592,9 @@ router.post(
  * @openapi
  * /threads/{thread_id}/move:
  *   post:
- *     summary: Move the thread to another board.
+ *     summary: Move a thread to another board.
  *     operationId: moveThread
- *     description:
+ *     description: Moves the specified thread to the specified board.
  *     tags:
  *       - /threads/
  *     security:
@@ -655,6 +657,8 @@ router.post(
     const { destinationId } = req.body;
 
     // TODO: add a test for this case
+    // Note: canAccessBoardByUuid will return false if board doesn't exist...
+    // should it be 403 or 404?
     if (
       !(await canAccessBoardByUuid({
         boardId: destinationId,

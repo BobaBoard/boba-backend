@@ -93,7 +93,7 @@ components:
           description: Force anonymity even among friends.
           oneOf:
             - type: boolean
-            - type: null
+            - type: "null"
         defaultView:
           type: string
           enum: [thread, gallery, timeline]
@@ -103,7 +103,7 @@ components:
           description: Whether the thread will contain large posts.
           oneOf:
             - type: boolean
-            - type: null
+            - type: "null"
         identityId:
           type: string
           format: uuid
@@ -133,4 +133,4 @@ components:
             type: string
           description: The categories associated with the thread.
       required:
-       - content
+        - content
