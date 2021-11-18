@@ -7,22 +7,26 @@ import {
   updateWhisperTags,
 } from "../queries";
 
+import { REVOLVER_OCELOT_POST } from "test/data/posts";
 import debug from "debug";
 import { runWithinTransaction } from "utils/test-utils";
 
 const log = debug("bobaserver:posts:queries-test-log");
 
-//const GET_POST_STRING_ID = `SELECT string_id FROM posts WHERE id = $/post_id/`;
+const HIMBO_POST_ID = 6;
+const REVOLVER_OCELOT_POST_ID = 2;
+const HIMBO_POST_STRING_ID = "1f1ad4fa-f02a-48c0-a78a-51221a7db170";
 describe("Tests posts queries", () => {
   test("adds index tags to post (and database)", async () => {
     await runWithinTransaction(async (transaction) => {
-      // Himbo & zombies post
-      const postId = 6;
-      const postStringId = "1f1ad4fa-f02a-48c0-a78a-51221a7db170";
+      const postId = HIMBO_POST_ID;
+      const postStringId = HIMBO_POST_STRING_ID;
+
       const addedTags = await maybeAddIndexTags(transaction, {
         postId,
         indexTags: ["Resident Evil", "Leon Kennedy"],
       });
+      expect(addedTags).toIncludeSameMembers(["resident evil", "leon kennedy"]);
 
       const result = await getPostFromStringId(transaction, {
         firebaseId: undefined,
@@ -33,19 +37,19 @@ describe("Tests posts queries", () => {
         "leon kennedy",
         "resident evil",
       ]);
-      expect(addedTags).toIncludeSameMembers(["resident evil", "leon kennedy"]);
     });
   });
 
   test("adds content warnings tags to post (and database)", async () => {
     await runWithinTransaction(async (transaction) => {
-      // Himbo & zombies post
-      const postId = 6;
-      const postStringId = "1f1ad4fa-f02a-48c0-a78a-51221a7db170";
+      const postId = HIMBO_POST_ID;
+      const postStringId = HIMBO_POST_STRING_ID;
+
       const addedTags = await maybeAddContentWarningTags(transaction, {
         postId,
         contentWarnings: ["zombies", "vore"],
       });
+      expect(addedTags).toIncludeSameMembers(["zombies", "vore"]);
 
       const result = await getPostFromStringId(transaction, {
         firebaseId: undefined,
@@ -53,19 +57,18 @@ describe("Tests posts queries", () => {
       });
 
       expect(result.content_warnings).toIncludeSameMembers(["zombies", "vore"]);
-      expect(addedTags).toIncludeSameMembers(["zombies", "vore"]);
     });
   });
 
   test("adds category tags to post (and database)", async () => {
     await runWithinTransaction(async (transaction) => {
-      // Himbo & zombies post
-      const postId = 6;
-      const postStringId = "1f1ad4fa-f02a-48c0-a78a-51221a7db170";
+      const postId = HIMBO_POST_ID;
+      const postStringId = HIMBO_POST_STRING_ID;
       const addedTags = await maybeAddCategoryTags(transaction, {
         postId,
         categoryTags: ["thirst"],
       });
+      expect(addedTags).toIncludeSameMembers(["thirst"]);
 
       const result = await getPostFromStringId(transaction, {
         firebaseId: undefined,
@@ -73,17 +76,14 @@ describe("Tests posts queries", () => {
       });
 
       expect(result.category_tags).toIncludeSameMembers(["thirst"]);
-      expect(addedTags).toIncludeSameMembers(["thirst"]);
     });
   });
 
   test("removes tags from post", async () => {
     await runWithinTransaction(async (transaction) => {
-      // Revolver Ocelot post
-      const postId = 2;
-      const postStringId = "619adf62-833f-4bea-b591-03e807338a8e";
+      const postStringId = REVOLVER_OCELOT_POST.id;
       await removeIndexTags(transaction, {
-        postId,
+        postId: REVOLVER_OCELOT_POST_ID,
         indexTags: ["EVIL", "   metal gear      "],
       });
 
@@ -103,9 +103,8 @@ describe("Tests posts queries", () => {
 
   test("updates whisper tags", async () => {
     await runWithinTransaction(async (transaction) => {
-      // Himbo & zombies post
-      const postId = 6;
-      const postStringId = "1f1ad4fa-f02a-48c0-a78a-51221a7db170";
+      const postId = HIMBO_POST_ID;
+      const postStringId = HIMBO_POST_STRING_ID;
       await updateWhisperTags(transaction, {
         postId,
         whisperTags: ["whisper whisper", "babble babble"],

@@ -13,14 +13,14 @@ const DEFAULT_PAGE_SIZE = 10;
 export const getBoardActivityByUuid = async ({
   boardId,
   firebaseId,
-  filterCategory,
+  categoryFilter,
   cursor,
   pageSize,
 }: {
   boardId: string;
   firebaseId: string;
-  filterCategory?: string | null;
-  cursor: string;
+  categoryFilter?: string | null;
+  cursor: string | null;
   pageSize?: number;
 }): Promise<DbFeedType | false> => {
   try {
@@ -31,7 +31,7 @@ export const getBoardActivityByUuid = async ({
     const rows = await pool.manyOrNone(sql.getBoardActivityByUuid, {
       board_id: boardId,
       firebase_id: firebaseId,
-      filtered_category: filterCategory || null,
+      filtered_category: categoryFilter || null,
       last_activity_cursor: decodedCursor?.last_activity_cursor || null,
       page_size: finalPageSize,
     });
