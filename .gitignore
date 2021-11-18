@@ -11,3 +11,4 @@ dump.rdb
 .nyc_output/
 coverage/
 open-api-spec.json
+junit.xml
