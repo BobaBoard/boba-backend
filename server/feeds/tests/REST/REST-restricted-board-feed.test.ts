@@ -17,7 +17,7 @@ describe("Test feed of restricted boards REST API", () => {
 
     expect(res.status).toBe(401);
     expect(res.body).toEqual({
-      message: "User does not have required permissions to access board.",
+      message: "User must be authenticated to access board.",
     });
   });
 
