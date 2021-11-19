@@ -618,12 +618,13 @@ router.post(
  *           schema:
  *             type: object
  *             properties: 
- *               destinationSlug:
+ *               destinationId:
  *                 type: string
+ *                 format: uuid
  *             required: 
- *               - destinationSlug
+ *               - destinationId
  *           example:
- *             destinationSlug: main_street
+ *             destinationId: 2fb151eb-c600-4fe4-a542-4662487e5496
  *     responses:
  *       401:
  *         $ref: "#/components/responses/ensureLoggedIn401"
@@ -643,7 +644,20 @@ router.post(
  *                 value: 
  *                   message: User does not have required permissions on destination board.
  *       404:
- *         $ref: "#/components/responses/threadNotFound404"
+ *         description: Board or thread was not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/genericResponse"
+ *             examples:
+ *               threadNotFound:
+ *                 summary: The specified thread was not found.
+ *                 value: 
+ *                   message: The thread with id 29d1b2da-3289-454a-9089-2ed47db4967b was not found. 
+ *               boardNotFound:
+ *                 summary: The destination board was not found.
+ *                 value: 
+ *                   message: The board with id 2fb151eb-c600-4fe4-a542-4662487e5496 was not found. 
  *       204:
  *         description: Thread successfully moved.
  */
@@ -663,7 +677,7 @@ router.post(
         firebaseId: req.currentUser.uid,
       }))
     ) {
-      res.status(403).json({ message: "Cannot access destination board" });
+      res.status(404).json({ message: `The board with id ${destinationId} was not found.` });
       return;
     }
 

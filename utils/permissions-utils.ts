@@ -103,6 +103,9 @@ export const getBoardRestrictions = ({
   };
 };
 
+// TODO: return value has issues differentiating between the board not being found, the board
+// only being accessible to logged in users, or the user not having sufficient
+// permissions
 export const canAccessBoard = async ({
   slug,
   firebaseId,
