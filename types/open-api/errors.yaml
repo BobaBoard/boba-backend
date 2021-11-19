@@ -52,11 +52,11 @@ components:
             MissingToken:
               summary: No authentication token given.
               value:
-                message: No authenticated user found
+                message: No authenticated user found.
             ExpiredToken:
               summary: Expired authentication token given.
               value:
-                message: Authentication token expired
+                message: Authentication token expired.
     ensureThreadAccess401:
       description: User must be authenticated to access thread.
       content:

@@ -7,12 +7,14 @@ import {
 } from "./posts";
 import { GORE_BOARD_ID, RESTRICTED_BOARD_ID } from "./boards";
 import { Thread, ThreadSummary } from "../../types/rest/threads";
+import { GenericResponse } from "../../types/rest/responses";
 
 export const EXCELLENT_THREAD_ID = "8b2646af-2778-487e-8e44-7ae530c2549c";
 export const FAVORITE_CHARACTER_THREAD_ID =
   "29d1b2da-3289-454a-9089-2ed47db4967b";
 export const FAVORITE_MURDER_THREAD_ID = "a5c903df-35e8-43b2-a41a-208c43154671";
 export const RESTRICTED_THREAD_ID = "b3f4174e-c9e2-4f79-9d22-7232aa48744e";
+export const NULL_ID = "00000000-0000-0000-0000-000000000000";
 
 export const EXCELLENT_THREAD_SUMMARY: ThreadSummary = {
   id: EXCELLENT_THREAD_ID,
@@ -167,4 +169,8 @@ export const RESTRICTED_THREAD: Thread = {
       },
     ],
   },
+};
+
+export const NULL_THREAD_NOT_FOUND: GenericResponse = {
+  message: "The thread with id \"00000000-0000-0000-0000-000000000000\" was not found.",
 };
