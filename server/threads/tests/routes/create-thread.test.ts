@@ -25,7 +25,6 @@ import { GenericResponse } from "types/rest/responses";
 import request from "supertest";
 import router from "../../routes";
 
-jest.mock("server/cache");
 jest.mock("handlers/auth");
 jest.mock("server/db-pool");
 
