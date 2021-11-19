@@ -92,5 +92,5 @@ export const GORE_BOARD_METADATA = {
 Object.freeze(GORE_BOARD_METADATA);
 
 export const NULL_BOARD_NOT_FOUND: GenericResponse = {
-  message: "The board with id 00000000-0000-0000-0000-000000000000 was not found.",
+  message: "The board with id \"00000000-0000-0000-0000-000000000000\" was not found.",
 };
