@@ -407,9 +407,9 @@ router.post(
  *       403:
  *         $ref: "#/components/responses/ensureBoardPermission403"
  *       404:
- *         $ref: "#/components/responses/threadNotFound404"
+ *         $ref: "#/components/responses/boardNotFound404"
  *       200:
- *         description: Thread has been marked as visited.
+ *         description: Thread has been created.
  *         content:
  *           application/json:
  *             schema:
@@ -677,7 +677,7 @@ router.post(
         firebaseId: req.currentUser.uid,
       }))
     ) {
-      res.status(404).json({ message: `The board with id ${destinationId} was not found.` });
+      res.status(404).json({ message: `The board with id \"${destinationId}\" was not found.` });
       return;
     }
 

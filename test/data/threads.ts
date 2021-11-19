@@ -171,6 +171,117 @@ export const RESTRICTED_THREAD: Thread = {
   },
 };
 
+export const CREATE_GORE_THREAD_REQUEST = {
+  content: "[{\"insert\":\"Gore. Gore? Gore!\"}]",
+  forceAnonymous: false,
+  defaultView: "thread",
+  whisperTags: [
+    "whisper"
+  ],
+  indexTags: [
+    "search"
+  ],
+  contentWarnings: [
+    "content notice"
+  ],
+  categoryTags: [
+    "filter"
+  ]
+}
+
+export const CREATE_GORE_THREAD_RESPONSE: Thread = {
+  id: expect.any(String),
+  parent_board_slug: "gore",
+  parent_board_id: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
+  starter: {
+    id: expect.any(String),
+    parent_thread_id: expect.any(String),
+    parent_post_id: null,
+    created_at: expect.any(String),
+    content: "[{\"insert\":\"Gore. Gore? Gore!\"}]",
+    secret_identity: {
+      name: expect.any(String),
+      avatar: expect.any(String),
+      color: null,
+      accessory: null
+    },
+    user_identity: {
+      name: "bobatan",
+      avatar: "/bobatan.png"
+    },
+    friend: false,
+    own: true,
+    new: false,
+    tags: {
+      whisper_tags: [
+        "whisper"
+      ],
+      index_tags: [
+        "search"
+      ],
+      category_tags: [
+        "filter"
+      ],
+      content_warnings: [
+        "content notice"
+      ]
+    },
+    total_comments_amount: 0,
+    new_comments_amount: 0
+  },
+  default_view: "thread",
+  muted: false,
+  hidden: false,
+  new: false,
+  new_posts_amount: 0,
+  new_comments_amount: 0,
+  total_comments_amount: 0,
+  total_posts_amount: 1,
+  last_activity_at: expect.any(String),
+  direct_threads_amount: 0,
+  posts: [
+    {
+      id: expect.any(String),
+      parent_thread_id: expect.any(String),
+      parent_post_id: null,
+      created_at: expect.any(String),
+      content: "[{\"insert\":\"Gore. Gore? Gore!\"}]",
+      secret_identity: {
+        name: expect.any(String),
+        avatar: expect.any(String),
+        color: null,
+        accessory: null
+      },
+      user_identity: {
+        name: "bobatan",
+        avatar: "/bobatan.png"
+      },
+      friend: false,
+      own: true,
+      new: false,
+      tags: {
+        whisper_tags: [
+          "whisper"
+        ],
+        index_tags: [
+          "search"
+        ],
+        category_tags: [
+          "filter"
+        ],
+        content_warnings: [
+          "content notice"
+        ]
+      },
+      total_comments_amount: 0,
+      new_comments_amount: 0
+    }
+  ],
+  comments: {
+    //expect.any(String): []
+  }
+}
+
 export const NULL_THREAD_NOT_FOUND: GenericResponse = {
   message: "The thread with id \"00000000-0000-0000-0000-000000000000\" was not found.",
 };
