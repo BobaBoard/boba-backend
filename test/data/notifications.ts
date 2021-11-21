@@ -22,10 +22,10 @@ export const BOBATAN_NOTIFICATIONS: NotificationsResponse = {
     [GORE_BOARD_ID]: {
       has_updates: true,
       id: GORE_BOARD_ID,
-      is_outdated: expect.any(Boolean),
+      is_outdated: false,
       last_activity_at: "2020-10-04T12:44:00.000Z",
       last_activity_from_others_at: "2020-10-02T12:43:00.000Z",
-      last_visited_at: expect.any(String),
+      last_visited_at: "2020-05-25T16:42:00.000Z",
     },
   },
   realm_boards: {
@@ -81,10 +81,10 @@ export const BOBATAN_NOTIFICATIONS: NotificationsResponse = {
     [GORE_BOARD_ID]: {
       has_updates: true,
       id: GORE_BOARD_ID,
-      is_outdated: expect.any(Boolean),
+      is_outdated: false,
       last_activity_at: "2020-10-04T12:44:00.000Z",
       last_activity_from_others_at: "2020-10-02T12:43:00.000Z",
-      last_visited_at: expect.any(String),
+      last_visited_at: "2020-05-25T16:42:00.000Z",
     },
     "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83": {
       has_updates: true,
