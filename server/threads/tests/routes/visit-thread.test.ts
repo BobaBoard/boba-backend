@@ -24,6 +24,7 @@ import request from "supertest";
 import router from "../../routes";
 
 jest.mock("handlers/auth");
+jest.mock("server/db-pool");
 
 describe("Tests threads REST API - visits", () => {
   const server = startTestServer(router);
