@@ -25,12 +25,14 @@ describe("Tests threads REST API - visits", () => {
   const server = startTestServer(router);
 
   test("should mark thread as visited", async () => {
-    setLoggedInUser(BOBATAN_USER_ID);
-    const res = await request(server.app).post(
-      `/${FAVORITE_CHARACTER_THREAD_ID}/visits`
-    );
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(BOBATAN_USER_ID);
+      const res = await request(server.app).post(
+        `/${FAVORITE_CHARACTER_THREAD_ID}/visits`
+      );
 
-    expect(res.status).toBe(200);
+      expect(res.status).toBe(200);
+    });
   });
 
   test("should fail when user is unauthenticated", async () => {
