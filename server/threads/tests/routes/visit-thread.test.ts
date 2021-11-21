@@ -11,7 +11,11 @@ import {
   ENSURE_THREAD_ACCESS_UNAUTHORIZED,
 } from "test/data/responses";
 
-import { setLoggedInUser, startTestServer } from "utils/test-utils";
+import {
+  setLoggedInUser,
+  startTestServer,
+  wrapWithTransaction,
+} from "utils/test-utils";
 
 import { BOBATAN_USER_ID } from "test/data/auth";
 import { Thread } from "types/rest/threads";
