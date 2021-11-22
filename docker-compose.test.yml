@@ -19,7 +19,7 @@ services:
       TZ: "America/Los_Angeles"
     command:
       # There is still a race condition here for the init step of the db
-      sh -c "/usr/src/git/wait-for-it/wait-for-it.sh 127.0.0.1:35432 -t 120 -- sleep 10 && yarn run test --ci --reporters=default --reporters=jest-junit"
+      sh -c "/usr/src/git/wait-for-it/wait-for-it.sh 127.0.0.1:35432 -t 320 -- sleep 10 && yarn run test --ci --reporters=default --reporters=jest-junit"
     volumes:
       - .:/usr/src/app
       # Below line prevents Docker from mapping the host's node_modules/
