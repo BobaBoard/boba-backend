@@ -16,8 +16,6 @@ jobs:
       - run:
           name: run test
           command: docker-compose -f docker-compose.test.yml run --rm test
-          environment:
-            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
       - store_test_results:
           path: ./reports/junit/
       - store_artifacts:
