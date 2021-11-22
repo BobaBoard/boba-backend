@@ -12,3 +12,4 @@ dump.rdb
 coverage/
 open-api-spec.json
 junit.xml
+reports/
