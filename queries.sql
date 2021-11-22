@@ -140,3 +140,6 @@ ON threads.id = uti.thread_id
 INNER JOIN secret_identities
 ON uti.identity_id = secret_identities.id
 WHERE threads.string_id = '3365000d-cbdf-47d8-8eb3-0e17cd3609b2';
+
+ALTER TYPE restriction_type RENAME TO board_restrictions_type;
+ALTER TYPE role_permissions RENAME TO role_permissions_type;
