@@ -75,8 +75,53 @@ export const maybeAddCategoryTags = async (
   const tags = categoryTags
     .filter((tag) => !!tag.trim().length)
     .map((tag) => tag.trim().toLowerCase());
-  await transaction.manyOrNone(sql.createAddCategoriesQuery(tags));
+  const query = sql.createAddCategoriesQuery(tags);
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log(query);
+  await transaction.manyOrNone(query);
   log(`Returning tags: ${tags}`);
+  const categories = await transaction.manyOrNone(
+    `(SELECT id FROM categories WHERE category = $/category/)`,
+    {
+      category: tags[0],
+    }
+  );
+  log(categories);
   await transaction.many(sql.createAddCategoriesToPostQuery(postId, tags));
 
   return tags;
