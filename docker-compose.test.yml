@@ -1,7 +1,7 @@
 version: "3"
 services:
   database:
-    image: circleci/postgres:12-bullseye
+    image: postgres:alpine
     env_file:
       - .env
     ports:
