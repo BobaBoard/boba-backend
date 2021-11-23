@@ -15,7 +15,7 @@ export const runWithinTransaction = async (
 ) => {
   await pool.tx("test-transaction", async (t) => {
     try {
-      await t.none("SET TRANSACTION ISOLATION LEVEL SERIALIZABLE;");
+      await t.none("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;");
       await test(t);
     } finally {
       await t.none("ROLLBACK;");
