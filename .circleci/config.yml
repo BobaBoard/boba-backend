@@ -16,10 +16,6 @@ jobs:
       - run:
           name: run test
           command: docker-compose -f docker-compose.test.yml run --rm test
-      - store_test_results:
-          path: ./reports/junit/
-      - store_artifacts:
-          path: ./reports/junit
   open-api-validate:
     machine: true
     steps:
