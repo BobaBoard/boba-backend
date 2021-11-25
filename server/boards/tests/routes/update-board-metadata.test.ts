@@ -59,7 +59,7 @@ describe("Tests boards REST API", () => {
 
     expect(res.status).toBe(403);
     expect(res.body).toEqual({
-      message: `User cannot access board with id "c6d3d10e-8e49-4d73-b28a-9d652b41beec".`,
+      message: `User does not have required permissions for board operation.`,
     });
   });
 

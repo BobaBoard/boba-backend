@@ -1,16 +1,18 @@
-import { DbThreadType, ThreadPermissions } from "Types";
+import { THREAD_OWNER_PERMISSIONS, ThreadPermissions } from "types/permissions";
 import {
   addNewIdentityToThread,
+  addNewIdentityToThreadByBoardId,
   maybeAddCategoryTags,
   maybeAddContentWarningTags,
   maybeAddIndexTags,
 } from "../posts/queries";
 
+import { DbThreadType } from "Types";
 import debug from "debug";
+import { extractThreadPermissions } from "utils/permissions-utils";
 import { getBoardBySlug } from "../boards/queries";
 import pool from "server/db-pool";
 import sql from "./sql";
-import { transformThreadPermissions } from "utils/permissions-utils";
 import { v4 as uuidv4 } from "uuid";
 
 const log = debug("bobaserver:threads:queries-log");
@@ -67,7 +69,7 @@ export const createThread = async ({
   content,
   isLarge,
   anonymityType,
-  boardSlug,
+  boardStringId,
   whisperTags,
   indexTags,
   categoryTags,
@@ -81,7 +83,7 @@ export const createThread = async ({
   isLarge: boolean;
   defaultView: string;
   anonymityType: string;
-  boardSlug: string;
+  boardStringId: string;
   whisperTags: string[];
   indexTags: string[];
   categoryTags: string[];
@@ -94,7 +96,7 @@ export const createThread = async ({
       const threadStringId = uuidv4();
       const createThreadResult = await t.one(sql.createThread, {
         thread_string_id: threadStringId,
-        board_slug: boardSlug,
+        board_string_id: boardStringId,
         thread_options: {
           default_view: defaultView,
         },
@@ -128,20 +130,20 @@ export const createThread = async ({
         postId: postResult.id,
       });
 
-      await addNewIdentityToThread(t, {
+      await addNewIdentityToThreadByBoardId(t, {
         user_id: postResult.author,
         identityId,
         accessory_id: accessoryId,
         thread_id: createThreadResult.id,
         firebaseId,
-        board_slug: boardSlug,
+        board_string_id: boardStringId,
       });
 
       log(`Added identity for ${threadStringId}.`);
       return threadStringId;
     })
     .catch((e) => {
-      error(`Error while creating thread on board ${boardSlug}: `, e);
+      error(`Error while creating thread on board ${boardStringId}: `, e);
       return false;
     });
 };
@@ -261,14 +263,14 @@ export const getUserPermissionsForThread = async ({
     });
 
     if (threadDetails.is_thread_owner) {
-      permissions.push(ThreadPermissions.editDefaultView);
+      permissions.push(...THREAD_OWNER_PERMISSIONS);
     }
 
     const board = await getBoardBySlug({
       firebaseId,
       slug: threadDetails.parent_board_slug,
     });
-    const threadPermissions = transformThreadPermissions(board.permissions);
+    const threadPermissions = extractThreadPermissions(board.permissions);
     permissions.push(...threadPermissions);
     return permissions;
   } catch (e) {
@@ -313,14 +315,14 @@ export const getTriggeredWebhooks = async ({
 
 export const moveThread = async ({
   threadId,
-  destinationSlug,
+  destinationId,
 }: {
   threadId: string;
-  destinationSlug: string;
+  destinationId: string;
 }) => {
   try {
     const result = await pool.none(sql.moveThread, {
-      board_slug: destinationSlug,
+      board_string_id: destinationId,
       thread_string_id: threadId,
     });
     return true;

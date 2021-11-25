@@ -63,11 +63,11 @@ export const BOBATAN_NOTIFICATIONS: NotificationsResponse = {
       last_visited_at: null,
     },
     [RESTRICTED_BOARD_ID]: {
-      has_updates: false,
+      has_updates: true,
       id: RESTRICTED_BOARD_ID,
       is_outdated: false,
-      last_activity_at: null,
-      last_activity_from_others_at: null,
+      last_activity_at: "2020-04-24T12:44:00.000Z",
+      last_activity_from_others_at: "2020-04-24T12:44:00.000Z",
       last_visited_at: null,
     },
     "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b": {

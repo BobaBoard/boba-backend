@@ -1,10 +1,6 @@
-import {
-  DbCommentType,
-  DbPostType,
-  PostPermissions,
-  QueryTagsType,
-} from "Types";
-import { canPostAs, transformPostPermissions } from "utils/permissions-utils";
+import { DbCommentType, DbPostType, QueryTagsType } from "Types";
+import { POST_OWNER_PERMISSIONS, PostPermissions } from "types/permissions";
+import { canPostAs, extractPostPermissions } from "utils/permissions-utils";
 
 import { ITask } from "pg-promise";
 import debug from "debug";
@@ -350,6 +346,8 @@ export const postNewContribution = async ({
           parent_thread_id: thread_string_id,
           parent_post_id: parentPostId,
           parent_board_slug: board_slug,
+          // TODO: fill this
+          parent_board_id: "",
           author: user_id,
           username,
           user_avatar,
@@ -357,7 +355,7 @@ export const postNewContribution = async ({
           secret_identity_avatar,
           secret_identity_color,
           accessory_avatar,
-          created: result.created_string,
+          created_at: result.created_at,
           content: result.content,
           options: result.options,
           type: result.type,
@@ -456,7 +454,7 @@ const postNewCommentWithTransaction = async ({
       chain_parent_id: result.chain_parent_comment,
       author: user_id,
       content: result.content,
-      created: result.created_string,
+      created_at: result.created_at,
       anonymity_type: result.anonymity_type,
       username,
       user_avatar,
@@ -655,37 +653,95 @@ export const addNewIdentityToThread = async (
   };
 };
 
-export const getUserPermissionsForPost = async ({
-  firebaseId,
-  postId,
-}: {
-  firebaseId: string;
-  postId: string;
-}) => {
-  try {
-    const post = await getPostFromStringId(null, {
-      firebaseId,
-      postId,
-    });
-    if (!post) {
-      return [];
-    }
-    if (post.is_own) {
-      return [
-        PostPermissions.editCategoryTags,
-        PostPermissions.editContentNotices,
-        PostPermissions.editIndexTags,
-        PostPermissions.editWhisperTags,
-      ];
-    }
-    const board = await getBoardBySlug({
-      firebaseId,
-      slug: post.parent_board_slug,
-    });
-    return transformPostPermissions(board.permissions);
-  } catch (e) {
-    return false;
+// TODO: delete and change addNewIdentityToThread to use string id
+export const addNewIdentityToThreadByBoardId = async (
+  transaction: ITask<any>,
+  {
+    user_id,
+    accessory_id,
+    identityId,
+    thread_id,
+    firebaseId,
+    board_string_id,
+  }: {
+    identityId: string;
+    firebaseId: string;
+    user_id: any;
+    accessory_id?: string;
+    board_string_id: any;
+    thread_id: any;
   }
+) => {
+  let secret_identity_id = null;
+  let role_identity_id = null;
+  let secret_identity_name;
+  let secret_identity_avatar;
+  let secret_identity_color;
+
+  if (identityId) {
+    // An identity was passed to this method, which means we don't need to randomize it.
+    // The only thing we need to check is whether the user is *actually able* to post
+    // as that identity.
+    const roleResult = await transaction.one(threadsSql.getRoleByStringIdAndBoardId, {
+      role_id: identityId,
+      firebase_id: firebaseId,
+      board_string_id,
+    });
+    if (!canPostAs(roleResult.permissions)) {
+      throw new Error(
+        "Attempted to post on thread with identity without post as permissions"
+      );
+    }
+    role_identity_id = roleResult.id;
+    secret_identity_name = roleResult.name;
+    secret_identity_avatar = roleResult.avatar_reference_id;
+    secret_identity_color = roleResult.color;
+  } else {
+    const randomIdentityResult = await transaction.one(sql.getRandomIdentity, {
+      thread_id,
+    });
+    secret_identity_id = randomIdentityResult.secret_identity_id;
+    secret_identity_name = randomIdentityResult.secret_identity_name;
+    secret_identity_avatar = randomIdentityResult.secret_identity_avatar;
+  }
+
+  // The secret identity id is not currently in the thread data.
+  // Add it.
+  log(`Adding identity to thread:`);
+  log({
+    role_identity_id,
+    secret_identity_id,
+    secret_identity_name,
+    secret_identity_avatar,
+    secret_identity_color,
+    accessory_id,
+  });
+
+  await transaction.one(sql.addIdentityToThread, {
+    user_id,
+    thread_id,
+    secret_identity_id,
+    role_identity_id,
+  });
+
+  let accessory_avatar = null;
+  if (accessory_id) {
+    ({ accessory_avatar } = await addAccessoryToIdentity(transaction, {
+      identity_id: secret_identity_id,
+      role_identity_id,
+      thread_id,
+      accessory_id,
+    }));
+  }
+
+  return {
+    secret_identity_id,
+    secret_identity_name,
+    secret_identity_avatar,
+    role_identity_id,
+    accessory_avatar,
+    secret_identity_color,
+  };
 };
 
 export const getPostFromStringId = async (

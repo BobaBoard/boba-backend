@@ -1,30 +1,44 @@
 components:
+  schemas:
+    genericResponse:
+      description: Generic response object
+      type: object
+      properties:
+        message:
+          type: string
   responses:
+    default200:
+      description: OK
+      content:
+        text/plain:
+          schema:
+            type: string
+          example: OK
     default401:
       description: Unauthorized
       content:
-        application/json:
+        text/plain:
           schema:
             type: string
           example: Unauthorized
     default403:
       description: Forbidden
       content:
-        application/json:
+        text/plain:
           schema:
             type: string
           example: Forbidden
     default404:
       description: Not Found
       content:
-        application/json:
+        text/plain:
           schema:
             type: string
           example: Not Found
     default500:
       description: Internal Server Error
       content:
-        application/json:
+        text/plain:
           schema:
             type: string
           example: Internal Server Error
@@ -33,20 +47,101 @@ components:
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              message:
-                type: string
-          example:
-            message: No authenticated user found
-    ensureLoggedIn403:
-      description: User is not authorized to perform the action.
+            $ref: "#/components/schemas/genericResponse"
+          examples:
+            MissingToken:
+              summary: No authentication token given.
+              value:
+                message: No authenticated user found.
+            ExpiredToken:
+              summary: Expired authentication token given.
+              value:
+                message: Authentication token expired.
+    ensureThreadAccess401:
+      description: User must be authenticated to access thread.
       content:
         application/json:
           schema:
-            type: object
-            properties:
-              message:
-                type: string
-          example:
-            message: Authentication token expired
+            $ref: "#/components/schemas/genericResponse"
+          examples:
+            lockedThread:
+              summary: Thread is only accessible to logged in users.
+              value: 
+                message: User must be authenticated to access thread.
+    ensureThreadAccess403:
+      description: User is not authorized to access thread.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/genericResponse"
+          examples:
+            lockedThread:
+              summary: User does not have required permissions to access thread.
+              value: 
+                message: User does not have required permissions to access thread.
+    ensureThreadPermission403:
+      description: User is unauthorized to perform thread operation.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/genericResponse"
+          examples:
+            insufficientPermissions:
+              summary: Insufficient permissions.
+              value: 
+                message: User does not have required permissions for thread operation.
+    threadNotFound404:
+      description: The specified thread could not be found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/genericResponse"
+          examples:
+            notFound:
+              summary: Thread not found.
+              value:
+                message: The thread with id 29d1b2da-3289-454a-9089-2ed47db4967b was not found. 
+    ensureBoardAccess401:
+      description: User must be authenticated to access board.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/genericResponse"
+          examples:
+            lockedBoard:
+              summary: Board is only accessible to logged in users.
+              value: 
+                message: User must be authenticated to access board.
+    ensureBoardAccess403:
+      description: User does not have required permissions to access board.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/genericResponse"
+          examples:
+            lockedBoard:
+              summary: User is unauthorized to access board.
+              value: 
+                message: User does not have required permissions to access board.
+    ensureBoardPermission403:
+      description: User is unauthorized to perform board operation.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/genericResponse"
+          examples:
+            insufficientPermissions:
+              summary: Insufficient permissions.
+              value: 
+                message: User does not have required permissions for board operation.
+    boardNotFound404:
+      description: The specified board could not be found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/genericResponse"
+          examples:
+            notFound:
+              summary: Board not found.
+              value:
+                message: The board with id 29d1b2da-3289-454a-9089-2ed47db4967b was not found. 

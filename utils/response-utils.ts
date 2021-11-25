@@ -1,18 +1,15 @@
+import { Comment, Post, Thread, ThreadSummary } from "types/rest/threads";
 import {
   DbBoardMetadata,
   DbCommentType,
   DbPostType,
   DbThreadSummaryType,
   DbThreadType,
-  ServerCommentType,
-  ServerPostType,
-  ServerThreadSummaryType,
-  ServerThreadType,
-  restriction_types,
 } from "Types";
 
+import { BoardRestrictions } from "types/permissions";
 import debug from "debug";
-import { transformPermissions } from "./permissions-utils";
+import { getUserPermissionsForBoard } from "./permissions-utils";
 
 const info = debug("bobaserver:response-utils-info");
 const log = debug("bobaserver::response-utils-log");
@@ -92,7 +89,7 @@ export const mergeObjectIdentity = <T>(
   let secret_identity = transformImageUrls({
     name: secret_identity_name,
     avatar: secret_identity_avatar,
-    color: secret_identity_color,
+    color: secret_identity_color || null,
     accessory: accessory_avatar,
   });
 
@@ -105,16 +102,18 @@ export const mergeObjectIdentity = <T>(
 
 export const makeServerThreadSummary = (
   thread: DbThreadType | DbThreadSummaryType
-): ServerThreadSummaryType => {
+): ThreadSummary => {
   const starter =
     "posts" in thread
       ? makeServerPost(thread.posts[0])
       : makeServerPost(thread);
   // TODO[realms]: remove comments from post in db
+  // @ts-expect-error
   delete starter.comments;
   return {
     id: thread.thread_id,
     parent_board_slug: thread.board_slug,
+    parent_board_id: thread.board_id,
     starter: starter,
     default_view: thread.default_view,
     muted: thread.muted,
@@ -129,10 +128,11 @@ export const makeServerThreadSummary = (
   };
 };
 
-export const makeServerThread = (thread: DbThreadType): ServerThreadType => {
+export const makeServerThread = (thread: DbThreadType): Thread => {
   const posts = thread.posts?.map(makeServerPost) || [];
   // TODO[realms]: remove this
   const postsWithoutComments = posts.map((post) => {
+    // @ts-expect-error
     const { comments, ...rest } = post;
     return rest;
   });
@@ -140,9 +140,12 @@ export const makeServerThread = (thread: DbThreadType): ServerThreadType => {
     ...makeServerThreadSummary(thread),
     posts: postsWithoutComments,
     comments: posts.reduce(
-      (agg: Record<string, ServerCommentType[]>, post: ServerPostType) => {
+      (agg: { [contribution_id: string]: Comment[] }, post: Post) => {
+        // @ts-expect-error
         log(post.comments);
+        // @ts-expect-error
         if (post.comments) {
+          // @ts-expect-error
           agg[post.id] = post.comments;
         }
         return agg;
@@ -154,13 +157,13 @@ export const makeServerThread = (thread: DbThreadType): ServerThreadType => {
 
 export const makeServerPost = (
   post: DbPostType | DbThreadSummaryType
-): ServerPostType => {
+): Post => {
   const oldPost = mergeObjectIdentity<DbPostType | DbThreadSummaryType>(post);
   const serverPost = {
     id: post.post_id,
     parent_thread_id: post.parent_thread_id,
     parent_post_id: post.parent_post_id,
-    created_at: post.created,
+    created_at: post.created_at,
     content: post.content,
     secret_identity: oldPost.secret_identity,
     user_identity: oldPost.user_identity,
@@ -184,16 +187,14 @@ export const makeServerPost = (
   return serverPost;
 };
 
-export const makeServerComment = (
-  comment: DbCommentType
-): ServerCommentType => {
+export const makeServerComment = (comment: DbCommentType): Comment => {
   const identityPost = mergeObjectIdentity<DbCommentType>(comment);
   return {
     id: comment.comment_id,
     parent_comment_id: comment.parent_comment,
     chain_parent_id: comment.chain_parent_id,
     parent_post_id: comment.parent_post,
-    created_at: comment.created,
+    created_at: comment.created_at,
     content: comment.content,
     secret_identity: identityPost.secret_identity,
     user_identity: identityPost.user_identity,
@@ -250,7 +251,7 @@ export const processBoardMetadata = ({
           ? description.categories
           : undefined,
     })),
-    permissions: transformPermissions(metadata.permissions),
+    permissions: getUserPermissionsForBoard(metadata.permissions),
     posting_identities: metadata.posting_identities.map((identity: any) =>
       transformImageUrls(identity)
     ),
@@ -284,9 +285,9 @@ export const processBoardsMetadata = ({
     // Remove from list if the board shouldn't be visible in the sidebar
     boardResult.delisted =
       (!isLoggedIn &&
-        board.logged_out_restrictions.includes(restriction_types.DELIST)) ||
+        board.logged_out_restrictions.includes(BoardRestrictions.DELIST)) ||
       (isLoggedIn &&
-        board.logged_in_base_restrictions.includes(restriction_types.DELIST));
+        board.logged_in_base_restrictions.includes(BoardRestrictions.DELIST));
     // Pinned boards should still return their value here, even if delisted.
     // Note that the existence of a pinned order implies that the user is
     // logged in.
@@ -295,7 +296,7 @@ export const processBoardsMetadata = ({
     }
 
     boardResult.loggedInOnly = board.logged_out_restrictions.includes(
-      restriction_types.LOCK_ACCESS
+      BoardRestrictions.LOCK_ACCESS
     );
 
     // Remove details from list if the board is locked and the user doesn't have access
