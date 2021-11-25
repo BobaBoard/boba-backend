@@ -1,10 +1,18 @@
 import { BoardMetadata, LoggedInBoardMetadata } from "types/rest/boards";
-import { BoardPermissions, PostPermissions, ThreadPermissions } from "Types";
+import {
+  BoardPermissions,
+  PostPermissions,
+  ThreadPermissions,
+} from "types/permissions";
+import { GenericResponse } from "../../types/rest/responses";
 
 export const GORE_BOARD_ID = "c6d3d10e-8e49-4d73-b28a-9d652b41beec";
+export const ANIME_BOARD_ID = "4b30fb7c-2aca-4333-aa56-ae8623a92b65";
 export const MAIN_STREET_BOARD_ID = "2fb151eb-c600-4fe4-a542-4662487e5496";
 export const MUTED_BOARD_ID = "2bdce2fa-12e0-461b-b0fb-1a2e67227434";
 export const RESTRICTED_BOARD_ID = "76ebaab0-6c3e-4d7b-900f-f450625a5ed3";
+export const LONG_BOARD_ID = "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83";
+export const NULL_ID = "00000000-0000-0000-0000-000000000000";
 
 const GORE_LOGGED_OUT_METADATA: BoardMetadata = {
   descriptions: [
@@ -82,3 +90,7 @@ export const GORE_BOARD_METADATA = {
   BOBATAN: GORE_WITH_ROLE_METADATA,
 };
 Object.freeze(GORE_BOARD_METADATA);
+
+export const NULL_BOARD_NOT_FOUND: GenericResponse = {
+  message: "The board with id \"00000000-0000-0000-0000-000000000000\" was not found.",
+};

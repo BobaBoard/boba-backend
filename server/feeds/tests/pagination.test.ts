@@ -1,11 +1,13 @@
-import { getBoardActivityBySlug } from "../queries";
+import { BOBATAN_USER_ID } from "test/data/auth";
+import { LONG_BOARD_ID } from "test/data/boards";
+import { getBoardActivityByUuid } from "../queries";
 
 describe("Tests boards queries", () => {
   test("fetches first page, gets cursor back", async () => {
-    const boardActivity = await getBoardActivityBySlug({
-      slug: "long",
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: LONG_BOARD_ID,
       // Bobatan
-      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      firebaseId: BOBATAN_USER_ID,
       cursor: null,
     });
 
@@ -26,10 +28,10 @@ describe("Tests boards queries", () => {
   });
 
   test("fetches second page, gets cursor back", async () => {
-    const boardActivity = await getBoardActivityBySlug({
-      slug: "long",
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: LONG_BOARD_ID,
       // Bobatan
-      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      firebaseId: BOBATAN_USER_ID,
       cursor:
         "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDQtMTVUMDU6NDI6MDAuMDAwMDAwIiwicGFnZV9zaXplIjoxMH0=",
     });
@@ -51,10 +53,10 @@ describe("Tests boards queries", () => {
   });
 
   test("fetches last page, gets no cursor back", async () => {
-    const boardActivity = await getBoardActivityBySlug({
-      slug: "long",
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: LONG_BOARD_ID,
       // Bobatan
-      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      firebaseId: BOBATAN_USER_ID,
       cursor:
         "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDQtMDVUMDU6NDI6MDAuMDAwMDAwIiwicGFnZV9zaXplIjoxMH0=",
     });
@@ -72,10 +74,10 @@ describe("Tests boards queries", () => {
   });
 
   test("fetches correctly when only one result after current page", async () => {
-    const boardActivity = await getBoardActivityBySlug({
-      slug: "long",
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: LONG_BOARD_ID,
       // Bobatan
-      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      firebaseId: BOBATAN_USER_ID,
       cursor:
         "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDQtMTBUMDU6NDI6MDAiLCJwYWdlX3NpemUiOjEwfQ==",
     });
@@ -92,10 +94,10 @@ describe("Tests boards queries", () => {
       boardActivity.activity[boardActivity.activity.length - 1].content
     ).toEqual('[{"insert":"Post 2!"}]');
 
-    const boardActivity2 = await getBoardActivityBySlug({
-      slug: "long",
+    const boardActivity2 = await getBoardActivityByUuid({
+      boardId: LONG_BOARD_ID,
       // Bobatan
-      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      firebaseId: BOBATAN_USER_ID,
       cursor: boardActivity.cursor,
     });
 
@@ -110,10 +112,10 @@ describe("Tests boards queries", () => {
   });
 
   it("fetches correctly when no result after current page (outdated cursor)", async () => {
-    const boardActivity = await getBoardActivityBySlug({
-      slug: "long",
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: LONG_BOARD_ID,
       // Bobatan
-      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      firebaseId: BOBATAN_USER_ID,
       cursor:
         "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMTktMDQtMTBUMDU6NDI6MDAiLCJwYWdlX3NpemUiOjEwfQ==",
     });
@@ -130,10 +132,10 @@ describe("Tests boards queries", () => {
     // This is to guard against the reintroduction of a bug that caused
     // posts to not be returned when the timestamp of their creation included
     // microseconds.
-    const boardActivityCursor = await getBoardActivityBySlug({
-      slug: "long",
+    const boardActivityCursor = await getBoardActivityByUuid({
+      boardId: LONG_BOARD_ID,
       // Bobatan
-      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      firebaseId: BOBATAN_USER_ID,
       cursor: undefined,
       pageSize: 5,
     });
@@ -153,10 +155,10 @@ describe("Tests boards queries", () => {
       '[{"insert":"Post 22!"}]'
     );
 
-    const boardActivity = await getBoardActivityBySlug({
-      slug: "long",
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: LONG_BOARD_ID,
       // Bobatan
-      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      firebaseId: BOBATAN_USER_ID,
       cursor: boardActivityCursor.cursor,
     });
 

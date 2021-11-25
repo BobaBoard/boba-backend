@@ -41,8 +41,8 @@ SELECT
     COALESCE(
         json_agg(DISTINCT p.permissions) 
             FILTER (WHERE p.permissions IS NOT NULL AND p.permissions != 'post_as_role'), '[]') AS permissions,
-    to_jsonb(COALESCE(logged_out_restrictions, ARRAY[]::restriction_type[])) as logged_out_restrictions,
-    to_jsonb(COALESCE(CASE WHEN logged_in_user.id IS NOT NULL THEN logged_in_base_restrictions ELSE NULL END, ARRAY[]::restriction_type[])) as logged_in_base_restrictions
+    to_jsonb(COALESCE(logged_out_restrictions, ARRAY[]::board_restrictions_type[])) as logged_out_restrictions,
+    to_jsonb(COALESCE(CASE WHEN logged_in_user.id IS NOT NULL THEN logged_in_base_restrictions ELSE NULL END, ARRAY[]::board_restrictions_type[])) as logged_in_base_restrictions
 FROM boards 
     LEFT JOIN threads 
         ON boards.id = threads.parent_board
