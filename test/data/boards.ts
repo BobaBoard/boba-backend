@@ -10,6 +10,8 @@ import {
 } from "types/permissions";
 import { GenericResponse } from "../../types/rest/responses";
 
+import { GenericResponse } from "../../types/rest/responses";
+
 export const GORE_BOARD_ID = "c6d3d10e-8e49-4d73-b28a-9d652b41beec";
 export const ANIME_BOARD_ID = "4b30fb7c-2aca-4333-aa56-ae8623a92b65";
 export const MAIN_STREET_BOARD_ID = "2fb151eb-c600-4fe4-a542-4662487e5496";
@@ -119,7 +121,8 @@ export const GORE_BOARD_METADATA = {
 Object.freeze(GORE_BOARD_METADATA);
 
 export const NULL_BOARD_NOT_FOUND: GenericResponse = {
-  message: "The board with id \"00000000-0000-0000-0000-000000000000\" was not found.",
+  message:
+    'The board with id "00000000-0000-0000-0000-000000000000" was not found.',
 };
 
 const RESTRICTED_LOGGED_OUT_BOARD_SUMMARY: BoardSummary = {
