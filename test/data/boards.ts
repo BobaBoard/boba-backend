@@ -8,6 +8,7 @@ import {
   PostPermissions,
   ThreadPermissions,
 } from "types/permissions";
+
 import { GenericResponse } from "../../types/rest/responses";
 
 export const GORE_BOARD_ID = "c6d3d10e-8e49-4d73-b28a-9d652b41beec";
@@ -118,11 +119,10 @@ export const GORE_BOARD_METADATA = {
 };
 Object.freeze(GORE_BOARD_METADATA);
 
-<<<<<<< HEAD
 export const NULL_BOARD_NOT_FOUND: GenericResponse = {
-  message: "The board with id \"00000000-0000-0000-0000-000000000000\" was not found.",
+  message:
+    'The board with id "00000000-0000-0000-0000-000000000000" was not found.',
 };
-=======
 const RESTRICTED_LOGGED_OUT_BOARD_SUMMARY: BoardSummary = {
   id: RESTRICTED_BOARD_ID,
   realm_id: "v0-fake-id",
@@ -152,4 +152,3 @@ export const RESTRICTED_BOARD_SUMMARY = {
   BOBATAN: RESTRICTED_BOBATAN_SUMMARY,
 };
 Object.freeze(RESTRICTED_BOARD_SUMMARY);
->>>>>>> d63fecc34c7c71e4d371fb9d30229d1c2a344586
