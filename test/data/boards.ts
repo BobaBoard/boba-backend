@@ -8,7 +8,6 @@ import {
   PostPermissions,
   ThreadPermissions,
 } from "types/permissions";
-import { GenericResponse } from "../../types/rest/responses";
 
 import { GenericResponse } from "../../types/rest/responses";
 

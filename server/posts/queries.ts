@@ -75,53 +75,9 @@ export const maybeAddCategoryTags = async (
   const tags = categoryTags
     .filter((tag) => !!tag.trim().length)
     .map((tag) => tag.trim().toLowerCase());
-  const query = sql.createAddCategoriesQuery(tags);
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log("*********");
-  log(query);
-  await transaction.manyOrNone(query);
+
+  await transaction.manyOrNone(sql.createAddCategoriesQuery(tags));
   log(`Returning tags: ${tags}`);
-  const categories = await transaction.manyOrNone(
-    `(SELECT id FROM categories WHERE category = $/category/)`,
-    {
-      category: tags[0],
-    }
-  );
-  log(categories);
   await transaction.many(sql.createAddCategoriesToPostQuery(postId, tags));
 
   return tags;
@@ -727,11 +683,14 @@ export const addNewIdentityToThreadByBoardId = async (
     // An identity was passed to this method, which means we don't need to randomize it.
     // The only thing we need to check is whether the user is *actually able* to post
     // as that identity.
-    const roleResult = await transaction.one(threadsSql.getRoleByStringIdAndBoardId, {
-      role_id: identityId,
-      firebase_id: firebaseId,
-      board_string_id,
-    });
+    const roleResult = await transaction.one(
+      threadsSql.getRoleByStringIdAndBoardId,
+      {
+        role_id: identityId,
+        firebase_id: firebaseId,
+        board_string_id,
+      }
+    );
     if (!canPostAs(roleResult.permissions)) {
       throw new Error(
         "Attempted to post on thread with identity without post as permissions"
