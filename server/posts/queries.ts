@@ -28,12 +28,12 @@ export const maybeAddIndexTags = async (
   }
   const tags = indexTags
     .filter((tag) => !!tag.trim().length)
-    .map((tag) => tag.trim());
+    .map((tag) => tag.trim().toLowerCase());
   await transaction.manyOrNone(sql.createAddTagsQuery(tags));
   log(`Returning tags:`);
   await transaction.many(sql.createAddTagsToPostQuery(postId, tags));
 
-  return tags.map((tag) => tag.toLowerCase());
+  return tags;
 };
 
 export const removeIndexTags = async (
@@ -74,12 +74,57 @@ export const maybeAddCategoryTags = async (
   }
   const tags = categoryTags
     .filter((tag) => !!tag.trim().length)
-    .map((tag) => tag.trim());
-  await transaction.manyOrNone(sql.createAddCategoriesQuery(tags));
-  log(`Returning tags:`);
+    .map((tag) => tag.trim().toLowerCase());
+  const query = sql.createAddCategoriesQuery(tags);
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log("*********");
+  log(query);
+  await transaction.manyOrNone(query);
+  log(`Returning tags: ${tags}`);
+  const categories = await transaction.manyOrNone(
+    `(SELECT id FROM categories WHERE category = $/category/)`,
+    {
+      category: tags[0],
+    }
+  );
+  log(categories);
   await transaction.many(sql.createAddCategoriesToPostQuery(postId, tags));
 
-  return tags.map((tag) => tag.toLowerCase());
+  return tags;
 };
 
 export const removeCategoryTags = async (
@@ -120,12 +165,12 @@ export const maybeAddContentWarningTags = async (
   }
   const tags = contentWarnings
     .filter((tag) => !!tag.trim().length)
-    .map((tag) => tag.trim());
+    .map((tag) => tag.trim().toLowerCase());
   await transaction.manyOrNone(sql.createAddContentWarningsQuery(tags));
   log(`Returning tags:`);
   await transaction.many(sql.createAddContentWarningsToPostQuery(postId, tags));
 
-  return tags.map((tag) => tag.toLowerCase());
+  return tags;
 };
 
 export const removeContentWarningTags = async (
