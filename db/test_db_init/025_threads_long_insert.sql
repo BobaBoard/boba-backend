@@ -680,3 +680,33 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
     ((SELECT id FROM new_thread_id),
         (SELECT id FROM Users WHERE username = 'jersey_devil_69'),
         (SELECT id FROM secret_identities WHERE display_name = 'DragonFucker'));
+
+INSERT INTO post_categories(post_id, category_id) VALUES -- odd
+ ((SELECT id FROM posts WHERE string_id = 'f423a2f4-7a8a-4d3d-8858-c1c7602133da'), 3),
+ ((SELECT id FROM posts WHERE string_id = '39a02dd0-4955-4276-b659-e673c70b1a2e'), 3),
+ ((SELECT id FROM posts WHERE string_id = '187bbc83-558a-46fe-aeb4-c146bc5fd6e8'), 3),
+ ((SELECT id FROM posts WHERE string_id = 'ce00d513-1c45-4248-8124-d18cc2174631'), 3),
+ ((SELECT id FROM posts WHERE string_id = 'd3c57555-a40e-4036-a001-e9b6177a4ddc'), 3),
+ ((SELECT id FROM posts WHERE string_id = '7fbb6b0b-eb1d-4cbf-b610-6aaa3dbf50ba'), 3),
+ ((SELECT id FROM posts WHERE string_id = '77037fd3-3a14-46ce-928c-86ab97c513df'), 3),
+ ((SELECT id FROM posts WHERE string_id = '07a31562-c7e5-4026-b268-de758299f924'), 3),
+ ((SELECT id FROM posts WHERE string_id = '95228cfe-02d1-425e-bf1e-4917218dfd2a'), 3),
+ ((SELECT id FROM posts WHERE string_id = 'bd6efcb5-1b0e-4ebc-bc48-4c9a23b14cdb'), 3),
+ ((SELECT id FROM posts WHERE string_id = '0480192a-e816-4eb3-b927-50ef2c620fc0'), 3),
+ ((SELECT id FROM posts WHERE string_id = '9adb9e1b-2013-4359-9743-ad9998444dae'), 3),
+ ((SELECT id FROM posts WHERE string_id = 'e93eed13-105b-486d-bdd2-9e797983192b'), 3);
+
+INSERT INTO post_categories(post_id, category_id) VALUES -- even
+ ((SELECT id FROM posts WHERE string_id = 'c137f3e9-8810-4807-9a1d-0ddd27ce52ca'), 4),
+ ((SELECT id FROM posts WHERE string_id = '73454eae-6b9d-4e1b-9652-517366f92f2b'), 4),
+ ((SELECT id FROM posts WHERE string_id = 'cfe5c845-23b2-4e24-b5a8-20b5e3a0d7ab'), 4),
+ ((SELECT id FROM posts WHERE string_id = 'ec74bcfd-1660-4f84-8656-89ae52b403d7'), 4),
+ ((SELECT id FROM posts WHERE string_id = '946f0408-f0a5-4b7e-90ee-a70f6c1e2082'), 4),
+ ((SELECT id FROM posts WHERE string_id = 'e3b05f4d-fda3-4c4e-ab5c-5f0f0afa626d'), 4),
+ ((SELECT id FROM posts WHERE string_id = '07fb6be3-b4db-4e44-adaf-4d0d5214fdf8'), 4),
+ ((SELECT id FROM posts WHERE string_id = '676f0a9a-897e-4194-9020-980cf2ac813f'), 4),
+ ((SELECT id FROM posts WHERE string_id = 'c0af79f8-af24-412c-8e1b-c3dad47bcf68'), 4),
+ ((SELECT id FROM posts WHERE string_id = '9bbcd916-a17c-47ee-80ca-376eb8f1d3bb'), 4),
+ ((SELECT id FROM posts WHERE string_id = '8cb16008-1efd-4c5d-a1aa-0b738fcc68c0'), 4),
+ ((SELECT id FROM posts WHERE string_id = '6c698c20-754a-42d2-b60f-7f73ca2c6fa0'), 4),
+ ((SELECT id FROM posts WHERE string_id = '995d80d3-d8b9-445d-9723-e39f7a682665'), 4);
