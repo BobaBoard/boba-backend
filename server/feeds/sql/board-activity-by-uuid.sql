@@ -61,6 +61,8 @@ WHERE
    -- activity cursor condition
    AND last_update_timestamp <= COALESCE(${last_activity_cursor}, NOW())
    -- categories condition
-    AND ${filtered_category} IS NULL OR (SELECT id FROM categories WHERE categories.category = ${filtered_category}) IN (SELECT category_id FROM post_categories WHERE post_categories.post_id = first_post_id)
+   AND (${filtered_category} IS NULL OR (
+       (SELECT id FROM categories WHERE categories.category = ${filtered_category})
+        IN (SELECT category_id FROM post_categories WHERE post_categories.post_id = first_post_id)))
 ORDER BY thread_last_activity DESC
 LIMIT ${page_size} + 1 

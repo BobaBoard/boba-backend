@@ -266,11 +266,6 @@ router.post(
  *     responses:
  *       204:
  *         description: The board was successfully muted.
- *         content:
- *           application/json:
- *             examples:
- *               existing:
- *                 $ref: "#/components/examples/PinnedBoardResponse"
  *       401:
  *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
@@ -334,7 +329,7 @@ router.post(
  *       500:
  *         description: Internal Server Error
  *         $ref: "#/components/responses/default500"
- *       200:
+ *       204:
  *         description: The board was successfully unmuted.
  *
  */
@@ -392,7 +387,7 @@ router.delete(
  *       500:
  *         description: Internal Server Error
  *         $ref: "#/components/responses/default500"
- *       200:
+ *       204:
  *         description: The board was successfully pinned.
  *
  */
@@ -450,7 +445,7 @@ router.post(
  *       500:
  *         description: Internal Server Error
  *         $ref: "#/components/responses/default500"
- *       200:
+ *       204:
  *         description: The board was successfully unpinned.
  *
  */

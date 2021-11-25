@@ -1,4 +1,8 @@
-import { BoardMetadata, LoggedInBoardMetadata } from "types/rest/boards";
+import {
+  BoardMetadata,
+  BoardSummary,
+  LoggedInBoardMetadata,
+} from "types/rest/boards";
 import {
   BoardPermissions,
   PostPermissions,
@@ -14,21 +18,44 @@ export const RESTRICTED_BOARD_ID = "76ebaab0-6c3e-4d7b-900f-f450625a5ed3";
 export const LONG_BOARD_ID = "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83";
 export const NULL_ID = "00000000-0000-0000-0000-000000000000";
 
+export const extractBoardSummary = (metadata: BoardMetadata): BoardSummary => {
+  const {
+    id,
+    realm_id,
+    slug,
+    avatar_url,
+    tagline,
+    accent_color,
+    logged_in_only,
+    delisted,
+  } = metadata;
+  return {
+    id,
+    realm_id,
+    slug,
+    avatar_url,
+    tagline,
+    accent_color,
+    logged_in_only,
+    delisted,
+  };
+};
+
 const GORE_LOGGED_OUT_METADATA: BoardMetadata = {
   descriptions: [
     {
-      categories: ["blood", "bruises"],
-      id: "id1",
-      index: 2,
-      title: "Gore Categories",
-      type: "category_filter",
-    },
-    {
       description: '[{"insert": "pls b nice"}]',
-      id: "id2",
+      id: "51be2abf-d191-4269-830a-e0c51b9fd8e7",
       index: 1,
       title: "Gore description",
       type: "text",
+    },
+    {
+      categories: ["blood", "bruises"],
+      id: "e541f259-8e6a-42c9-84c3-9c8991945930",
+      index: 2,
+      title: "Gore Categories",
+      type: "category_filter",
     },
   ],
   accent_color: "#f96680",
@@ -94,3 +121,33 @@ Object.freeze(GORE_BOARD_METADATA);
 export const NULL_BOARD_NOT_FOUND: GenericResponse = {
   message: "The board with id \"00000000-0000-0000-0000-000000000000\" was not found.",
 };
+
+const RESTRICTED_LOGGED_OUT_BOARD_SUMMARY: BoardSummary = {
+  id: RESTRICTED_BOARD_ID,
+  realm_id: "v0-fake-id",
+  avatar_url:
+    "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2Fe4e263cf-ee98-4902-9c14-c10299210e01.png?alt=media&token=7c170411-9401-4d4e-9f66-5d6dfee2fccd",
+  logged_in_only: true,
+  delisted: false,
+  accent_color: "#234a69",
+  slug: "restricted",
+  tagline: "A board to test for logged-in only view",
+};
+
+const RESTRICTED_BOBATAN_SUMMARY: BoardSummary = {
+  id: RESTRICTED_BOARD_ID,
+  realm_id: "v0-fake-id",
+  avatar_url:
+    "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2Fe4e263cf-ee98-4902-9c14-c10299210e01.png?alt=media&token=7c170411-9401-4d4e-9f66-5d6dfee2fccd",
+  logged_in_only: true,
+  delisted: false,
+  accent_color: "#234a69",
+  slug: "restricted",
+  tagline: "A board to test for logged-in only view",
+};
+
+export const RESTRICTED_BOARD_SUMMARY = {
+  LOGGED_OUT: RESTRICTED_LOGGED_OUT_BOARD_SUMMARY,
+  BOBATAN: RESTRICTED_BOBATAN_SUMMARY,
+};
+Object.freeze(RESTRICTED_BOARD_SUMMARY);

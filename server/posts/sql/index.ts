@@ -85,7 +85,7 @@ const createAddTagsQuery = (tags: string[]) => {
   const tagsColumn = new pgInstance.helpers.ColumnSet(["tag"], {
     table: "tags",
   });
-  const tagsValues = tags.map((tag) => ({ tag: tag.toLowerCase() }));
+  const tagsValues = tags.map((tag) => ({ tag: tag }));
   // NOTE: ON CONFLICT DO NOTHING DOESN'T WORK WITH RETURNING
   // this means unfortunately that we have to always call select to get
   // back the tag id.
@@ -102,7 +102,7 @@ const createAddTagsToPostQuery = (postId: number, tags: string[]) => {
       query: insertTagQuery,
       values: {
         post_id: postId,
-        tag: tag.toLowerCase(),
+        tag: tag,
       },
     }))
   );
@@ -137,7 +137,7 @@ const createAddCategoriesQuery = (categories: string[]) => {
     table: "categories",
   });
   const categoriesValues = categories.map((category) => ({
-    category: category.toLowerCase(),
+    category: category,
   }));
   // NOTE: ON CONFLICT DO NOTHING DOESN'T WORK WITH RETURNING
   // this means unfortunately that we have to always call select to get
@@ -161,7 +161,7 @@ const createAddCategoriesToPostQuery = (
       query: insertCategoryQuery,
       values: {
         post_id: postId,
-        category: category.toLowerCase(),
+        category: category,
       },
     }))
   );
@@ -172,7 +172,7 @@ const createAddContentWarningsQuery = (warnings: string[]) => {
     table: "content_warnings",
   });
   const warningsValues = warnings.map((warning) => ({
-    warning: warning.toLowerCase(),
+    warning: warning,
   }));
   // NOTE: ON CONFLICT DO NOTHING DOESN'T WORK WITH RETURNING
   // this means unfortunately that we have to always call select to get
@@ -196,7 +196,7 @@ const createAddContentWarningsToPostQuery = (
       query: insertWarningQuery,
       values: {
         post_id: postId,
-        warning: warning.toLowerCase(),
+        warning: warning,
       },
     }))
   );
