@@ -140,8 +140,10 @@ INSERT INTO posts (string_id,parent_thread,parent_post,author,created,"content",
 ,('b8321446-3ebe-4177-80ce-7a5adcb38e36',31,35,1,'2020-08-22 03:36:55.850','[{"insert":{"block-image":{"src":"https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fmemes%2F2765f36a-b4f9-4efe-96f2-cb34f055d032%2F894374bd-fed2-42af-a21e-18ed9c5040fc?alt=media&token=f5afda1f-2a14-43a3-9717-7cdc0aeddc2d","spoilers":false,"width":3840,"height":2160}}},{"insert":""}]','text','{}','{"wide": false}',false,'strangers')
 ;
 
-INSERT INTO categories(category) VALUES 
-  ('aiba'), ('release');
+INSERT INTO categories(id, category) 
+OVERRIDING SYSTEM VALUE VALUES 
+  (10, 'aiba'), 
+  (11, 'release');
 INSERT INTO post_categories(post_id, category_id) VALUES
  ((SELECT id FROM posts WHERE string_id = 'd14e311a-a22a-4673-8b8a-cd0423e38a3c'),
   (SELECT id FROM categories WHERE category = 'aiba')),
