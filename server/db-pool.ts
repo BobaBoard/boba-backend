@@ -28,7 +28,7 @@ const pgLib = pgp({
     error(`error occurred on the db `, e);
   },
   query: (q) => {
-    log("executing query: ", q.query);
+    info("executing query: ", q.query);
   },
 });
 const pool = pgLib({ ...databaseConfig, max: 1 });
