@@ -71,10 +71,11 @@ router.get("/boards/:board_id", ensureBoardAccess, async (req, res) => {
     `Fetching activity data for board with slug ${boardId} with cursor ${cursor} and filtered category "${categoryFilter}"`
   );
 
+  log(cursor);
   const result = await getBoardActivityByUuid({
     boardId,
     firebaseId: req.currentUser?.uid,
-    filterCategory: (categoryFilter as string) || null,
+    categoryFilter: (categoryFilter as string) || null,
     cursor: (cursor as string) || null,
   });
   info(`Found activity for board ${boardId}:`, result);
