@@ -223,6 +223,7 @@ export const ensureNoIdentityLeakage = (post: any) => {
 
 const extractLockedBoardMetadata = (metadata: any) => {
   return {
+    string_id: metadata.string_id,
     slug: metadata.slug,
     avatar_reference_id: metadata.avatar_reference_id,
     tagline: metadata.tagline,
@@ -281,7 +282,6 @@ export const processBoardsMetadata = ({
 }) => {
   const result = boards.map((board: any) => {
     let boardResult = board;
-
     // Remove from list if the board shouldn't be visible in the sidebar
     boardResult.delisted =
       (!isLoggedIn &&
