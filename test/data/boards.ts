@@ -8,6 +8,7 @@ import {
   PostPermissions,
   ThreadPermissions,
 } from "types/permissions";
+import { GenericResponse } from "../../types/rest/responses";
 
 import { GenericResponse } from "../../types/rest/responses";
 
@@ -123,6 +124,7 @@ export const NULL_BOARD_NOT_FOUND: GenericResponse = {
   message:
     'The board with id "00000000-0000-0000-0000-000000000000" was not found.',
 };
+
 const RESTRICTED_LOGGED_OUT_BOARD_SUMMARY: BoardSummary = {
   id: RESTRICTED_BOARD_ID,
   realm_id: "v0-fake-id",
