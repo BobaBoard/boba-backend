@@ -7,6 +7,7 @@ import {
 } from "./posts";
 import { GORE_BOARD_ID, RESTRICTED_BOARD_ID } from "./boards";
 import { Thread, ThreadSummary } from "../../types/rest/threads";
+
 import { GenericResponse } from "../../types/rest/responses";
 
 export const EXCELLENT_THREAD_ID = "8b2646af-2778-487e-8e44-7ae530c2549c";
@@ -171,24 +172,8 @@ export const RESTRICTED_THREAD: Thread = {
   },
 };
 
-export const CREATE_GORE_THREAD_REQUEST = {
-  content: "[{\"insert\":\"Gore. Gore? Gore!\"}]",
-  forceAnonymous: false,
-  defaultView: "thread",
-  whisperTags: [
-    "whisper"
-  ],
-  indexTags: [
-    "search"
-  ],
-  contentWarnings: [
-    "content notice"
-  ],
-  categoryTags: [
-    "filter"
-  ]
-}
-
+// TODO: mock random identity generator to allow to check for
+// correct identity return
 export const CREATE_GORE_THREAD_RESPONSE: Thread = {
   id: expect.any(String),
   parent_board_slug: "gore",
@@ -198,36 +183,28 @@ export const CREATE_GORE_THREAD_RESPONSE: Thread = {
     parent_thread_id: expect.any(String),
     parent_post_id: null,
     created_at: expect.any(String),
-    content: "[{\"insert\":\"Gore. Gore? Gore!\"}]",
+    content: '[{"insert":"Gore. Gore? Gore!"}]',
     secret_identity: {
       name: expect.any(String),
       avatar: expect.any(String),
-      color: null,
-      accessory: null
+      color: expect.toBeOneOf([expect.any(String), null]),
+      accessory: null,
     },
     user_identity: {
       name: "bobatan",
-      avatar: "/bobatan.png"
+      avatar: "/bobatan.png",
     },
     friend: false,
     own: true,
     new: false,
     tags: {
-      whisper_tags: [
-        "whisper"
-      ],
-      index_tags: [
-        "search"
-      ],
-      category_tags: [
-        "filter"
-      ],
-      content_warnings: [
-        "content notice"
-      ]
+      whisper_tags: ["whisper"],
+      index_tags: ["search"],
+      category_tags: ["filter"],
+      content_warnings: ["content notice"],
     },
     total_comments_amount: 0,
-    new_comments_amount: 0
+    new_comments_amount: 0,
   },
   default_view: "thread",
   muted: false,
@@ -245,43 +222,36 @@ export const CREATE_GORE_THREAD_RESPONSE: Thread = {
       parent_thread_id: expect.any(String),
       parent_post_id: null,
       created_at: expect.any(String),
-      content: "[{\"insert\":\"Gore. Gore? Gore!\"}]",
+      content: '[{"insert":"Gore. Gore? Gore!"}]',
       secret_identity: {
         name: expect.any(String),
         avatar: expect.any(String),
-        color: null,
-        accessory: null
+        color: expect.toBeOneOf([expect.any(String), null]),
+        accessory: null,
       },
       user_identity: {
         name: "bobatan",
-        avatar: "/bobatan.png"
+        avatar: "/bobatan.png",
       },
       friend: false,
       own: true,
       new: false,
       tags: {
-        whisper_tags: [
-          "whisper"
-        ],
-        index_tags: [
-          "search"
-        ],
-        category_tags: [
-          "filter"
-        ],
-        content_warnings: [
-          "content notice"
-        ]
+        whisper_tags: ["whisper"],
+        index_tags: ["search"],
+        category_tags: ["filter"],
+        content_warnings: ["content notice"],
       },
       total_comments_amount: 0,
-      new_comments_amount: 0
-    }
+      new_comments_amount: 0,
+    },
   ],
   comments: {
     //expect.any(String): []
-  }
-}
+  },
+};
 
 export const NULL_THREAD_NOT_FOUND: GenericResponse = {
-  message: "The thread with id \"00000000-0000-0000-0000-000000000000\" was not found.",
+  message:
+    'The thread with id "00000000-0000-0000-0000-000000000000" was not found.',
 };

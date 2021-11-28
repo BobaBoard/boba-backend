@@ -1,3 +1,4 @@
+import { canAccessBoard, canAccessBoardByUuid } from "utils/permissions-utils";
 import {
   createThread,
   getThreadByStringId,
@@ -10,24 +11,22 @@ import {
   updateThreadView,
 } from "./queries";
 import {
+  ensureBoardAccess,
+  ensureBoardPermission,
+  ensureThreadAccess,
+  ensureThreadPermission,
+} from "handlers/permissions";
+import {
   ensureNoIdentityLeakage,
   makeServerThread,
 } from "utils/response-utils";
-import {
-  ensureThreadAccess,
-  ensureThreadPermission,
-  ensureBoardAccess,
-  ensureBoardPermission
-} from "handlers/permissions";
-
-import { getBoardMetadataByUuid } from "../boards/utils";
 
 import { ThreadPermissions } from "types/permissions";
 import axios from "axios";
-import { canAccessBoard, canAccessBoardByUuid } from "utils/permissions-utils";
 import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
+import { getBoardMetadataByUuid } from "../boards/utils";
 import { moveThread } from "./queries";
 
 const info = debug("bobaserver:threads:routes-info");
@@ -122,9 +121,9 @@ router.get("/:thread_id", ensureThreadAccess, async (req, res) => {
  *         description: The thread was succesfully muted.
  */
 router.post(
-  "/:thread_id/mute", 
-  ensureLoggedIn, 
-  ensureThreadAccess, 
+  "/:thread_id/mute",
+  ensureLoggedIn,
+  ensureThreadAccess,
   async (req, res) => {
     const { thread_id: threadId } = req.params;
     log(`Setting thread muted: ${threadId}`);
@@ -370,7 +369,7 @@ router.post(
 
 /**
  * @openapi
- * /threads/{board_slug}/create:
+ * /threads/{board_id}/create:
  *   post:
  *     summary: Create a new thread.
  *     operationId: createThread
@@ -419,8 +418,8 @@ router.post(
  *                 $ref: "#/components/examples/createGoreTestThreadResponse"
  */
 router.post(
-  "/:board_id/create", 
-  ensureLoggedIn, 
+  "/:board_id/create",
+  ensureLoggedIn,
   ensureBoardAccess,
   //TODO: ensureBoardPermission(BoardPermissions.createThread),
   async (req, res, next) => {
@@ -490,7 +489,9 @@ router.post(
     info(`sending back data for thread ${threadStringId}.`);
     res.status(200).json(serverThread);
 
-    info(`generating webhook for thread ${threadStringId} in board ${boardSlug}`);
+    info(
+      `generating webhook for thread ${threadStringId} in board ${boardSlug}`
+    );
 
     const webhooks = await getTriggeredWebhooks({
       slug: boardSlug,
@@ -541,11 +542,11 @@ router.post(
  *         application/json:
  *           schema:
  *             type: object
- *             properties: 
+ *             properties:
  *               defaultView:
  *                 type: string
  *                 enum: [thread, gallery, timeline]
- *             required: 
+ *             required:
  *               - defaultView
  *           example:
  *             defaultView: gallery
@@ -617,11 +618,11 @@ router.post(
  *         application/json:
  *           schema:
  *             type: object
- *             properties: 
+ *             properties:
  *               destinationId:
  *                 type: string
  *                 format: uuid
- *             required: 
+ *             required:
  *               - destinationId
  *           example:
  *             destinationId: 2fb151eb-c600-4fe4-a542-4662487e5496
@@ -637,11 +638,11 @@ router.post(
  *             examples:
  *               insufficientThreadPermissions:
  *                 summary: Insufficient thread permissions.
- *                 value: 
+ *                 value:
  *                   message: User does not have required permissions for thread operation.
  *               insufficientBoardPermissions:
  *                 summary: Insufficient board permissions.
- *                 value: 
+ *                 value:
  *                   message: User does not have required permissions on destination board.
  *       404:
  *         description: Board or thread was not found.
@@ -652,12 +653,12 @@ router.post(
  *             examples:
  *               threadNotFound:
  *                 summary: The specified thread was not found.
- *                 value: 
- *                   message: The thread with id 29d1b2da-3289-454a-9089-2ed47db4967b was not found. 
+ *                 value:
+ *                   message: The thread with id 29d1b2da-3289-454a-9089-2ed47db4967b was not found.
  *               boardNotFound:
  *                 summary: The destination board was not found.
- *                 value: 
- *                   message: The board with id 2fb151eb-c600-4fe4-a542-4662487e5496 was not found. 
+ *                 value:
+ *                   message: The board with id 2fb151eb-c600-4fe4-a542-4662487e5496 was not found.
  *       204:
  *         description: Thread successfully moved.
  */
@@ -677,7 +678,11 @@ router.post(
         firebaseId: req.currentUser.uid,
       }))
     ) {
-      res.status(404).json({ message: `The board with id \"${destinationId}\" was not found.` });
+      res
+        .status(404)
+        .json({
+          message: `The board with id \"${destinationId}\" was not found.`,
+        });
       return;
     }
 

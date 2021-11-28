@@ -1,5 +1,9 @@
 import {
-  CREATE_GORE_THREAD_REQUEST,
+  BOBATAN_USER_ID,
+  GORE_MASTER_IDENTITY_ID,
+  SEXY_DADDY_USER_ID,
+} from "test/data/auth";
+import {
   CREATE_GORE_THREAD_RESPONSE,
   NULL_ID,
   NULL_THREAD_NOT_FOUND,
@@ -16,7 +20,6 @@ import {
   wrapWithTransaction,
 } from "utils/test-utils";
 
-import { BOBATAN_USER_ID } from "test/data/auth";
 import { GenericResponse } from "types/rest/responses";
 import { Thread } from "types/rest/threads";
 import request from "supertest";
@@ -25,6 +28,16 @@ import router from "../../routes";
 jest.mock("handlers/auth");
 jest.mock("server/db-pool");
 
+export const CREATE_GORE_THREAD_BASE_REQUEST = {
+  content: '[{"insert":"Gore. Gore? Gore!"}]',
+  forceAnonymous: false,
+  defaultView: "thread",
+  whisperTags: ["whisper"],
+  indexTags: ["search"],
+  contentWarnings: ["content notice"],
+  categoryTags: ["filter"],
+};
+
 describe("Tests threads REST API - create", () => {
   const server = startTestServer(router);
 
@@ -32,7 +45,7 @@ describe("Tests threads REST API - create", () => {
     await wrapWithTransaction(async () => {
       const res = await request(server.app)
         .post(`/${GORE_BOARD_ID}/create`)
-        .send(CREATE_GORE_THREAD_REQUEST);
+        .send(CREATE_GORE_THREAD_BASE_REQUEST);
 
       expect(res.status).toBe(401);
       expect(res.body).toEqual<GenericResponse>(ENSURE_LOGGED_IN_NO_TOKEN);
@@ -44,7 +57,7 @@ describe("Tests threads REST API - create", () => {
     //await wrapWithTransaction(async () => {
     //const res = await request(server.app)
     //  .post(`/${GORE_BOARD_ID}/create`)
-    //  .send(CREATE_GORE_THREAD_REQUEST);
+    //  .send(CREATE_GORE_THREAD_BASE_REQUEST);
     //expect(res.status).toBe(401);
     //expect(res.body).toEqual<GenericResponse>(ENSURE_LOGGED_IN_INVALID_TOKEN);
     //});
@@ -56,7 +69,7 @@ describe("Tests threads REST API - create", () => {
     //  setLoggedInUser(BOBATAN_USER_ID);
     //  const res = await request(server.app)
     //    .post(`/${GORE_BOARD_ID}/create`)
-    //    .send(CREATE_GORE_THREAD_REQUEST);
+    //    .send(CREATE_GORE_THREAD_BASE_REQUEST);
     //  expect(res.status).toBe(403);
     //});
   });
@@ -66,7 +79,7 @@ describe("Tests threads REST API - create", () => {
       setLoggedInUser(BOBATAN_USER_ID);
       const res = await request(server.app)
         .post(`/${NULL_ID}/create`)
-        .send(CREATE_GORE_THREAD_REQUEST);
+        .send(CREATE_GORE_THREAD_BASE_REQUEST);
 
       expect(res.status).toBe(404);
       expect(res.body).toEqual(NULL_BOARD_NOT_FOUND);
@@ -79,7 +92,7 @@ describe("Tests threads REST API - create", () => {
     //  setLoggedInUser(BOBATAN_USER_ID);
     //  const res = await request(server.app)
     //    .post(`/${NULL_ID}/create`)
-    //    .send(CREATE_GORE_THREAD_REQUEST);
+    //    .send(CREATE_GORE_THREAD_BASE_REQUEST);
     //  expect(res.status).toBe(422);
   });
 
@@ -90,11 +103,50 @@ describe("Tests threads REST API - create", () => {
         setLoggedInUser(BOBATAN_USER_ID);
         const res = await request(server.app)
           .post(`/${GORE_BOARD_ID}/create`)
-          .send(CREATE_GORE_THREAD_REQUEST);
+          .send({
+            content: '[{"insert":"Gore. Gore? Gore!"}]',
+            forceAnonymous: false,
+            defaultView: "thread",
+            whisperTags: ["whisper"],
+            indexTags: ["search"],
+            contentWarnings: ["content notice"],
+            categoryTags: ["filter"],
+          });
 
         expect(res.status).toBe(200);
         expect(res.body).toMatchObject(CREATE_GORE_THREAD_RESPONSE);
       });
+    });
+  });
+
+  test("should create thread as role", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(BOBATAN_USER_ID);
+      const res = await request(server.app)
+        .post(`/${GORE_BOARD_ID}/create`)
+        .send({
+          ...CREATE_GORE_THREAD_BASE_REQUEST,
+          identityId: GORE_MASTER_IDENTITY_ID,
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.body).toMatchObject(CREATE_GORE_THREAD_RESPONSE);
+    });
+  });
+
+  test("should fail creating thread as role when role is not owned", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(SEXY_DADDY_USER_ID);
+      const res = await request(server.app)
+        .post(`/${GORE_BOARD_ID}/create`)
+        .send({
+          ...CREATE_GORE_THREAD_BASE_REQUEST,
+          identityId: GORE_MASTER_IDENTITY_ID,
+        });
+
+      // TODO: change this to return 403
+      expect(res.status).toBe(500);
+      //expect(res.body).toMatchObject(CREATE_GORE_THREAD_RESPONSE);
     });
   });
 });
