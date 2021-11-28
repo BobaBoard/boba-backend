@@ -1,17 +1,17 @@
-import debug from "debug";
-import { getBoardBySlug, getBoardByUuid } from "server/boards/queries";
-
 import {
+  BoardPermissions,
+  BoardRestrictions,
   DbRolePermissions,
   PostPermissions,
   ThreadPermissions,
-  BoardPermissions,
   UserBoardPermissions,
-  extractPermissions,
-  BoardRestrictions,
   extractBoardRestrictions,
+  extractPermissions,
 } from "types/permissions";
 import { DbBoardMetadata, QueryTagsType } from "Types";
+import { getBoardBySlug, getBoardByUuid } from "server/boards/queries";
+
+import debug from "debug";
 
 const info = debug("bobaserver:board:utils-info");
 const log = debug("bobaserver::permissions-utils-log");
@@ -24,10 +24,9 @@ export const hasPermission = (
 };
 
 export const canPostAs = (permissions?: string[]) => {
-  return permissions.some(
-    (p) =>
-      (<any>Permissions)[p] == DbRolePermissions.post_as_role.toString() ||
-      (<any>Permissions)[p] == DbRolePermissions.all.toString()
+  return (
+    hasPermission(DbRolePermissions.post_as_role, permissions) ||
+    hasPermission(DbRolePermissions.all, permissions)
   );
 };
 
