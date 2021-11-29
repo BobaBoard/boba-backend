@@ -1,6 +1,5 @@
 import { THREAD_OWNER_PERMISSIONS, ThreadPermissions } from "types/permissions";
 import {
-  addNewIdentityToThread,
   addNewIdentityToThreadByBoardId,
   maybeAddCategoryTags,
   maybeAddContentWarningTags,
@@ -24,24 +23,18 @@ export const getThreadByStringId = async ({
 }: {
   threadId: string;
   firebaseId?: string;
-}): Promise<DbThreadType | false> => {
-  try {
-    const thread = await pool.oneOrNone(sql.threadByStringId, {
-      thread_string_id: threadId,
-      firebase_id: firebaseId,
-    });
+}): Promise<DbThreadType | null> => {
+  const thread = await pool.oneOrNone<DbThreadType>(sql.threadByStringId, {
+    thread_string_id: threadId,
+    firebase_id: firebaseId,
+  });
 
-    if (!thread) {
-      log(`Thread not found: ${threadId}`);
-      return null;
-    }
-
-    return thread;
-  } catch (e) {
-    error(`Error while fetching thread: ${threadId}.`);
-    error(e);
-    return false;
+  if (!thread) {
+    log(`Thread not found: ${threadId}`);
+    return null;
   }
+
+  return thread;
 };
 
 export const updateThreadView = async ({
@@ -91,61 +84,56 @@ export const createThread = async ({
   identityId?: string;
   accessoryId?: string;
 }) => {
-  return pool
-    .tx("create-thread", async (t) => {
-      const threadStringId = uuidv4();
-      const createThreadResult = await t.one(sql.createThread, {
-        thread_string_id: threadStringId,
-        board_string_id: boardStringId,
-        thread_options: {
-          default_view: defaultView,
-        },
-      });
-      log(`Created thread entry for thread ${threadStringId}`);
-
-      const postStringId = uuidv4();
-      const postResult = await t.one(sql.createPost, {
-        post_string_id: postStringId,
-        parent_thread: createThreadResult.id,
-        firebase_id: firebaseId,
-        options: {
-          wide: isLarge,
-        },
-        content,
-        anonymity_type: anonymityType,
-        whisper_tags: whisperTags,
-      });
-      log(`Created post entry for thread ${postStringId}`);
-
-      await maybeAddIndexTags(t, {
-        indexTags,
-        postId: postResult.id,
-      });
-      await maybeAddCategoryTags(t, {
-        categoryTags,
-        postId: postResult.id,
-      });
-      await maybeAddContentWarningTags(t, {
-        contentWarnings,
-        postId: postResult.id,
-      });
-
-      await addNewIdentityToThreadByBoardId(t, {
-        user_id: postResult.author,
-        identityId,
-        accessory_id: accessoryId,
-        thread_id: createThreadResult.id,
-        firebaseId,
-        board_string_id: boardStringId,
-      });
-
-      log(`Added identity for ${threadStringId}.`);
-      return threadStringId;
-    })
-    .catch((e) => {
-      error(`Error while creating thread on board ${boardStringId}: `, e);
-      return false;
+  return pool.tx("create-thread", async (t) => {
+    const threadStringId = uuidv4();
+    const createThreadResult = await t.one(sql.createThread, {
+      thread_string_id: threadStringId,
+      board_string_id: boardStringId,
+      thread_options: {
+        default_view: defaultView,
+      },
     });
+    log(`Created thread entry for thread ${threadStringId}`);
+
+    const postStringId = uuidv4();
+    const postResult = await t.one(sql.createPost, {
+      post_string_id: postStringId,
+      parent_thread: createThreadResult.id,
+      firebase_id: firebaseId,
+      options: {
+        wide: isLarge,
+      },
+      content,
+      anonymity_type: anonymityType,
+      whisper_tags: whisperTags,
+    });
+    log(`Created post entry for thread ${postStringId}`);
+
+    await maybeAddIndexTags(t, {
+      indexTags,
+      postId: postResult.id,
+    });
+    await maybeAddCategoryTags(t, {
+      categoryTags,
+      postId: postResult.id,
+    });
+    await maybeAddContentWarningTags(t, {
+      contentWarnings,
+      postId: postResult.id,
+    });
+
+    await addNewIdentityToThreadByBoardId(t, {
+      user_id: postResult.author,
+      identityId,
+      accessory_id: accessoryId,
+      thread_id: createThreadResult.id,
+      firebaseId,
+      board_string_id: boardStringId,
+    });
+
+    log(`Added identity for ${threadStringId}.`);
+    return threadStringId;
+  });
 };
 
 export const markThreadVisit = async ({

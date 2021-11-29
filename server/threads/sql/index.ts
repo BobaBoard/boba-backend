@@ -39,27 +39,7 @@ const getRandomIdentityId = `
  * We add limit 1 cause the role might be associated to the user in more than one board/realm,
  * but we're only interested in whether it's associated to them at all.
  */
-const getRoleByStringId = `
-    SELECT 
-      roles.id,
-      roles.name,
-      roles.avatar_reference_id,
-      roles.color,
-      to_json(roles.permissions) as permissions
-    FROM roles
-    LEFT JOIN board_user_roles bur
-      ON roles.id = bur.role_id
-    LEFT JOIN realm_user_roles rur
-      ON roles.id = rur.role_id
-    INNER JOIN users 
-      ON users.id = bur.user_id  OR users.id = rur.user_id
-    WHERE
-      roles.string_id = $/role_id/
-      AND (rur.role_id IS NOT NULL OR bur.board_id  = (SELECT id FROM boards WHERE boards.slug = $/board_slug/))
-      AND users.firebase_id = $/firebase_id/
-    LIMIT 1`;
-
-// TODO: update getRoleByStringId to use board string id rather than board slug
+// TODO: rename to getRoleByStringId
 const getRoleByStringIdAndBoardId = `
     SELECT 
       roles.id,
@@ -168,7 +148,6 @@ export default {
   hideThreadByStringId,
   unhideThreadByStringId,
   updateThreadViewByStringId,
-  getRoleByStringId,
   getRoleByStringIdAndBoardId,
   getThreadDetails,
   getTriggeredWebhooks,

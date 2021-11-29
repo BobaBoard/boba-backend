@@ -21,6 +21,8 @@ import {
   makeServerThread,
 } from "utils/response-utils";
 
+import { DbThreadType } from "Types";
+import { NotFound404Error } from "types/errors/api";
 import { ThreadPermissions } from "types/permissions";
 import axios from "axios";
 import debug from "debug";
@@ -446,51 +448,48 @@ router.post(
       accessoryId,
     } = req.body;
 
-    const threadStringId = await createThread({
-      firebaseId: req.currentUser.uid,
-      content,
-      defaultView,
-      anonymityType: "everyone",
-      isLarge: !!large,
-      boardStringId: boardId,
-      whisperTags,
-      indexTags,
-      categoryTags,
-      contentWarnings,
-      identityId,
-      accessoryId,
-    });
-    info(`Created new thread`, threadStringId);
+    let thread: DbThreadType | null = null;
+    try {
+      const threadStringId = await createThread({
+        firebaseId: req.currentUser.uid,
+        content,
+        defaultView,
+        anonymityType: "everyone",
+        isLarge: !!large,
+        boardStringId: boardId,
+        whisperTags,
+        indexTags,
+        categoryTags,
+        contentWarnings,
+        identityId,
+        accessoryId,
+      });
+      info(`Created new thread`, threadStringId);
 
-    if (threadStringId === false) {
-      res.sendStatus(500);
+      thread = await getThreadByStringId({
+        threadId: threadStringId as string,
+        firebaseId: req.currentUser?.uid,
+      });
+
+      if (!thread) {
+        throw new NotFound404Error(
+          `Thread with id ${threadStringId} was not found after being created.`
+        );
+      }
+    } catch (error) {
+      next(error);
       return;
     }
 
-    const thread = await getThreadByStringId({
-      threadId: threadStringId as string,
-      // @ts-ignore
-      firebaseId: req.currentUser?.uid,
-    });
     info(`Found thread: `, thread);
-
-    if (thread === false) {
-      res.sendStatus(500);
-      return;
-    }
-    if (!thread) {
-      res.sendStatus(404);
-      return;
-    }
-
     const serverThread = makeServerThread(thread);
     ensureNoIdentityLeakage(serverThread);
 
-    info(`sending back data for thread ${threadStringId}.`);
+    info(`sending back data for thread ${serverThread.id}.`);
     res.status(200).json(serverThread);
 
     info(
-      `generating webhook for thread ${threadStringId} in board ${boardSlug}`
+      `generating webhook for thread ${serverThread.id} in board ${boardSlug}`
     );
 
     const webhooks = await getTriggeredWebhooks({
@@ -498,7 +497,7 @@ router.post(
       categories: serverThread.posts[0].tags?.category_tags,
     });
     if (webhooks && webhooks.length > 0) {
-      const threadUrl = `https://v0.boba.social/!${boardSlug}/thread/${threadStringId}`;
+      const threadUrl = `https://v0.boba.social/!${boardSlug}/thread/${serverThread.id}`;
       webhooks.forEach(({ webhook, subscriptionNames }) => {
         const message = `Your "${subscriptionNames.join(
           ", "
@@ -678,11 +677,9 @@ router.post(
         firebaseId: req.currentUser.uid,
       }))
     ) {
-      res
-        .status(404)
-        .json({
-          message: `The board with id \"${destinationId}\" was not found.`,
-        });
+      res.status(404).json({
+        message: `The board with id \"${destinationId}\" was not found.`,
+      });
       return;
     }
 

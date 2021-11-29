@@ -3,8 +3,8 @@ import { POST_OWNER_PERMISSIONS, PostPermissions } from "types/permissions";
 import { canPostAs, extractPostPermissions } from "utils/permissions-utils";
 
 import { ITask } from "pg-promise";
+import { Unauthorized403Error } from "types/errors/api";
 import debug from "debug";
-import { getBoardBySlug } from "../boards/queries";
 import pool from "server/db-pool";
 import sql from "./sql";
 import threadsSql from "../threads/sql";
@@ -213,6 +213,7 @@ const getThreadDetails = async (
     post_id,
     comment_id,
     board_slug,
+    board_string_id,
   } = await transaction.one(sql.getThreadDetails, {
     post_string_id: parentPostId,
     firebase_id: firebaseId,
@@ -241,13 +242,13 @@ const getThreadDetails = async (
       secret_identity_color,
       role_identity_id,
       accessory_avatar,
-    } = await addNewIdentityToThread(transaction, {
+    } = await addNewIdentityToThreadByBoardId(transaction, {
       user_id,
       identityId,
       accessory_id: accessoryId,
       thread_id,
       firebaseId,
-      board_slug,
+      board_string_id,
     }));
   }
 
@@ -564,97 +565,7 @@ const addAccessoryToIdentity = async (
   };
 };
 
-export const addNewIdentityToThread = async (
-  transaction: ITask<any>,
-  {
-    user_id,
-    accessory_id,
-    identityId,
-    thread_id,
-    firebaseId,
-    board_slug,
-  }: {
-    identityId: string;
-    firebaseId: string;
-    user_id: any;
-    accessory_id?: string;
-    board_slug: any;
-    thread_id: any;
-  }
-) => {
-  let secret_identity_id = null;
-  let role_identity_id = null;
-  let secret_identity_name;
-  let secret_identity_avatar;
-  let secret_identity_color;
-
-  if (identityId) {
-    // An identity was passed to this method, which means we don't need to randomize it.
-    // The only thing we need to check is whether the user is *actually able* to post
-    // as that identity.
-    const roleResult = await transaction.one(threadsSql.getRoleByStringId, {
-      role_id: identityId,
-      firebase_id: firebaseId,
-      board_slug,
-    });
-    if (!canPostAs(roleResult.permissions)) {
-      throw new Error(
-        "Attempted to post on thread with identity without post as permissions"
-      );
-    }
-    role_identity_id = roleResult.id;
-    secret_identity_name = roleResult.name;
-    secret_identity_avatar = roleResult.avatar_reference_id;
-    secret_identity_color = roleResult.color;
-  } else {
-    const randomIdentityResult = await transaction.one(sql.getRandomIdentity, {
-      thread_id,
-    });
-    secret_identity_id = randomIdentityResult.secret_identity_id;
-    secret_identity_name = randomIdentityResult.secret_identity_name;
-    secret_identity_avatar = randomIdentityResult.secret_identity_avatar;
-  }
-
-  // The secret identity id is not currently in the thread data.
-  // Add it.
-  log(`Adding identity to thread:`);
-  log({
-    role_identity_id,
-    secret_identity_id,
-    secret_identity_name,
-    secret_identity_avatar,
-    secret_identity_color,
-    accessory_id,
-  });
-
-  await transaction.one(sql.addIdentityToThread, {
-    user_id,
-    thread_id,
-    secret_identity_id,
-    role_identity_id,
-  });
-
-  let accessory_avatar = null;
-  if (accessory_id) {
-    ({ accessory_avatar } = await addAccessoryToIdentity(transaction, {
-      identity_id: secret_identity_id,
-      role_identity_id,
-      thread_id,
-      accessory_id,
-    }));
-  }
-
-  return {
-    secret_identity_id,
-    secret_identity_name,
-    secret_identity_avatar,
-    role_identity_id,
-    accessory_avatar,
-    secret_identity_color,
-  };
-};
-
-// TODO: delete and change addNewIdentityToThread to use string id
+// TODO: rename to addNewIdentityToThread
 export const addNewIdentityToThreadByBoardId = async (
   transaction: ITask<any>,
   {
@@ -683,7 +594,7 @@ export const addNewIdentityToThreadByBoardId = async (
     // An identity was passed to this method, which means we don't need to randomize it.
     // The only thing we need to check is whether the user is *actually able* to post
     // as that identity.
-    const roleResult = await transaction.one(
+    const roleResult = await transaction.oneOrNone(
       threadsSql.getRoleByStringIdAndBoardId,
       {
         role_id: identityId,
@@ -691,9 +602,9 @@ export const addNewIdentityToThreadByBoardId = async (
         board_string_id,
       }
     );
-    if (!canPostAs(roleResult.permissions)) {
-      throw new Error(
-        "Attempted to post on thread with identity without post as permissions"
+    if (!roleResult || !canPostAs(roleResult.permissions)) {
+      throw new Unauthorized403Error(
+        "Attempted to post on thread with unauthorized identity"
       );
     }
     role_identity_id = roleResult.id;

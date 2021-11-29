@@ -5,6 +5,7 @@ import { ITask } from "pg-promise";
 import { Server } from "http";
 import bodyParser from "body-parser";
 import debug from "debug";
+import { handleApiErrors } from "handlers/errors";
 import { mocked } from "ts-jest/utils";
 import pool from "server/db-pool";
 
@@ -72,6 +73,7 @@ export const startTestServer = (router: Router) => {
     // to keep these prerequisite in sync.
     server.app.use(withLoggedIn);
     server.app.use(router);
+    server.app.use(handleApiErrors);
     listener = server.app.listen(4000, () => {
       done();
     });

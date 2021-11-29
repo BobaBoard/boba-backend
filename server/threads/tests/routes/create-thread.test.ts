@@ -144,9 +144,7 @@ describe("Tests threads REST API - create", () => {
           identityId: GORE_MASTER_IDENTITY_ID,
         });
 
-      // TODO: change this to return 403
-      expect(res.status).toBe(500);
-      //expect(res.body).toMatchObject(CREATE_GORE_THREAD_RESPONSE);
+      expect(res.status).toBe(403);
     });
   });
 });
