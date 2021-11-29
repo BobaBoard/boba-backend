@@ -12,7 +12,8 @@ SELECT
     threads.string_id as thread_string_id,
     posts.id as post_id,
     comments.id as comment_id,
-    boards.slug  AS board_slug
+    boards.slug AS board_slug,
+    boards.string_id AS board_string_id
 FROM users
 CROSS JOIN threads
 LEFT JOIN posts
