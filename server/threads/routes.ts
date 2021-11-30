@@ -6,6 +6,7 @@ import {
 import {
   ensureThreadAccess,
   ensureThreadPermission,
+  withThreadPermissions,
 } from "handlers/permissions";
 import {
   hideThread,
@@ -362,11 +363,11 @@ router.post(
 
 /**
  * @openapi
- * /threads/{thread_id}/update/view:
- *   post:
- *     summary: Update default thread view.
- *     operationId: updateThreadViewByStringId
- *     description: Updates the default view that the thread uses.
+ * /threads/{thread_id}:
+ *   patch:
+ *     summary: Update thread properties.
+ *     operationId: updateThreadStringId
+ *     description: Updates the default view that the thread uses or the parent board of the thread.
  *     tags:
  *       - /threads/
  *     security:
@@ -374,13 +375,16 @@ router.post(
  *     parameters:
  *       - name: thread_id
  *         in: path
- *         description: The id of the thread whose default view should be updated.
+ *         description: The id of the thread whose properties should be updated.
  *         required: true
  *         schema:
  *           type: string
  *           format: uuid
  *         examples:
- *           goreThreadId:
+ *           updateView:
+ *             summary: A thread from the gore board.
+ *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
+ *           moveThread:
  *             summary: A thread from the gore board.
  *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
  *     requestBody:
@@ -390,13 +394,18 @@ router.post(
  *           schema:
  *             type: object
  *             properties:
- *               defaultView:
- *                 type: string
- *                 enum: [thread, gallery, timeline]
- *             required:
- *               - defaultView
- *           example:
- *             defaultView: gallery
+ *              anyOf:
+ *                - defaultView:
+ *                  type: string
+ *                  enum: [thread, gallery, timeline]
+ *                - parentBoardId:
+ *                  type: string
+ *                  format: uuid
+ *           examples:
+ *             updateView:
+ *               defaultView: gallery
+ *             moveThread:
+ *                parentBoardId: 0e0d1ee6-f996-4415-89c1-c9dc1fe991dc
  *     responses:
  *       401:
  *         $ref: "#/components/responses/ensureLoggedIn401"
@@ -404,140 +413,79 @@ router.post(
  *         $ref: "#/components/responses/ensureThreadPermission403"
  *       404:
  *         $ref: "#/components/responses/threadNotFound404"
- *       200:
- *         description: Default thread view changed.
- *         $ref: "#/components/responses/default200"
- */
-router.post(
-  "/:thread_id/update/view",
-  ensureLoggedIn,
-  ensureThreadPermission(ThreadPermissions.editDefaultView),
-  async (req, res) => {
-    const { thread_id } = req.params;
-    const { defaultView } = req.body;
-
-    if (!defaultView) {
-      res.send(500).json({
-        message: "Missing default view in thread view update request.",
-      });
-      return;
-    }
-
-    if (
-      !(await updateThreadView({
-        threadId: thread_id,
-        defaultView,
-      }))
-    ) {
-      return res.sendStatus(500);
-    }
-
-    res.sendStatus(200);
-  }
-);
-
-/**
- * @openapi
- * /threads/{thread_id}/move:
- *   post:
- *     summary: Move a thread to another board.
- *     operationId: moveThread
- *     description: Moves the specified thread to the specified board.
- *     tags:
- *       - /threads/
- *     security:
- *       - firebase: []
- *     parameters:
- *       - name: thread_id
- *         in: path
- *         description: The id of the thread to be moved.
- *         required: true
- *         schema:
- *           type: string
- *           format: uuid
- *         examples:
- *           goreThreadId:
- *             summary: A thread from the gore board.
- *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
- *     requestBody:
- *       description: request body
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               destinationId:
- *                 type: string
- *                 format: uuid
- *             required:
- *               - destinationId
- *           example:
- *             destinationId: 2fb151eb-c600-4fe4-a542-4662487e5496
- *     responses:
- *       401:
- *         $ref: "#/components/responses/ensureLoggedIn401"
- *       403:
- *         description: User is unauthorized to perform operation.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/genericResponse"
- *             examples:
- *               insufficientThreadPermissions:
- *                 summary: Insufficient thread permissions.
- *                 value:
- *                   message: User does not have required permissions for thread operation.
- *               insufficientBoardPermissions:
- *                 summary: Insufficient board permissions.
- *                 value:
- *                   message: User does not have required permissions on destination board.
- *       404:
- *         description: Board or thread was not found.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/genericResponse"
- *             examples:
- *               threadNotFound:
- *                 summary: The specified thread was not found.
- *                 value:
- *                   message: The thread with id 29d1b2da-3289-454a-9089-2ed47db4967b was not found.
- *               boardNotFound:
- *                 summary: The destination board was not found.
- *                 value:
- *                   message: The board with id 2fb151eb-c600-4fe4-a542-4662487e5496 was not found.
  *       204:
- *         description: Thread successfully moved.
+ *         description: Thread properties successfully changed.
+ *         $ref: "#/components/responses/default204"
  */
-router.post(
-  "/:thread_id/move",
+router.patch(
+  "/:thread_id",
   ensureLoggedIn,
-  ensureThreadPermission(ThreadPermissions.moveThread),
-  //ensureBoardPermission(BoardPermissions.createThread),
+  withThreadPermissions,
   async (req, res) => {
     const { thread_id } = req.params;
-    const { destinationId } = req.body;
+    const { defaultView, parentBoardId } = req.body;
 
-    // TODO: add a test for this case
-    if (
-      !(await canAccessBoardByUuid({
-        boardId: destinationId,
-        firebaseId: req.currentUser.uid,
-      }))
-    ) {
-      res.status(404).json({
-        message: `The board with id \"${destinationId}\" was not found.`,
-      });
+    if (!defaultView && !parentBoardId) {
+      res
+        .status(500)
+        .json({ message: "Thread update requires a parameter to update" });
       return;
     }
 
-    if (
-      !(await moveThread({
-        threadId: thread_id,
-        destinationId,
-      }))
-    ) {
-      return res.sendStatus(500);
+    if (defaultView) {
+      if (
+        !req.currentThreadPermissions.includes(
+          ThreadPermissions.editDefaultView
+        )
+      ) {
+        res.status(403).json({
+          message: `User does not have permission to update view for thread with id ${thread_id}.`,
+        });
+        return;
+      }
+
+      if (
+        !(await updateThreadView({
+          threadId: thread_id,
+          defaultView,
+        }))
+      ) {
+        return res.sendStatus(500);
+      }
+    }
+
+    if (parentBoardId) {
+      if (
+        !req.currentThreadPermissions.includes(ThreadPermissions.moveThread)
+      ) {
+        res.status(403).json({
+          message: `User does not have permission to move thread thread with id ${thread_id}.`,
+        });
+        return;
+      }
+      // TODO: add a test for this case
+      if (
+        !(await canAccessBoardByUuid({
+          boardId: parentBoardId,
+          firebaseId: req.currentUser.uid,
+        }))
+      ) {
+        res.status(404).json({
+          message: `The board with id \"${parentBoardId}\" was not found.`,
+        });
+        return;
+
+        // TODO: add case where user can't access board
+      }
+
+      if (
+        !(await moveThread({
+          threadId: thread_id,
+          destinationId: parentBoardId,
+        }))
+      ) {
+        return res.sendStatus(500);
+      }
     }
 
     res.sendStatus(204);
