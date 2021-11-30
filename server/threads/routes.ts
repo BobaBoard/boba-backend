@@ -1,3 +1,8 @@
+import {
+  BadRequest400Error,
+  Forbidden403Error,
+  NotFound404Error,
+} from "types/errors/api";
 import { canAccessBoard, canAccessBoardByUuid } from "utils/permissions-utils";
 import {
   ensureNoIdentityLeakage,
@@ -426,10 +431,9 @@ router.patch(
     const { defaultView, parentBoardId } = req.body;
 
     if (!defaultView && !parentBoardId) {
-      res
-        .status(500)
-        .json({ message: "Thread update requires a parameter to update" });
-      return;
+      throw new BadRequest400Error(
+        "Thread update requires a parameter to update"
+      );
     }
 
     if (defaultView) {
@@ -438,10 +442,9 @@ router.patch(
           ThreadPermissions.editDefaultView
         )
       ) {
-        res.status(403).json({
-          message: `User does not have permission to update view for thread with id ${thread_id}.`,
-        });
-        return;
+        throw new Forbidden403Error(
+          `User does not have permission to update view for thread with id ${thread_id}.`
+        );
       }
 
       if (
@@ -458,22 +461,20 @@ router.patch(
       if (
         !req.currentThreadPermissions.includes(ThreadPermissions.moveThread)
       ) {
-        res.status(403).json({
-          message: `User does not have permission to move thread thread with id ${thread_id}.`,
-        });
-        return;
+        throw new Forbidden403Error(
+          `User does not have permission to move thread thread with id ${thread_id}.`
+        );
       }
-      // TODO: add a test for this case
+      // TODO: add a test for this case once there's boards that are not accessible to everyone.
       if (
         !(await canAccessBoardByUuid({
           boardId: parentBoardId,
           firebaseId: req.currentUser.uid,
         }))
       ) {
-        res.status(404).json({
-          message: `The board with id \"${parentBoardId}\" was not found.`,
-        });
-        return;
+        throw new NotFound404Error(
+          `The board with id \"${parentBoardId}\" was not found.`
+        );
 
         // TODO: add case where user can't access board
       }

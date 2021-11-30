@@ -13,3 +13,4 @@ coverage/
 open-api-spec.json
 junit.xml
 reports/
+yarn-error.log

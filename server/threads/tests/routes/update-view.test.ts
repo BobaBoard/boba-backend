@@ -70,17 +70,14 @@ describe("Tests update view REST API", () => {
     //});
   });
 
-  // TODO: No request patch validation for thread
   test("TODO: should fail request body is invalid", async () => {
-    //await wrapWithTransaction(async () => {
-    //  setLoggedInUser("fb3");
-    //  const res = await request(server.app)
-    //    .patch(`/${NULL_ID}`)
-    //    .send({
-    //      defaultView: "gallery",
-    //    });
-    //  expect(res.status).toBe(422);
-    //});
+    await wrapWithTransaction(async () => {
+      setLoggedInUser("fb3");
+      const res = await request(server.app)
+        .patch(`/${CHARACTER_TO_MAIM_THREAD_ID}`)
+        .send({});
+      expect(res.status).toBe(400);
+    });
   });
 
   test("should update view data", async () => {

@@ -8,6 +8,8 @@ import debug from "debug";
 import { handleApiErrors } from "handlers/errors";
 import { mocked } from "ts-jest/utils";
 import pool from "server/db-pool";
+require("express-async-errors");
+
 
 const log = debug("bobaserver:tests:test-utils");
 

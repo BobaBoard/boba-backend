@@ -174,7 +174,6 @@ router.post(
       boardId,
     });
     const boardSlug = boardMetadata.slug;
-    -0;
     log(`Creating thread in board with id ${boardId}`);
     const {
       content,
@@ -189,37 +188,31 @@ router.post(
       accessoryId,
     } = req.body;
 
-    let thread: DbThreadType | null = null;
-    try {
-      const threadStringId = await createThread({
-        firebaseId: req.currentUser.uid,
-        content,
-        defaultView,
-        anonymityType: "everyone",
-        isLarge: !!large,
-        boardStringId: boardId,
-        whisperTags,
-        indexTags,
-        categoryTags,
-        contentWarnings,
-        identityId,
-        accessoryId,
-      });
-      info(`Created new thread`, threadStringId);
+    const threadStringId = await createThread({
+      firebaseId: req.currentUser.uid,
+      content,
+      defaultView,
+      anonymityType: "everyone",
+      isLarge: !!large,
+      boardStringId: boardId,
+      whisperTags,
+      indexTags,
+      categoryTags,
+      contentWarnings,
+      identityId,
+      accessoryId,
+    });
+    info(`Created new thread`, threadStringId);
 
-      thread = await getThreadByStringId({
-        threadId: threadStringId as string,
-        firebaseId: req.currentUser?.uid,
-      });
+    const thread = await getThreadByStringId({
+      threadId: threadStringId as string,
+      firebaseId: req.currentUser?.uid,
+    });
 
-      if (!thread) {
-        throw new NotFound404Error(
-          `Thread with id ${threadStringId} was not found after being created.`
-        );
-      }
-    } catch (error) {
-      next(error);
-      return;
+    if (!thread) {
+      throw new NotFound404Error(
+        `Thread with id ${threadStringId} was not found after being created.`
+      );
     }
 
     info(`Found thread: `, thread);
