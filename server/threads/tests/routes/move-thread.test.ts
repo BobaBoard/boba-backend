@@ -1,20 +1,12 @@
 import {
-  NULL_ID,
-  NULL_THREAD_NOT_FOUND,
-} from "test/data/threads";
-
-import { 
-  LONG_BOARD_ID,
-  NULL_BOARD_NOT_FOUND,
-} from "test/data/boards";
-
-import {
-  ENSURE_LOGGED_IN_NO_TOKEN,
   ENSURE_LOGGED_IN_INVALID_TOKEN,
+  ENSURE_LOGGED_IN_NO_TOKEN,
   ENSURE_THREAD_PERMISSIONS_UNAUTHORIZED,
 } from "test/data/responses";
-
+import { LONG_BOARD_ID, NULL_BOARD_NOT_FOUND } from "test/data/boards";
+import { NULL_ID, NULL_THREAD_NOT_FOUND } from "test/data/threads";
 import { setLoggedInUser, startTestServer } from "utils/test-utils";
+
 import { BOBATAN_USER_ID } from "test/data/auth";
 import { GenericResponse } from "types/rest/responses";
 import request from "supertest";
@@ -29,25 +21,25 @@ const CHARACTER_TO_MAIM_THREAD_ID = "29d1b2da-3289-454a-9089-2ed47db4967b";
 describe("Tests move thread REST API", () => {
   const server = startTestServer(router);
 
-  test("should fail when user is unauthenticated", async() => {
+  test("should fail when user is unauthenticated", async () => {
     await wrapWithTransaction(async () => {
       const res = await request(server.app)
-        .post(`/${CHARACTER_TO_MAIM_THREAD_ID}/move`)
+        .patch(`/${CHARACTER_TO_MAIM_THREAD_ID}`)
         .send({
-          destinationId: LONG_BOARD_ID,
+          parentBoardId: LONG_BOARD_ID,
         });
       expect(res.status).toBe(401);
       expect(res.body).toEqual<GenericResponse>(ENSURE_LOGGED_IN_NO_TOKEN);
     });
   });
-  
+
   // TODO: don't know how to generate invalid token
   test("TODO: should fail when user has invalid authentication", async () => {
     //await wrapWithTransaction(async () => {
     //  const res = await request(server.app)
-    //    .post(`/${CHARACTER_TO_MAIM_THREAD_ID}/move`)
+    //    .patch(`/${CHARACTER_TO_MAIM_THREAD_ID}`)
     //    .send({
-    //      destinationId: LONG_BOARD_ID,
+    //      parentBoardId: LONG_BOARD_ID,
     //    });
     //  expect(res.status).toBe(401);
     //  expect(res.body).toEqual<GenericResponse>(ENSURE_LOGGED_IN_INVALID_TOKEN);
@@ -58,12 +50,15 @@ describe("Tests move thread REST API", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser("fb2");
       const res = await request(server.app)
-        .post(`/${CHARACTER_TO_MAIM_THREAD_ID}/move`)
+        .patch(`/${CHARACTER_TO_MAIM_THREAD_ID}`)
         .send({
-          destinationId: LONG_BOARD_ID,
+          parentBoardId: LONG_BOARD_ID,
         });
       expect(res.status).toBe(403);
-      expect(res.body).toEqual<GenericResponse>(ENSURE_THREAD_PERMISSIONS_UNAUTHORIZED);
+      expect(res.body).toEqual({
+        message:
+          "User does not have permission to move thread thread with id 29d1b2da-3289-454a-9089-2ed47db4967b.",
+      });
     });
   });
 
@@ -72,9 +67,9 @@ describe("Tests move thread REST API", () => {
     //await wrapWithTransaction(async () => {
     //  setLoggedInUser("fb2");
     //  const res = await request(server.app)
-    //    .post(`/${CHARACTER_TO_MAIM_THREAD_ID}/move`)
+    //    .patch(`/${CHARACTER_TO_MAIM_THREAD_ID}`)
     //    .send({
-    //      destinationId: LONG_BOARD_ID,
+    //      parentBoardId: LONG_BOARD_ID,
     //    });
     //expect(res.status).toBe(403);
     //expect(res.body).toEqual<GenericResponse>(ENSURE_BOARD_PERMISSIONS_UNAUTHORIZED);
@@ -86,9 +81,9 @@ describe("Tests move thread REST API", () => {
     //await wrapWithTransaction(async () => {
     //  setLoggedInUser(BOBATAN_USER_ID);
     //  const res = await request(server.app)
-    //    .post(`/${NULL_ID}/move`)
+    //    .patch(`/${NULL_ID}`)
     //    .send({
-    //      destinationId: LONG_BOARD_ID,
+    //      parentBoardId: LONG_BOARD_ID,
     //    });
     //  expect(res.status).toBe(404);
     //  expect(res.body).toEqual<GenericResponse>(NULL_THREAD_NOT_FOUND);
@@ -99,23 +94,23 @@ describe("Tests move thread REST API", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(BOBATAN_USER_ID);
       const res = await request(server.app)
-        .post(`/${CHARACTER_TO_MAIM_THREAD_ID}/move`)
+        .patch(`/${CHARACTER_TO_MAIM_THREAD_ID}`)
         .send({
-          destinationId: NULL_ID,
+          parentBoardId: NULL_ID,
         });
       expect(res.status).toBe(404);
       expect(res.body).toEqual<GenericResponse>(NULL_BOARD_NOT_FOUND);
     });
   });
-  
-  // No request body validation for /thread/move yet
+
+  // No request body validation for /thread yet
   test("TODO: should fail if request body is invalid", async () => {
     //await wrapWithTransaction(async () => {
     //  setLoggedInUser(BOBATAN_USER_ID);
     //  const res = await request(server.app)
-    //    .post(`/${NULL_ID}/move`)
+    //    .patch(`/${NULL_ID}`)
     //    .send({
-    //      destinationId: LONG_BOARD_ID,
+    //      parentBoardId: LONG_BOARD_ID,
     //    });
     //  expect(res.status).toBe(422);
     //});
@@ -125,9 +120,9 @@ describe("Tests move thread REST API", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(BOBATAN_USER_ID);
       const res = await request(server.app)
-        .post(`/${CHARACTER_TO_MAIM_THREAD_ID}/move`)
+        .patch(`/${CHARACTER_TO_MAIM_THREAD_ID}`)
         .send({
-          destinationId: LONG_BOARD_ID,
+          parentBoardId: LONG_BOARD_ID,
         });
       expect(res.status).toBe(204);
       const threadRes = await request(server.app).get(

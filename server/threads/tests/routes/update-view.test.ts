@@ -1,17 +1,12 @@
 import {
-  NULL_ID,
-  NULL_THREAD_NOT_FOUND,
-} from "test/data/threads";
-
-import {
-  ENSURE_LOGGED_IN_NO_TOKEN,
   ENSURE_LOGGED_IN_INVALID_TOKEN,
+  ENSURE_LOGGED_IN_NO_TOKEN,
   ENSURE_THREAD_ACCESS_UNAUTHORIZED,
 } from "test/data/responses";
-
+import { NULL_ID, NULL_THREAD_NOT_FOUND } from "test/data/threads";
 import { setLoggedInUser, startTestServer } from "utils/test-utils";
-import { GenericResponse } from "types/rest/responses";
 
+import { GenericResponse } from "types/rest/responses";
 import request from "supertest";
 import router from "../../routes";
 import { wrapWithTransaction } from "utils/test-utils";
@@ -27,7 +22,7 @@ describe("Tests update view REST API", () => {
   test("should fail when user is unauthenticated", async () => {
     await wrapWithTransaction(async () => {
       const res = await request(server.app)
-        .post(`/${CHARACTER_TO_MAIM_THREAD_ID}/update/view`)
+        .patch(`/${CHARACTER_TO_MAIM_THREAD_ID}`)
         .send({
           defaultView: "gallery",
         });
@@ -40,13 +35,12 @@ describe("Tests update view REST API", () => {
   test("TODO: should fail when user has invalid authentication", async () => {
     //await wrapWithTransaction(async () => {
     //  const res = await request(server.app)
-    //    .post(`/${CHARACTER_TO_MAIM_THREAD_ID}/update/view`)
+    //    .patch(`/${CHARACTER_TO_MAIM_THREAD_ID}`)
     //    .send({
     //      defaultView: "gallery",
     //    });
-
-      //expect(res.status).toBe(401);
-      //expect(res.body).toEqual<GenericResponse>(ENSURE_LOGGED_IN_NO_TOKEN);
+    //expect(res.status).toBe(401);
+    //expect(res.body).toEqual<GenericResponse>(ENSURE_LOGGED_IN_NO_TOKEN);
     //});
   });
 
@@ -54,7 +48,7 @@ describe("Tests update view REST API", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser("fb2");
       const res = await request(server.app)
-        .post(`/${CHARACTER_TO_MAIM_THREAD_ID}/update/view`)
+        .patch(`/${CHARACTER_TO_MAIM_THREAD_ID}`)
         .send({
           defaultView: "gallery",
         });
@@ -67,7 +61,7 @@ describe("Tests update view REST API", () => {
     //await wrapWithTransaction(async () => {
     //  setLoggedInUser("fb2");
     //  const res = await request(server.app)
-    //    .post(`/${NULL_ID}/update/view`)
+    //    .patch(`/${NULL_ID}`)
     //    .send({
     //      defaultView: "gallery",
     //    });
@@ -76,12 +70,12 @@ describe("Tests update view REST API", () => {
     //});
   });
 
-  // TODO: No request body validation for thread/update/view
+  // TODO: No request patch validation for thread
   test("TODO: should fail request body is invalid", async () => {
     //await wrapWithTransaction(async () => {
     //  setLoggedInUser("fb3");
     //  const res = await request(server.app)
-    //    .post(`/${NULL_ID}/update/view`)
+    //    .patch(`/${NULL_ID}`)
     //    .send({
     //      defaultView: "gallery",
     //    });
@@ -93,11 +87,11 @@ describe("Tests update view REST API", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser("fb3");
       const res = await request(server.app)
-        .post(`/${CHARACTER_TO_MAIM_THREAD_ID}/update/view`)
+        .patch(`/${CHARACTER_TO_MAIM_THREAD_ID}`)
         .send({
           defaultView: "gallery",
         });
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(204);
       const threadRes = await request(server.app).get(
         `/${CHARACTER_TO_MAIM_THREAD_ID}`
       );
@@ -105,5 +99,4 @@ describe("Tests update view REST API", () => {
       expect(threadRes.body.default_view).toEqual("gallery");
     });
   }, 10000);
-
 });
