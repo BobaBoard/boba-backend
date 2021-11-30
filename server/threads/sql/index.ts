@@ -9,27 +9,6 @@ const createThread = `
       $/thread_options/)
     RETURNING id`;
 
-const createPost = `
-    INSERT INTO posts(
-      string_id, 
-      parent_post, 
-      parent_thread, 
-      author, 
-      content, type, 
-      whisper_tags, 
-      anonymity_type, options)
-    VALUES (
-      $/post_string_id/, 
-      NULL, 
-      $/parent_thread/,
-      (SELECT id FROM users WHERE firebase_id = $/firebase_id/),
-      $/content/, 
-      'text', 
-      $/whisper_tags/, 
-      $/anonymity_type/,
-      $/options/) 
-    RETURNING id, author`;
-
 const getRandomIdentityId = `
     SELECT id FROM secret_identities ORDER BY RANDOM() LIMIT 1`;
 
@@ -140,7 +119,6 @@ export default {
     path.join(__dirname, "visit-thread-by-string-id.sql")
   ),
   createThread,
-  createPost,
   getRandomIdentityId,
   insertNewIdentity,
   muteThreadByStringId,

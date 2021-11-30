@@ -216,6 +216,7 @@ const isPostOwner = `
 
 export default {
   postByStringId: new QueryFile(path.join(__dirname, "post-by-string-id.sql")),
+  getPostDetails: new QueryFile(path.join(__dirname, "get-post-details.sql")),
   getThreadDetails: new QueryFile(
     path.join(__dirname, "get-thread-details.sql")
   ),

@@ -60,6 +60,7 @@
     "redis": "^3.0.2",
     "redoc-express": "^1.0.0",
     "swagger-jsdoc": "^6.1.0",
+    "tiny-invariant": "^1.2.0",
     "ts-node": "^8.9.1",
     "tsconfig-paths": "^3.11.0",
     "uuid": "^8.1.0"

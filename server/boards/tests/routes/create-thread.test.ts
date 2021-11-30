@@ -44,7 +44,7 @@ describe("Tests threads REST API - create", () => {
   test("should fail when user is unauthenticated", async () => {
     await wrapWithTransaction(async () => {
       const res = await request(server.app)
-        .post(`/${GORE_BOARD_ID}/create`)
+        .post(`/${GORE_BOARD_ID}`)
         .send(CREATE_GORE_THREAD_BASE_REQUEST);
 
       expect(res.status).toBe(401);
@@ -56,7 +56,7 @@ describe("Tests threads REST API - create", () => {
   test("TODO: should fail when user has invalid authentication", async () => {
     //await wrapWithTransaction(async () => {
     //const res = await request(server.app)
-    //  .post(`/${GORE_BOARD_ID}/create`)
+    //  .post(`/${GORE_BOARD_ID}`)
     //  .send(CREATE_GORE_THREAD_BASE_REQUEST);
     //expect(res.status).toBe(401);
     //expect(res.body).toEqual<GenericResponse>(ENSURE_LOGGED_IN_INVALID_TOKEN);
@@ -68,7 +68,7 @@ describe("Tests threads REST API - create", () => {
     //await wrapWithTransaction(async () => {
     //  setLoggedInUser(BOBATAN_USER_ID);
     //  const res = await request(server.app)
-    //    .post(`/${GORE_BOARD_ID}/create`)
+    //    .post(`/${GORE_BOARD_ID}`)
     //    .send(CREATE_GORE_THREAD_BASE_REQUEST);
     //  expect(res.status).toBe(403);
     //});
@@ -78,7 +78,7 @@ describe("Tests threads REST API - create", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(BOBATAN_USER_ID);
       const res = await request(server.app)
-        .post(`/${NULL_ID}/create`)
+        .post(`/${NULL_ID}`)
         .send(CREATE_GORE_THREAD_BASE_REQUEST);
 
       expect(res.status).toBe(404);
@@ -86,12 +86,12 @@ describe("Tests threads REST API - create", () => {
     });
   });
 
-  // No request body validation for /create yet
+  // No request body validation for  yet
   test("TODO: should fail if request body is invalid", async () => {
     //await wrapWithTransaction(async () => {
     //  setLoggedInUser(BOBATAN_USER_ID);
     //  const res = await request(server.app)
-    //    .post(`/${NULL_ID}/create`)
+    //    .post(`/${NULL_ID}`)
     //    .send(CREATE_GORE_THREAD_BASE_REQUEST);
     //  expect(res.status).toBe(422);
   });
@@ -102,7 +102,7 @@ describe("Tests threads REST API - create", () => {
       await wrapWithTransaction(async () => {
         setLoggedInUser(BOBATAN_USER_ID);
         const res = await request(server.app)
-          .post(`/${GORE_BOARD_ID}/create`)
+          .post(`/${GORE_BOARD_ID}`)
           .send({
             content: '[{"insert":"Gore. Gore? Gore!"}]',
             forceAnonymous: false,
@@ -123,7 +123,7 @@ describe("Tests threads REST API - create", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(BOBATAN_USER_ID);
       const res = await request(server.app)
-        .post(`/${GORE_BOARD_ID}/create`)
+        .post(`/${GORE_BOARD_ID}`)
         .send({
           ...CREATE_GORE_THREAD_BASE_REQUEST,
           identityId: GORE_MASTER_IDENTITY_ID,
@@ -138,7 +138,7 @@ describe("Tests threads REST API - create", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(SEXY_DADDY_USER_ID);
       const res = await request(server.app)
-        .post(`/${GORE_BOARD_ID}/create`)
+        .post(`/${GORE_BOARD_ID}`)
         .send({
           ...CREATE_GORE_THREAD_BASE_REQUEST,
           identityId: GORE_MASTER_IDENTITY_ID,

@@ -5,6 +5,7 @@ import { canPostAs, extractPostPermissions } from "utils/permissions-utils";
 import { ITask } from "pg-promise";
 import { Unauthorized403Error } from "types/errors/api";
 import debug from "debug";
+import invariant from "tiny-invariant";
 import pool from "server/db-pool";
 import sql from "./sql";
 import threadsSql from "../threads/sql";
@@ -173,13 +174,15 @@ const getThreadDetails = async (
   transaction: ITask<any>,
   {
     parentPostId,
+    threadId,
     firebaseId,
     parentCommentId,
     identityId,
     accessoryId,
   }: {
     firebaseId: string;
-    parentPostId: string;
+    parentPostId?: string;
+    threadId?: string;
     parentCommentId?: string;
     identityId?: string;
     accessoryId?: string;
@@ -197,7 +200,12 @@ const getThreadDetails = async (
   post_id: number;
   comment_id: number;
   board_slug: string;
+  board_string_id: string;
 }> => {
+  invariant(
+    parentPostId || threadId,
+    "ParentPostId (${parentPostId}) or threadId (${threadId}) is required when getting details for a thread."
+  );
   let {
     user_id,
     username,
@@ -210,15 +218,19 @@ const getThreadDetails = async (
     accessory_avatar,
     thread_id,
     thread_string_id,
-    post_id,
-    comment_id,
+    post_id = null,
+    comment_id = null,
     board_slug,
     board_string_id,
-  } = await transaction.one(sql.getThreadDetails, {
-    post_string_id: parentPostId,
-    firebase_id: firebaseId,
-    parent_comment_string_id: parentCommentId,
-  });
+  } = await transaction.one(
+    parentPostId ? sql.getPostDetails : sql.getThreadDetails,
+    {
+      post_string_id: parentPostId,
+      thread_string_id: threadId,
+      firebase_id: firebaseId,
+      parent_comment_string_id: parentCommentId,
+    }
+  );
 
   log(`Found details for thread:`);
   log({
@@ -265,123 +277,133 @@ const getThreadDetails = async (
     post_id,
     comment_id,
     board_slug,
+    board_string_id,
   };
 };
 
-export const postNewContribution = async ({
-  firebaseId,
-  identityId,
-  accessoryId,
-  parentPostId,
-  content,
-  isLarge,
-  anonymityType,
-  whisperTags,
-  indexTags,
-  contentWarnings,
-  categoryTags,
-}: {
-  firebaseId: string;
-  identityId?: string;
-  accessoryId?: string;
-  parentPostId: string;
-  content: string;
-  isLarge: boolean;
-  anonymityType: string;
-  whisperTags: string[];
-  indexTags: string[];
-  categoryTags: string[];
-  contentWarnings: string[];
-}): Promise<{ contribution: DbPostType; boardSlug: string } | false> => {
-  return pool
-    .tx("create-contribution", async (t) => {
-      let {
-        board_slug,
-        user_id,
+export const postNewContribution = async (
+  {
+    firebaseId,
+    identityId,
+    accessoryId,
+    parentPostId,
+    threadId,
+    content,
+    isLarge,
+    anonymityType,
+    whisperTags,
+    indexTags,
+    contentWarnings,
+    categoryTags,
+  }: {
+    firebaseId: string;
+    identityId?: string;
+    accessoryId?: string;
+    content: string;
+    isLarge: boolean;
+    anonymityType: string;
+    whisperTags: string[];
+    indexTags: string[];
+    categoryTags: string[];
+    contentWarnings: string[];
+    parentPostId?: string;
+    threadId?: string;
+  },
+  tx?: ITask<unknown>
+): Promise<{ contribution: DbPostType; boardSlug: string } | false> => {
+  const createContribution = async (
+    t: ITask<unknown>
+  ): Promise<{ contribution: DbPostType; boardSlug: string }> => {
+    invariant(
+      parentPostId || threadId,
+      `ParentPostId (${parentPostId}) or threadId (${threadId}) is required when creating a new contribution`
+    );
+    let {
+      board_slug,
+      board_string_id,
+      user_id,
+      username,
+      user_avatar,
+      secret_identity_name,
+      secret_identity_avatar,
+      secret_identity_color,
+      accessory_avatar,
+      thread_id,
+      thread_string_id,
+      post_id = null,
+    } = await getThreadDetails(t, {
+      identityId,
+      accessoryId,
+      parentPostId,
+      threadId,
+      firebaseId,
+    });
+    const result = await t.one(sql.makePost, {
+      post_string_id: uuidv4(),
+      parent_post: post_id,
+      parent_thread: thread_id,
+      user_id,
+      content,
+      anonymity_type: anonymityType,
+      whisper_tags: whisperTags,
+      options: {
+        wide: isLarge,
+      },
+    });
+    log(`Added new contribution to thread ${thread_id}.`);
+    log(result);
+
+    const indexedTags = await maybeAddIndexTags(t, {
+      postId: result.id,
+      indexTags,
+    });
+
+    const categoryTagsResult = await maybeAddCategoryTags(t, {
+      categoryTags,
+      postId: result.id,
+    });
+    const contentWarningsResult = await maybeAddContentWarningTags(t, {
+      contentWarnings,
+      postId: result.id,
+    });
+
+    return {
+      contribution: {
+        post_id: result.string_id,
+        parent_thread_id: thread_string_id,
+        parent_post_id: parentPostId,
+        parent_board_slug: board_slug,
+        parent_board_id: board_string_id,
+        author: user_id,
         username,
         user_avatar,
         secret_identity_name,
         secret_identity_avatar,
         secret_identity_color,
         accessory_avatar,
-        thread_id,
-        thread_string_id,
-        post_id,
-      } = await getThreadDetails(t, {
-        identityId,
-        accessoryId,
-        parentPostId,
-        firebaseId,
-      });
-      const result = await t.one(sql.makePost, {
-        post_string_id: uuidv4(),
-        parent_post: post_id,
-        parent_thread: thread_id,
-        user_id,
-        content,
-        anonymity_type: anonymityType,
-        whisper_tags: whisperTags,
-        options: {
-          wide: isLarge,
-        },
-      });
-      log(`Added new contribution to thread ${thread_id}.`);
-      log(result);
-
-      const indexedTags = await maybeAddIndexTags(t, {
-        postId: result.id,
-        indexTags,
-      });
-
-      const categoryTagsResult = await maybeAddCategoryTags(t, {
-        categoryTags,
-        postId: result.id,
-      });
-      const contentWarningsResult = await maybeAddContentWarningTags(t, {
-        contentWarnings,
-        postId: result.id,
-      });
-
-      return {
-        contribution: {
-          post_id: result.string_id,
-          parent_thread_id: thread_string_id,
-          parent_post_id: parentPostId,
-          parent_board_slug: board_slug,
-          // TODO: fill this
-          parent_board_id: "",
-          author: user_id,
-          username,
-          user_avatar,
-          secret_identity_name,
-          secret_identity_avatar,
-          secret_identity_color,
-          accessory_avatar,
-          created_at: result.created_at,
-          content: result.content,
-          options: result.options,
-          type: result.type,
-          whisper_tags: result.whisper_tags,
-          index_tags: indexedTags,
-          category_tags: categoryTagsResult,
-          content_warnings: contentWarningsResult,
-          anonymity_type: result.anonymity_type,
-          total_comments_amount: 0,
-          new_comments_amount: 0,
-          comments: null,
-          friend: false,
-          self: true,
-          is_new: true,
-          is_own: true,
-        },
-        boardSlug: board_slug,
-      };
-    })
-    .catch((e) => {
-      error(`Error while creating contribution.`);
-      error(e);
-      return false;
-    });
+        created_at: result.created_at,
+        content: result.content,
+        options: result.options,
+        type: result.type,
+        whisper_tags: result.whisper_tags,
+        index_tags: indexedTags,
+        category_tags: categoryTagsResult,
+        content_warnings: contentWarningsResult,
+        anonymity_type: result.anonymity_type,
+        total_comments_amount: 0,
+        new_comments_amount: 0,
+        comments: null,
+        friend: false,
+        self: true,
+        is_new: true,
+        is_own: true,
+      },
+      boardSlug: board_slug,
+    };
+  };
+  return tx
+    ? createContribution(tx)
+    : pool.tx("create-contribution", createContribution);
 };
 
 const postNewCommentWithTransaction = async ({
@@ -604,7 +626,7 @@ export const addNewIdentityToThreadByBoardId = async (
     );
     if (!roleResult || !canPostAs(roleResult.permissions)) {
       throw new Unauthorized403Error(
-        "Attempted to post on thread with unauthorized identity"
+        `Attempted to post on thread with unauthorized identity for board ${board_string_id}.`
       );
     }
     role_identity_id = roleResult.id;
