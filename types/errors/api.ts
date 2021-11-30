@@ -50,11 +50,21 @@ export class ApiError extends BaseError {
   }
 }
 
-export class Unauthorized403Error extends ApiError {
+export class Forbidden403Error extends ApiError {
   constructor(description: string) {
     super({
       name: "UNAUTHORIZED_USER",
       statusCode: HttpStatusCode.UNAUTHORIZED,
+      description,
+    });
+  }
+}
+
+export class BadRequest400Error extends ApiError {
+  constructor(description: string) {
+    super({
+      name: "BAD_REQUEST",
+      statusCode: HttpStatusCode.BAD_REQUEST,
       description,
     });
   }

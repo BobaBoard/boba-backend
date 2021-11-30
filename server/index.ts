@@ -14,6 +14,7 @@ if (process.env.NODE_ENV == "production") {
 }
 
 import express from "express";
+require("express-async-errors");
 import bodyParser from "body-parser";
 import initOpenApiDocs from "handlers/open-api";
 import cors from "cors";

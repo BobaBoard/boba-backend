@@ -2,8 +2,8 @@ import { DbCommentType, DbPostType, QueryTagsType } from "Types";
 import { POST_OWNER_PERMISSIONS, PostPermissions } from "types/permissions";
 import { canPostAs, extractPostPermissions } from "utils/permissions-utils";
 
+import { Forbidden403Error } from "types/errors/api";
 import { ITask } from "pg-promise";
-import { Unauthorized403Error } from "types/errors/api";
 import debug from "debug";
 import invariant from "tiny-invariant";
 import pool from "server/db-pool";
@@ -625,7 +625,7 @@ export const addNewIdentityToThreadByBoardId = async (
       }
     );
     if (!roleResult || !canPostAs(roleResult.permissions)) {
-      throw new Unauthorized403Error(
+      throw new Forbidden403Error(
         `Attempted to post on thread with unauthorized identity for board ${board_string_id}.`
       );
     }
