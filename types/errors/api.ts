@@ -49,6 +49,15 @@ export class ApiError extends BaseError {
     super({ name, statusCode, isOperational, description });
   }
 }
+export class Internal500Error extends ApiError {
+  constructor(description: string) {
+    super({
+      name: "UNAUTHORIZED_USER",
+      statusCode: HttpStatusCode.UNAUTHORIZED,
+      description,
+    });
+  }
+}
 
 export class Forbidden403Error extends ApiError {
   constructor(description: string) {
