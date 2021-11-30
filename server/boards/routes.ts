@@ -20,7 +20,6 @@ import {
 } from "server/threads/queries";
 
 import { BoardPermissions } from "types/permissions";
-import { DbThreadType } from "Types";
 import { NotFound404Error } from "types/errors/api";
 import axios from "axios";
 import debug from "debug";

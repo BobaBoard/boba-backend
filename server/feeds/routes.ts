@@ -5,6 +5,7 @@ import {
 import { getBoardActivityByUuid, getUserActivity } from "./queries";
 
 import { Feed } from "types/rest/threads";
+import { NotFound404Error } from "types/errors/api";
 import debug from "debug";
 import { ensureBoardAccess } from "handlers/permissions";
 import { ensureLoggedIn } from "handlers/auth";
@@ -85,8 +86,7 @@ router.get("/boards/:board_id", ensureBoardAccess, async (req, res) => {
     return;
   }
   if (!result) {
-    res.sendStatus(404);
-    return;
+    throw new NotFound404Error(`Board with id ${boardId} was not found`);
   }
   if (!result.activity.length) {
     res.sendStatus(204);
@@ -147,8 +147,7 @@ router.get("/users/@me", ensureLoggedIn, async (req, res) => {
   });
 
   if (!userActivity) {
-    res.sendStatus(404);
-    return;
+    throw new NotFound404Error(`User with id ${currentUserId} was not found`);
   }
   if (!userActivity.activity.length) {
     res.sendStatus(204);
