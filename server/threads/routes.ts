@@ -1,8 +1,13 @@
 import { canAccessBoard, canAccessBoardByUuid } from "utils/permissions-utils";
 import {
-  createThread,
-  getThreadByStringId,
-  getTriggeredWebhooks,
+  ensureNoIdentityLeakage,
+  makeServerThread,
+} from "utils/response-utils";
+import {
+  ensureThreadAccess,
+  ensureThreadPermission,
+} from "handlers/permissions";
+import {
   hideThread,
   markThreadVisit,
   muteThread,
@@ -10,25 +15,11 @@ import {
   unmuteThread,
   updateThreadView,
 } from "./queries";
-import {
-  ensureBoardAccess,
-  ensureBoardPermission,
-  ensureThreadAccess,
-  ensureThreadPermission,
-} from "handlers/permissions";
-import {
-  ensureNoIdentityLeakage,
-  makeServerThread,
-} from "utils/response-utils";
 
-import { DbThreadType } from "Types";
-import { NotFound404Error } from "types/errors/api";
 import { ThreadPermissions } from "types/permissions";
-import axios from "axios";
 import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
-import { getBoardMetadataByUuid } from "../boards/utils";
 import { moveThread } from "./queries";
 
 const info = debug("bobaserver:threads:routes-info");
@@ -366,149 +357,6 @@ router.post(
 
     info(`Marked last visited time for thread: ${threadId}.`);
     res.status(200).json();
-  }
-);
-
-/**
- * @openapi
- * /threads/{board_id}/create:
- *   post:
- *     summary: Create a new thread.
- *     operationId: createThread
- *     description: Creates a new thread in the specified board.
- *     tags:
- *       - /threads/
- *     security:
- *       - firebase: []
- *     parameters:
- *       - name: board_id
- *         in: path
- *         description: The id for the board in which the thread will be created.
- *         required: true
- *         schema:
- *           type: string
- *           format: uuid
- *         examples:
- *           goreBoardId:
- *             summary: The id for the gore board.
- *             value: c6d3d10e-8e49-4d73-b28a-9d652b41beec
- *     requestBody:
- *       description: request body
- *       content:
- *         application/json:
- *           schema:
- *             $ref: "#/components/schemas/CreateThread"
- *           examples:
- *             requestBody:
- *               $ref: "#/components/examples/createGoreTestThread"
- *       required: true
- *     responses:
- *       401:
- *         $ref: "#/components/responses/ensureLoggedIn401"
- *       403:
- *         $ref: "#/components/responses/ensureBoardPermission403"
- *       404:
- *         $ref: "#/components/responses/boardNotFound404"
- *       200:
- *         description: Thread has been created.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/Thread"
- *             examples:
- *               response:
- *                 $ref: "#/components/examples/createGoreTestThreadResponse"
- */
-router.post(
-  "/:board_id/create",
-  ensureLoggedIn,
-  ensureBoardAccess,
-  //TODO: ensureBoardPermission(BoardPermissions.createThread),
-  async (req, res, next) => {
-    const { board_id: boardId } = req.params;
-
-    log(`Fetching metadata for board with id ${boardId}`);
-    const boardMetadata = await getBoardMetadataByUuid({
-      firebaseId: req.currentUser?.uid,
-      boardId,
-    });
-    const boardSlug = boardMetadata.slug;
-
-    log(`Creating thread in board with id ${boardId}`);
-    const {
-      content,
-      forceAnonymous,
-      defaultView,
-      large,
-      whisperTags,
-      indexTags,
-      categoryTags,
-      contentWarnings,
-      identityId,
-      accessoryId,
-    } = req.body;
-
-    let thread: DbThreadType | null = null;
-    try {
-      const threadStringId = await createThread({
-        firebaseId: req.currentUser.uid,
-        content,
-        defaultView,
-        anonymityType: "everyone",
-        isLarge: !!large,
-        boardStringId: boardId,
-        whisperTags,
-        indexTags,
-        categoryTags,
-        contentWarnings,
-        identityId,
-        accessoryId,
-      });
-      info(`Created new thread`, threadStringId);
-
-      thread = await getThreadByStringId({
-        threadId: threadStringId as string,
-        firebaseId: req.currentUser?.uid,
-      });
-
-      if (!thread) {
-        throw new NotFound404Error(
-          `Thread with id ${threadStringId} was not found after being created.`
-        );
-      }
-    } catch (error) {
-      next(error);
-      return;
-    }
-
-    info(`Found thread: `, thread);
-    const serverThread = makeServerThread(thread);
-    ensureNoIdentityLeakage(serverThread);
-
-    info(`sending back data for thread ${serverThread.id}.`);
-    res.status(200).json(serverThread);
-
-    info(
-      `generating webhook for thread ${serverThread.id} in board ${boardSlug}`
-    );
-
-    const webhooks = await getTriggeredWebhooks({
-      slug: boardSlug,
-      categories: serverThread.posts[0].tags?.category_tags,
-    });
-    if (webhooks && webhooks.length > 0) {
-      const threadUrl = `https://v0.boba.social/!${boardSlug}/thread/${serverThread.id}`;
-      webhooks.forEach(({ webhook, subscriptionNames }) => {
-        const message = `Your "${subscriptionNames.join(
-          ", "
-        )}" subscription has updated!\n ${threadUrl}`;
-        axios.post(webhook, {
-          content: message,
-          username: serverThread.posts[0].secret_identity.name,
-          avatar_url: serverThread.posts[0].secret_identity.avatar,
-        });
-      });
-    }
   }
 );
 

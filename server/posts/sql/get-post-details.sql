@@ -10,11 +10,16 @@ SELECT
     accessories.image_reference_id as accessory_avatar,
     threads.id as thread_id,
     threads.string_id as thread_string_id,
+    posts.id as post_id,
+    comments.id as comment_id,
     boards.slug AS board_slug,
     boards.string_id AS board_string_id
 FROM users
-LEFT JOIN threads
-    ON threads.string_id = ${thread_string_id}
+CROSS JOIN threads
+LEFT JOIN posts
+    ON posts.parent_thread = threads.id
+LEFT JOIN comments
+    ON comments.parent_thread = threads.id AND comments.string_id = ${parent_comment_string_id}
 LEFT JOIN user_thread_identities as uti
     ON uti.thread_id = threads.id AND uti.user_id = users.id
 LEFT JOIN secret_identities 
@@ -34,4 +39,4 @@ LEFT JOIN LATERAL (
     ON 1 = 1
 LEFT JOIN boards
     ON threads.parent_board = boards.id
-WHERE firebase_id = ${firebase_id}
+WHERE posts.string_id = ${post_string_id} AND firebase_id = ${firebase_id}
