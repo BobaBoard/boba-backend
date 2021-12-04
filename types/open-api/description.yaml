@@ -65,27 +65,3 @@ components:
         tagline:
           type: string
           description: Board tagline.
-    UpdatedBoardDescription:
-      type: object
-      properties:
-        id:
-          type: string
-        slug:
-          type: string
-        avatar_url:
-          type: string
-          format: uri-reference
-        descriptions:
-          type: array
-          items:
-            $ref: "#/components/schemas/Description"
-        permissions:
-          $ref: "#/components/schemas/Permissions"
-        posting_identities:
-          type: array
-          items:
-            $ref: "#/components/schemas/PostingIdentity"
-        accessories:
-          type: array
-          items:
-            $ref: "#/components/schemas/Accessory"

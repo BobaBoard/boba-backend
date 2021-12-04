@@ -37,7 +37,7 @@ const router = express.Router();
  *             summary: The feed for the gore board.
  *             value: c6d3d10e-8e49-4d73-b28a-9d652b41beec
  *           cursor:
- *             summary: The feed for a board with a cursor.
+ *             summary: The feed for a board with a cursor (!long).
  *             value: db8dc5b3-5b4a-4bfe-a303-e176c9b00b83
  *       - name: cursor
  *         in: query
@@ -64,6 +64,8 @@ const router = express.Router();
  *             examples:
  *               gore:
  *                 $ref: '#/components/examples/FeedBoardGore'
+ *               cursor:
+ *                 $ref: '#/components/examples/FeedBoardCursor'
  */
 router.get("/boards/:board_id", ensureBoardAccess, async (req, res) => {
   const { board_id: boardId } = req.params;

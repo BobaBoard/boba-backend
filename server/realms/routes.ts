@@ -41,6 +41,8 @@ const router = express.Router();
  *             examples:
  *               v0:
  *                 $ref: '#/components/examples/V0RealmResponse'
+ *       404:
+ *         description: The realm was not found.
  */
 router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
   try {
@@ -103,6 +105,8 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/RealmActivity"
+ *       404:
+ *         description: The realm was not found.
  */
 router.get("/:realm_id/activity", async (req, res) => {
   try {
