@@ -96,6 +96,36 @@ describe("Tests threads REST API - create", () => {
     //  expect(res.status).toBe(422);
   });
 
+  test("should create thread with accessory", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(BOBATAN_USER_ID);
+      const res = await request(server.app)
+        .post(`/${GORE_BOARD_ID}`)
+        .send({
+          ...CREATE_GORE_THREAD_BASE_REQUEST,
+          accessoryId: "c82b99b4-9aa7-4792-8e6b-211edba5981e",
+          identityId: "3df1d417-c36a-43dd-aaba-9590316ffc32",
+        });
+
+      const expectedStarter = {
+        ...CREATE_GORE_THREAD_RESPONSE.starter,
+        secret_identity: {
+          name: "The Owner",
+          accessory: "/420accessories/weed_hands.png",
+          avatar:
+            "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F2df7dfb4-4c64-4370-8e74-9ee30948f05d?alt=media&token=26b16bef-0fd2-47b5-b6df-6cf2799010ca",
+          color: "pink",
+        },
+      };
+      expect(res.status).toBe(200);
+      expect(res.body).toMatchObject<Thread>({
+        ...CREATE_GORE_THREAD_RESPONSE,
+        starter: expectedStarter,
+        posts: [expectedStarter],
+      });
+    });
+  });
+
   // TODO: figure out why this fails on CI and remove the wrapping describe
   describe("ci-disable", () => {
     test("should create thread", async () => {

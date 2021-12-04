@@ -1,8 +1,8 @@
+import { BadRequest400Error, Forbidden403Error } from "types/errors/api";
 import { DbCommentType, DbPostType, QueryTagsType } from "Types";
 import { POST_OWNER_PERMISSIONS, PostPermissions } from "types/permissions";
 import { canPostAs, extractPostPermissions } from "utils/permissions-utils";
 
-import { Forbidden403Error } from "types/errors/api";
 import { ITask } from "pg-promise";
 import debug from "debug";
 import invariant from "tiny-invariant";
@@ -556,11 +556,10 @@ const addAccessoryToIdentity = async (
     thread_id: string;
   }
 ) => {
-  if (!identity_id && !role_identity_id) {
-    throw new Error(
-      "Accessory must be added to either identity or role identity"
-    );
-  }
+  invariant(
+    identity_id || role_identity_id,
+    "Accessory must be added to either identity or role identity"
+  );
   // TODO: this is to get a random accessory for events.
   // Right now we only support actually choosing one.
   // const accessory = await transaction.one(sql.getRandomAccessory);
@@ -568,22 +567,25 @@ const addAccessoryToIdentity = async (
   const allowed_accessories =
     (await transaction.manyOrNone(sql.getUserAccessories)) || [];
 
+  log(`allowed_accessories`, allowed_accessories);
   const selectedAccessory = allowed_accessories.find(
-    (accessory) => accessory.accessory_id == accessory_id
+    (accessory) => accessory.string_id == accessory_id
   );
   if (!selectedAccessory) {
-    throw new Error("Selected accessory was not found for this user.");
+    throw new BadRequest400Error(
+      "Selected accessory was not found for this user."
+    );
   }
 
   await transaction.one(sql.addAccessoryToIdentity, {
     thread_id,
     identity_id,
     role_id: role_identity_id,
-    accessory_id,
+    accessory_id: selectedAccessory.id,
   });
 
   return {
-    accessory_avatar: selectedAccessory.accessory_avatar,
+    accessory_avatar: selectedAccessory.avatar,
   };
 };
 
