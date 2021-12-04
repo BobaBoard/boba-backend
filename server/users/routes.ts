@@ -139,20 +139,24 @@ router.get("/@me", ensureLoggedIn, async (req, res) => {
  *       - /users/
  *     security:
  *       - firebase: []
- *     parameters:
- *       - name: username
- *         in: path
- *         description: The username of the user.
- *         required: true
- *         schema:
- *           type: string
- *      - name: avatar_url
- *        in: path
- *        description: The avatar url of the user.
- *        required: true
- *        schema:
- *          type: string
- *          format: uri
+ *     requestBody:
+ *       description: request body
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 description: The username of the user.
+ *                 type: string
+ *               avatarUrl:
+ *                 description: The avatar url of the user.
+ *                 type: string
+ *                 format: uri
+ *             required:
+ *               - username
+ *               - avatarUrl
  *     responses:
  *       401:
  *         description: User was not found in request that requires authentication.
@@ -198,7 +202,7 @@ router.patch("/@me", ensureLoggedIn, async (req, res) => {
   await cache().hdel(CacheKeys.USER, currentUserId);
   res.status(200).json({
     username: userData.username,
-    avatarUrl: userData.avatarUrl,
+    avatar_url: userData.avatarUrl,
   });
 });
 

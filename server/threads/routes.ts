@@ -394,22 +394,26 @@ router.post(
  *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
  *     requestBody:
  *       description: request body
+ *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
  *             properties:
- *              anyOf:
- *                - defaultView:
- *                  type: string
- *                  enum: [thread, gallery, timeline]
- *                - parentBoardId:
- *                  type: string
- *                  format: uuid
+ *               defaultView:
+ *                 description: The default view that the thread should use.
+ *                 type: string
+ *                 enum: [thread, gallery, timeline]
+ *               parentBoardId:
+ *                 description: The id of the board that the thread should be moved to.
+ *                 type: string
+ *                 format: uuid
  *           examples:
  *             updateView:
- *               defaultView: gallery
+ *               value:
+ *                 defaultView: gallery
  *             moveThread:
+ *               value:
  *                parentBoardId: 0e0d1ee6-f996-4415-89c1-c9dc1fe991dc
  *     responses:
  *       401:
