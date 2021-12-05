@@ -5,6 +5,7 @@ import {
 import { getBoardActivityByUuid, getUserActivity } from "./queries";
 
 import { Feed } from "types/rest/threads";
+import { NotFound404Error } from "types/errors/api";
 import debug from "debug";
 import { ensureBoardAccess } from "handlers/permissions";
 import { ensureLoggedIn } from "handlers/auth";
@@ -36,7 +37,7 @@ const router = express.Router();
  *             summary: The feed for the gore board.
  *             value: c6d3d10e-8e49-4d73-b28a-9d652b41beec
  *           cursor:
- *             summary: The feed for a board with a cursor.
+ *             summary: The feed for a board with a cursor (!long).
  *             value: db8dc5b3-5b4a-4bfe-a303-e176c9b00b83
  *       - name: cursor
  *         in: query
@@ -63,6 +64,8 @@ const router = express.Router();
  *             examples:
  *               gore:
  *                 $ref: '#/components/examples/FeedBoardGore'
+ *               cursor:
+ *                 $ref: '#/components/examples/FeedBoardCursor'
  */
 router.get("/boards/:board_id", ensureBoardAccess, async (req, res) => {
   const { board_id: boardId } = req.params;
@@ -85,8 +88,7 @@ router.get("/boards/:board_id", ensureBoardAccess, async (req, res) => {
     return;
   }
   if (!result) {
-    res.sendStatus(404);
-    return;
+    throw new NotFound404Error(`Board with id ${boardId} was not found`);
   }
   if (!result.activity.length) {
     res.sendStatus(204);
@@ -147,8 +149,7 @@ router.get("/users/@me", ensureLoggedIn, async (req, res) => {
   });
 
   if (!userActivity) {
-    res.sendStatus(404);
-    return;
+    throw new NotFound404Error(`User with id ${currentUserId} was not found`);
   }
   if (!userActivity.activity.length) {
     res.sendStatus(204);

@@ -1,3 +1,4 @@
+import { BadRequest400Error, Forbidden403Error } from "types/errors/api";
 import {
   ensureNoIdentityLeakage,
   makeServerComment,
@@ -199,10 +200,9 @@ router.post("/:post_id/comments", ensureLoggedIn, async (req, res) => {
   );
 
   if (!Array.isArray(contents)) {
-    res.status(500).json({
-      message: "Received non-array type as contents of comment.",
-    });
-    return;
+    throw new BadRequest400Error(
+      `Received non-array type as contents of comments.`
+    );
   }
 
   const comments = await postNewCommentChain({
@@ -311,8 +311,9 @@ router.patch(
     );
 
     if (!canDoTagsEdit(tagsDelta, req.currentPostPermissions)) {
-      res.sendStatus(403);
-      return;
+      throw new Forbidden403Error(
+        "User is not authorized to edit tags on this post."
+      );
     }
     log(`Editing post with id ${post_id}}`);
 
