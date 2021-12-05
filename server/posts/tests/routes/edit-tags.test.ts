@@ -84,7 +84,9 @@ describe("Test editing tags of post REST API", () => {
         });
 
       expect(res.status).toBe(403);
-      expect(res.body).toEqual({});
+      expect(res.body).toEqual({
+        message: `User is not authorized to edit tags on this post.`,
+      });
     });
   });
 
@@ -129,7 +131,9 @@ describe("Test editing tags of post REST API", () => {
         });
 
       expect(res.status).toBe(403);
-      expect(res.body).toEqual({});
+      expect(res.body).toEqual({
+        message: `User is not authorized to edit tags on this post.`,
+      });
     });
   });
 });

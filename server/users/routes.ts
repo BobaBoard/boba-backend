@@ -1,3 +1,9 @@
+import {
+  BadRequest400Error,
+  Forbidden403Error,
+  Internal500Error,
+  NotFound404Error,
+} from "types/errors/api";
 import { CacheKeys, cache } from "../cache";
 import {
   createNewUser,
@@ -123,13 +129,61 @@ router.get("/@me", ensureLoggedIn, async (req, res) => {
   cache().hset(CacheKeys.USER, currentUserId, stringify(userDataResponse));
 });
 
-router.post("/me/update", ensureLoggedIn, async (req, res) => {
+/**
+ * @openapi
+ * /users/@me:
+ *   patch:
+ *     summary: Update data for the current user.
+ *     operationId: updateCurrentUser
+ *     tags:
+ *       - /users/
+ *     security:
+ *       - firebase: []
+ *     requestBody:
+ *       description: request body
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 description: The username of the user.
+ *                 type: string
+ *               avatarUrl:
+ *                 description: The avatar url of the user.
+ *                 type: string
+ *                 format: uri
+ *             required:
+ *               - username
+ *               - avatarUrl
+ *     responses:
+ *       401:
+ *         description: User was not found in request that requires authentication.
+ *       403:
+ *         description: User is not authorized to perform the action.
+ *       200:
+ *         description: The user data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 username:
+ *                   type: string
+ *                 avatar_url:
+ *                   type: string
+ *                   format: uri
+ *               required:
+ *                 - username
+ *                 - avatar_url
+ */
+router.patch("/@me", ensureLoggedIn, async (req, res) => {
   let currentUserId: string = req.currentUser.uid;
   const { username, avatarUrl } = req.body;
 
   if (!username || !avatarUrl) {
-    res.sendStatus(400);
-    return;
+    throw new BadRequest400Error(`Missing username or avatar url`);
   }
   log(`Updating user data for firebase id: ${currentUserId}`);
 
@@ -148,7 +202,7 @@ router.post("/me/update", ensureLoggedIn, async (req, res) => {
   await cache().hdel(CacheKeys.USER, currentUserId);
   res.status(200).json({
     username: userData.username,
-    avatarUrl: userData.avatarUrl,
+    avatar_url: userData.avatarUrl,
   });
 });
 
@@ -158,27 +212,15 @@ router.post("/invite/accept", async (req, res) => {
   const inviteDetails = await getInviteDetails({ nonce });
 
   if (!inviteDetails) {
-    res.status(404).json({
-      errorCode: "",
-      message: "Invite not found.",
-    });
-    return;
+    throw new NotFound404Error(`Invite not found`);
   }
 
   if (inviteDetails.expired || inviteDetails.used) {
-    res.status(403).json({
-      errorCode: "",
-      message: "Invite expired or already used.",
-    });
-    return;
+    throw new Forbidden403Error(`Invite expired or already used`);
   }
 
   if (inviteDetails.email.toLowerCase() != (email as string).toLowerCase()) {
-    res.status(403).json({
-      errorCode: "",
-      message: "Email doesn't match invite.",
-    });
-    return;
+    throw new Forbidden403Error(`Invite email does not match`);
   }
   firebaseAuth
     .auth()
@@ -192,11 +234,7 @@ router.post("/invite/accept", async (req, res) => {
       // TODO: decide whether to put these together in a transaction.
       const success = await markInviteUsed({ nonce });
       if (!success) {
-        res.status(500).json({
-          errorCode: "",
-          message: "Error marking invite as used. User not created.",
-        });
-        return;
+        throw new Internal500Error(`Failed to mark invite as used`);
       }
       const created = await createNewUser({
         firebaseId: uid,
@@ -204,20 +242,14 @@ router.post("/invite/accept", async (req, res) => {
         createdOn: user.metadata.creationTime,
       });
       if (!created) {
-        res.status(500).json({
-          errorCode: "",
-          message: "Error when adding a new user to the database.",
-        });
-        return;
+        throw new Internal500Error(`Failed to create new user`);
       }
       res.sendStatus(200);
     })
     .catch((error) => {
-      log(error);
-      res.status(400).json({
-        errorCode: error.code,
-        message: error.message,
-      });
+      throw new BadRequest400Error(
+        `Error creating user: ${error.message} (${error.code})`
+      );
     });
 });
 
@@ -350,12 +382,8 @@ router.get("/@me/bobadex", ensureLoggedIn, async (req, res) => {
   res.status(200).json(identities);
 });
 
-router.post("/notifications/dismiss", async (req, res) => {
+router.post("/notifications/dismiss", ensureLoggedIn, async (req, res) => {
   let currentUserId: string = req.currentUser?.uid;
-  if (!currentUserId) {
-    res.sendStatus(401);
-    return;
-  }
   log(`Dismissing notifications for firebase id: ${currentUserId}`);
   const dismissSuccessful = await dismissAllNotifications({
     firebaseId: currentUserId,
@@ -391,8 +419,7 @@ router.post("/settings/update", ensureLoggedIn, async (req, res) => {
     );
     res.status(200).json(aggregateByType(settings));
   } catch (e) {
-    error(e);
-    res.status(500).send("Error while updating settings.");
+    throw new Internal500Error(`Failed to update user settings`);
   }
 });
 
@@ -400,8 +427,7 @@ router.get("/settings", ensureLoggedIn, withUserSettings, async (req, res) => {
   try {
     res.status(200).json(aggregateByType(req.currentUser.settings));
   } catch (e) {
-    error(e);
-    res.status(500).send("Error while fetching settings.");
+    throw new Internal500Error(`Failed to get user settings`);
   }
 });
 

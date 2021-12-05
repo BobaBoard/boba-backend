@@ -30,6 +30,11 @@ const pgLib = pgp({
   query: (q) => {
     info("executing query: ", q.query);
   },
+  disconnect: () => {
+    log(`disconnected from the db`);
+  },
+  // This prevents the DB from hanging during tests
+  noLocking: process.env.NODE_ENV === "test",
 });
 const pool = pgLib({ ...databaseConfig, max: 1 });
 

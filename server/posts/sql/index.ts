@@ -28,8 +28,9 @@ const getRandomAccessory = `
 
 const getUserAccessories = `
     SELECT 
-        id as accessory_id ,
-        image_reference_id as accessory_avatar
+        id as id ,
+        string_id as string_id ,
+        image_reference_id as avatar
     FROM realm_accessories
     INNER JOIN accessories
       ON realm_accessories.accessory_id = accessories.id`;
@@ -216,6 +217,7 @@ const isPostOwner = `
 
 export default {
   postByStringId: new QueryFile(path.join(__dirname, "post-by-string-id.sql")),
+  getPostDetails: new QueryFile(path.join(__dirname, "get-post-details.sql")),
   getThreadDetails: new QueryFile(
     path.join(__dirname, "get-thread-details.sql")
   ),

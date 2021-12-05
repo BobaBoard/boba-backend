@@ -14,12 +14,14 @@ if (process.env.NODE_ENV == "production") {
 }
 
 import express from "express";
+require("express-async-errors");
 import bodyParser from "body-parser";
 import initOpenApiDocs from "handlers/open-api";
 import cors from "cors";
 import firebaseAuth from "firebase-admin";
 import { initCache } from "./cache";
 import { withLoggedIn } from "handlers/auth";
+import { handleApiErrors } from "handlers/errors";
 import { applyRoutes } from "./all-routes";
 
 const serviceAccount = require(process.env.GOOGLE_APPLICATION_CREDENTIALS_PATH);
@@ -44,6 +46,8 @@ const port = process.env.PORT || 4200;
 
 applyRoutes(app);
 app.set("json spaces", 2);
+
+app.use(handleApiErrors);
 
 if (require.main === module) {
   app.listen(port, () =>

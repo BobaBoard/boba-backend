@@ -29,6 +29,7 @@ components:
             default_view: thread
             id: 78d98a6a-c24b-4b7a-8e06-4a30862afa2d
             parent_board_slug: long
+            parent_board_id: db8dc5b3-5b4a-4bfe-a303-e176c9b00b83
             new_posts_amount: 0
             new_comments_amount: 0
             total_comments_amount: 0
@@ -62,6 +63,7 @@ components:
             default_view: thread
             id: c5004e2b-4358-43df-8078-905b608e9ceb
             parent_board_slug: long
+            parent_board_id: db8dc5b3-5b4a-4bfe-a303-e176c9b00b83
             new_posts_amount: 0
             new_comments_amount: 0
             total_comments_amount: 0
@@ -95,6 +97,7 @@ components:
             default_view: thread
             id: 8d0be581-5cc7-47c1-947c-f8242898682d
             parent_board_slug: long
+            parent_board_id: db8dc5b3-5b4a-4bfe-a303-e176c9b00b83
             new_posts_amount: 0
             new_comments_amount: 0
             total_comments_amount: 0
@@ -128,6 +131,7 @@ components:
             default_view: thread
             id: 1c92ab43-4309-454f-be27-d85d3fd78808
             parent_board_slug: long
+            parent_board_id: db8dc5b3-5b4a-4bfe-a303-e176c9b00b83
             new_posts_amount: 0
             new_comments_amount: 0
             total_comments_amount: 0
@@ -161,6 +165,7 @@ components:
             default_view: thread
             id: 3e9a317f-2bcd-4db3-abbb-619fa7c03f24
             parent_board_slug: long
+            parent_board_id: db8dc5b3-5b4a-4bfe-a303-e176c9b00b83
             new_posts_amount: 0
             new_comments_amount: 0
             total_comments_amount: 0
@@ -194,6 +199,7 @@ components:
             default_view: thread
             id: 7006e0dc-7c7b-4cc5-8c08-61362e8d288b
             parent_board_slug: long
+            parent_board_id: db8dc5b3-5b4a-4bfe-a303-e176c9b00b83
             new_posts_amount: 0
             new_comments_amount: 0
             total_comments_amount: 0
@@ -227,6 +233,7 @@ components:
             default_view: thread
             id: 72470830-7984-4bf6-a0bf-dc5af7d4779b
             parent_board_slug: long
+            parent_board_id: db8dc5b3-5b4a-4bfe-a303-e176c9b00b83
             new_posts_amount: 0
             new_comments_amount: 0
             total_comments_amount: 0
@@ -260,6 +267,7 @@ components:
             default_view: thread
             id: 06ba998d-82d8-4e0b-8bbb-a3b3455c4167
             parent_board_slug: long
+            parent_board_id: db8dc5b3-5b4a-4bfe-a303-e176c9b00b83
             new_posts_amount: 0
             new_comments_amount: 0
             total_comments_amount: 0
@@ -293,6 +301,7 @@ components:
             default_view: thread
             id: 8d227983-7649-49c9-9fa4-b3c398f4648c
             parent_board_slug: long
+            parent_board_id: db8dc5b3-5b4a-4bfe-a303-e176c9b00b83
             new_posts_amount: 0
             new_comments_amount: 0
             total_comments_amount: 0
@@ -326,6 +335,7 @@ components:
             default_view: thread
             id: bcbde425-7f84-4e68-acd5-65aaae95714c
             parent_board_slug: long
+            parent_board_id: db8dc5b3-5b4a-4bfe-a303-e176c9b00b83
             new_posts_amount: 0
             new_comments_amount: 0
             total_comments_amount: 0

@@ -3,8 +3,11 @@ import { ITask } from "pg-promise";
 import debug from "debug";
 import { getMetadataDelta } from "./utils";
 import pool from "server/db-pool";
+import { postNewContribution } from "server/posts/queries";
 import postsSQL from "../posts/sql";
 import sql from "./sql";
+import threadsSql from "../threads/sql";
+import { v4 as uuidv4 } from "uuid";
 
 const info = debug("bobaserver:board:queries-info");
 const log = debug("bobaserver:board:queries-log");
@@ -386,4 +389,62 @@ export const dismissBoardNotifications = async ({
     error(e);
     return false;
   }
+};
+
+export const createThread = async ({
+  firebaseId,
+  content,
+  isLarge,
+  anonymityType,
+  boardStringId,
+  whisperTags,
+  indexTags,
+  categoryTags,
+  contentWarnings,
+  identityId,
+  accessoryId,
+  defaultView,
+}: {
+  firebaseId: string;
+  content: string;
+  isLarge: boolean;
+  defaultView: string;
+  anonymityType: string;
+  boardStringId: string;
+  whisperTags: string[];
+  indexTags: string[];
+  categoryTags: string[];
+  contentWarnings: string[];
+  identityId?: string;
+  accessoryId?: string;
+}) => {
+  return pool.tx("create-thread", async (t) => {
+    const threadStringId = uuidv4();
+    await t.one(threadsSql.createThread, {
+      thread_string_id: threadStringId,
+      board_string_id: boardStringId,
+      thread_options: {
+        default_view: defaultView,
+      },
+    });
+    log(`Created thread entry for thread ${threadStringId}`);
+
+    await postNewContribution(
+      {
+        firebaseId,
+        identityId,
+        accessoryId,
+        content,
+        isLarge,
+        anonymityType,
+        whisperTags,
+        indexTags,
+        contentWarnings,
+        categoryTags,
+        threadId: threadStringId,
+      },
+      t
+    );
+    return threadStringId;
+  });
 };

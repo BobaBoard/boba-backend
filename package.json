@@ -16,9 +16,9 @@
     "test:watch": "yarn run test --watchAll",
     "test:changed": "yarn run test:base --watch --onlyChanged",
     "test:file": "yarn run test:base --watchAll",
-    "test:docker": "docker-compose -f docker-compose.test.yml run --rm test",
+    "test:docker": "docker-compose down && docker-compose -f docker-compose.test.yml run --rm test",
     "open-api:generate": "node -r dotenv/config -r ts-node/register -r tsconfig-paths/register utils/generate-spec-file.ts dotenv_config_path=./.env.prod",
-    "open-api:validate": "yarn run open-api:generate && validate-api open-api-spec.json && openapi-examples-validator open-api-spec.json --ignore-formats color quill-delta",
+    "open-api:validate": "yarn run open-api:generate && validate-api open-api-spec.json && openapi-examples-validator open-api-spec.json --ignore-formats color quill-delta && openapi lint open-api-spec.json --skip-rule=no-ambiguous-paths",
     "open-api:docker": "docker-compose -f docker-compose.open-api.test.yml run --rm test",
     "deploy": "gcloud config set project bobaboard && gcloud app deploy --version live",
     "stage": "gcloud config set project bobaboard && gcloud app deploy --quiet --version staging --no-promote"
@@ -53,6 +53,7 @@
     "dotenv": "^8.2.0",
     "dotenv-expand": "^5.1.0",
     "express": "^4.17.1",
+    "express-async-errors": "^3.1.1",
     "fast-json-stable-stringify": "^2.1.0",
     "firebase-admin": "^8.12.1",
     "honeycomb-beeline": "^2.7.2",
@@ -60,11 +61,13 @@
     "redis": "^3.0.2",
     "redoc-express": "^1.0.0",
     "swagger-jsdoc": "^6.1.0",
+    "tiny-invariant": "^1.2.0",
     "ts-node": "^8.9.1",
     "tsconfig-paths": "^3.11.0",
     "uuid": "^8.1.0"
   },
   "devDependencies": {
+    "@redocly/openapi-cli": "^1.0.0-beta.69",
     "@seriousme/openapi-schema-validator": "^1.6.0",
     "@types/jest": "^27.0.2",
     "@types/supertest": "^2.0.8",
