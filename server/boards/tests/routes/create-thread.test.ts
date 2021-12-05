@@ -126,26 +126,23 @@ describe("Tests threads REST API - create", () => {
     });
   });
 
-  // TODO: figure out why this fails on CI and remove the wrapping describe
-  describe("ci-disable", () => {
-    test("should create thread", async () => {
-      await wrapWithTransaction(async () => {
-        setLoggedInUser(BOBATAN_USER_ID);
-        const res = await request(server.app)
-          .post(`/${GORE_BOARD_ID}`)
-          .send({
-            content: '[{"insert":"Gore. Gore? Gore!"}]',
-            forceAnonymous: false,
-            defaultView: "thread",
-            whisperTags: ["whisper"],
-            indexTags: ["search"],
-            contentWarnings: ["content notice"],
-            categoryTags: ["filter"],
-          });
+  test("should create thread", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(BOBATAN_USER_ID);
+      const res = await request(server.app)
+        .post(`/${GORE_BOARD_ID}`)
+        .send({
+          content: '[{"insert":"Gore. Gore? Gore!"}]',
+          forceAnonymous: false,
+          defaultView: "thread",
+          whisperTags: ["whisper"],
+          indexTags: ["search"],
+          contentWarnings: ["content notice"],
+          categoryTags: ["filter"],
+        });
 
-        expect(res.status).toBe(200);
-        expect(res.body).toMatchObject(CREATE_GORE_THREAD_RESPONSE);
-      });
+      expect(res.status).toBe(200);
+      expect(res.body).toMatchObject(CREATE_GORE_THREAD_RESPONSE);
     });
   });
 
