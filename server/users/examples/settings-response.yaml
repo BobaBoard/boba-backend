@@ -1,0 +1,20 @@
+components:
+  examples:
+    UserSettingsRequest:
+      summary: A sample user settings update request
+      value:
+        name: FESTIVE_BACKGROUND_FEED
+        value: false
+    UserSettingsResponse:
+      summary: A sample user settings response
+      value:
+        decorations:
+          - name: FESTIVE_BACKGROUND_FEED
+            type: BOOLEAN
+            value: true
+          - name: FESTIVE_BACKGROUND_SIDEBAR
+            type: BOOLEAN
+            value: true
+          - name: FESTIVE_CURSOR
+            type: BOOLEAN
+            value: false
