@@ -1,4 +1,5 @@
 import pg, { QueryFile } from "pg-promise";
+
 import path from "path";
 
 const getRandomIdentity = `
@@ -27,8 +28,9 @@ const getRandomAccessory = `
 
 const getUserAccessories = `
     SELECT 
-        id as accessory_id ,
-        image_reference_id as accessory_avatar
+        id as id ,
+        string_id as string_id ,
+        image_reference_id as avatar
     FROM realm_accessories
     INNER JOIN accessories
       ON realm_accessories.accessory_id = accessories.id`;
@@ -63,7 +65,7 @@ const makePost = `
         $/whisper_tags/,
         $/anonymity_type/,
         $/options/
-    ) RETURNING *, TO_CHAR(posts.created, 'YYYY-MM-DD"T"HH24:MI:SS') as created_string
+    ) RETURNING *, TO_CHAR(posts.created, 'YYYY-MM-DD"T"HH24:MI:SS') as created_at
     `;
 
 const makeComment = `
@@ -77,14 +79,14 @@ const makeComment = `
         $/anonymity_type/,
         $/chain_parent_comment/,
         $/parent_comment/
-    ) RETURNING *, TO_CHAR(comments.created, 'YYYY-MM-DD"T"HH24:MI:SS') as created_string`;
+    ) RETURNING *, TO_CHAR(comments.created, 'YYYY-MM-DD"T"HH24:MI:SS') as created_at`;
 
 const pgInstance = pg();
 const createAddTagsQuery = (tags: string[]) => {
   const tagsColumn = new pgInstance.helpers.ColumnSet(["tag"], {
     table: "tags",
   });
-  const tagsValues = tags.map((tag) => ({ tag: tag.toLowerCase() }));
+  const tagsValues = tags.map((tag) => ({ tag: tag }));
   // NOTE: ON CONFLICT DO NOTHING DOESN'T WORK WITH RETURNING
   // this means unfortunately that we have to always call select to get
   // back the tag id.
@@ -101,7 +103,7 @@ const createAddTagsToPostQuery = (postId: number, tags: string[]) => {
       query: insertTagQuery,
       values: {
         post_id: postId,
-        tag: tag.toLowerCase(),
+        tag: tag,
       },
     }))
   );
@@ -136,7 +138,7 @@ const createAddCategoriesQuery = (categories: string[]) => {
     table: "categories",
   });
   const categoriesValues = categories.map((category) => ({
-    category: category.toLowerCase(),
+    category: category,
   }));
   // NOTE: ON CONFLICT DO NOTHING DOESN'T WORK WITH RETURNING
   // this means unfortunately that we have to always call select to get
@@ -160,7 +162,7 @@ const createAddCategoriesToPostQuery = (
       query: insertCategoryQuery,
       values: {
         post_id: postId,
-        category: category.toLowerCase(),
+        category: category,
       },
     }))
   );
@@ -171,7 +173,7 @@ const createAddContentWarningsQuery = (warnings: string[]) => {
     table: "content_warnings",
   });
   const warningsValues = warnings.map((warning) => ({
-    warning: warning.toLowerCase(),
+    warning: warning,
   }));
   // NOTE: ON CONFLICT DO NOTHING DOESN'T WORK WITH RETURNING
   // this means unfortunately that we have to always call select to get
@@ -195,7 +197,7 @@ const createAddContentWarningsToPostQuery = (
       query: insertWarningQuery,
       values: {
         post_id: postId,
-        warning: warning.toLowerCase(),
+        warning: warning,
       },
     }))
   );
@@ -215,6 +217,7 @@ const isPostOwner = `
 
 export default {
   postByStringId: new QueryFile(path.join(__dirname, "post-by-string-id.sql")),
+  getPostDetails: new QueryFile(path.join(__dirname, "get-post-details.sql")),
   getThreadDetails: new QueryFile(
     path.join(__dirname, "get-thread-details.sql")
   ),

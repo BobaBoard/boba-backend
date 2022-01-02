@@ -33,6 +33,8 @@ components:
               format: uuid
             parent_board_slug:
               type: string
+            parent_board_id:
+              type: string
             starter:
               description: "The contribution that starts the thread."
               $ref: "#/components/schemas/Contribution"
@@ -54,6 +56,8 @@ components:
           required:
             - id
             - parent_board_slug
+            - parent_board_id
+            - starter
             - default_view
             - new
             - muted
@@ -80,3 +84,57 @@ components:
             - posts
             - comments
         - $ref: "#/components/schemas/ThreadSummary"
+
+    CreateThread:
+      type: object
+      properties:
+        content:
+          type: string
+          format: quill-delta
+          description: The content of the first post in the thread.
+        forceAnonymous:
+          deprecated: true
+          description: Force anonymity even among friends.
+          oneOf:
+            - type: boolean
+            - type: "null"
+        defaultView:
+          type: string
+          enum: [thread, gallery, timeline]
+          description: The default view that the thread will display as.
+        large:
+          deprecated: true
+          description: Whether the thread will contain large posts.
+          oneOf:
+            - type: boolean
+            - type: "null"
+        identityId:
+          type: string
+          format: uuid
+          description: The identity the original poster will use to create the thread.
+        accessoryId:
+          type: string
+          format: uuid
+          description: The accessory that the original poster will use in the thread.
+        whisper_tags:
+          type: array
+          items:
+            type: string
+          description: The whisper tags associated with the thread.
+        index_tags:
+          type: array
+          items:
+            type: string
+          description: The searchable tags associated with the thread.
+        content_warnings:
+          type: array
+          items:
+            type: string
+          description: The content warnings associated with the thread.
+        category_tags:
+          type: array
+          items:
+            type: string
+          description: The categories associated with the thread.
+      required:
+        - content

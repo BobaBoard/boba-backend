@@ -9,3 +9,9 @@ services:
     volumes:
       #  - database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
       - ./db:/docker-entrypoint-initdb.d
+  cache:
+    image: "redis"
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./cache:/docker-entrypoint-initdb.d

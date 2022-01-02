@@ -7,7 +7,6 @@ describe("user star feed queries", () => {
       // Bobatan
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
       cursor: null,
-      starredOnly: true,
     });
 
     if (feed === false) {
@@ -38,7 +37,6 @@ describe("user star feed queries", () => {
       // jersey devil
       firebaseId: "fb2",
       cursor: null,
-      starredOnly: true,
     });
 
     if (feed === false) {

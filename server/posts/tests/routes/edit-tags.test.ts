@@ -1,0 +1,139 @@
+import {
+  BOBATAN_USER_ID,
+  ONCEST_USER_ID,
+  SEXY_DADDY_USER_ID,
+} from "test/data/auth";
+import {
+  CHARACTER_TO_MAIM_POST,
+  CHARACTER_TO_MAIM_POST_ID,
+} from "test/data/posts";
+import {
+  setLoggedInUser,
+  startTestServer,
+  wrapWithTransaction,
+} from "utils/test-utils";
+
+import { ONCEST_USER_IDENTITY } from "test/data/user";
+import request from "supertest";
+import router from "../../routes";
+
+jest.mock("server/db-pool");
+jest.mock("handlers/auth");
+
+describe("Test editing tags of post REST API", () => {
+  const server = startTestServer(router);
+
+  test("doesn't allow post editing when logged out", async () => {
+    await wrapWithTransaction(async () => {
+      const res = await request(server.app)
+        .patch(`/${CHARACTER_TO_MAIM_POST_ID}/contributions`)
+        .send({
+          index_tags: [],
+          category_tags: [],
+          content_warnings: ["new_warning_1"],
+          whisper_tags: [],
+        });
+
+      expect(res.status).toBe(401);
+      expect(res.body).toEqual({
+        message: "No authenticated user found.",
+      });
+    });
+  });
+
+  test("allows post editing when logged in as owner", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(ONCEST_USER_ID);
+      const res = await request(server.app)
+        .patch(`/${CHARACTER_TO_MAIM_POST_ID}/contributions`)
+        .send({
+          index_tags: ["new_index_tag"],
+          category_tags: ["new_category_tag"],
+          content_warnings: ["new_warning"],
+          whisper_tags: ["new_whisper_tag"],
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({
+        ...CHARACTER_TO_MAIM_POST,
+        // TODO: the total comments amount should be returned also in the other queries
+        total_comments_amount: 2,
+        new_comments_amount: 2,
+        own: true,
+        tags: {
+          index_tags: ["new_index_tag"],
+          category_tags: ["new_category_tag"],
+          content_warnings: ["new_warning"],
+          whisper_tags: ["new_whisper_tag"],
+        },
+        user_identity: ONCEST_USER_IDENTITY,
+      });
+    });
+  });
+
+  test("doesn't allow post editing when logged in as different user", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(SEXY_DADDY_USER_ID);
+      const res = await request(server.app)
+        .patch(`/${CHARACTER_TO_MAIM_POST_ID}/contributions`)
+        .send({
+          index_tags: ["new_index_tag"],
+          category_tags: ["new_category_tag"],
+          content_warnings: ["new_warning"],
+          whisper_tags: ["new_whisper_tag"],
+        });
+
+      expect(res.status).toBe(403);
+      expect(res.body).toEqual({
+        message: `User is not authorized to edit tags on this post.`,
+      });
+    });
+  });
+
+  test("allows post editing when has correct permissions", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(BOBATAN_USER_ID);
+      const res = await request(server.app)
+        .patch(`/${CHARACTER_TO_MAIM_POST_ID}/contributions`)
+        .send({
+          index_tags: ["evil", "bobapost"],
+          category_tags: ["new_category_tag"],
+          content_warnings: ["new_warning"],
+          whisper_tags: [],
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({
+        ...CHARACTER_TO_MAIM_POST,
+        friend: true,
+        user_identity: ONCEST_USER_IDENTITY,
+        // TODO: the total comments amount should be returned also in the other queries
+        total_comments_amount: 2,
+        tags: {
+          ...CHARACTER_TO_MAIM_POST.tags,
+          category_tags: ["new_category_tag"],
+          content_warnings: ["new_warning"],
+        },
+      });
+    });
+  });
+
+  test("doesn't allow post editing when tag type permission not explicitly granted", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(BOBATAN_USER_ID);
+      const res = await request(server.app)
+        .patch(`/${CHARACTER_TO_MAIM_POST_ID}/contributions`)
+        .send({
+          index_tags: ["new_index_tag"],
+          category_tags: ["new_category_tag"],
+          content_warnings: ["new_warning"],
+          whisper_tags: ["new_whisper_tag"],
+        });
+
+      expect(res.status).toBe(403);
+      expect(res.body).toEqual({
+        message: `User is not authorized to edit tags on this post.`,
+      });
+    });
+  });
+});

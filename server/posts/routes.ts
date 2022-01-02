@@ -1,3 +1,4 @@
+import { BadRequest400Error, Forbidden403Error } from "types/errors/api";
 import {
   ensureNoIdentityLeakage,
   makeServerComment,
@@ -5,7 +6,6 @@ import {
 } from "utils/response-utils";
 import {
   getPostFromStringId,
-  getUserPermissionsForPost,
   postNewCommentChain,
   postNewContribution,
   updatePostTags,
@@ -17,6 +17,7 @@ import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
 import { getTagsDelta } from "./utils";
 import { maybeUpdateSubscriptionsOnThreadChange } from "../subscriptions/utils";
+import { withPostPermissions } from "handlers/permissions";
 
 const info = debug("bobaserver:posts:routes-info");
 const log = debug("bobaserver:posts:routes-log");
@@ -26,7 +27,7 @@ const router = express.Router();
 
 /**
  * @openapi
- * /posts/{post_id}/contribution:
+ * /posts/{post_id}/contributions:
  *   post:
  *     summary: Replies to a contribution.
  *     operationId: postContribution
@@ -75,7 +76,7 @@ const router = express.Router();
  *                   $ref: "#/components/schemas/Contribution"
  *                   description: Finalized details of the contributions just posted.
  */
-router.post("/:post_id/contribution", ensureLoggedIn, async (req, res) => {
+router.post("/:post_id/contributions", ensureLoggedIn, async (req, res) => {
   const { post_id } = req.params;
   const {
     content,
@@ -130,7 +131,7 @@ router.post("/:post_id/contribution", ensureLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * /posts/{post_id}/comment:
+ * /posts/{post_id}/comments:
  *   post:
  *     summary: Add comments to a contribution, optionally nested under another comment.
  *     operationId: postComment
@@ -184,7 +185,7 @@ router.post("/:post_id/contribution", ensureLoggedIn, async (req, res) => {
  *                   items:
  *                     $ref: "#/components/schemas/Comment"
  */
-router.post("/:post_id/comment", ensureLoggedIn, async (req, res) => {
+router.post("/:post_id/comments", ensureLoggedIn, async (req, res) => {
   const { post_id } = req.params;
   const {
     contents,
@@ -199,10 +200,9 @@ router.post("/:post_id/comment", ensureLoggedIn, async (req, res) => {
   );
 
   if (!Array.isArray(contents)) {
-    res.status(500).json({
-      message: "Received non-array type as contents of comment.",
-    });
-    return;
+    throw new BadRequest400Error(
+      `Received non-array type as contents of comments.`
+    );
   }
 
   const comments = await postNewCommentChain({
@@ -231,7 +231,7 @@ router.post("/:post_id/comment", ensureLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * /posts/{post_id}/contribution:
+ * /posts/{post_id}/contributions:
  *   patch:
  *     summary: Edits a contribution.
  *     operationId: editContribution
@@ -271,77 +271,70 @@ router.post("/:post_id/comment", ensureLoggedIn, async (req, res) => {
  *                   $ref: "#/components/schemas/Contribution"
  *                   description: Finalized details of the contributions just edited.
  */
-router.patch("/:post_id/contribution", ensureLoggedIn, async (req, res) => {
-  const { post_id } = req.params;
-  const { whisper_tags, index_tags, category_tags, content_warnings } =
-    req.body;
+router.patch(
+  "/:post_id/contributions",
+  ensureLoggedIn,
+  withPostPermissions,
+  async (req, res) => {
+    const { post_id } = req.params;
+    const { whisper_tags, index_tags, category_tags, content_warnings } =
+      req.body;
 
-  const firebaseId = req.currentUser.uid;
-  log(`Getting post permissions for user ${firebaseId}`);
+    const firebaseId = req.currentUser.uid;
+    log(`Getting post permissions for user ${firebaseId}`);
 
-  const permissions = await getUserPermissionsForPost({
-    firebaseId,
-    postId: post_id,
-  });
+    log(`Getting details from post ${post_id}`);
+    const postDetails = await getPostFromStringId(null, {
+      firebaseId,
+      postId: post_id,
+    });
 
-  log(`Permissions: ${permissions}`);
-  if (!permissions) {
-    log(`Error while fetching permissions for post ${post_id}`);
-    res.sendStatus(500);
-    return;
+    const postTags = {
+      contentWarnings: postDetails.content_warnings,
+      indexTags: postDetails.index_tags,
+      categoryTags: postDetails.category_tags,
+      whisperTags: postDetails.whisper_tags,
+    };
+
+    const newTags = {
+      whisperTags: whisper_tags,
+      indexTags: index_tags,
+      categoryTags: category_tags,
+      contentWarnings: content_warnings,
+    };
+
+    const tagsDelta = getTagsDelta({ oldTags: postTags, newTags });
+    info(
+      "Attempting tags edit of delta %O with permissions %O",
+      tagsDelta,
+      req.currentPostPermissions
+    );
+
+    if (!canDoTagsEdit(tagsDelta, req.currentPostPermissions)) {
+      throw new Forbidden403Error(
+        "User is not authorized to edit tags on this post."
+      );
+    }
+    log(`Editing post with id ${post_id}}`);
+
+    const updatedDetails = await updatePostTags(null, {
+      firebaseId,
+      postId: post_id,
+      tagsDelta,
+    });
+    if (!updatedDetails) {
+      log(`Error while updating post ${post_id}`);
+      res.sendStatus(500);
+      return;
+    }
+    const responsePost = makeServerPost(updatedDetails);
+    // TODO: [realms] remove comments from makeServerPost
+    // @ts-expect-error
+    delete responsePost.comments;
+
+    ensureNoIdentityLeakage(responsePost);
+    res.status(200).json(responsePost);
   }
-
-  if (!permissions.length) {
-    res.sendStatus(401);
-    return;
-  }
-
-  log(`Getting details from post ${post_id}`);
-  const postDetails = await getPostFromStringId(null, {
-    firebaseId,
-    postId: post_id,
-  });
-
-  const postTags = {
-    contentWarnings: postDetails.content_warnings,
-    indexTags: postDetails.index_tags,
-    categoryTags: postDetails.category_tags,
-    whisperTags: postDetails.whisper_tags,
-  };
-
-  const newTags = {
-    whisperTags: whisper_tags,
-    indexTags: index_tags,
-    categoryTags: category_tags,
-    contentWarnings: content_warnings,
-  };
-
-  const tagsDelta = getTagsDelta({ oldTags: postTags, newTags });
-  info(
-    "Attempting tags edit of delta %O with permissions %O",
-    tagsDelta,
-    permissions
-  );
-  if (!canDoTagsEdit(tagsDelta, permissions)) {
-    res.sendStatus(401);
-    return;
-  }
-  log(`Editing post with id ${post_id}}`);
-
-  const updatedDetails = await updatePostTags(null, {
-    firebaseId,
-    postId: post_id,
-    tagsDelta,
-  });
-  if (!updatedDetails) {
-    log(`Error while updating post ${post_id}`);
-    res.sendStatus(500);
-    return;
-  }
-  const responsePost = makeServerPost(updatedDetails);
-
-  ensureNoIdentityLeakage(responsePost);
-  res.status(220).json({ contribution: responsePost });
-});
+);
 
 export default router;

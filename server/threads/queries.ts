@@ -1,16 +1,17 @@
-import { DbThreadType, ThreadPermissions } from "Types";
+import { THREAD_OWNER_PERMISSIONS, ThreadPermissions } from "types/permissions";
 import {
-  addNewIdentityToThread,
+  addNewIdentityToThreadByBoardId,
   maybeAddCategoryTags,
   maybeAddContentWarningTags,
   maybeAddIndexTags,
 } from "../posts/queries";
 
+import { DbThreadType } from "Types";
 import debug from "debug";
+import { extractThreadPermissions } from "utils/permissions-utils";
 import { getBoardBySlug } from "../boards/queries";
 import pool from "server/db-pool";
 import sql from "./sql";
-import { transformThreadPermissions } from "utils/permissions-utils";
 import { v4 as uuidv4 } from "uuid";
 
 const log = debug("bobaserver:threads:queries-log");
@@ -22,24 +23,18 @@ export const getThreadByStringId = async ({
 }: {
   threadId: string;
   firebaseId?: string;
-}): Promise<DbThreadType | false> => {
-  try {
-    const thread = await pool.oneOrNone(sql.threadByStringId, {
-      thread_string_id: threadId,
-      firebase_id: firebaseId,
-    });
+}): Promise<DbThreadType | null> => {
+  const thread = await pool.oneOrNone<DbThreadType>(sql.threadByStringId, {
+    thread_string_id: threadId,
+    firebase_id: firebaseId,
+  });
 
-    if (!thread) {
-      log(`Thread not found: ${threadId}`);
-      return null;
-    }
-
-    return thread;
-  } catch (e) {
-    error(`Error while fetching thread: ${threadId}.`);
-    error(e);
-    return false;
+  if (!thread) {
+    log(`Thread not found: ${threadId}`);
+    return null;
   }
+
+  return thread;
 };
 
 export const updateThreadView = async ({
@@ -60,90 +55,6 @@ export const updateThreadView = async ({
     error(e);
     return false;
   }
-};
-
-export const createThread = async ({
-  firebaseId,
-  content,
-  isLarge,
-  anonymityType,
-  boardSlug,
-  whisperTags,
-  indexTags,
-  categoryTags,
-  contentWarnings,
-  identityId,
-  accessoryId,
-  defaultView,
-}: {
-  firebaseId: string;
-  content: string;
-  isLarge: boolean;
-  defaultView: string;
-  anonymityType: string;
-  boardSlug: string;
-  whisperTags: string[];
-  indexTags: string[];
-  categoryTags: string[];
-  contentWarnings: string[];
-  identityId?: string;
-  accessoryId?: string;
-}) => {
-  return pool
-    .tx("create-thread", async (t) => {
-      const threadStringId = uuidv4();
-      const createThreadResult = await t.one(sql.createThread, {
-        thread_string_id: threadStringId,
-        board_slug: boardSlug,
-        thread_options: {
-          default_view: defaultView,
-        },
-      });
-      log(`Created thread entry for thread ${threadStringId}`);
-
-      const postStringId = uuidv4();
-      const postResult = await t.one(sql.createPost, {
-        post_string_id: postStringId,
-        parent_thread: createThreadResult.id,
-        firebase_id: firebaseId,
-        options: {
-          wide: isLarge,
-        },
-        content,
-        anonymity_type: anonymityType,
-        whisper_tags: whisperTags,
-      });
-      log(`Created post entry for thread ${postStringId}`);
-
-      await maybeAddIndexTags(t, {
-        indexTags,
-        postId: postResult.id,
-      });
-      await maybeAddCategoryTags(t, {
-        categoryTags,
-        postId: postResult.id,
-      });
-      await maybeAddContentWarningTags(t, {
-        contentWarnings,
-        postId: postResult.id,
-      });
-
-      await addNewIdentityToThread(t, {
-        user_id: postResult.author,
-        identityId,
-        accessory_id: accessoryId,
-        thread_id: createThreadResult.id,
-        firebaseId,
-        board_slug: boardSlug,
-      });
-
-      log(`Added identity for ${threadStringId}.`);
-      return threadStringId;
-    })
-    .catch((e) => {
-      error(`Error while creating thread on board ${boardSlug}: `, e);
-      return false;
-    });
 };
 
 export const markThreadVisit = async ({
@@ -221,7 +132,7 @@ export const starThread = async ({
     });
     return true;
   } catch (e) {
-    error(`Error while starring thread.`);
+    error(`Error while adding star thread.`);
     error(e);
     return false;
   }
@@ -242,7 +153,7 @@ export const unstarThread = async ({
     });
     return true;
   } catch (e) {
-    error(`Error while unstarring thread.`);
+    error(`Error while removing star thread.`);
     error(e);
     return false;
   }
@@ -303,14 +214,14 @@ export const getUserPermissionsForThread = async ({
     });
 
     if (threadDetails.is_thread_owner) {
-      permissions.push(ThreadPermissions.editDefaultView);
+      permissions.push(...THREAD_OWNER_PERMISSIONS);
     }
 
     const board = await getBoardBySlug({
       firebaseId,
       slug: threadDetails.parent_board_slug,
     });
-    const threadPermissions = transformThreadPermissions(board.permissions);
+    const threadPermissions = extractThreadPermissions(board.permissions);
     permissions.push(...threadPermissions);
     return permissions;
   } catch (e) {
@@ -355,14 +266,14 @@ export const getTriggeredWebhooks = async ({
 
 export const moveThread = async ({
   threadId,
-  destinationSlug,
+  destinationId,
 }: {
   threadId: string;
-  destinationSlug: string;
+  destinationId: string;
 }) => {
   try {
     const result = await pool.none(sql.moveThread, {
-      board_slug: destinationSlug,
+      board_string_id: destinationId,
       thread_string_id: threadId,
     });
     return true;

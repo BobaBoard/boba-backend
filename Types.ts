@@ -1,8 +1,8 @@
 import {
   BoardCategoryDescription,
-  BoardDescription,
   BoardTextDescription,
 } from "types/rest/boards";
+
 export interface UserIdentityType {
   name: string;
   // TODO[realms]: make this avatar_url
@@ -16,74 +16,6 @@ export interface SecretIdentityType {
   color?: string;
   accessory?: string;
 }
-
-export interface ServerCommentType {
-  id: string;
-  parent_comment_id: string;
-  parent_post_id: string;
-  created_at: string;
-  content: string;
-  secret_identity: SecretIdentityType;
-  user_identity?: UserIdentityType;
-  accessory_avatar?: string;
-  chain_parent_id: string | null;
-  own: boolean;
-  friend: boolean;
-  new: boolean;
-}
-
-export interface ServerPostType {
-  id: string;
-  parent_thread_id: string;
-  parent_post_id: string;
-  secret_identity: SecretIdentityType;
-  user_identity?: UserIdentityType;
-  accessory_avatar?: string;
-  created_at: string;
-  own: boolean;
-  friend: boolean;
-  new: boolean;
-  content: string;
-  tags?: {
-    index_tags: string[];
-    whisper_tags: string[];
-    category_tags: string[];
-    content_warnings: string[];
-  };
-  comments?: ServerCommentType[];
-  total_comments_amount: number;
-  new_comments_amount: number;
-}
-
-export interface ServerThreadSummaryType {
-  starter: ServerPostType;
-  id: string;
-  parent_board_slug: string;
-  direct_threads_amount: number;
-  new_posts_amount: number;
-  new_comments_amount: number;
-  total_comments_amount: number;
-  total_posts_amount: number;
-  last_activity_at: string;
-  muted: boolean;
-  default_view: "thread" | "gallery" | "timeline";
-  hidden: boolean;
-  starred: boolean;
-  new: boolean;
-}
-
-export interface ServerThreadType extends ServerThreadSummaryType {
-  posts: ServerPostType[];
-  comments: Record<string, ServerCommentType[]>;
-}
-
-export interface ServerFeedType {
-  cursor: {
-    next: string | null;
-  };
-  activity: ServerThreadSummaryType[];
-}
-
 export interface DbIdentityType {
   id: string;
   username: string;
@@ -98,6 +30,7 @@ export interface DbPostType {
   post_id: string;
   parent_thread_id: string;
   parent_post_id: string;
+  parent_board_id: string;
   parent_board_slug: string;
   author: number;
   username: string;
@@ -108,7 +41,7 @@ export interface DbPostType {
   accessory_avatar?: string;
   self: boolean;
   friend: boolean;
-  created: string;
+  created_at: string;
   content: string;
   options: {
     wide?: boolean;
@@ -138,7 +71,7 @@ export interface DbCommentType {
   secret_identity_color: string | null;
   accessory_avatar?: string;
   content: string;
-  created: string;
+  created_at: string;
   anonymity_type: "everyone" | "strangers";
   self: boolean;
   friend: boolean;
@@ -149,6 +82,7 @@ export interface DbCommentType {
 export interface DbThreadType {
   thread_id: string;
   board_slug: string;
+  board_id: string;
   thread_last_activity: string;
   posts: DbPostType[];
   default_view: "thread" | "gallery" | "timeline";
@@ -212,43 +146,6 @@ export interface DbFeedType {
   activity: DbThreadSummaryType[];
 }
 
-export enum DbRolePermissions {
-  all,
-  edit_board_details,
-  post_as_role,
-  edit_category_tags,
-  edit_content_notices,
-  move_thread,
-}
-
-export interface UserBoardPermissions {
-  board_permissions: BoardPermissions[];
-  post_permissions: PostPermissions[];
-  thread_permissions: ThreadPermissions[];
-}
-
-export enum ThreadPermissions {
-  editDefaultView,
-  moveThread = "move_thread",
-}
-
-export enum BoardPermissions {
-  editMetadata = "edit_metadata",
-}
-
-export enum PostPermissions {
-  editContent = "edit_content",
-  editWhisperTags = "edit_whisper_tags",
-  editCategoryTags = "edit_category_tags",
-  editIndexTags = "edit_index_tags",
-  editContentNotices = "edit_content_notices",
-}
-
-export enum restriction_types {
-  LOCK_ACCESS = "lock_access",
-  DELIST = "delist",
-}
-
 export interface DbBoardTextDescription extends BoardTextDescription {
   categories: null;
 }
@@ -281,8 +178,8 @@ export interface DbBoardMetadata {
     accessory: string;
   }[];
   permissions: string[];
-  logged_out_restrictions: restriction_types[];
-  logged_in_base_restrictions: restriction_types[];
+  logged_out_restrictions: string[];
+  logged_in_base_restrictions: string[];
 }
 
 export interface QueryTagsType {

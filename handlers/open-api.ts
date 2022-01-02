@@ -11,6 +11,10 @@ const options = {
     info: {
       title: "BobaBoard's API documentation.",
       version: "0.0.1",
+      license: {
+        name: "MIT",
+        url: "https://opensource.org/licenses/MIT",
+      },
       // Note: indenting the description will cause the markdown not to format correctly.
       description: `
 # Intro

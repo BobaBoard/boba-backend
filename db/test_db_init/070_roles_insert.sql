@@ -2,19 +2,19 @@ INSERT INTO roles(string_id, name, avatar_reference_id, color, description, perm
 VALUES
     ('e5f86f53-6dcd-4f15-b6ea-6ca1f088e62d', 'GoreMaster5000', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F6518df53-2031-4ac5-8d75-57a0051ed924?alt=media&token=23df54b7-297c-42ff-a0ea-b9862c9814f8', 
         'red', 'A role for people who can edit the gore board.', 
-        ARRAY['edit_board_details'::role_permissions,
-              'post_as_role'::role_permissions,
-              'edit_category_tags'::role_permissions,
-              'edit_content_notices'::role_permissions]
+        ARRAY['edit_board_details'::role_permissions_type,
+              'post_as_role'::role_permissions_type,
+              'edit_category_tags'::role_permissions_type,
+              'edit_content_notices'::role_permissions_type]
               ),
     ('70485a1e-4ce9-4064-bd87-440e16b2f219', 'The Memester', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F01af97fa-e240-4002-81fb-7abec9ee984b?alt=media&token=ac14effe-a788-47ae-b3b8-cbb3d8ad8f94', 
         'blue', 'A role for the real memers.', 
-        ARRAY['all'::role_permissions]),
+        ARRAY['all'::role_permissions_type]),
     ('3df1d417-c36a-43dd-aaba-9590316ffc32', 'The Owner', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F2df7dfb4-4c64-4370-8e74-9ee30948f05d?alt=media&token=26b16bef-0fd2-47b5-b6df-6cf2799010ca', 
         'pink', 'A role for the owner.', 
-        ARRAY['edit_board_details'::role_permissions,
-              'post_as_role'::role_permissions,
-              'move_thread'::role_permissions]);
+        ARRAY['edit_board_details'::role_permissions_type,
+              'post_as_role'::role_permissions_type,
+              'move_thread'::role_permissions_type]);
 
 INSERT INTO board_user_roles(user_id, board_id, role_id)
 VALUES
