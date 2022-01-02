@@ -1,10 +1,12 @@
+import { GORE_BOARD_ID, MAIN_STREET_BOARD_ID } from "test/data/boards";
+
 import { DbThreadSummaryType } from "Types";
-import { getBoardActivityBySlug } from "../queries";
+import { getBoardActivityByUuid } from "../queries";
 
 export const extractActivity = (thread: DbThreadSummaryType) => {
   return {
     thread_id: thread.thread_id,
-    created: thread.created,
+    created: thread.created_at,
     thread_last_activity: thread.thread_last_activity,
     thread_last_activity_micro: thread.thread_last_activity_at_micro,
     post_id: thread.post_id,
@@ -32,6 +34,7 @@ export const extractsMetadata = (thread: any) => {
     content_warnings: thread.content_warnings,
     whisper_tags: thread.whisper_tags,
     board_slug: thread.board_slug,
+    board_id: thread.board_id,
   };
 };
 
@@ -50,8 +53,8 @@ const extractAuthorData = (thread: any) => {
 describe("Tests boards activity queries", () => {
   describe("tests activity metadata", () => {
     test("fetches board activity when slug present (logged in)", async () => {
-      const board = await getBoardActivityBySlug({
-        slug: "gore",
+      const board = await getBoardActivityByUuid({
+        boardId: GORE_BOARD_ID,
         // Oncest
         firebaseId: "fb3",
         cursor: null,
@@ -105,8 +108,8 @@ describe("Tests boards activity queries", () => {
     });
 
     test("fetches board activity when slug present (logged out)", async () => {
-      const board = await getBoardActivityBySlug({
-        slug: "gore",
+      const board = await getBoardActivityByUuid({
+        boardId: GORE_BOARD_ID,
         firebaseId: undefined,
         cursor: null,
       });
@@ -159,8 +162,8 @@ describe("Tests boards activity queries", () => {
     });
 
     test("fetches empty board activity", async () => {
-      const board = await getBoardActivityBySlug({
-        slug: "main_street",
+      const board = await getBoardActivityByUuid({
+        boardId: MAIN_STREET_BOARD_ID,
         // Bobatan
         firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
         cursor: null,
@@ -176,8 +179,8 @@ describe("Tests boards activity queries", () => {
 
   describe("fetches metadata", () => {
     test("fetches board activity when slug present (logged in)", async () => {
-      const board = await getBoardActivityBySlug({
-        slug: "gore",
+      const board = await getBoardActivityByUuid({
+        boardId: GORE_BOARD_ID,
         // Oncest
         firebaseId: "fb3",
         cursor: null,
@@ -192,6 +195,7 @@ describe("Tests boards activity queries", () => {
           parent_post_id: null,
           post_id: "ff9f2ae2-a254-4069-9791-3ac5e6dff5bb",
           board_slug: "gore",
+          board_id: GORE_BOARD_ID,
           content:
             '[{"insert":"Remember to be excellent to each other and only be mean to fictional characters!"}]',
           default_view: "thread",
@@ -208,6 +212,7 @@ describe("Tests boards activity queries", () => {
           parent_post_id: null,
           post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
           board_slug: "gore",
+          board_id: GORE_BOARD_ID,
           content: '[{"insert":"Favorite character to maim?"}]',
           default_view: "thread",
           options: {},
@@ -221,6 +226,7 @@ describe("Tests boards activity queries", () => {
         },
         {
           board_slug: "gore",
+          board_id: GORE_BOARD_ID,
           post_id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
           parent_post_id: null,
           content: '[{"insert":"Favorite murder scene in videogames?"}]',
@@ -238,8 +244,8 @@ describe("Tests boards activity queries", () => {
     });
 
     test("fetches board activity when slug present (logged out)", async () => {
-      const board = await getBoardActivityBySlug({
-        slug: "gore",
+      const board = await getBoardActivityByUuid({
+        boardId: GORE_BOARD_ID,
         firebaseId: undefined,
         cursor: null,
       });
@@ -253,6 +259,7 @@ describe("Tests boards activity queries", () => {
           parent_post_id: null,
           post_id: "ff9f2ae2-a254-4069-9791-3ac5e6dff5bb",
           board_slug: "gore",
+          board_id: GORE_BOARD_ID,
           content:
             '[{"insert":"Remember to be excellent to each other and only be mean to fictional characters!"}]',
           default_view: "thread",
@@ -269,6 +276,7 @@ describe("Tests boards activity queries", () => {
           parent_post_id: null,
           post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
           board_slug: "gore",
+          board_id: GORE_BOARD_ID,
           content: '[{"insert":"Favorite character to maim?"}]',
           default_view: "thread",
           options: {},
@@ -282,6 +290,7 @@ describe("Tests boards activity queries", () => {
         },
         {
           board_slug: "gore",
+          board_id: GORE_BOARD_ID,
           post_id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
           parent_post_id: null,
           content: '[{"insert":"Favorite murder scene in videogames?"}]',
@@ -301,8 +310,8 @@ describe("Tests boards activity queries", () => {
 
   describe("fetches author data", () => {
     test("fetches board activity when slug present (logged in)", async () => {
-      const board = await getBoardActivityBySlug({
-        slug: "gore",
+      const board = await getBoardActivityByUuid({
+        boardId: GORE_BOARD_ID,
         // Oncest
         firebaseId: "fb3",
         cursor: null,
@@ -347,8 +356,8 @@ describe("Tests boards activity queries", () => {
     });
 
     test("fetches board activity when slug present (logged out)", async () => {
-      const board = await getBoardActivityBySlug({
-        slug: "gore",
+      const board = await getBoardActivityByUuid({
+        boardId: GORE_BOARD_ID,
         firebaseId: undefined,
         cursor: null,
       });

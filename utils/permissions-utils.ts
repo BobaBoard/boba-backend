@@ -1,16 +1,17 @@
-import debug from "debug";
-import { getBoardBySlug, getBoardByUuid } from "server/boards/queries";
-
 import {
+  BoardPermissions,
+  BoardRestrictions,
   DbRolePermissions,
-  QueryTagsType,
   PostPermissions,
   ThreadPermissions,
-  BoardPermissions,
   UserBoardPermissions,
-  restriction_types,
-  DbBoardMetadata,
-} from "Types";
+  extractBoardRestrictions,
+  extractPermissions,
+} from "types/permissions";
+import { DbBoardMetadata, QueryTagsType } from "Types";
+import { getBoardBySlug, getBoardByUuid } from "server/boards/queries";
+
+import debug from "debug";
 
 const info = debug("bobaserver:board:utils-info");
 const log = debug("bobaserver::permissions-utils-log");
@@ -19,58 +20,37 @@ export const hasPermission = (
   permission: DbRolePermissions,
   permissions?: string[]
 ) => {
-  return permissions.some(
-    (p) =>
-      (<any>DbRolePermissions)[p] == permission.toString() ||
-      (<any>DbRolePermissions)[p] == DbRolePermissions.all.toString()
-  );
+  return permissions.some((p) => p == permission || p == DbRolePermissions.all);
 };
 
 export const canPostAs = (permissions?: string[]) => {
-  return permissions.some(
-    (p) =>
-      (<any>DbRolePermissions)[p] ==
-        DbRolePermissions.post_as_role.toString() ||
-      (<any>DbRolePermissions)[p] == DbRolePermissions.all.toString()
+  return (
+    hasPermission(DbRolePermissions.post_as_role, permissions) ||
+    hasPermission(DbRolePermissions.all, permissions)
   );
 };
 
-export const transformPostPermissions = (permissions?: string[]) => {
-  const postsPermissions = [];
-  if (hasPermission(DbRolePermissions.edit_category_tags, permissions)) {
-    postsPermissions.push(PostPermissions.editCategoryTags);
-  }
-  if (hasPermission(DbRolePermissions.edit_content_notices, permissions)) {
-    postsPermissions.push(PostPermissions.editContentNotices);
-  }
-  return postsPermissions;
+export const extractPostPermissions = (permissions?: string[]) => {
+  return extractPermissions(PostPermissions, permissions);
 };
 
-export const transformThreadPermissions = (permissions?: string[]) => {
-  const threadPermissions = [];
-  if (hasPermission(DbRolePermissions.move_thread, permissions)) {
-    threadPermissions.push(ThreadPermissions.moveThread);
-  }
-  return threadPermissions;
+export const extractThreadPermissions = (permissions?: string[]) => {
+  return extractPermissions(ThreadPermissions, permissions);
 };
 
-export const transformBoardPermissions = (permissions?: string[]) => {
-  const boardPermissions = [];
-  if (hasPermission(DbRolePermissions.edit_board_details, permissions)) {
-    boardPermissions.push(BoardPermissions.editMetadata);
-  }
-  return boardPermissions;
+export const extractBoardPermissions = (permissions?: string[]) => {
+  return extractPermissions(BoardPermissions, permissions);
 };
 
-export const transformPermissions = (
+export const getUserPermissionsForBoard = (
   permissions?: string[]
 ): UserBoardPermissions => {
-  log(`Transforming the following user permissions: ${permissions}`);
+  info(`Transforming the following user permissions: ${permissions}`);
 
   return {
-    board_permissions: transformBoardPermissions(permissions),
-    post_permissions: transformPostPermissions(permissions),
-    thread_permissions: transformThreadPermissions(permissions),
+    board_permissions: extractBoardPermissions(permissions),
+    post_permissions: extractPostPermissions(permissions),
+    thread_permissions: extractThreadPermissions(permissions),
   };
 };
 
@@ -78,6 +58,10 @@ export const canDoTagsEdit = (
   tagsDelta: { added: QueryTagsType; removed: QueryTagsType },
   permissions: PostPermissions[]
 ) => {
+  if (permissions.length == 0) {
+    return false;
+  }
+
   const isEditingContentWarnings =
     tagsDelta.added.contentWarnings.length > 0 ||
     tagsDelta.removed.contentWarnings.length > 0;
@@ -103,6 +87,24 @@ export const canDoTagsEdit = (
   );
 };
 
+export const getBoardRestrictions = ({
+  loggedOutRestrictions,
+  loggedInBaseRestrictions,
+}: {
+  loggedOutRestrictions: string[];
+  loggedInBaseRestrictions: string[];
+}) => {
+  return {
+    loggedOutRestrictions: extractBoardRestrictions(loggedOutRestrictions),
+    loggedInBaseRestrictions: extractBoardRestrictions(
+      loggedInBaseRestrictions
+    ),
+  };
+};
+
+// TODO: return value has issues differentiating between the board not being found, the board
+// only being accessible to logged in users, or the user not having sufficient
+// permissions
 export const canAccessBoard = async ({
   slug,
   firebaseId,
@@ -118,7 +120,7 @@ export const canAccessBoard = async ({
   if (!board) {
     return false;
   }
-  if (board.logged_out_restrictions.includes(restriction_types.LOCK_ACCESS)) {
+  if (board.logged_out_restrictions.includes(BoardRestrictions.LOCK_ACCESS)) {
     return !!firebaseId;
   }
 
@@ -141,6 +143,9 @@ export const canAccessBoardByUuid = async ({
   if (!board) {
     return false;
   }
+  if (board.logged_out_restrictions.includes(BoardRestrictions.LOCK_ACCESS)) {
+    return !!firebaseId;
+  }
 
   return hasBoardAccessPermission({ boardMetadata: board, firebaseId });
 };
@@ -154,7 +159,7 @@ export const hasBoardAccessPermission = ({
 }) => {
   if (
     boardMetadata.logged_out_restrictions.includes(
-      restriction_types.LOCK_ACCESS
+      BoardRestrictions.LOCK_ACCESS
     )
   ) {
     return !!firebaseId;

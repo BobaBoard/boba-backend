@@ -32,3 +32,8 @@ export const BOBATAN_USER_DATA: UserData = {
   },
   username: "bobatan",
 };
+
+export const ONCEST_USER_IDENTITY = {
+  avatar: "/greedler.jpg",
+  name: "oncest5evah",
+};

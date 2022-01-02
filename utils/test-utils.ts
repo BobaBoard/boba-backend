@@ -5,8 +5,11 @@ import { ITask } from "pg-promise";
 import { Server } from "http";
 import bodyParser from "body-parser";
 import debug from "debug";
+import { handleApiErrors } from "handlers/errors";
 import { mocked } from "ts-jest/utils";
 import pool from "server/db-pool";
+require("express-async-errors");
+
 
 const log = debug("bobaserver:tests:test-utils");
 
@@ -14,8 +17,12 @@ export const runWithinTransaction = async (
   test: (transaction: ITask<any>) => void
 ) => {
   await pool.tx("test-transaction", async (t) => {
-    await test(t);
-    await t.none("ROLLBACK;");
+    try {
+      await t.none("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;");
+      await test(t);
+    } finally {
+      await t.none("ROLLBACK;");
+    }
   });
 };
 
@@ -31,10 +38,7 @@ export const wrapWithTransaction = async (test: () => void) => {
     await test();
   } finally {
     log("running cleanup");
-    //   await pool.none("ROLLBACK;");
-    //   jest.mock("server/db-pool", () => ({
-    //     ...jest.requireActual("server/db-pool").default,
-    //   }));
+    await pool.none("ROLLBACK;");
   }
 };
 
@@ -71,6 +75,7 @@ export const startTestServer = (router: Router) => {
     // to keep these prerequisite in sync.
     server.app.use(withLoggedIn);
     server.app.use(router);
+    server.app.use(handleApiErrors);
     listener = server.app.listen(4000, () => {
       done();
     });

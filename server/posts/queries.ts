@@ -1,14 +1,11 @@
-import {
-  DbCommentType,
-  DbPostType,
-  PostPermissions,
-  QueryTagsType,
-} from "Types";
-import { canPostAs, transformPostPermissions } from "utils/permissions-utils";
+import { BadRequest400Error, Forbidden403Error } from "types/errors/api";
+import { DbCommentType, DbPostType, QueryTagsType } from "Types";
+import { POST_OWNER_PERMISSIONS, PostPermissions } from "types/permissions";
+import { canPostAs, extractPostPermissions } from "utils/permissions-utils";
 
 import { ITask } from "pg-promise";
 import debug from "debug";
-import { getBoardBySlug } from "../boards/queries";
+import invariant from "tiny-invariant";
 import pool from "server/db-pool";
 import sql from "./sql";
 import threadsSql from "../threads/sql";
@@ -32,12 +29,12 @@ export const maybeAddIndexTags = async (
   }
   const tags = indexTags
     .filter((tag) => !!tag.trim().length)
-    .map((tag) => tag.trim());
+    .map((tag) => tag.trim().toLowerCase());
   await transaction.manyOrNone(sql.createAddTagsQuery(tags));
   log(`Returning tags:`);
   await transaction.many(sql.createAddTagsToPostQuery(postId, tags));
 
-  return tags.map((tag) => tag.toLowerCase());
+  return tags;
 };
 
 export const removeIndexTags = async (
@@ -78,12 +75,13 @@ export const maybeAddCategoryTags = async (
   }
   const tags = categoryTags
     .filter((tag) => !!tag.trim().length)
-    .map((tag) => tag.trim());
+    .map((tag) => tag.trim().toLowerCase());
+
   await transaction.manyOrNone(sql.createAddCategoriesQuery(tags));
-  log(`Returning tags:`);
+  log(`Returning tags: ${tags}`);
   await transaction.many(sql.createAddCategoriesToPostQuery(postId, tags));
 
-  return tags.map((tag) => tag.toLowerCase());
+  return tags;
 };
 
 export const removeCategoryTags = async (
@@ -124,12 +122,12 @@ export const maybeAddContentWarningTags = async (
   }
   const tags = contentWarnings
     .filter((tag) => !!tag.trim().length)
-    .map((tag) => tag.trim());
+    .map((tag) => tag.trim().toLowerCase());
   await transaction.manyOrNone(sql.createAddContentWarningsQuery(tags));
   log(`Returning tags:`);
   await transaction.many(sql.createAddContentWarningsToPostQuery(postId, tags));
 
-  return tags.map((tag) => tag.toLowerCase());
+  return tags;
 };
 
 export const removeContentWarningTags = async (
@@ -176,13 +174,15 @@ const getThreadDetails = async (
   transaction: ITask<any>,
   {
     parentPostId,
+    threadId,
     firebaseId,
     parentCommentId,
     identityId,
     accessoryId,
   }: {
     firebaseId: string;
-    parentPostId: string;
+    parentPostId?: string;
+    threadId?: string;
     parentCommentId?: string;
     identityId?: string;
     accessoryId?: string;
@@ -200,7 +200,12 @@ const getThreadDetails = async (
   post_id: number;
   comment_id: number;
   board_slug: string;
+  board_string_id: string;
 }> => {
+  invariant(
+    parentPostId || threadId,
+    "ParentPostId (${parentPostId}) or threadId (${threadId}) is required when getting details for a thread."
+  );
   let {
     user_id,
     username,
@@ -213,14 +218,19 @@ const getThreadDetails = async (
     accessory_avatar,
     thread_id,
     thread_string_id,
-    post_id,
-    comment_id,
+    post_id = null,
+    comment_id = null,
     board_slug,
-  } = await transaction.one(sql.getThreadDetails, {
-    post_string_id: parentPostId,
-    firebase_id: firebaseId,
-    parent_comment_string_id: parentCommentId,
-  });
+    board_string_id,
+  } = await transaction.one(
+    parentPostId ? sql.getPostDetails : sql.getThreadDetails,
+    {
+      post_string_id: parentPostId,
+      thread_string_id: threadId,
+      firebase_id: firebaseId,
+      parent_comment_string_id: parentCommentId,
+    }
+  );
 
   log(`Found details for thread:`);
   log({
@@ -244,13 +254,13 @@ const getThreadDetails = async (
       secret_identity_color,
       role_identity_id,
       accessory_avatar,
-    } = await addNewIdentityToThread(transaction, {
+    } = await addNewIdentityToThreadByBoardId(transaction, {
       user_id,
       identityId,
       accessory_id: accessoryId,
       thread_id,
       firebaseId,
-      board_slug,
+      board_string_id,
     }));
   }
 
@@ -267,121 +277,133 @@ const getThreadDetails = async (
     post_id,
     comment_id,
     board_slug,
+    board_string_id,
   };
 };
 
-export const postNewContribution = async ({
-  firebaseId,
-  identityId,
-  accessoryId,
-  parentPostId,
-  content,
-  isLarge,
-  anonymityType,
-  whisperTags,
-  indexTags,
-  contentWarnings,
-  categoryTags,
-}: {
-  firebaseId: string;
-  identityId?: string;
-  accessoryId?: string;
-  parentPostId: string;
-  content: string;
-  isLarge: boolean;
-  anonymityType: string;
-  whisperTags: string[];
-  indexTags: string[];
-  categoryTags: string[];
-  contentWarnings: string[];
-}): Promise<{ contribution: DbPostType; boardSlug: string } | false> => {
-  return pool
-    .tx("create-contribution", async (t) => {
-      let {
-        board_slug,
-        user_id,
+export const postNewContribution = async (
+  {
+    firebaseId,
+    identityId,
+    accessoryId,
+    parentPostId,
+    threadId,
+    content,
+    isLarge,
+    anonymityType,
+    whisperTags,
+    indexTags,
+    contentWarnings,
+    categoryTags,
+  }: {
+    firebaseId: string;
+    identityId?: string;
+    accessoryId?: string;
+    content: string;
+    isLarge: boolean;
+    anonymityType: string;
+    whisperTags: string[];
+    indexTags: string[];
+    categoryTags: string[];
+    contentWarnings: string[];
+    parentPostId?: string;
+    threadId?: string;
+  },
+  tx?: ITask<unknown>
+): Promise<{ contribution: DbPostType; boardSlug: string } | false> => {
+  const createContribution = async (
+    t: ITask<unknown>
+  ): Promise<{ contribution: DbPostType; boardSlug: string }> => {
+    invariant(
+      parentPostId || threadId,
+      `ParentPostId (${parentPostId}) or threadId (${threadId}) is required when creating a new contribution`
+    );
+    let {
+      board_slug,
+      board_string_id,
+      user_id,
+      username,
+      user_avatar,
+      secret_identity_name,
+      secret_identity_avatar,
+      secret_identity_color,
+      accessory_avatar,
+      thread_id,
+      thread_string_id,
+      post_id = null,
+    } = await getThreadDetails(t, {
+      identityId,
+      accessoryId,
+      parentPostId,
+      threadId,
+      firebaseId,
+    });
+    const result = await t.one(sql.makePost, {
+      post_string_id: uuidv4(),
+      parent_post: post_id,
+      parent_thread: thread_id,
+      user_id,
+      content,
+      anonymity_type: anonymityType,
+      whisper_tags: whisperTags,
+      options: {
+        wide: isLarge,
+      },
+    });
+    log(`Added new contribution to thread ${thread_id}.`);
+    log(result);
+
+    const indexedTags = await maybeAddIndexTags(t, {
+      postId: result.id,
+      indexTags,
+    });
+
+    const categoryTagsResult = await maybeAddCategoryTags(t, {
+      categoryTags,
+      postId: result.id,
+    });
+    const contentWarningsResult = await maybeAddContentWarningTags(t, {
+      contentWarnings,
+      postId: result.id,
+    });
+
+    return {
+      contribution: {
+        post_id: result.string_id,
+        parent_thread_id: thread_string_id,
+        parent_post_id: parentPostId,
+        parent_board_slug: board_slug,
+        parent_board_id: board_string_id,
+        author: user_id,
         username,
         user_avatar,
         secret_identity_name,
         secret_identity_avatar,
         secret_identity_color,
         accessory_avatar,
-        thread_id,
-        thread_string_id,
-        post_id,
-      } = await getThreadDetails(t, {
-        identityId,
-        accessoryId,
-        parentPostId,
-        firebaseId,
-      });
-      const result = await t.one(sql.makePost, {
-        post_string_id: uuidv4(),
-        parent_post: post_id,
-        parent_thread: thread_id,
-        user_id,
-        content,
-        anonymity_type: anonymityType,
-        whisper_tags: whisperTags,
-        options: {
-          wide: isLarge,
-        },
-      });
-      log(`Added new contribution to thread ${thread_id}.`);
-      log(result);
-
-      const indexedTags = await maybeAddIndexTags(t, {
-        postId: result.id,
-        indexTags,
-      });
-
-      const categoryTagsResult = await maybeAddCategoryTags(t, {
-        categoryTags,
-        postId: result.id,
-      });
-      const contentWarningsResult = await maybeAddContentWarningTags(t, {
-        contentWarnings,
-        postId: result.id,
-      });
-
-      return {
-        contribution: {
-          post_id: result.string_id,
-          parent_thread_id: thread_string_id,
-          parent_post_id: parentPostId,
-          parent_board_slug: board_slug,
-          author: user_id,
-          username,
-          user_avatar,
-          secret_identity_name,
-          secret_identity_avatar,
-          secret_identity_color,
-          accessory_avatar,
-          created: result.created_string,
-          content: result.content,
-          options: result.options,
-          type: result.type,
-          whisper_tags: result.whisper_tags,
-          index_tags: indexedTags,
-          category_tags: categoryTagsResult,
-          content_warnings: contentWarningsResult,
-          anonymity_type: result.anonymity_type,
-          total_comments_amount: 0,
-          new_comments_amount: 0,
-          comments: null,
-          friend: false,
-          self: true,
-          is_new: true,
-          is_own: true,
-        },
-        boardSlug: board_slug,
-      };
-    })
-    .catch((e) => {
-      error(`Error while creating contribution.`);
-      error(e);
-      return false;
-    });
+        created_at: result.created_at,
+        content: result.content,
+        options: result.options,
+        type: result.type,
+        whisper_tags: result.whisper_tags,
+        index_tags: indexedTags,
+        category_tags: categoryTagsResult,
+        content_warnings: contentWarningsResult,
+        anonymity_type: result.anonymity_type,
+        total_comments_amount: 0,
+        new_comments_amount: 0,
+        comments: null,
+        friend: false,
+        self: true,
+        is_new: true,
+        is_own: true,
+      },
+      boardSlug: board_slug,
+    };
+  };
+  return tx
+    ? createContribution(tx)
+    : pool.tx("create-contribution", createContribution);
 };
 
 const postNewCommentWithTransaction = async ({
@@ -456,7 +478,7 @@ const postNewCommentWithTransaction = async ({
       chain_parent_id: result.chain_parent_comment,
       author: user_id,
       content: result.content,
-      created: result.created_string,
+      created_at: result.created_at,
       anonymity_type: result.anonymity_type,
       username,
       user_avatar,
@@ -534,11 +556,10 @@ const addAccessoryToIdentity = async (
     thread_id: string;
   }
 ) => {
-  if (!identity_id && !role_identity_id) {
-    throw new Error(
-      "Accessory must be added to either identity or role identity"
-    );
-  }
+  invariant(
+    identity_id || role_identity_id,
+    "Accessory must be added to either identity or role identity"
+  );
   // TODO: this is to get a random accessory for events.
   // Right now we only support actually choosing one.
   // const accessory = await transaction.one(sql.getRandomAccessory);
@@ -546,26 +567,30 @@ const addAccessoryToIdentity = async (
   const allowed_accessories =
     (await transaction.manyOrNone(sql.getUserAccessories)) || [];
 
+  log(`allowed_accessories`, allowed_accessories);
   const selectedAccessory = allowed_accessories.find(
-    (accessory) => accessory.accessory_id == accessory_id
+    (accessory) => accessory.string_id == accessory_id
   );
   if (!selectedAccessory) {
-    throw new Error("Selected accessory was not found for this user.");
+    throw new BadRequest400Error(
+      "Selected accessory was not found for this user."
+    );
   }
 
   await transaction.one(sql.addAccessoryToIdentity, {
     thread_id,
     identity_id,
     role_id: role_identity_id,
-    accessory_id,
+    accessory_id: selectedAccessory.id,
   });
 
   return {
-    accessory_avatar: selectedAccessory.accessory_avatar,
+    accessory_avatar: selectedAccessory.avatar,
   };
 };
 
-export const addNewIdentityToThread = async (
+// TODO: rename to addNewIdentityToThread
+export const addNewIdentityToThreadByBoardId = async (
   transaction: ITask<any>,
   {
     user_id,
@@ -573,13 +598,13 @@ export const addNewIdentityToThread = async (
     identityId,
     thread_id,
     firebaseId,
-    board_slug,
+    board_string_id,
   }: {
     identityId: string;
     firebaseId: string;
     user_id: any;
     accessory_id?: string;
-    board_slug: any;
+    board_string_id: any;
     thread_id: any;
   }
 ) => {
@@ -593,14 +618,17 @@ export const addNewIdentityToThread = async (
     // An identity was passed to this method, which means we don't need to randomize it.
     // The only thing we need to check is whether the user is *actually able* to post
     // as that identity.
-    const roleResult = await transaction.one(threadsSql.getRoleByStringId, {
-      role_id: identityId,
-      firebase_id: firebaseId,
-      board_slug,
-    });
-    if (!canPostAs(roleResult.permissions)) {
-      throw new Error(
-        "Attempted to post on thread with identity without post as permissions"
+    const roleResult = await transaction.oneOrNone(
+      threadsSql.getRoleByStringIdAndBoardId,
+      {
+        role_id: identityId,
+        firebase_id: firebaseId,
+        board_string_id,
+      }
+    );
+    if (!roleResult || !canPostAs(roleResult.permissions)) {
+      throw new Forbidden403Error(
+        `Attempted to post on thread with unauthorized identity for board ${board_string_id}.`
       );
     }
     role_identity_id = roleResult.id;
@@ -653,39 +681,6 @@ export const addNewIdentityToThread = async (
     accessory_avatar,
     secret_identity_color,
   };
-};
-
-export const getUserPermissionsForPost = async ({
-  firebaseId,
-  postId,
-}: {
-  firebaseId: string;
-  postId: string;
-}) => {
-  try {
-    const post = await getPostFromStringId(null, {
-      firebaseId,
-      postId,
-    });
-    if (!post) {
-      return [];
-    }
-    if (post.is_own) {
-      return [
-        PostPermissions.editCategoryTags,
-        PostPermissions.editContentNotices,
-        PostPermissions.editIndexTags,
-        PostPermissions.editWhisperTags,
-      ];
-    }
-    const board = await getBoardBySlug({
-      firebaseId,
-      slug: post.parent_board_slug,
-    });
-    return transformPostPermissions(board.permissions);
-  } catch (e) {
-    return false;
-  }
 };
 
 export const getPostFromStringId = async (

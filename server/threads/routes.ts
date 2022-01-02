@@ -1,31 +1,32 @@
 import {
-  canAccessBoard,
-  transformThreadPermissions,
-} from "utils/permissions-utils";
-import {
-  createThread,
-  getThreadByStringId,
-  getTriggeredWebhooks,
-  getUserPermissionsForThread,
-  starThread,
-  unstarThread,
-  hideThread,
-  unhideThread,
-  muteThread,
-  unmuteThread,
-  markThreadVisit,
-  updateThreadView,
-} from "./queries";
+  BadRequest400Error,
+  Forbidden403Error,
+  NotFound404Error,
+} from "types/errors/api";
+import { canAccessBoard, canAccessBoardByUuid } from "utils/permissions-utils";
 import {
   ensureNoIdentityLeakage,
   makeServerThread,
 } from "utils/response-utils";
+import {
+  ensureThreadAccess,
+  ensureThreadPermission,
+  withThreadPermissions,
+} from "handlers/permissions";
+import {
+  hideThread,
+  muteThread,
+  starThread,
+  unhideThread,
+  unmuteThread,
+  unstarThread,
+  markThreadVisit,
+  updateThreadView,
+} from "./queries";
 
-import { ThreadPermissions } from "Types";
-import axios from "axios";
+import { ThreadPermissions } from "types/permissions";
 import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
-import { ensureThreadPermission } from "handlers/permissions";
 import express from "express";
 import { moveThread } from "./queries";
 
@@ -39,7 +40,8 @@ const router = express.Router();
  * /threads/{thread_id}:
  *   get:
  *     summary: Fetches thread data.
- *     operationId: getThreadByUuid
+ *     operationId: getThreadByStringId
+ *     description: Fetches data for the specified thread.
  *     tags:
  *       - /threads/
  *     security:
@@ -60,10 +62,11 @@ const router = express.Router();
  *     responses:
  *       401:
  *         description: User was not found and thread requires authentication.
+ *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
- *         description: User is not authorized to fetch this thread.
+ *         $ref: "#/components/responses/ensureThreadAccess403"
  *       404:
- *         description: The thread was not found.
+ *         $ref: "#/components/responses/threadNotFound404"
  *       200:
  *         description: The thread data.
  *         content:
@@ -74,267 +77,422 @@ const router = express.Router();
  *               withcommentsthread:
  *                 $ref: '#/components/examples/ThreadWithCommentsThreadResponse'
  */
-router.get("/:id", async (req, res) => {
-  const { id } = req.params;
-  log(`Fetching data for thread with id ${id}`);
+router.get("/:thread_id", ensureThreadAccess, async (req, res) => {
+  const { thread_id: threadId } = req.params;
+  log(`Fetching data for thread with id ${threadId}`);
 
-  // NOTE: if updating this (and it makes sense) also update
-  // the method for thread creation + retrieval.
-  // TODO: check if this has already been unified
-  const thread = await getThreadByStringId({
-    threadId: id,
-    firebaseId: req.currentUser?.uid,
-  });
-  info(`Found thread: `, thread);
-
-  if (
-    thread &&
-    !(await canAccessBoard({
-      slug: thread.board_slug,
-      firebaseId: req.currentUser?.uid,
-    }))
-  ) {
-    return req.currentUser ? res.sendStatus(403) : res.sendStatus(401);
-  }
-
-  if (thread === false) {
-    res.sendStatus(500);
-    return;
-  }
-  if (!thread) {
-    res.sendStatus(404);
-    return;
-  }
-
-  const serverThread = makeServerThread(thread);
+  const serverThread = makeServerThread(req.currentThreadData);
   ensureNoIdentityLeakage(serverThread);
 
-  info(`sending back data for thread ${id}.`);
+  info(`sending back data for thread ${serverThread.id}.`);
   res.status(200).json(serverThread);
 });
 
-router.post("/:threadId/mute", ensureLoggedIn, async (req, res) => {
-  const { threadId } = req.params;
-  log(`Setting thread muted: ${threadId}`);
-
-  if (
-    !(await muteThread({
-      firebaseId: req.currentUser.uid,
-      threadId,
-    }))
-  ) {
-    res.sendStatus(500);
-    return;
-  }
-
-  info(`Marked last visited time for thread: ${threadId}.`);
-  res.status(200).json();
-});
-
-router.post("/:threadId/unmute", ensureLoggedIn, async (req, res) => {
-  const { threadId } = req.params;
-  log(`Setting thread unmuted: ${threadId}`);
-
-  if (
-    !(await unmuteThread({
-      firebaseId: req.currentUser.uid,
-      threadId,
-    }))
-  ) {
-    res.sendStatus(500);
-    return;
-  }
-
-  info(`Marked last visited time for thread: ${threadId}.`);
-  res.status(200).json();
-});
-
-router.post("/:threadId/hide", ensureLoggedIn, async (req, res) => {
-  const { threadId } = req.params;
-  log(`Setting thread hidden: ${threadId}`);
-
-  if (
-    !(await hideThread({
-      firebaseId: req.currentUser.uid,
-      threadId,
-    }))
-  ) {
-    res.sendStatus(500);
-    return;
-  }
-
-  info(`Marked last visited time for thread: ${threadId}.`);
-  res.status(200).json();
-});
-
-router.post("/:threadId/unhide", ensureLoggedIn, async (req, res) => {
-  const { threadId } = req.params;
-  log(`Setting thread visible: ${threadId}`);
-
-  if (
-    !(await unhideThread({
-      firebaseId: req.currentUser.uid,
-      threadId,
-    }))
-  ) {
-    res.sendStatus(500);
-    return;
-  }
-
-  info(`Marked last visited time for thread: ${threadId}.`);
-  res.status(200).json();
-});
-
-router.get("/:threadId/visit", ensureLoggedIn, async (req, res) => {
-  const { threadId } = req.params;
-  log(`Setting last visited time for thread: ${threadId}`);
-
-  if (
-    !(await markThreadVisit({
-      firebaseId: req.currentUser.uid,
-      threadId,
-    }))
-  ) {
-    res.sendStatus(500);
-    return;
-  }
-
-  info(`Marked last visited time for thread: ${threadId}.`);
-  res.status(200).json();
-});
-
-router.post("/:boardSlug/create", ensureLoggedIn, async (req, res, next) => {
-  const { boardSlug } = req.params;
-  log(`Creating thread in board with slug ${boardSlug}`);
-  const {
-    content,
-    forceAnonymous,
-    defaultView,
-    large,
-    whisperTags,
-    indexTags,
-    categoryTags,
-    contentWarnings,
-    identityId,
-    accessoryId,
-  } = req.body;
-
-  const threadStringId = await createThread({
-    firebaseId: req.currentUser.uid,
-    content,
-    defaultView,
-    anonymityType: "everyone",
-    isLarge: !!large,
-    boardSlug: boardSlug,
-    whisperTags,
-    indexTags,
-    categoryTags,
-    contentWarnings,
-    identityId,
-    accessoryId,
-  });
-  info(`Created new thread`, threadStringId);
-
-  if (threadStringId === false) {
-    res.sendStatus(500);
-    return;
-  }
-
-  const thread = await getThreadByStringId({
-    threadId: threadStringId as string,
-    // @ts-ignore
-    firebaseId: req.currentUser?.uid,
-  });
-  info(`Found thread: `, thread);
-
-  if (thread === false) {
-    res.sendStatus(500);
-    return;
-  }
-  if (!thread) {
-    res.sendStatus(404);
-    return;
-  }
-
-  const serverThread = makeServerThread(thread);
-  ensureNoIdentityLeakage(serverThread);
-
-  info(`sending back data for thread ${threadStringId}.`);
-  res.status(200).json(serverThread);
-
-  const webhooks = await getTriggeredWebhooks({
-    slug: boardSlug,
-    categories: serverThread.posts[0].tags?.category_tags,
-  });
-  if (webhooks && webhooks.length > 0) {
-    const threadUrl = `https://v0.boba.social/!${boardSlug}/thread/${threadStringId}`;
-    webhooks.forEach(({ webhook, subscriptionNames }) => {
-      const message = `Your "${subscriptionNames.join(
-        ", "
-      )}" subscription has updated!\n ${threadUrl}`;
-      axios.post(webhook, {
-        content: message,
-        username: serverThread.posts[0].secret_identity.name,
-        avatar_url: serverThread.posts[0].secret_identity.avatar,
-      });
-    });
-  }
-});
-
+/**
+ * @openapi
+ * /threads/{thread_id}/mute:
+ *   post:
+ *     summary: Mutes a thread.
+ *     operationId: muteThreadByStringId
+ *     description: Mutes the specified thread for the current user.
+ *     tags:
+ *       - /threads/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: thread_id
+ *         in: path
+ *         description: The id of the thread to mute.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         examples:
+ *           goreThreadId:
+ *             summary: A thread from the gore board.
+ *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
+ *     responses:
+ *       401:
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         $ref: "#/components/responses/ensureThreadAccess403"
+ *       404:
+ *         $ref: "#/components/responses/threadNotFound404"
+ *       200:
+ *         description: The thread was succesfully muted.
+ */
 router.post(
-  "/:thread_id/update/view",
+  "/:thread_id/mute",
   ensureLoggedIn,
-  ensureThreadPermission(ThreadPermissions.editDefaultView),
+  ensureThreadAccess,
   async (req, res) => {
-    const { thread_id } = req.params;
-    const { defaultView } = req.body;
+    const { thread_id: threadId } = req.params;
+    log(`Setting thread muted: ${threadId}`);
 
-    if (!defaultView) {
-      res.send(500).json({
-        message: "Missing default view in thread view update request.",
-      });
+    if (
+      !(await muteThread({
+        firebaseId: req.currentUser.uid,
+        threadId,
+      }))
+    ) {
+      res.sendStatus(500);
       return;
     }
 
-    if (
-      !(await updateThreadView({
-        threadId: thread_id,
-        defaultView,
-      }))
-    ) {
-      return res.sendStatus(500);
-    }
-
-    res.sendStatus(200);
+    info(`Marked last visited time for thread: ${threadId}.`);
+    res.status(200).json();
   }
 );
 
-router.post(
-  "/:thread_id/move",
+/**
+ * @openapi
+ * /threads/{thread_id}/mute:
+ *   delete:
+ *     summary: Unmutes a thread.
+ *     operationId: unmuteThreadByStringId
+ *     description: Unmutes a specified thread.
+ *     tags:
+ *       - /threads/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: thread_id
+ *         in: path
+ *         description: The id of the thread to unmute.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         examples:
+ *           goreThreadId:
+ *             summary: A thread from the gore board.
+ *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
+ *     responses:
+ *       401:
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         $ref: "#/components/responses/ensureThreadAccess403"
+ *       404:
+ *         $ref: "#/components/responses/threadNotFound404"
+ *       200:
+ *         description: The thread was successfully unmuted.
+ */
+router.delete(
+  "/:thread_id/mute",
   ensureLoggedIn,
-  ensureThreadPermission(ThreadPermissions.moveThread),
+  ensureThreadAccess,
   async (req, res) => {
-    const { thread_id } = req.params;
-    const { destinationSlug } = req.body;
+    const { thread_id: threadId } = req.params;
+    log(`Setting thread unmuted: ${threadId}`);
 
-    // TODO: add a test for this case
     if (
-      !(await canAccessBoard({
-        slug: destinationSlug,
+      !(await unmuteThread({
         firebaseId: req.currentUser.uid,
+        threadId,
       }))
     ) {
-      res.status(403).json({ message: "Cannot access destination board" });
+      res.sendStatus(500);
       return;
     }
 
+    info(`Marked last visited time for thread: ${threadId}.`);
+    res.status(200).json();
+  }
+);
+
+/**
+ * @openapi
+ * /threads/{thread_id}/hide:
+ *   post:
+ *     summary: Hides a thread.
+ *     operationId: hideThreadByStringId
+ *     description: Hides the specified thread for the current user.
+ *     tags:
+ *       - /threads/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: thread_id
+ *         in: path
+ *         description: The id of the thread to unhide.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         examples:
+ *           goreThreadId:
+ *             summary: A thread from the gore board.
+ *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
+ *     responses:
+ *       401:
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         $ref: "#/components/responses/ensureThreadAccess403"
+ *       404:
+ *         $ref: "#/components/responses/threadNotFound404"
+ *       200:
+ *         description: The thread was succesfully hidden.
+ */
+router.post(
+  "/:thread_id/hide",
+  ensureLoggedIn,
+  ensureThreadAccess,
+  async (req, res) => {
+    const { thread_id: threadId } = req.params;
+    log(`Setting thread hidden: ${threadId}`);
+
     if (
-      !(await moveThread({
-        threadId: thread_id,
-        destinationSlug,
+      !(await hideThread({
+        firebaseId: req.currentUser.uid,
+        threadId,
       }))
     ) {
-      return res.sendStatus(500);
+      res.sendStatus(500);
+      return;
+    }
+
+    info(`Marked last visited time for thread: ${threadId}.`);
+    res.status(200).json();
+  }
+);
+
+/**
+ * @openapi
+ * /threads/{thread_id}/hide:
+ *   delete:
+ *     summary: Unhides a thread.
+ *     operationId: unhideThreadByStringId
+ *     description: Unhides the specified thread for the current user.
+ *     tags:
+ *       - /threads/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: thread_id
+ *         in: path
+ *         description: The id of the thread to unhide.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         examples:
+ *           goreThreadId:
+ *             summary: A thread from the gore board.
+ *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
+ *     responses:
+ *       401:
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         $ref: "#/components/responses/ensureThreadAccess403"
+ *       404:
+ *         $ref: "#/components/responses/threadNotFound404"
+ *       200:
+ *         description: The thread was succesfully unhidden.
+ */
+router.delete(
+  "/:thread_id/hide",
+  ensureLoggedIn,
+  ensureThreadAccess,
+  async (req, res) => {
+    const { thread_id: threadId } = req.params;
+    log(`Setting thread visible: ${threadId}`);
+
+    if (
+      !(await unhideThread({
+        firebaseId: req.currentUser.uid,
+        threadId,
+      }))
+    ) {
+      res.sendStatus(500);
+      return;
+    }
+
+    info(`Marked last visited time for thread: ${threadId}.`);
+    res.status(200).json();
+  }
+);
+
+/**
+ * @openapi
+ * /threads/{thread_id}/visits:
+ *   post:
+ *     summary: Records a visit to a thread by the current user.
+ *     operationId: visitThreadByStringId
+ *     description: Records a visit to a thread by the current user.
+ *     tags:
+ *       - /threads/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: thread_id
+ *         in: path
+ *         description: The id of the thread that is being visited.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         examples:
+ *           goreThreadId:
+ *             summary: A thread from the gore board.
+ *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
+ *     responses:
+ *       401:
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         $ref: "#/components/responses/ensureThreadAccess403"
+ *       404:
+ *         $ref: "#/components/responses/threadNotFound404"
+ *       200:
+ *         description: Thread has been marked as visited.
+ */
+router.post(
+  "/:thread_id/visits",
+  ensureLoggedIn,
+  ensureThreadAccess,
+  async (req, res) => {
+    const { thread_id: threadId } = req.params;
+    log(`Setting last visited time for thread: ${threadId}`);
+
+    if (
+      !(await markThreadVisit({
+        firebaseId: req.currentUser.uid,
+        threadId,
+      }))
+    ) {
+      res.sendStatus(500);
+      return;
+    }
+
+    info(`Marked last visited time for thread: ${threadId}.`);
+    res.status(200).json();
+  }
+);
+
+/**
+ * @openapi
+ * /threads/{thread_id}:
+ *   patch:
+ *     summary: Update thread properties.
+ *     operationId: updateThreadStringId
+ *     description: Updates the default view that the thread uses or the parent board of the thread.
+ *     tags:
+ *       - /threads/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: thread_id
+ *         in: path
+ *         description: The id of the thread whose properties should be updated.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         examples:
+ *           updateView:
+ *             summary: A thread from the gore board.
+ *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
+ *           moveThread:
+ *             summary: A thread from the gore board.
+ *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
+ *     requestBody:
+ *       description: request body
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               defaultView:
+ *                 description: The default view that the thread should use.
+ *                 type: string
+ *                 enum: [thread, gallery, timeline]
+ *               parentBoardId:
+ *                 description: The id of the board that the thread should be moved to.
+ *                 type: string
+ *                 format: uuid
+ *           examples:
+ *             updateView:
+ *               value:
+ *                 defaultView: gallery
+ *             moveThread:
+ *               value:
+ *                parentBoardId: 0e0d1ee6-f996-4415-89c1-c9dc1fe991dc
+ *     responses:
+ *       401:
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         $ref: "#/components/responses/ensureThreadPermission403"
+ *       404:
+ *         $ref: "#/components/responses/threadNotFound404"
+ *       204:
+ *         description: Thread properties successfully changed.
+ *         $ref: "#/components/responses/default204"
+ */
+router.patch(
+  "/:thread_id",
+  ensureLoggedIn,
+  withThreadPermissions,
+  async (req, res) => {
+    const { thread_id } = req.params;
+    const { defaultView, parentBoardId } = req.body;
+
+    if (!defaultView && !parentBoardId) {
+      throw new BadRequest400Error(
+        "Thread update requires a parameter to update"
+      );
+    }
+
+    if (defaultView) {
+      if (
+        !req.currentThreadPermissions.includes(
+          ThreadPermissions.editDefaultView
+        )
+      ) {
+        throw new Forbidden403Error(
+          `User does not have permission to update view for thread with id ${thread_id}.`
+        );
+      }
+
+      if (
+        !(await updateThreadView({
+          threadId: thread_id,
+          defaultView,
+        }))
+      ) {
+        return res.sendStatus(500);
+      }
+    }
+
+    if (parentBoardId) {
+      if (
+        !req.currentThreadPermissions.includes(ThreadPermissions.moveThread)
+      ) {
+        throw new Forbidden403Error(
+          `User does not have permission to move thread thread with id ${thread_id}.`
+        );
+      }
+      // TODO: add a test for this case once there's boards that are not accessible to everyone.
+      if (
+        !(await canAccessBoardByUuid({
+          boardId: parentBoardId,
+          firebaseId: req.currentUser.uid,
+        }))
+      ) {
+        throw new NotFound404Error(
+          `The board with id \"${parentBoardId}\" was not found.`
+        );
+
+        // TODO: add case where user can't access board
+      }
+
+      if (
+        !(await moveThread({
+          threadId: thread_id,
+          destinationId: parentBoardId,
+        }))
+      ) {
+        return res.sendStatus(500);
+      }
     }
 
     res.sendStatus(204);

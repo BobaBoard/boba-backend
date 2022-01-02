@@ -5,30 +5,9 @@ const createThread = `
     INSERT INTO threads(string_id, parent_board, options)
     VALUES (
       $/thread_string_id/,
-      (SELECT id FROM boards WHERE slug = $/board_slug/),
+      (SELECT id FROM boards WHERE boards.string_id = $/board_string_id/),
       $/thread_options/)
     RETURNING id`;
-
-const createPost = `
-    INSERT INTO posts(
-      string_id,
-      parent_post,
-      parent_thread,
-      author,
-      content, type,
-      whisper_tags,
-      anonymity_type, options)
-    VALUES (
-      $/post_string_id/,
-      NULL,
-      $/parent_thread/,
-      (SELECT id FROM users WHERE firebase_id = $/firebase_id/),
-      $/content/,
-      'text',
-      $/whisper_tags/,
-      $/anonymity_type/,
-      $/options/)
-    RETURNING id, author`;
 
 const getRandomIdentityId = `
     SELECT id FROM secret_identities ORDER BY RANDOM() LIMIT 1`;
@@ -39,7 +18,8 @@ const getRandomIdentityId = `
  * We add limit 1 cause the role might be associated to the user in more than one board/realm,
  * but we're only interested in whether it's associated to them at all.
  */
-const getRoleByStringId = `
+// TODO: rename to getRoleByStringId
+const getRoleByStringIdAndBoardId = `
     SELECT
       roles.id,
       roles.name,
@@ -55,7 +35,7 @@ const getRoleByStringId = `
       ON users.id = bur.user_id  OR users.id = rur.user_id
     WHERE
       roles.string_id = $/role_id/
-      AND (rur.role_id IS NOT NULL OR bur.board_id  = (SELECT id FROM boards WHERE boards.slug = $/board_slug/))
+      AND (rur.role_id IS NOT NULL OR bur.board_id  = (SELECT id FROM boards WHERE boards.string_id = $/board_string_id/))
       AND users.firebase_id = $/firebase_id/
     LIMIT 1`;
 
@@ -141,7 +121,7 @@ const getTriggeredWebhooks = `
 
 const moveThread = `
     UPDATE threads
-    SET parent_board = (SELECT id FROM boards WHERE slug = $/board_slug/)
+    SET parent_board = (SELECT id FROM boards WHERE boards.string_id = $/board_string_id/)
     WHERE string_id = $/thread_string_id/;
 `;
 
@@ -153,7 +133,6 @@ export default {
     path.join(__dirname, "visit-thread-by-string-id.sql")
   ),
   createThread,
-  createPost,
   getRandomIdentityId,
   insertNewIdentity,
   muteThreadByStringId,
@@ -163,7 +142,7 @@ export default {
   hideThreadByStringId,
   unhideThreadByStringId,
   updateThreadViewByStringId,
-  getRoleByStringId,
+  getRoleByStringIdAndBoardId,
   getThreadDetails,
   getTriggeredWebhooks,
   moveThread,

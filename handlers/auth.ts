@@ -88,7 +88,7 @@ export const ensureLoggedIn = (
           message: NO_USER_FOUND_ERROR,
         });
       } else if (req.authenticationError?.message === EXPIRED_TOKEN_ERROR) {
-        res.status(403).json({
+        res.status(401).json({
           message: EXPIRED_TOKEN_ERROR,
         });
       } else {

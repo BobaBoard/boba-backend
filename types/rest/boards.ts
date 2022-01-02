@@ -1,6 +1,6 @@
 import { Accessory, Role } from "./identity";
 
-import { UserBoardPermissions } from "Types";
+import { UserBoardPermissions } from "types/permissions";
 
 export interface BoardTextDescription {
   id: string;
