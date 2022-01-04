@@ -1,5 +1,6 @@
 import { CacheKeys, cache } from "../cache";
 
+import { SubscriptionFeed } from "types/rest/subscriptions";
 import debug from "debug";
 import express from "express";
 import { getLatestSubscriptionData } from "./queries";
@@ -9,8 +10,28 @@ const info = debug("bobaserver:board:routes-info");
 const log = debug("bobaserver:board:routes");
 
 const router = express.Router();
-
-router.get("/:subscriptionId/latest", async (req, res) => {
+/**
+ * @openapi
+ * /subscriptions/{subscriptionId}:
+ *   get:
+ *     summary: Gets data for the given subscription. Currently returns only the last update.
+ *     operationId: getSubscription
+ *     tags:
+ *       - /subscriptions/
+ *     security:
+ *       - {}
+ *       - firebase: []
+ *     responses:
+ *       404:
+ *         description: The subscription was not found.
+ *       200:
+ *         description: The subscription data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/SubscriptionActivity"
+ */
+router.get("/:subscriptionId", async (req, res) => {
   const { subscriptionId } = req.params;
   log(`Fetching data for subscription with id ${subscriptionId}`);
 
@@ -27,12 +48,50 @@ router.get("/:subscriptionId/latest", async (req, res) => {
     subscriptionId,
   });
 
-  res.status(200).json(subscriptionData);
-  cache().hset(
-    CacheKeys.SUBSCRIPTION,
-    subscriptionId,
-    stringify(subscriptionData)
-  );
+  if (!subscriptionData || !subscriptionData.length) {
+    res.sendStatus(404);
+    return;
+  }
+
+  const response: SubscriptionFeed = {
+    cursor: {
+      next: null,
+    },
+    subscription: {
+      id: subscriptionData[0].subscription_string_id,
+      name: subscriptionData[0].subscription_name,
+      last_activity_at: subscriptionData[0].last_updated_at,
+    },
+    activity: [
+      {
+        id: subscriptionData[0].latest_post_string_id,
+        parent_thread_id: subscriptionData[0].thread_string_id,
+        parent_post_id: null,
+        content: subscriptionData[0].post_content,
+        created_at: subscriptionData[0].last_updated_at,
+        secret_identity: {
+          avatar: subscriptionData[0].secret_identity_avatar,
+          name: subscriptionData[0].secret_identity_name,
+          color: subscriptionData[0].secret_identity_color || undefined,
+          accessory: subscriptionData[0].secret_identity_accessory || undefined,
+        },
+        own: false,
+        new: false,
+        friend: false,
+        total_comments_amount: 0,
+        new_comments_amount: 0,
+        tags: {
+          whisper_tags: [],
+          index_tags: [],
+          category_tags: [],
+          content_warnings: [],
+        },
+      },
+    ],
+  };
+
+  res.status(200).json(response);
+  cache().hset(CacheKeys.SUBSCRIPTION, subscriptionId, stringify(response));
 });
 
 export default router;

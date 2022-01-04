@@ -1,0 +1,34 @@
+components:
+  schemas:
+    Subscription:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        last_activity_at:
+          oneOf:
+            - type: string
+              format: date-time
+            - type: "null"
+      required:
+        - id
+        - name
+        - last_activity_at
+    SubscriptionActivity:
+      type: object
+      properties:
+        cursor:
+          $ref: "#/components/schemas/Cursor"
+        subscription:
+          $ref: "#/components/schemas/Subscription"
+        activity:
+          type: array
+          items:
+            $ref: "#/components/schemas/Contribution"
+      required:
+        - subscription
+        - name
+        - activity
