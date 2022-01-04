@@ -8,14 +8,29 @@ export const getLatestSubscriptionData = async ({
   subscriptionId,
 }: {
   subscriptionId: string;
-}): Promise<any> => {
+}): Promise<
+  | {
+      subscription_id: number;
+      subscription_name: string;
+      subscription_string_id: string;
+      last_updated_at: string;
+      secret_identity_name: string | null;
+      secret_identity_avatar: string | null;
+      secret_identity_color: string | null;
+      secret_identity_accessory: string | null;
+      post_content: string;
+      thread_string_id: string;
+      latest_post_string_id: string | null;
+    }[]
+  | false
+> => {
   try {
-    return await pool.many(sql.getSubscriptionActivityByStringId, {
+    return (await pool.manyOrNone(sql.getSubscriptionActivityByStringId, {
       subscription_string_id: subscriptionId,
       // we use page_size = 0 because the query returns always one more for the cursor
       page_size: 0,
       last_activity_cursor: null,
-    });
+    })) as any;
   } catch (e) {
     error(`Error while fetching subscription activity.`);
     error(e);
