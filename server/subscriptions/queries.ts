@@ -1,3 +1,4 @@
+import { Internal500Error } from "types/errors/api";
 import debug from "debug";
 import pool from "server/db-pool";
 import sql from "./sql";
@@ -32,9 +33,9 @@ export const getLatestSubscriptionData = async ({
       last_activity_cursor: null,
     })) as any;
   } catch (e) {
-    error(`Error while fetching subscription activity.`);
-    error(e);
-    return false;
+    throw new Internal500Error(
+      `Error while getting webhooks for subscription ${subscriptionId}`
+    );
   }
 };
 
@@ -81,12 +82,10 @@ export const getWebhooksForSubscriptions = async ({
       })
     )?.filter((result: any) => result.webhook != null);
   } catch (e) {
-    error(
+    throw new Internal500Error(
       `Error while getting webhooks for subscriptions ${subscriptions.join(
         ", "
       )}.`
     );
-    error(e);
-    return false;
   }
 };
