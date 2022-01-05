@@ -1,6 +1,9 @@
 const { pathsToModuleNameMapper } = require("ts-jest/utils");
 const { compilerOptions } = require("./tsconfig");
 
+const util = require("util");
+util.inspect.defaultOptions.depth = null;
+
 module.exports = {
   testEnvironment: "node",
   transform: {

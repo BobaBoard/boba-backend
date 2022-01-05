@@ -1,0 +1,3 @@
+export const AIBA_SUBSCRIPTION_ID = "a87800a6-21e5-46dd-a979-a901cdcea563";
+export const BLOOD_SUBSCRIPTION_ID = "11e29fe7-1913-48a5-a3aa-9f01358d212f";
+export const BRUISES_SUBSCRIPTION_ID = "04af1212-e641-414b-bf84-81fae2da8484";
