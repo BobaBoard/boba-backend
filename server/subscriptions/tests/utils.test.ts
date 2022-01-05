@@ -4,7 +4,7 @@ import axios from "axios";
 import { maybeUpdateSubscriptionsOnThreadChange } from "../utils";
 import { mocked } from "ts-jest/utils";
 
-jest.mock("../../cache");
+jest.mock("server/cache");
 jest.mock("axios");
 
 describe("Tests subscriptions updates", () => {
@@ -37,11 +37,5 @@ describe("Tests subscriptions updates", () => {
       username: "webmaster",
     });
     expect(axios.post).toBeCalledTimes(1);
-  });
-
-  test("correctly triggers webhook on thread update 2", async function () {
-    // TODO: this is testing nothing. Figure out what my intention was.
-    expect(cache().hdel).not.toHaveBeenCalled();
-    expect(axios.post).not.toHaveBeenCalled();
   });
 });

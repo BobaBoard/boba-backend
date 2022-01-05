@@ -1,5 +1,6 @@
 import { CacheKeys, cache } from "../cache";
 
+import { NotFound404Error } from "types/errors/api";
 import { SubscriptionFeed } from "types/rest/subscriptions";
 import debug from "debug";
 import express from "express";
@@ -12,7 +13,7 @@ const log = debug("bobaserver:board:routes");
 const router = express.Router();
 /**
  * @openapi
- * /subscriptions/{subscriptionId}:
+ * /subscriptions/{subscription_id}:
  *   get:
  *     summary: Gets data for the given subscription. Currently returns only the last update.
  *     operationId: getSubscription
@@ -31,8 +32,8 @@ const router = express.Router();
  *             schema:
  *               $ref: "#/components/schemas/SubscriptionActivity"
  */
-router.get("/:subscriptionId", async (req, res) => {
-  const { subscriptionId } = req.params;
+router.get("/:subscription_id", async (req, res) => {
+  const { subscription_id: subscriptionId } = req.params;
   log(`Fetching data for subscription with id ${subscriptionId}`);
 
   const cachedSubscription = await cache().hget(
@@ -49,7 +50,9 @@ router.get("/:subscriptionId", async (req, res) => {
   });
 
   if (!subscriptionData || !subscriptionData.length) {
-    res.sendStatus(404);
+    throw new NotFound404Error(
+      `Webhook for subscription ${subscriptionId} was not found.`
+    );
     return;
   }
 
