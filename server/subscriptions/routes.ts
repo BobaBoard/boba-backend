@@ -22,6 +22,14 @@ const router = express.Router();
  *     security:
  *       - {}
  *       - firebase: []
+ *     parameters:
+ *       - name: subscription_id
+ *         in: path
+ *         description: The uuid of the subscription.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
  *     responses:
  *       404:
  *         description: The subscription was not found.
