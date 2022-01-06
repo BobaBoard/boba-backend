@@ -93,6 +93,7 @@ This is just to test that sections work. It will be written better later.
           "/threads/",
           "/posts/",
           "/users/",
+          "/subscriptions/",
         ],
       },
       {
