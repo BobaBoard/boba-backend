@@ -116,7 +116,7 @@ router.get("/:thread_id", ensureThreadAccess, async (req, res) => {
  *         $ref: "#/components/responses/ensureThreadAccess403"
  *       404:
  *         $ref: "#/components/responses/threadNotFound404"
- *       200:
+ *       204:
  *         description: The thread was succesfully muted.
  */
 router.post(
@@ -138,7 +138,7 @@ router.post(
     }
 
     info(`Marked last visited time for thread: ${threadId}.`);
-    res.status(200).json();
+    res.status(204).json();
   }
 );
 
@@ -172,7 +172,7 @@ router.post(
  *         $ref: "#/components/responses/ensureThreadAccess403"
  *       404:
  *         $ref: "#/components/responses/threadNotFound404"
- *       200:
+ *       204:
  *         description: The thread was successfully unmuted.
  */
 router.delete(
@@ -194,7 +194,7 @@ router.delete(
     }
 
     info(`Marked last visited time for thread: ${threadId}.`);
-    res.status(200).json();
+    res.status(204).json();
   }
 );
 
@@ -250,7 +250,7 @@ router.post(
     }
 
     info(`Marked last visited time for thread: ${threadId}.`);
-    res.status(200).json();
+    res.status(204).json();
   }
 );
 
@@ -306,7 +306,7 @@ router.delete(
     }
 
     info(`Marked last visited time for thread: ${threadId}.`);
-    res.status(200).json();
+    res.status(204).json();
   }
 );
 
@@ -362,7 +362,7 @@ router.post(
     }
 
     info(`Marked last visited time for thread: ${threadId}.`);
-    res.status(200).json();
+    res.status(204).json();
   }
 );
 

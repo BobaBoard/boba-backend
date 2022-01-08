@@ -34,7 +34,7 @@ describe("Tests threads REST API - hide", () => {
         `/${FAVORITE_CHARACTER_THREAD_ID}/hide`
       );
 
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(204);
     });
   });
 
@@ -84,7 +84,7 @@ describe("Tests threads REST API - unhide", () => {
         `/${FAVORITE_CHARACTER_THREAD_ID}/hide`
       );
 
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(204);
     });
   });
 
