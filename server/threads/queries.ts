@@ -117,7 +117,6 @@ export const unmuteThread = async ({
   }
 };
 
-/* ADD STAR THREAD TEST */
 export const starThread = async ({
   threadId,
   firebaseId,
@@ -138,7 +137,6 @@ export const starThread = async ({
   }
 };
 
-/* REMOVE STAR THREAD TEST */
 export const unstarThread = async ({
   threadId,
   firebaseId,
