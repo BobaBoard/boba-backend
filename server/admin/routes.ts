@@ -5,10 +5,10 @@ import {
   createInvite,
   updateIdentities,
 } from "./queries";
+import { ensureAdmin, ensureLoggedIn } from "handlers/auth";
 
 import axios from "axios";
 import debug from "debug";
-import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
 import firebaseAuth from "firebase-admin";
 import { getUserFromFirebaseId } from "../users/queries";
@@ -126,15 +126,20 @@ router.post(
   }
 );
 
-router.post("/invite/generate", ensureLoggedIn, async (req, res) => {
-  const user = req.currentUser?.uid;
+router.post(
+  "/invite/generate", 
+  ensureLoggedIn, 
+  ensureAdmin,
+  async (req, res) => {
+ /* const user = req.currentUser?.uid;
   if (user !== ADMIN_ID) {
     return res.sendStatus(403);
-  }
+  }*/
+
   const { email } = req.body;
   // Generate 64 characters random id string
   const inviteCode = randomBytes(32).toString("hex");
-  const adminId = await getUserFromFirebaseId({ firebaseId: user });
+  const adminId = await getUserFromFirebaseId({ firebaseId: req.currentUser?.uid });
 
   log(adminId);
   const inviteAdded = await createInvite({

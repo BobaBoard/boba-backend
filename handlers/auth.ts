@@ -10,6 +10,7 @@ import stringify from "fast-json-stable-stringify";
 const log = debug("bobaserver:auth-log");
 const error = debug("bobaserver:auth-error");
 
+const ADMIN_ID = "c6HimTlg2RhVH3fC1psXZORdLcx2";
 const EXPIRED_TOKEN_ERROR = "Authentication token expired.";
 const NO_USER_FOUND_ERROR = "No authenticated user found.";
 declare global {
@@ -97,6 +98,55 @@ export const ensureLoggedIn = (
         });
       }
       return;
+    }
+    next();
+  });
+};
+
+export const ensureAdmin = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  withLoggedIn(req, res, async () => {
+    const currentUserId = req.currentUser?.uid;
+/*    if (!currentUserId) {
+      error(
+        `Unauthorized request received for ensureAdmin route: ${req.originalUrl}.`
+      );
+      error(req.authenticationError);
+      if (req.authenticationError?.message === NO_USER_FOUND_ERROR) {
+        res.status(401).json({
+          message: NO_USER_FOUND_ERROR,
+        });
+      } else if (req.authenticationError?.message === EXPIRED_TOKEN_ERROR) {
+        res.status(401).json({
+          message: EXPIRED_TOKEN_ERROR,
+        });
+      } else {
+        res.status(401).json({
+          message: req.authenticationError?.message,
+        });
+      }*/
+    if (currentUserId!=ADMIN_ID) {
+      error(
+        `Unauthorized request received for ensureAdmin route: ${req.originalUrl}.`
+       );
+      error(req.authenticationError);
+      if (req.authenticationError?.message === NO_USER_FOUND_ERROR) {
+        res.status(401).json({
+          message: NO_USER_FOUND_ERROR,
+        });
+      } else if (req.authenticationError?.message === EXPIRED_TOKEN_ERROR) {
+        res.status(401).json({
+          message: EXPIRED_TOKEN_ERROR,
+        });
+      } else {
+        res.status(401).json({
+          message: req.authenticationError?.message,
+        });
+      }
+      return res.sendStatus(403);
     }
     next();
   });

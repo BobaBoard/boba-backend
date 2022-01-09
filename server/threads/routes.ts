@@ -424,9 +424,9 @@ router.post(
  *         $ref: "#/components/responses/ensureThreadPermission403"
  *       404:
  *         $ref: "#/components/responses/threadNotFound404"
- *       204:
+ *       200:
  *         description: Thread properties successfully changed.
- *         $ref: "#/components/responses/default204"
+ *         $ref: "#/components/responses/default200"
  */
 router.patch(
   "/:thread_id",
@@ -504,6 +504,7 @@ router.patch(
  * threads/{thread_id}/stars:
  *   post:
  *     summary: Adds thread to Star Feed
+ *     operationId: starThreadByStringId
  *     description: Adds selected thread to current user Star Feed.
  *     tags:
  *       - /threads/
@@ -519,12 +520,23 @@ router.patch(
  *     responses:
  *       500:
  *         description: Internal Server Error
- *       204:
+ *       401:
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         $ref: "#/components/responses/ensureThreadAccess403"
+ *       404:
+ *         $ref: "#/components/responses/threadNotFound404"
+ *       200:
  *         description: Thread added to Star Feed successfully.
  */
 
-router.post("/:threadId/stars", ensureLoggedIn, async (req, res) => {
+router.post(
+  "/:threadId/stars",
+  ensureLoggedIn,
+  ensureThreadAccess,
+  async (req, res) => {
   const { threadId } = req.params;
+  log(`Adding thread to stars: ${threadId}`);
 
   if (
     !(await starThread({
@@ -537,7 +549,7 @@ router.post("/:threadId/stars", ensureLoggedIn, async (req, res) => {
   }
 
   info(`Thread ${threadId} added to starfeed of user ${req.currentUser.uid}.`);
-  res.status(204).json();
+  res.status(200).json();
 });
 
 /**
@@ -545,6 +557,7 @@ router.post("/:threadId/stars", ensureLoggedIn, async (req, res) => {
  * threads/{thread_id}/stars:
  *   delete:
  *     summary: Removes thread from Star Feed
+ *     operationId: unstarThreadByStringId
  *     description: Deletes selected thread from current user Star Feed.
  *     tags:
  *       - /threads/
@@ -560,12 +573,23 @@ router.post("/:threadId/stars", ensureLoggedIn, async (req, res) => {
  *     responses:
  *       500:
  *         description: Internal Server Error
- *       204:
+ *       401:
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         $ref: "#/components/responses/ensureThreadAccess403"
+ *       404:
+ *         $ref: "#/components/responses/threadNotFound404"
+ *       200:
  *         description: Thread removed from Star Feed successfully.
  */
 
-router.delete("/:threadId/stars", ensureLoggedIn, async (req, res) => {
-  const { threadId } = req.params;
+router.delete(
+  "/:threadId/stars",
+  ensureLoggedIn,
+  ensureThreadAccess,
+  async (req, res) => {
+  const { thread_id: threadId } = req.params;
+  log(`Removing thread from stars: ${threadId}`);
 
   if (
     !(await unstarThread({
@@ -578,7 +602,7 @@ router.delete("/:threadId/stars", ensureLoggedIn, async (req, res) => {
   }
 
   info(`Thread ${threadId} removed from starfeed of user ${req.currentUser.uid}.`);
-  res.status(204).json();
+  res.status(200).json();
 });
 
 export default router;

@@ -2,7 +2,7 @@ import { extractActivity, extractsMetadata } from "./board-feed.test";
 import { getUserStarFeed } from "../queries";
 
 describe("user star feed queries", () => {
-  test("bobatan star feed", async () => {
+  /*test("bobatan star feed", async () => {
     const feed = await getUserStarFeed({
       // Bobatan
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
@@ -31,7 +31,7 @@ describe("user star feed queries", () => {
         whisper_tags: [],
       }
     ]);
-  });
+  });*/
   test("jersey devil star feed", async () => {
     const feed = await getUserStarFeed({
       // jersey devil

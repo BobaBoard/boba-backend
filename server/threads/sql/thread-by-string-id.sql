@@ -142,4 +142,4 @@ LEFT JOIN user_hidden_threads uht
 LEFT JOIN user_starred_threads ust
     ON  ${firebase_id} IS NOT NULL AND ust.user_id = (SELECT id FROM users WHERE firebase_id = ${firebase_id}) AND ust.thread_id = threads.id
 WHERE threads.string_id = ${thread_string_id}
-GROUP BY threads.id, boards.slug, uht.user_id, umt.user_id, ust.user_id, thread_details.last_update_timestamp,  boards.string_id;
+GROUP BY threads.id, boards.slug, uht.user_id, umt.user_id, ust.user_id, thread_details.last_update_timestamp, boards.string_id;
