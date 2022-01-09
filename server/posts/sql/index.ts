@@ -65,7 +65,7 @@ const makePost = `
         $/whisper_tags/,
         $/anonymity_type/,
         $/options/
-    ) RETURNING *, TO_CHAR(posts.created, 'YYYY-MM-DD"T"HH24:MI:SS') as created_at
+    ) RETURNING *, TO_CHAR(posts.created, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as created_at
     `;
 
 const makeComment = `
@@ -79,7 +79,7 @@ const makeComment = `
         $/anonymity_type/,
         $/chain_parent_comment/,
         $/parent_comment/
-    ) RETURNING *, TO_CHAR(comments.created, 'YYYY-MM-DD"T"HH24:MI:SS') as created_at`;
+    ) RETURNING *, TO_CHAR(comments.created, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as created_at`;
 
 const pgInstance = pg();
 const createAddTagsQuery = (tags: string[]) => {
