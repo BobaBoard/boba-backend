@@ -1,16 +1,14 @@
 import {
-  FAVORITE_CHARACTER_THREAD_ID,
-  RESTRICTED_THREAD_ID,
-  NULL_ID,
-  NULL_THREAD_NOT_FOUND,
-} from "test/data/threads";
-
-import {
-  ENSURE_LOGGED_IN_NO_TOKEN,
   ENSURE_LOGGED_IN_INVALID_TOKEN,
+  ENSURE_LOGGED_IN_NO_TOKEN,
   ENSURE_THREAD_ACCESS_UNAUTHORIZED,
 } from "test/data/responses";
-
+import {
+  FAVORITE_CHARACTER_THREAD_ID,
+  NULL_ID,
+  NULL_THREAD_NOT_FOUND,
+  RESTRICTED_THREAD_ID,
+} from "test/data/threads";
 import {
   setLoggedInUser,
   startTestServer,
@@ -18,8 +16,8 @@ import {
 } from "utils/test-utils";
 
 import { BOBATAN_USER_ID } from "test/data/auth";
-import { Thread } from "types/rest/threads";
 import { GenericResponse } from "types/rest/responses";
+import { Thread } from "types/rest/threads";
 import request from "supertest";
 import router from "../../routes";
 
@@ -36,7 +34,7 @@ describe("Tests threads REST API - visits", () => {
         `/${FAVORITE_CHARACTER_THREAD_ID}/visits`
       );
 
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(204);
     });
   });
 
@@ -54,7 +52,6 @@ describe("Tests threads REST API - visits", () => {
     //const res = await request(server.app).post(
     //  `/${FAVORITE_CHARACTER_THREAD_ID}/visits`
     //);
-
     //expect(res.status).toBe(401);
     //expect(res.body).toEqual<GenericResponse>(ENSURE_LOGGED_IN_NO_TOKEN);
   });
@@ -64,16 +61,13 @@ describe("Tests threads REST API - visits", () => {
     //const res = await request(server.app).post(
     //  `/${FAVORITE_CHARACTER_THREAD_ID}/visits`
     //);
-
     //expect(res.status).toBe(403);
     //expect(res.body).toEqual<GenericResponse>(ENSURE_THREAD_ACCESS_UNAUTHORIZED);
   });
 
   test("should fail when thread does not exist", async () => {
     setLoggedInUser(BOBATAN_USER_ID);
-    const res = await request(server.app).post(
-      `/${NULL_ID}/visits`
-    );
+    const res = await request(server.app).post(`/${NULL_ID}/visits`);
 
     expect(res.status).toBe(404);
     expect(res.body).toEqual<GenericResponse>(NULL_THREAD_NOT_FOUND);
