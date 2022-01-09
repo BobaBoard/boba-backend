@@ -110,24 +110,6 @@ export const ensureAdmin = (
 ) => {
   withLoggedIn(req, res, async () => {
     const currentUserId = req.currentUser?.uid;
-/*    if (!currentUserId) {
-      error(
-        `Unauthorized request received for ensureAdmin route: ${req.originalUrl}.`
-      );
-      error(req.authenticationError);
-      if (req.authenticationError?.message === NO_USER_FOUND_ERROR) {
-        res.status(401).json({
-          message: NO_USER_FOUND_ERROR,
-        });
-      } else if (req.authenticationError?.message === EXPIRED_TOKEN_ERROR) {
-        res.status(401).json({
-          message: EXPIRED_TOKEN_ERROR,
-        });
-      } else {
-        res.status(401).json({
-          message: req.authenticationError?.message,
-        });
-      }*/
     if (currentUserId!=ADMIN_ID) {
       error(
         `Unauthorized request received for ensureAdmin route: ${req.originalUrl}.`

@@ -5,6 +5,7 @@ import {
 } from "test/data/responses";
 import {
   FAVORITE_CHARACTER_THREAD_ID,
+  FAVORITE_MURDER_THREAD_ID,
   NULL_ID,
   NULL_THREAD_NOT_FOUND,
   RESTRICTED_THREAD_ID,

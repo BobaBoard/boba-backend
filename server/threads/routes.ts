@@ -15,12 +15,12 @@ import {
 } from "handlers/permissions";
 import {
   hideThread,
+  markThreadVisit,
   muteThread,
   starThread,
   unhideThread,
   unmuteThread,
   unstarThread,
-  markThreadVisit,
   updateThreadView,
 } from "./queries";
 
@@ -511,12 +511,17 @@ router.patch(
  *     security:
  *       - firebase: []
  *     parameters:
- *       - name: threadId
+ *       - name: thread_id
  *         in: path
- *         description: The id of the thread to fetch.
+ *         description: The id of the thread to star.
  *         required: true
  *         schema:
  *           type: string
+ *           format: uuid
+ *         examples:
+ *           goreThreadId:
+ *             summary: A thread from the gore board.
+ *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
  *     responses:
  *       500:
  *         description: Internal Server Error
@@ -535,22 +540,23 @@ router.post(
   ensureLoggedIn,
   ensureThreadAccess,
   async (req, res) => {
-  const { threadId } = req.params;
-  log(`Adding thread to stars: ${threadId}`);
+    const { thread_id: threadId } = req.params;
+    log(`Adding thread to stars: ${threadId}`);
 
-  if (
-    !(await starThread({
-      firebaseId: req.currentUser.uid,
-      threadId,
-    }))
-  ) {
-    res.sendStatus(500);
-    return;
+    if (
+      !(await starThread({
+        firebaseId: req.currentUser.uid,
+        threadId,
+      }))
+    ) {
+      res.sendStatus(500);
+      return;
+    }
+
+    info(`Marked last visited time for thread: ${threadId}.`);
+    res.status(204).json();
   }
-
-  info(`Thread ${threadId} added to starfeed of user ${req.currentUser.uid}.`);
-  res.status(200).json();
-});
+);
 
 /**
  * @openapi
@@ -588,21 +594,22 @@ router.delete(
   ensureLoggedIn,
   ensureThreadAccess,
   async (req, res) => {
-  const { thread_id: threadId } = req.params;
-  log(`Removing thread from stars: ${threadId}`);
+    const { thread_id: threadId } = req.params;
+    log(`Removing thread from stars: ${threadId}`);
 
-  if (
-    !(await unstarThread({
-      firebaseId: req.currentUser.uid,
-      threadId,
-    }))
-  ) {
-    res.sendStatus(500);
-    return;
+    if (
+      !(await unstarThread({
+        firebaseId: req.currentUser.uid,
+        threadId,
+      }))
+    ) {
+      res.sendStatus(500);
+      return;
+    }
+
+    info(`Marked last visited time for thread: ${threadId}.`);
+    res.status(204).json();
   }
-
-  info(`Thread ${threadId} removed from starfeed of user ${req.currentUser.uid}.`);
-  res.status(200).json();
-});
+);
 
 export default router;
