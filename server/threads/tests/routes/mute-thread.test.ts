@@ -34,7 +34,7 @@ describe("Tests threads REST API - mute", () => {
         `/${FAVORITE_CHARACTER_THREAD_ID}/mute`
       );
 
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(204);
     });
   });
 
@@ -84,7 +84,7 @@ describe("Tests threads REST API - unmute", () => {
         `/${FAVORITE_CHARACTER_THREAD_ID}/mute`
       );
 
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(204);
     });
   });
 
