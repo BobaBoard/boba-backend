@@ -5,10 +5,10 @@ import {
   createInvite,
   updateIdentities,
 } from "./queries";
-import { ensureAdmin, ensureLoggedIn } from "handlers/auth";
 
 import axios from "axios";
 import debug from "debug";
+import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
 import firebaseAuth from "firebase-admin";
 import { getUserFromFirebaseId } from "../users/queries";
@@ -129,12 +129,11 @@ router.post(
 router.post(
   "/invite/generate", 
   ensureLoggedIn, 
-  ensureAdmin,
   async (req, res) => {
- /* const user = req.currentUser?.uid;
+  const user = req.currentUser?.uid;
   if (user !== ADMIN_ID) {
     return res.sendStatus(403);
-  }*/
+  }
 
   const { email } = req.body;
   // Generate 64 characters random id string
