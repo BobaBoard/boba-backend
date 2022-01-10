@@ -78,7 +78,7 @@ describe("Tests threads REST API - star", () => {
 describe("Tests threads REST API - unstar", () => {
   const server = startTestServer(router);
 
-  test("should unmute thread", async () => {
+  test("should unstar thread", async () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(BOBATAN_USER_ID);
       const res = await request(server.app).delete(

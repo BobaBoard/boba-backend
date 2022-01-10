@@ -536,7 +536,7 @@ router.patch(
  */
 
 router.post(
-  "/:threadId/stars",
+  "/:thread_id/stars",
   ensureLoggedIn,
   ensureThreadAccess,
   async (req, res) => {
@@ -554,7 +554,7 @@ router.post(
     }
 
     info(`Marked last visited time for thread: ${threadId}.`);
-    res.status(204).json();
+    res.status(200).json();
   }
 );
 
@@ -590,7 +590,7 @@ router.post(
  */
 
 router.delete(
-  "/:threadId/stars",
+  "/:thread_id/stars",
   ensureLoggedIn,
   ensureThreadAccess,
   async (req, res) => {
@@ -608,7 +608,7 @@ router.delete(
     }
 
     info(`Marked last visited time for thread: ${threadId}.`);
-    res.status(204).json();
+    res.status(200).json();
   }
 );
 
