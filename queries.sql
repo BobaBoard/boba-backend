@@ -51,14 +51,6 @@ DELETE FROM user_thread_identities WHERE thread_id IN (SELECT id FROM threads WH
 DELETE FROM user_thread_last_visits WHERE thread_id IN (SELECT id FROM threads WHERE string_id = '157b0460-6cfe-416a-9c65-bb35ce2c7521');
 DELETE FROM threads WHERE string_id = '157b0460-6cfe-416a-9c65-bb35ce2c7521';
 
---- TOTAL ACTIVITY ---
-select count(*) from threads;
-select count(*) from posts;
-select count(*) from comments;
-
---- TOP POSTS BY USERS COUNT ---
-SELECT slug, threads.string_id, thread_id, COUNT(user_id) as c FROM user_thread_identities JOIN threads on thread_id = threads.id LEFT JOIN boards on parent_board = boards.id GROUP BY thread_id, string_id, slug ORDER BY c DESC;
-
 --- ADD NEW ROLE ---
 INSERT INTO roles(string_id, name, avatar_reference_id, color, description, permissions)
 VALUES
@@ -129,7 +121,6 @@ INSERT INTO board_restrictions(board_id, logged_out_restrictions) VALUES
 -- ADD NEW ACCESSORY --
 INSERT INTO accessories(image_reference_id) VALUES ('https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F7c6c9459-7fa1-4d06-8dc0-ebb5b1bd76a8.png?alt=media&token=78d812a5-b217-4afb-99f3-41b9ed7b7ed5') RETURNING id;
 
-
 -- FIND FIREBASE IDS FOR IDENTITIES IN THREAD --
 SELECT 
     uti.*,
@@ -143,3 +134,12 @@ WHERE threads.string_id = '3365000d-cbdf-47d8-8eb3-0e17cd3609b2';
 
 ALTER TYPE restriction_type RENAME TO board_restrictions_type;
 ALTER TYPE role_permissions RENAME TO role_permissions_type;
+
+-- GET POST TIMINGS --
+SELECT
+    extract(month from created) as month,
+    extract(hour from created) as hour,
+    extract(dow from created) as day_of_week,
+    extract(doy from created) as day_of_year,
+    extract(year from created) as year
+FROM posts;
