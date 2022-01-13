@@ -1,8 +1,9 @@
 import { extractActivity, extractsMetadata } from "./board-feed.test";
+
 import { getUserStarFeed } from "../queries";
 
 describe("user star feed queries", () => {
-  /*test("bobatan star feed", async () => {
+  test("bobatan star feed", async () => {
     const feed = await getUserStarFeed({
       // Bobatan
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
@@ -13,25 +14,8 @@ describe("user star feed queries", () => {
       throw Error("User star feed fetching encountered an Error.");
     }
 
-    expect(feed.activity.map(extractsMetadata)).toEqual([
-      {
-        parent_post_id: null,
-        post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
-        board_slug: "gore",
-        content:
-          '[{"insert":"Favorite character to maim?"}]',
-        default_view: "thread",
-        options: {},
-        muted: false,
-        hidden: false,
-        starred: true,
-        index_tags: ["evil","bobapost",],
-        category_tags: ["bruises"],
-        content_warnings: [],
-        whisper_tags: [],
-      }
-    ]);
-  });*/
+    expect(feed.activity.map(extractsMetadata)).toEqual([]);
+  });
   test("jersey devil star feed", async () => {
     const feed = await getUserStarFeed({
       // jersey devil

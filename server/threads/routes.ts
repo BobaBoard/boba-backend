@@ -426,7 +426,7 @@ router.post(
  *         $ref: "#/components/responses/threadNotFound404"
  *       200:
  *         description: Thread properties successfully changed.
- *         $ref: "#/components/responses/default200"
+ *         $ref: "#/components/responses/default204"
  */
 router.patch(
   "/:thread_id",
@@ -501,7 +501,7 @@ router.patch(
 
 /**
  * @openapi
- * threads/{thread_id}/stars:
+ * /threads/{thread_id}/stars:
  *   post:
  *     summary: Adds thread to Star Feed
  *     operationId: starThreadByStringId
@@ -518,10 +518,6 @@ router.patch(
  *         schema:
  *           type: string
  *           format: uuid
- *         examples:
- *           goreThreadId:
- *             summary: A thread from the gore board.
- *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
  *     responses:
  *       500:
  *         description: Internal Server Error
@@ -531,7 +527,7 @@ router.patch(
  *         $ref: "#/components/responses/ensureThreadAccess403"
  *       404:
  *         $ref: "#/components/responses/threadNotFound404"
- *       200:
+ *       204:
  *         description: Thread added to Star Feed successfully.
  */
 
@@ -554,13 +550,13 @@ router.post(
     }
 
     info(`Marked last visited time for thread: ${threadId}.`);
-    res.status(200).json();
+    res.status(204).json();
   }
 );
 
 /**
  * @openapi
- * threads/{thread_id}/stars:
+ * /threads/{thread_id}/stars:
  *   delete:
  *     summary: Removes thread from Star Feed
  *     operationId: unstarThreadByStringId
@@ -570,7 +566,7 @@ router.post(
  *     security:
  *       - firebase: []
  *     parameters:
- *       - name: threadId
+ *       - name: thread_id
  *         in: path
  *         description: The id of the thread to fetch.
  *         required: true
@@ -585,7 +581,7 @@ router.post(
  *         $ref: "#/components/responses/ensureThreadAccess403"
  *       404:
  *         $ref: "#/components/responses/threadNotFound404"
- *       200:
+ *       204:
  *         description: Thread removed from Star Feed successfully.
  */
 
@@ -608,7 +604,7 @@ router.delete(
     }
 
     info(`Marked last visited time for thread: ${threadId}.`);
-    res.status(200).json();
+    res.status(204).json();
   }
 );
 

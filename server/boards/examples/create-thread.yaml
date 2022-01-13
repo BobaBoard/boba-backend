@@ -52,6 +52,7 @@ components:
         default_view: thread
         muted: false
         hidden: false
+        starred: false
         new: false
         new_posts_amount: 0
         new_comments_amount: 0
