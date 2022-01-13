@@ -35,7 +35,7 @@ describe("Tests threads REST API - star", () => {
         `/${FAVORITE_CHARACTER_THREAD_ID}/stars`
       );
 
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(204);
     });
   });
 
@@ -85,7 +85,7 @@ describe("Tests threads REST API - unstar", () => {
         `/${FAVORITE_CHARACTER_THREAD_ID}/stars`
       );
 
-      expect(res.status).toBe(200);
+      expect(res.status).toBe(204);
     });
   });
 

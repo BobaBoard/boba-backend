@@ -175,6 +175,7 @@ router.get("/users/@me", ensureLoggedIn, async (req, res) => {
  * /feeds/users/@me/stars:
  *   get:
  *     summary: Get current users Star Feed.
+ *     operationId: getUserStarFeed
  *     tags:
  *       - /feeds/
  *     security:
@@ -201,12 +202,10 @@ router.get("/users/@me", ensureLoggedIn, async (req, res) => {
 router.get("/users/@me/stars", ensureLoggedIn, async (req, res) => {
   const { cursor, starred } = req.query;
   const currentUserId: string = req.currentUser?.uid;
-
- // get user star feed activity
+  
   const userStarFeed = await getUserStarFeed({
     firebaseId: currentUserId,
     cursor: (cursor as string) || null,
-//    starredOnly: starred === "true",
   });
 
   if (!userStarFeed) {
