@@ -92,6 +92,7 @@ const getThreadDetails = `
 const getTriggeredWebhooks = `
     SELECT 
         webhook,
+        array_agg(DISTINCT subscriptions.string_id) AS subscription_ids,
         array_agg(DISTINCT subscriptions.name) AS subscription_names,
         array_agg(DISTINCT categories.category) AS triggered_categories
     FROM subscriptions
