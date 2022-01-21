@@ -1,3 +1,5 @@
+import * as uuid from "uuid";
+
 import {
   BOBATAN_USER_ID,
   GORE_MASTER_IDENTITY_ID,
@@ -22,11 +24,20 @@ import {
 
 import { GenericResponse } from "types/rest/responses";
 import { Thread } from "types/rest/threads";
+import axios from "axios";
+import { mocked } from "ts-jest/utils";
 import request from "supertest";
 import router from "../../routes";
 
+jest.mock("uuid", () => ({
+  __esModule: true,
+  // @ts-ignore
+  ...jest.requireActual("uuid"),
+}));
+
 jest.mock("handlers/auth");
 jest.mock("server/db-pool");
+jest.mock("axios");
 
 export const CREATE_GORE_THREAD_BASE_REQUEST = {
   content: '[{"insert":"Gore. Gore? Gore!"}]',
@@ -36,6 +47,9 @@ export const CREATE_GORE_THREAD_BASE_REQUEST = {
   indexTags: ["search"],
   contentWarnings: ["content notice"],
   categoryTags: ["filter"],
+};
+const sleep = (milliseconds: number) => {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
 };
 
 describe("Tests threads REST API - create", () => {
@@ -172,6 +186,43 @@ describe("Tests threads REST API - create", () => {
         });
 
       expect(res.status).toBe(403);
+    });
+  });
+
+  test("should trigger webhook when updating subscription", async () => {
+    await wrapWithTransaction(async () => {
+      const newThreadId = "ce875278-d315-4c7f-b2e8-fd6720d9ef5b";
+      jest.spyOn(uuid, "v4").mockReturnValueOnce(newThreadId);
+      setLoggedInUser(BOBATAN_USER_ID);
+      const res = await request(server.app)
+        .post(`/${GORE_BOARD_ID}`)
+        .send({
+          ...CREATE_GORE_THREAD_BASE_REQUEST,
+          categoryTags: ["blood"],
+          identityId: GORE_MASTER_IDENTITY_ID,
+        });
+
+      expect(res.status).toBe(200);
+      await sleep(200);
+      expect(axios.post).toHaveBeenCalledTimes(2);
+      expect(mocked(axios.post).mock.calls).toContainEqual([
+        "http://localhost:4200/hooks/realm_of_terror",
+        {
+          avatar_url:
+            "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F6518df53-2031-4ac5-8d75-57a0051ed924?alt=media&token=23df54b7-297c-42ff-a0ea-b9862c9814f8",
+          content: `Your "blood & bruises" subscription has updated!\nhttps://v0.boba.social/!gore/thread/${newThreadId}`,
+          username: "GoreMaster5000",
+        },
+      ]);
+      expect(mocked(axios.post).mock.calls).toContainEqual([
+        "http://localhost:4200/hooks/volunteers",
+        {
+          avatar_url:
+            "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F6518df53-2031-4ac5-8d75-57a0051ed924?alt=media&token=23df54b7-297c-42ff-a0ea-b9862c9814f8",
+          content: `Your "blood" subscription has updated!\nhttps://v0.boba.social/!gore/thread/${newThreadId}`,
+          username: "GoreMaster5000",
+        },
+      ]);
     });
   });
 });
