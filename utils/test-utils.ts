@@ -8,8 +8,8 @@ import debug from "debug";
 import { handleApiErrors } from "handlers/errors";
 import { mocked } from "ts-jest/utils";
 import pool from "server/db-pool";
-require("express-async-errors");
 
+require("express-async-errors");
 
 const log = debug("bobaserver:tests:test-utils");
 
@@ -18,7 +18,6 @@ export const runWithinTransaction = async (
 ) => {
   await pool.tx("test-transaction", async (t) => {
     try {
-      await t.none("SET TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;");
       await test(t);
     } finally {
       await t.none("ROLLBACK;");
