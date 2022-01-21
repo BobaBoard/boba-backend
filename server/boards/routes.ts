@@ -230,16 +230,23 @@ router.post(
     });
     if (webhooks && webhooks.length > 0) {
       const threadUrl = `https://v0.boba.social/!${boardSlug}/thread/${serverThread.id}`;
-      webhooks.forEach(({ webhook, subscriptionNames }) => {
-        const message = `Your "${subscriptionNames.join(
-          ", "
-        )}" subscription has updated!\n${threadUrl}`;
-        axios.post(webhook, {
-          content: message,
-          username: serverThread.posts[0].secret_identity.name,
-          avatar_url: serverThread.posts[0].secret_identity.avatar,
-        });
-      });
+      webhooks.forEach(
+        async ({ webhook, subscriptionNames, subscriptionIds }) => {
+          await Promise.all(
+            subscriptionIds.map((subscriptionId) =>
+              cache().hdel(CacheKeys.SUBSCRIPTION, subscriptionId)
+            )
+          );
+          const message = `Your "${subscriptionNames.join(
+            ", "
+          )}" subscription has updated!\n${threadUrl}`;
+          axios.post(webhook, {
+            content: message,
+            username: serverThread.posts[0].secret_identity.name,
+            avatar_url: serverThread.posts[0].secret_identity.avatar,
+          });
+        }
+      );
     }
   }
 );

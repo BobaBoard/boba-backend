@@ -10,6 +10,7 @@ import {
   NULL_ID,
   NULL_THREAD_NOT_FOUND,
 } from "test/data/threads";
+import { CacheKeys, cache } from "server/cache";
 import {
   ENSURE_LOGGED_IN_INVALID_TOKEN,
   ENSURE_LOGGED_IN_NO_TOKEN,
@@ -36,6 +37,7 @@ jest.mock("uuid", () => ({
 }));
 
 jest.mock("handlers/auth");
+jest.mock("server/cache");
 jest.mock("server/db-pool");
 jest.mock("axios");
 
@@ -223,6 +225,18 @@ describe("Tests threads REST API - create", () => {
           username: "GoreMaster5000",
         },
       ]);
+
+      expect(cache().hdel).toBeCalledTimes(2);
+      // blood & bruises subscription
+      expect(cache().hdel).toBeCalledWith(
+        CacheKeys.SUBSCRIPTION,
+        "04af1212-e641-414b-bf84-81fae2da8484"
+      );
+      // blood subscription
+      expect(cache().hdel).toBeCalledWith(
+        CacheKeys.SUBSCRIPTION,
+        "11e29fe7-1913-48a5-a3aa-9f01358d212f"
+      );
     });
   });
 });
