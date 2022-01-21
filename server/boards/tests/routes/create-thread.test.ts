@@ -5,17 +5,8 @@ import {
   GORE_MASTER_IDENTITY_ID,
   SEXY_DADDY_USER_ID,
 } from "test/data/auth";
-import {
-  CREATE_GORE_THREAD_RESPONSE,
-  NULL_ID,
-  NULL_THREAD_NOT_FOUND,
-} from "test/data/threads";
+import { CREATE_GORE_THREAD_RESPONSE, NULL_ID } from "test/data/threads";
 import { CacheKeys, cache } from "server/cache";
-import {
-  ENSURE_LOGGED_IN_INVALID_TOKEN,
-  ENSURE_LOGGED_IN_NO_TOKEN,
-  ENSURE_THREAD_ACCESS_UNAUTHORIZED,
-} from "test/data/responses";
 import { GORE_BOARD_ID, NULL_BOARD_NOT_FOUND } from "test/data/boards";
 import {
   setLoggedInUser,
@@ -23,6 +14,7 @@ import {
   wrapWithTransaction,
 } from "utils/test-utils";
 
+import { ENSURE_LOGGED_IN_NO_TOKEN } from "test/data/responses";
 import { GenericResponse } from "types/rest/responses";
 import { Thread } from "types/rest/threads";
 import axios from "axios";
@@ -50,6 +42,8 @@ export const CREATE_GORE_THREAD_BASE_REQUEST = {
   contentWarnings: ["content notice"],
   categoryTags: ["filter"],
 };
+
+// TODO: remove this hack once the webhook function is better implemented.
 const sleep = (milliseconds: number) => {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 };
