@@ -221,10 +221,9 @@ router.post(
     info(`sending back data for thread ${serverThread.id}.`);
     res.status(200).json(serverThread);
 
-    info(
+    log(
       `generating webhook for thread ${serverThread.id} in board ${boardSlug}`
     );
-
     const webhooks = await getTriggeredWebhooks({
       slug: boardSlug,
       categories: serverThread.posts[0].tags?.category_tags,
@@ -234,7 +233,7 @@ router.post(
       webhooks.forEach(({ webhook, subscriptionNames }) => {
         const message = `Your "${subscriptionNames.join(
           ", "
-        )}" subscription has updated!\n ${threadUrl}`;
+        )}" subscription has updated!\n${threadUrl}`;
         axios.post(webhook, {
           content: message,
           username: serverThread.posts[0].secret_identity.name,

@@ -96,9 +96,8 @@ const getTriggeredWebhooks = `
         array_agg(DISTINCT categories.category) AS triggered_categories
     FROM subscriptions
         LEFT JOIN board_category_subscriptions bcs ON bcs.subscription_id = subscriptions.id
-        LEFT JOIN board_category_mappings bcm ON bcs.board_category_mapping_id = bcm.id
-        LEFT JOIN boards ON bcm.board_id = boards.id
-        LEFT JOIN categories ON bcm.category_id = categories.id
+        LEFT JOIN boards ON bcs.board_id = boards.id
+        LEFT JOIN categories ON bcs.category_id = categories.id
         LEFT JOIN subscription_webhooks sw ON subscriptions.id = sw.subscription_id
         LEFT JOIN webhooks ON sw.webhook_id = webhooks.id
     WHERE boards.slug = $/board_slug/ AND categories.category = ANY($/category_names/)
