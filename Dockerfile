@@ -1,5 +1,5 @@
 # ---- Base Node ----
-FROM node:12-alpine AS base
+FROM node:16-alpine AS base
 RUN apk --no-cache add git
 RUN apk --no-cache add bash
 
