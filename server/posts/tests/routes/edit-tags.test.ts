@@ -40,37 +40,6 @@ describe("Test editing tags of post REST API", () => {
       });
     });
   });
-
-  test("allows post editing when logged in as owner", async () => {
-    await wrapWithTransaction(async () => {
-      setLoggedInUser(ONCEST_USER_ID);
-      const res = await request(server.app)
-        .patch(`/${CHARACTER_TO_MAIM_POST_ID}/contributions`)
-        .send({
-          index_tags: ["new_index_tag"],
-          category_tags: ["new_category_tag"],
-          content_warnings: ["new_warning"],
-          whisper_tags: ["new_whisper_tag"],
-        });
-
-      expect(res.status).toBe(200);
-      expect(res.body).toEqual({
-        ...CHARACTER_TO_MAIM_POST,
-        // TODO: the total comments amount should be returned also in the other queries
-        total_comments_amount: 2,
-        new_comments_amount: 2,
-        own: true,
-        tags: {
-          index_tags: ["new_index_tag"],
-          category_tags: ["new_category_tag"],
-          content_warnings: ["new_warning"],
-          whisper_tags: ["new_whisper_tag"],
-        },
-        user_identity: ONCEST_USER_IDENTITY,
-      });
-    });
-  });
-
   test("doesn't allow post editing when logged in as different user", async () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(SEXY_DADDY_USER_ID);
@@ -142,6 +111,35 @@ describe("ci-disable", () => {
           category_tags: ["new_category_tag"],
           content_warnings: ["new_warning"],
         },
+      });
+    });
+  });
+  test("allows post editing when logged in as owner", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(ONCEST_USER_ID);
+      const res = await request(server.app)
+        .patch(`/${CHARACTER_TO_MAIM_POST_ID}/contributions`)
+        .send({
+          index_tags: ["new_index_tag"],
+          category_tags: ["new_category_tag"],
+          content_warnings: ["new_warning"],
+          whisper_tags: ["new_whisper_tag"],
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({
+        ...CHARACTER_TO_MAIM_POST,
+        // TODO: the total comments amount should be returned also in the other queries
+        total_comments_amount: 2,
+        new_comments_amount: 2,
+        own: true,
+        tags: {
+          index_tags: ["new_index_tag"],
+          category_tags: ["new_category_tag"],
+          content_warnings: ["new_warning"],
+          whisper_tags: ["new_whisper_tag"],
+        },
+        user_identity: ONCEST_USER_IDENTITY,
       });
     });
   });
