@@ -6,7 +6,7 @@ import { Server } from "http";
 import bodyParser from "body-parser";
 import debug from "debug";
 import { handleApiErrors } from "handlers/errors";
-import { mocked } from "ts-jest/utils";
+import { mocked } from "jest-mock";
 import pool from "server/db-pool";
 
 require("express-async-errors");
