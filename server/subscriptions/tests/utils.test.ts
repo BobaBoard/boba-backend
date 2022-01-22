@@ -2,7 +2,7 @@ import { CacheKeys, cache } from "../../cache";
 
 import axios from "axios";
 import { maybeUpdateSubscriptionsOnThreadChange } from "../utils";
-import { mocked } from "ts-jest/utils";
+import { mocked } from "jest-mock";
 
 jest.mock("server/cache");
 jest.mock("axios");
