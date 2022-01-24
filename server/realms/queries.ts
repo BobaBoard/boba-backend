@@ -1,6 +1,9 @@
+import { filterOutDisabledSettings, getRealmCursorSetting } from "./utils";
+
 import { CssVariableSetting } from "../../types/settings";
 import { SettingEntry } from "../../types/settings";
-import { filterOutDisabledSettings, getRealmCursorSetting } from "./utils";
+import pool from "server/db-pool";
+import sql from "./sql";
 
 const CURSOR_SETTINGS = {
   // image: "https://cur.cursors-4u.net/nature/nat-2/nat120.cur",
@@ -62,4 +65,18 @@ export const getSettingsBySlug = async ({
     userSettings
   );
   return baseSettings;
+};
+
+export const getRealmDataBySlug = async ({
+  realmSlug,
+}: {
+  realmSlug: string;
+}): Promise<{
+  id: string;
+  string_id: string;
+  slug: string;
+} | null> => {
+  return await pool.oneOrNone(sql.getRealmBySlug, {
+    realm_slug: realmSlug,
+  });
 };

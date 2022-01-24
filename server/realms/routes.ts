@@ -1,7 +1,9 @@
+import { getRealmDataBySlug, getSettingsBySlug } from "./queries";
+
+import { NotFound404Error } from "types/errors/api";
 import debug from "debug";
 import express from "express";
 import { getBoards } from "../boards/queries";
-import { getSettingsBySlug } from "./queries";
 import { processBoardsSummary } from "utils/response-utils";
 import { processRealmActivity } from "./utils";
 import { withUserSettings } from "handlers/auth";
@@ -56,9 +58,16 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
       userSettings: currentUserSettings,
     });
 
+    const realmData = await getRealmDataBySlug({ realmSlug: realm_slug });
+
+    if (!realmData) {
+      throw new NotFound404Error(`The realm ${realm_slug} was not found.`);
+    }
+
     // TODO[realms]: use a per-realm query here
     const boards = await getBoards({
       firebaseId: req.currentUser?.uid,
+      realmId: realmData.id,
     });
 
     if (!boards) {

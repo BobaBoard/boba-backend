@@ -62,7 +62,7 @@ const GORE_LOGGED_OUT_METADATA: BoardMetadata = {
   accent_color: "#f96680",
   id: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
   slug: "gore",
-  realm_id: "v0-fake-id",
+  realm_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
   tagline: "Blood! Blood! Blood!",
   avatar_url: "/gore.png",
   delisted: false,
@@ -126,7 +126,7 @@ export const NULL_BOARD_NOT_FOUND: GenericResponse = {
 
 const RESTRICTED_LOGGED_OUT_BOARD_SUMMARY: BoardSummary = {
   id: RESTRICTED_BOARD_ID,
-  realm_id: "v0-fake-id",
+  realm_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
   avatar_url:
     "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2Fe4e263cf-ee98-4902-9c14-c10299210e01.png?alt=media&token=7c170411-9401-4d4e-9f66-5d6dfee2fccd",
   logged_in_only: true,
@@ -138,7 +138,7 @@ const RESTRICTED_LOGGED_OUT_BOARD_SUMMARY: BoardSummary = {
 
 const RESTRICTED_BOBATAN_SUMMARY: BoardSummary = {
   id: RESTRICTED_BOARD_ID,
-  realm_id: "v0-fake-id",
+  realm_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
   avatar_url:
     "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2Fe4e263cf-ee98-4902-9c14-c10299210e01.png?alt=media&token=7c170411-9401-4d4e-9f66-5d6dfee2fccd",
   logged_in_only: true,
