@@ -6,6 +6,7 @@ const extractBoardDetails = (boardData: any) => {
     settings: boardData.settings,
     slug: boardData.slug,
     uuid: boardData.string_id,
+    realm_string_id: boardData.realm_string_id,
     tagline: boardData.tagline,
   };
 };
@@ -14,6 +15,7 @@ const extractBoardUpdates = (boardData: any) => {
   return {
     slug: boardData.slug,
     uuid: boardData.string_id,
+    realm_string_id: boardData.realm_string_id,
     has_updates: boardData.has_updates,
     last_comment: boardData.last_comment,
     last_post: boardData.last_post,
@@ -27,6 +29,7 @@ const extractBoardUserSettings = (boardData: any) => {
   return {
     slug: boardData.slug,
     uuid: boardData.string_id,
+    realm_string_id: boardData.realm_string_id,
     muted: boardData.muted,
     pinned_order: boardData.pinned_order,
   };
@@ -48,6 +51,7 @@ describe("Tests boards queries", () => {
           },
           slug: "main_street",
           uuid: "2fb151eb-c600-4fe4-a542-4662487e5496",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           tagline: "For BobaBoard-related discussions.",
         },
         {
@@ -57,6 +61,7 @@ describe("Tests boards queries", () => {
           },
           slug: "gore",
           uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           tagline: "Blood! Blood! Blood!",
         },
         {
@@ -66,6 +71,7 @@ describe("Tests boards queries", () => {
           },
           slug: "anime",
           uuid: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           tagline: "I wish I had a funny one for this.",
         },
         {
@@ -75,6 +81,7 @@ describe("Tests boards queries", () => {
           },
           slug: "long",
           uuid: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           tagline: "A board to test with many posts.",
         },
         {
@@ -84,6 +91,7 @@ describe("Tests boards queries", () => {
           },
           slug: "memes",
           uuid: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           tagline: "A board to test collections view.",
         },
         {
@@ -94,6 +102,7 @@ describe("Tests boards queries", () => {
           },
           slug: "muted",
           uuid: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           tagline: "A board to test for muting.",
         },
         {
@@ -104,6 +113,7 @@ describe("Tests boards queries", () => {
           },
           slug: "restricted",
           uuid: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           tagline: "A board to test for logged-in only view",
         },
         {
@@ -114,6 +124,7 @@ describe("Tests boards queries", () => {
           },
           slug: "delisted",
           uuid: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           tagline: "A board to test for link-only view",
         },
       ]);
@@ -131,6 +142,7 @@ describe("Tests boards queries", () => {
         {
           slug: "main_street",
           uuid: "2fb151eb-c600-4fe4-a542-4662487e5496",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: null,
           last_post: null,
@@ -141,6 +153,7 @@ describe("Tests boards queries", () => {
         {
           slug: "gore",
           uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: true,
           last_comment: new Date(Date.UTC(2020, 9, 4, 12, 44)),
           last_post: new Date(Date.UTC(2020, 8, 25, 12, 42)),
@@ -152,6 +165,7 @@ describe("Tests boards queries", () => {
         {
           slug: "anime",
           uuid: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: true,
           last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
           last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
@@ -162,6 +176,7 @@ describe("Tests boards queries", () => {
         {
           slug: "long",
           uuid: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: true,
           last_comment: new Date(Date.UTC(2020, 3, 1, 12, 22)),
           last_post: new Date(Date.UTC(2020, 3, 25, 12, 42)),
@@ -172,6 +187,7 @@ describe("Tests boards queries", () => {
         {
           slug: "memes",
           uuid: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: null,
           last_post: new Date(Date.UTC(2020, 7, 22, 10, 36, 55, 850)),
@@ -182,6 +198,7 @@ describe("Tests boards queries", () => {
         {
           slug: "muted",
           uuid: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: null,
           last_post: null,
@@ -192,6 +209,7 @@ describe("Tests boards queries", () => {
         {
           slug: "restricted",
           uuid: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: true,
           last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
           last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
@@ -202,6 +220,7 @@ describe("Tests boards queries", () => {
         {
           slug: "delisted",
           uuid: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: null,
           last_post: null,
@@ -218,6 +237,7 @@ describe("Tests boards queries", () => {
         {
           slug: "main_street",
           uuid: "2fb151eb-c600-4fe4-a542-4662487e5496",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: null,
           last_post: null,
@@ -228,6 +248,7 @@ describe("Tests boards queries", () => {
         {
           slug: "gore",
           uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: new Date(Date.UTC(2020, 9, 4, 12, 44)),
           last_post: new Date(Date.UTC(2020, 8, 25, 12, 42)),
@@ -238,6 +259,7 @@ describe("Tests boards queries", () => {
         {
           slug: "anime",
           uuid: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
           last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
@@ -248,6 +270,7 @@ describe("Tests boards queries", () => {
         {
           slug: "long",
           uuid: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: new Date(Date.UTC(2020, 3, 1, 12, 22)),
           last_post: new Date(Date.UTC(2020, 3, 25, 12, 42)),
@@ -258,6 +281,7 @@ describe("Tests boards queries", () => {
         {
           slug: "memes",
           uuid: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: null,
           last_post: new Date(Date.UTC(2020, 7, 22, 10, 36, 55, 850)),
@@ -268,6 +292,7 @@ describe("Tests boards queries", () => {
         {
           slug: "muted",
           uuid: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: null,
           last_post: new Date(Date.UTC(2020, 0, 14, 8, 42)),
@@ -278,6 +303,7 @@ describe("Tests boards queries", () => {
         {
           slug: "restricted",
           uuid: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
           last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
@@ -288,6 +314,7 @@ describe("Tests boards queries", () => {
         {
           slug: "delisted",
           uuid: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: null,
           last_post: null,
@@ -308,6 +335,7 @@ describe("Tests boards queries", () => {
         {
           slug: "main_street",
           uuid: "2fb151eb-c600-4fe4-a542-4662487e5496",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: null,
           last_post: null,
@@ -318,6 +346,7 @@ describe("Tests boards queries", () => {
         {
           slug: "gore",
           uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: true,
           last_comment: new Date(Date.UTC(2020, 9, 4, 12, 44)),
           last_post: new Date(Date.UTC(2020, 8, 25, 12, 42)),
@@ -329,6 +358,7 @@ describe("Tests boards queries", () => {
         {
           slug: "anime",
           uuid: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
           last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
@@ -339,6 +369,7 @@ describe("Tests boards queries", () => {
         {
           slug: "long",
           uuid: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: true,
           last_comment: new Date(Date.UTC(2020, 3, 1, 12, 22)),
           last_post: new Date(Date.UTC(2020, 3, 25, 12, 42)),
@@ -349,6 +380,7 @@ describe("Tests boards queries", () => {
         {
           slug: "memes",
           uuid: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: true,
           last_comment: null,
           last_post: new Date(Date.UTC(2020, 7, 22, 10, 36, 55, 850)),
@@ -361,6 +393,7 @@ describe("Tests boards queries", () => {
         {
           slug: "muted",
           uuid: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: null,
           last_post: new Date(Date.UTC(2020, 0, 14, 8, 42)),
@@ -371,6 +404,7 @@ describe("Tests boards queries", () => {
         {
           slug: "restricted",
           uuid: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: true,
           last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
           last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
@@ -381,6 +415,7 @@ describe("Tests boards queries", () => {
         {
           slug: "delisted",
           uuid: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: null,
           last_post: null,
@@ -403,48 +438,56 @@ describe("Tests boards queries", () => {
         {
           slug: "main_street",
           uuid: "2fb151eb-c600-4fe4-a542-4662487e5496",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
         {
           slug: "gore",
           uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: "1",
         },
         {
           slug: "anime",
           uuid: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: "2",
         },
         {
           slug: "long",
           uuid: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
         {
           slug: "memes",
           uuid: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
         {
           slug: "muted",
           uuid: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
         {
           slug: "restricted",
           uuid: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
         {
           slug: "delisted",
           uuid: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
@@ -457,48 +500,56 @@ describe("Tests boards queries", () => {
         {
           slug: "main_street",
           uuid: "2fb151eb-c600-4fe4-a542-4662487e5496",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
         {
           slug: "gore",
           uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
         {
           slug: "anime",
           uuid: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
         {
           slug: "long",
           uuid: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
         {
           slug: "memes",
           uuid: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
         {
           slug: "muted",
           uuid: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
         {
           slug: "restricted",
           uuid: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
         {
           slug: "delisted",
           uuid: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
@@ -531,6 +582,7 @@ describe("Tests boards queries", () => {
         },
         slug: "main_street",
         string_id: "2fb151eb-c600-4fe4-a542-4662487e5496",
+        realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
         tagline: "For BobaBoard-related discussions.",
         logged_in_base_restrictions: [],
         logged_out_restrictions: [],

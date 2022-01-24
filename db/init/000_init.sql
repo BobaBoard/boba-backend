@@ -60,6 +60,17 @@ CREATE TABLE IF NOT EXISTS content_warnings
 );
 CREATE UNIQUE INDEX content_warnings_warning on content_warnings(warning);
 
+CREATE TABLE IF NOT EXISTS realms
+(
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    /* The realm's UUID. Used in backend requests. */
+    string_id TEXT NOT NULL,
+    /* Textual id of the realm, e.g. "v0", "my-cool-space". Used as part of the URL. */
+    slug TEXT NOT NULL
+);
+CREATE UNIQUE INDEX realms_string_id on realms(string_id);
+CREATE UNIQUE INDEX realms_slug on realms(slug);
+
 CREATE TABLE IF NOT EXISTS boards
 (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
@@ -70,6 +81,7 @@ CREATE TABLE IF NOT EXISTS boards
     tagline TEXT NOT NULL,
     /* Reference to the id of the image on external storage provider. */
     avatar_reference_id TEXT,
+    parent_realm_id BIGINT REFERENCES realms(id) ON DELETE RESTRICT NOT NULL,
     settings JSONB NOT NULL
 );
 CREATE UNIQUE INDEX boards_string_id on boards(string_id);
