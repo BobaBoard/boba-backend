@@ -13,7 +13,7 @@ components:
           thread_page: []
         boards:
           - id: 2fb151eb-c600-4fe4-a542-4662487e5496
-            realm_id: v0-fake-id
+            realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e
             slug: main_street
             tagline: For BobaBoard-related discussions.
             avatar_url: /villains.png
@@ -21,7 +21,7 @@ components:
             delisted: false
             logged_in_only: false
           - id: c6d3d10e-8e49-4d73-b28a-9d652b41beec
-            realm_id: v0-fake-id
+            realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e
             slug: gore
             tagline: Blood! Blood! Blood!
             avatar_url: /gore.png
@@ -29,7 +29,7 @@ components:
             delisted: false
             logged_in_only: false
           - id: 4b30fb7c-2aca-4333-aa56-ae8623a92b65
-            realm_id: v0-fake-id
+            realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e
             slug: anime
             tagline: I wish I had a funny one for this.
             avatar_url: /anime.png
@@ -37,7 +37,7 @@ components:
             delisted: false
             logged_in_only: false
           - id: db8dc5b3-5b4a-4bfe-a303-e176c9b00b83
-            realm_id: v0-fake-id
+            realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e
             slug: long
             tagline: A board to test with many posts.
             avatar_url: /onceler-board.png
@@ -45,7 +45,7 @@ components:
             delisted: false
             logged_in_only: false
           - id: 0e0d1ee6-f996-4415-89c1-c9dc1fe991dc
-            realm_id: v0-fake-id
+            realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e
             slug: memes
             tagline: A board to test collections view.
             avatar_url: /kink-meme.png
@@ -53,7 +53,7 @@ components:
             delisted: false
             logged_in_only: false
           - id: 2bdce2fa-12e0-461b-b0fb-1a2e67227434
-            realm_id: v0-fake-id
+            realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e
             slug: muted
             tagline: A board to test for muting.
             avatar_url: >-
@@ -62,7 +62,7 @@ components:
             delisted: false
             logged_in_only: false
           - id: 76ebaab0-6c3e-4d7b-900f-f450625a5ed3
-            realm_id: v0-fake-id
+            realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e
             slug: restricted
             tagline: A board to test for logged-in only view
             avatar_url: >-
