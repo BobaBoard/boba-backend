@@ -65,7 +65,7 @@ CREATE TABLE IF NOT EXISTS realms
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     /* The realm's UUID. Used in backend requests. */
     string_id TEXT NOT NULL,
-    /* Textual id of the realm, e.g. "v0", "my-cool-space". Used as part of the URL. */
+    /* Textual id of the realm, e.g. "twisted-minds", "my-cool-space". Used as part of the URL. */
     slug TEXT NOT NULL
 );
 CREATE UNIQUE INDEX realms_string_id on realms(string_id);
