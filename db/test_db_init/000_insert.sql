@@ -1,7 +1,7 @@
 INSERT INTO Realms(id, string_id, slug)
 OVERRIDING SYSTEM VALUE VALUES
-    (1, '76ef4cc3-1603-4278-95d7-99c59f481d2e', 'v0'),
-    (2, 'e88590d8-c5fb-44f2-abc2-8cffb5b4cdb1', 'v1');
+    (1, '76ef4cc3-1603-4278-95d7-99c59f481d2e', 'twisted-minds'),
+    (2, 'e88590d8-c5fb-44f2-abc2-8cffb5b4cdb1', 'uwu');
 
 INSERT INTO Boards(id, string_id, slug, tagline, avatar_reference_id, parent_realm_id, settings)
 OVERRIDING SYSTEM VALUE VALUES
