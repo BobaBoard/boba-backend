@@ -5,6 +5,9 @@ const util = require("util");
 util.inspect.defaultOptions.depth = null;
 
 module.exports = {
+  snapshotFormat: {
+    printBasicPrototype: false,
+  },
   testEnvironment: "node",
   transform: {
     "\\.(ts|tsx)$": "ts-jest",
