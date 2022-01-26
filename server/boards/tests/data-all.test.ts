@@ -1,3 +1,6 @@
+import { BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID } from "test/data/auth";
+
+import { TWISTED_MINDS_REALM_STRING_ID } from "test/data/realms";
 import { getBoards } from "../queries";
 
 const extractBoardDetails = (boardData: any) => {
@@ -39,10 +42,16 @@ describe("Tests boards queries", () => {
   describe("Boards details", () => {
     test("fetches boards details(with user)", async () => {
       const boards = await getBoards({
-        // Bobatan
-        firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+        firebaseId: BOBATAN_USER_ID,
+        realmId: TWISTED_MINDS_REALM_STRING_ID,
       });
 
+      console.log(boards);
+      console.log(boards);
+      console.log(boards);
+      console.log(boards);
+      console.log(boards);
+      console.log(boards);
       expect(boards.map(extractBoardDetails)).toEqual([
         {
           avatar_reference_id: "villains.png",
@@ -134,8 +143,8 @@ describe("Tests boards queries", () => {
   describe("Boards updates", () => {
     test("fetches all boards updates (with user)", async () => {
       const boards = await getBoards({
-        // Bobatan
-        firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+        firebaseId: BOBATAN_USER_ID,
+        realmId: TWISTED_MINDS_REALM_STRING_ID,
       });
 
       expect(boards.map(extractBoardUpdates)).toEqual([
@@ -231,7 +240,10 @@ describe("Tests boards queries", () => {
       ]);
     });
     test("fetches all boards updates (no user)", async () => {
-      const boards = await getBoards({ firebaseId: undefined });
+      const boards = await getBoards({
+        firebaseId: undefined,
+        realmId: TWISTED_MINDS_REALM_STRING_ID,
+      });
 
       expect(boards.map(extractBoardUpdates)).toEqual([
         {
@@ -327,8 +339,8 @@ describe("Tests boards queries", () => {
 
     test("fetches all boards updates (dismissed notifications)", async () => {
       const boards = await getBoards({
-        // Zodiac Killer
-        firebaseId: "fb5",
+        firebaseId: ZODIAC_KILLER_USER_ID,
+        realmId: TWISTED_MINDS_REALM_STRING_ID,
       });
 
       expect(boards.map(extractBoardUpdates)).toEqual([
@@ -430,8 +442,8 @@ describe("Tests boards queries", () => {
   describe("User settings", () => {
     test("fetches all boards (with user)", async () => {
       const boards = await getBoards({
-        // Bobatan
-        firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+        firebaseId: BOBATAN_USER_ID,
+        realmId: TWISTED_MINDS_REALM_STRING_ID,
       });
 
       expect(boards.map(extractBoardUserSettings)).toEqual([
@@ -494,7 +506,10 @@ describe("Tests boards queries", () => {
       ]);
     });
     test("fetches all boards user settings (no user)", async () => {
-      const boards = await getBoards({ firebaseId: undefined });
+      const boards = await getBoards({
+        firebaseId: undefined,
+        realmId: TWISTED_MINDS_REALM_STRING_ID,
+      });
 
       expect(boards.map(extractBoardUserSettings)).toEqual([
         {
@@ -563,8 +578,8 @@ describe("Tests boards queries", () => {
     // appropriate "extration" method so it can be captured by the other tests.
     test("fetches all boards (with user)", async () => {
       const boards = await getBoards({
-        // Bobatan
-        firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+        firebaseId: BOBATAN_USER_ID,
+        realmId: TWISTED_MINDS_REALM_STRING_ID,
       });
 
       expect(boards[0]).toEqual({
