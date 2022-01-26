@@ -18,6 +18,7 @@ export const MUTED_BOARD_ID = "2bdce2fa-12e0-461b-b0fb-1a2e67227434";
 export const RESTRICTED_BOARD_ID = "76ebaab0-6c3e-4d7b-900f-f450625a5ed3";
 export const LONG_BOARD_ID = "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83";
 export const NULL_ID = "00000000-0000-0000-0000-000000000000";
+export const MODS_BOARD_ID = "2895f9c8-8419-4ab8-b33d-3ad18e77a589";
 
 export const extractBoardSummary = (metadata: BoardMetadata): BoardSummary => {
   const {
