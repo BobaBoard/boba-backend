@@ -61,10 +61,9 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
       throw new NotFound404Error(`The realm ${realm_slug} was not found.`);
     }
 
-    // TODO[realms]: use a per-realm query here
     const boards = await getBoards({
       firebaseId: req.currentUser?.uid,
-      realmId: realmData.id,
+      realmId: realmData.string_id,
     });
 
     if (!boards) {
@@ -124,6 +123,7 @@ router.get("/:realm_id/activity", async (req, res) => {
     // TODO[realms]: use a per-realm query here
     const boards = await getBoards({
       firebaseId: req.currentUser?.uid,
+      realmId: realm_id,
     });
 
     if (!boards) {
