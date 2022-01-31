@@ -400,7 +400,7 @@ router.post("/notifications/dismiss", ensureLoggedIn, async (req, res) => {
   res.sendStatus(204);
 });
 
-router.post("/settings/update", ensureLoggedIn, async (req, res) => {
+router.patch("/@me/settings", ensureLoggedIn, async (req, res) => {
   const { name, value } = req.body;
 
   const firebaseId = req.currentUser.uid;
@@ -423,12 +423,17 @@ router.post("/settings/update", ensureLoggedIn, async (req, res) => {
   }
 });
 
-router.get("/settings", ensureLoggedIn, withUserSettings, async (req, res) => {
-  try {
-    res.status(200).json(aggregateByType(req.currentUser.settings));
-  } catch (e) {
-    throw new Internal500Error(`Failed to get user settings`);
+router.get(
+  "/@me/settings",
+  ensureLoggedIn,
+  withUserSettings,
+  async (req, res) => {
+    try {
+      res.status(200).json(aggregateByType(req.currentUser.settings));
+    } catch (e) {
+      throw new Internal500Error(`Failed to get user settings`);
+    }
   }
-});
+);
 
 export default router;
