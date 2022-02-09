@@ -327,7 +327,7 @@ router.get("/@me/notifications", ensureLoggedIn, async (req, res) => {
  *       204:
  *         description: The notifications were successfully dismissed.
  */
-router.post("/@me/notifications", ensureLoggedIn, async (req, res) => {
+router.delete("/@me/notifications", ensureLoggedIn, async (req, res) => {
   let currentUserId: string = req.currentUser?.uid;
   log(`Dismissing notifications for firebase id: ${currentUserId}`);
   const dismissSuccessful = await dismissAllNotifications({
