@@ -630,8 +630,8 @@ router.delete(
 
 /**
  * @openapi
- * /boards/{board_id}/notifications/dismiss:
- *   post:
+ * /boards/{board_id}/notifications:
+ *   delete:
  *     summary: Dismiss all notifications for board
  *     operationId: dismissBoardsByUuid
  *     tags:
@@ -665,7 +665,7 @@ router.delete(
  *         description: Board notifications dismissed.
  */
 router.post(
-  "/:board_id/notifications/dismiss",
+  "/:board_id/notifications",
   ensureLoggedIn,
   ensureBoardAccess,
   async (req, res) => {

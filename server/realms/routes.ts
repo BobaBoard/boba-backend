@@ -20,6 +20,9 @@ const router = express.Router();
  *     operationId: getRealmsBySlug
  *     tags:
  *       - /realms/
+ *     security:
+ *       - {}
+ *       - firebase: []
  *     parameters:
  *       - name: realm_slug
  *         in: path

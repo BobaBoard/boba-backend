@@ -206,53 +206,6 @@ router.patch("/@me", ensureLoggedIn, async (req, res) => {
   });
 });
 
-router.post("/invite/accept", async (req, res) => {
-  const { email, password, nonce } = req.body;
-
-  const inviteDetails = await getInviteDetails({ nonce });
-
-  if (!inviteDetails) {
-    throw new NotFound404Error(`Invite not found`);
-  }
-
-  if (inviteDetails.expired || inviteDetails.used) {
-    throw new Forbidden403Error(`Invite expired or already used`);
-  }
-
-  if (inviteDetails.email.toLowerCase() != (email as string).toLowerCase()) {
-    throw new Forbidden403Error(`Invite email does not match`);
-  }
-  firebaseAuth
-    .auth()
-    .createUser({
-      email,
-      password,
-    })
-    .then(async (user) => {
-      const uid = user.uid;
-      log(`Created new firebase user with uid ${uid}`);
-      // TODO: decide whether to put these together in a transaction.
-      const success = await markInviteUsed({ nonce });
-      if (!success) {
-        throw new Internal500Error(`Failed to mark invite as used`);
-      }
-      const created = await createNewUser({
-        firebaseId: uid,
-        invitedBy: inviteDetails.inviter,
-        createdOn: user.metadata.creationTime,
-      });
-      if (!created) {
-        throw new Internal500Error(`Failed to create new user`);
-      }
-      res.sendStatus(200);
-    })
-    .catch((error) => {
-      throw new BadRequest400Error(
-        `Error creating user: ${error.message} (${error.code})`
-      );
-    });
-});
-
 /**
  * @openapi
  * /users/@me/notifications:
@@ -355,6 +308,45 @@ router.get("/@me/notifications", ensureLoggedIn, async (req, res) => {
 
 /**
  * @openapi
+ * /users/@me/notifications:
+ *   delete:
+ *     summary: Dismisses user notifications.
+ *     operationId: dismissUserNotifications
+ *     tags:
+ *       - /users/
+ *     security:
+ *       - firebase: []
+ *     responses:
+ *       401:
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         $ref: "#/components/responses/ensureBoardAccess403"
+ *       500:
+ *         description: Internal Server Error
+ *         $ref: "#/components/responses/default500"
+ *       204:
+ *         description: The notifications were successfully dismissed.
+ */
+router.delete("/@me/notifications", ensureLoggedIn, async (req, res) => {
+  let currentUserId: string = req.currentUser?.uid;
+  log(`Dismissing notifications for firebase id: ${currentUserId}`);
+  const dismissSuccessful = await dismissAllNotifications({
+    firebaseId: currentUserId,
+  });
+
+  if (!dismissSuccessful) {
+    error(`Dismiss failed`);
+    return res.sendStatus(500);
+    return;
+  }
+
+  info(`Dismiss successful`);
+
+  res.sendStatus(204);
+});
+
+/**
+ * @openapi
  * /users/@me/bobadex:
  *   get:
  *     summary: Gets bobadex data for the current user.
@@ -382,24 +374,84 @@ router.get("/@me/bobadex", ensureLoggedIn, async (req, res) => {
   res.status(200).json(identities);
 });
 
-router.post("/notifications/dismiss", ensureLoggedIn, async (req, res) => {
-  let currentUserId: string = req.currentUser?.uid;
-  log(`Dismissing notifications for firebase id: ${currentUserId}`);
-  const dismissSuccessful = await dismissAllNotifications({
-    firebaseId: currentUserId,
-  });
-
-  if (!dismissSuccessful) {
-    error(`Dismiss failed`);
-    return res.sendStatus(500);
-    return;
+/**
+ * @openapi
+ * /users/@me/settings:
+ *   get:
+ *     summary: Gets settings data for the current user.
+ *     operationId: getUserSettings
+ *     tags:
+ *       - /users/
+ *     security:
+ *       - firebase: []
+ *     responses:
+ *       401:
+ *         description: User was not found in request that requires authentication.
+ *       200:
+ *         description: The user settings data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/UserSettings"
+ *             examples:
+ *               existing:
+ *                 $ref: '#/components/examples/UserSettingsResponse'
+ */
+router.get(
+  "/@me/settings",
+  ensureLoggedIn,
+  withUserSettings,
+  async (req, res) => {
+    try {
+      res.status(200).json(aggregateByType(req.currentUser.settings));
+    } catch (e) {
+      throw new Internal500Error(`Failed to get user settings`);
+    }
   }
+);
 
-  info(`Dismiss successful`);
-
-  res.sendStatus(204);
-});
-
+/**
+ * @openapi
+ * /users/@me/settings:
+ *   patch:
+ *     summary: Gets settings data for the current user.
+ *     operationId: updateUserSettings
+ *     tags:
+ *       - /users/
+ *     security:
+ *       - firebase: []
+ *     requestBody:
+ *       description: request body
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               value:
+ *                 oneOf:
+ *                   - type: string
+ *                   - type: boolean
+ *             required:
+ *              - name
+ *              - value
+ *           examples:
+ *             settings_update:
+ *               $ref: "#/components/examples/UserSettingsRequest"
+ *     responses:
+ *       401:
+ *         description: User was not found in request that requires authentication.
+ *       200:
+ *         description: The updated user settings data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/UserSettings"
+ *             examples:
+ *               settings_update:
+ *                 $ref: '#/components/examples/UserSettingsResponse'
+ */
 router.patch("/@me/settings", ensureLoggedIn, async (req, res) => {
   const { name, value } = req.body;
 
@@ -423,17 +475,51 @@ router.patch("/@me/settings", ensureLoggedIn, async (req, res) => {
   }
 });
 
-router.get(
-  "/@me/settings",
-  ensureLoggedIn,
-  withUserSettings,
-  async (req, res) => {
-    try {
-      res.status(200).json(aggregateByType(req.currentUser.settings));
-    } catch (e) {
-      throw new Internal500Error(`Failed to get user settings`);
-    }
+router.post("/invite/accept", async (req, res) => {
+  const { email, password, nonce } = req.body;
+
+  const inviteDetails = await getInviteDetails({ nonce });
+
+  if (!inviteDetails) {
+    throw new NotFound404Error(`Invite not found`);
   }
-);
+
+  if (inviteDetails.expired || inviteDetails.used) {
+    throw new Forbidden403Error(`Invite expired or already used`);
+  }
+
+  if (inviteDetails.email.toLowerCase() != (email as string).toLowerCase()) {
+    throw new Forbidden403Error(`Invite email does not match`);
+  }
+  firebaseAuth
+    .auth()
+    .createUser({
+      email,
+      password,
+    })
+    .then(async (user) => {
+      const uid = user.uid;
+      log(`Created new firebase user with uid ${uid}`);
+      // TODO: decide whether to put these together in a transaction.
+      const success = await markInviteUsed({ nonce });
+      if (!success) {
+        throw new Internal500Error(`Failed to mark invite as used`);
+      }
+      const created = await createNewUser({
+        firebaseId: uid,
+        invitedBy: inviteDetails.inviter,
+        createdOn: user.metadata.creationTime,
+      });
+      if (!created) {
+        throw new Internal500Error(`Failed to create new user`);
+      }
+      res.sendStatus(200);
+    })
+    .catch((error) => {
+      throw new BadRequest400Error(
+        `Error creating user: ${error.message} (${error.code})`
+      );
+    });
+});
 
 export default router;
