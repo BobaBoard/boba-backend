@@ -14,7 +14,7 @@ describe("Tests restricted board realm queries", () => {
   describe("REST API", () => {
     test("fetches board details when logged in (REST)", async () => {
       setLoggedInUser(BOBATAN_USER_ID);
-      const res = await request(server.app).get("/slug/v0");
+      const res = await request(server.app).get("/slug/twisted-minds");
 
       expect(res.status).toBe(200);
       expect(
@@ -23,7 +23,7 @@ describe("Tests restricted board realm queries", () => {
     });
 
     test("doesn't fetch restricted board details in realm query when logged out", async () => {
-      const res = await request(server.app).get("/slug/v0");
+      const res = await request(server.app).get("/slug/twisted-minds");
 
       expect(res.status).toBe(200);
       expect(
