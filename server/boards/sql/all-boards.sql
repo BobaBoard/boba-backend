@@ -6,6 +6,7 @@ WITH
 SELECT 
     boards.slug,
     boards.string_id,
+    realms.string_id as realm_string_id,
     boards.tagline,
     boards.avatar_reference_id,
     boards.settings,
@@ -20,6 +21,8 @@ SELECT
     to_jsonb(COALESCE(logged_out_restrictions, ARRAY[]::board_restrictions_type[])) as logged_out_restrictions,
     to_jsonb(COALESCE(CASE WHEN logged_in_user.id IS NOT NULL THEN logged_in_base_restrictions ELSE NULL END, ARRAY[]::board_restrictions_type[])) as logged_in_base_restrictions
 FROM boards
+INNER JOIN realms
+    ON boards.parent_realm_id = realms.id
 LEFT JOIN logged_in_user ON 1 = 1
 LEFT JOIN user_muted_boards 
     ON boards.id = user_muted_boards.board_id
@@ -98,4 +101,5 @@ LEFT JOIN LATERAL (
             AND user_hidden_threads.thread_id IS NULL 
             AND comments.parent_thread = threads.id) as comments
     ON 1=1
-GROUP BY boards.id, user_muted_boards.board_id, ordered_pinned_boards.INDEX, logged_out_restrictions, logged_in_base_restrictions, logged_in_user.id
+WHERE $/realm_string_id/ IS NULL OR realms.string_id = $/realm_string_id/
+GROUP BY boards.id, user_muted_boards.board_id, ordered_pinned_boards.INDEX, logged_out_restrictions, logged_in_base_restrictions, logged_in_user.id, realms.string_id 
