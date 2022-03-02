@@ -44,12 +44,17 @@ SELECT
 FROM secret_identities;
 
 --- DELETE THREAD ---
-DELETE FROM post_categories WHERE post_id IN (SELECT id FROM posts WHERE posts.parent_thread IN (SELECT id FROM threads WHERE string_id = '157b0460-6cfe-416a-9c65-bb35ce2c7521'));
-DELETE FROM comments WHERE id IN (SELECT id FROM comments WHERE comments.parent_thread IN (SELECT id FROM threads WHERE string_id = '157b0460-6cfe-416a-9c65-bb35ce2c7521'));
-DELETE FROM posts WHERE id IN (SELECT id FROM posts WHERE posts.parent_thread IN (SELECT id FROM threads WHERE string_id = '157b0460-6cfe-416a-9c65-bb35ce2c7521'));
-DELETE FROM user_thread_identities WHERE thread_id IN (SELECT id FROM threads WHERE string_id = '157b0460-6cfe-416a-9c65-bb35ce2c7521');
-DELETE FROM user_thread_last_visits WHERE thread_id IN (SELECT id FROM threads WHERE string_id = '157b0460-6cfe-416a-9c65-bb35ce2c7521');
-DELETE FROM threads WHERE string_id = '157b0460-6cfe-416a-9c65-bb35ce2c7521';
+DELETE FROM post_categories WHERE post_id IN (SELECT id FROM posts WHERE posts.parent_thread IN (SELECT id FROM threads WHERE string_id = '82a4a157-0397-488b-8134-7b5abe9c34e8'));
+DELETE FROM comments WHERE id IN (SELECT id FROM comments WHERE comments.parent_thread IN (SELECT id FROM threads WHERE string_id = '82a4a157-0397-488b-8134-7b5abe9c34e8'));
+DELETE FROM posts WHERE id IN (SELECT id FROM posts WHERE posts.parent_thread IN (SELECT id FROM threads WHERE string_id = '82a4a157-0397-488b-8134-7b5abe9c34e8'));
+DELETE FROM user_thread_identities WHERE thread_id IN (SELECT id FROM threads WHERE string_id = '82a4a157-0397-488b-8134-7b5abe9c34e8');
+DELETE FROM user_thread_last_visits WHERE thread_id IN (SELECT id FROM threads WHERE string_id = '82a4a157-0397-488b-8134-7b5abe9c34e8');
+DELETE FROM user_muted_threads WHERE thread_id IN (SELECT id FROM threads WHERE string_id = '82a4a157-0397-488b-8134-7b5abe9c34e8');
+DELETE FROM user_hidden_threads WHERE thread_id IN (SELECT id FROM threads WHERE string_id = '82a4a157-0397-488b-8134-7b5abe9c34e8');
+DELETE FROM threads WHERE string_id = '82a4a157-0397-488b-8134-7b5abe9c34e8';
+
+-- DELETE POSTS COMMENT --
+DELETE FROM comments WHERE id IN (SELECT id FROM comments WHERE comments.parent_post = (SELECT id FROM posts WHERE string_id = '38d4cac9-9ad6-4200-bef9-dd4b06dc7c79'));
 
 --- ADD NEW ROLE ---
 INSERT INTO roles(string_id, name, avatar_reference_id, color, description, permissions)
