@@ -1,6 +1,6 @@
 /**
  * This enum should be exactly the same as the role_permissions type declared
- * in `db/init/020_roles.sql`.
+ * in `db/init/020_roles_and_permissions.sql`.
  *
  * Keep them in sync.
  *
