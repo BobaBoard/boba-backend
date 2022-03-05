@@ -37,11 +37,11 @@ CREATE TABLE IF NOT EXISTS board_user_roles(
 CREATE UNIQUE INDEX board_user_roles_entry on board_user_roles(user_id, board_id);
 
 CREATE TABLE IF NOT EXISTS realm_user_roles(
-    -- Add realm id when realms *actually* exist.
+    realm_id BIGINT REFERENCES realms(id) ON DELETE RESTRICT NOT NULL,
     user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
     role_id BIGINT REFERENCES roles(id) ON DELETE RESTRICT NOT NULL
 );
-CREATE UNIQUE INDEX realm_user_roles_entry on realm_user_roles(user_id);
+CREATE UNIQUE INDEX realm_user_roles_entry on realm_user_roles(user_id, realm_id);
 
 CREATE TYPE board_restrictions_type AS ENUM ('lock_access', 'delist');
 CREATE TABLE IF NOT EXISTS board_restrictions(
