@@ -3,6 +3,7 @@ import {
   BoardRestrictions,
   POST_OWNER_PERMISSIONS,
   PostPermissions,
+  RealmPermissions,
   ThreadPermissions,
 } from "types/permissions";
 import { DbBoardMetadata, DbThreadType } from "Types";
@@ -12,6 +13,10 @@ import {
   extractPostPermissions,
   getBoardRestrictions,
 } from "utils/permissions-utils";
+import {
+  getRealmByUuid,
+  getUserPermissionsForRealm,
+} from "server/realms/queries";
 import {
   getThreadByStringId,
   getUserPermissionsForThread,
@@ -32,6 +37,7 @@ declare global {
         loggedInBaseRestrictions: BoardRestrictions[];
       };
       currentPostPermissions?: PostPermissions[];
+      currentRealmPermissions?: RealmPermissions[];
     }
   }
 }
@@ -211,5 +217,33 @@ export const withPostPermissions = async (
     boardId: post.parent_board_id,
   });
   req.currentPostPermissions = extractPostPermissions(board.permissions);
+  next();
+};
+
+export const withRealmPermissions = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.params.realm_id) {
+    throw new Error(
+      "Realm permissions can only be fetched on a route that includes a realm id."
+    );
+  }
+  if (!req.currentUser) {
+    next();
+    return;
+  }
+
+  const currentRealmPermissions = await getUserPermissionsForRealm({
+    firebaseId: req.currentUser.uid,
+    realmId: req.params.realm_id,
+  });
+
+  if (!currentRealmPermissions) {
+    next();
+    return;
+  }
+  req.currentRealmPermissions = currentRealmPermissions;
   next();
 };
