@@ -1,9 +1,11 @@
+import { DbRolePermissions, RealmPermissions } from "types/permissions";
 import { filterOutDisabledSettings, getRealmCursorSetting } from "./utils";
 
 import { CssVariableSetting } from "../../types/settings";
 import { Realm } from "../../types/rest/realms";
 import { SettingEntry } from "../../types/settings";
 import debug from "debug";
+import { extractRealmPermissions } from "utils/permissions-utils";
 import pool from "server/db-pool";
 import sql from "./sql";
 
@@ -121,4 +123,50 @@ export const dismissAllNotifications = async ({
     error(e);
     return false;
   }
+};
+
+// I added this before realizing I didn't actually need it for what I was doing
+// I can leave it in if it will be helpful in future, or I can delete it?
+export const getRealmByUuid = async ({
+  realmId,
+}: {
+  realmId: string;
+}): Promise<{
+  id: string;
+  string_id: string;
+  slug: string;
+} | null> => {
+  return await pool.oneOrNone(sql.getRealmByUuid, {
+    realm_id: realmId,
+  });
+};
+
+export const getUserPermissionsForRealm = async ({
+  firebaseId,
+  realmId,
+}: {
+  firebaseId: string;
+  realmId: string;
+}): Promise<RealmPermissions[] | null> => {
+  const userPermissionsGroupedByRoles = await pool.manyOrNone(
+    sql.getUserPermissionsForRealm,
+    {
+      user_id: firebaseId,
+      realm_id: realmId,
+    }
+  );
+  if (!userPermissionsGroupedByRoles.length) {
+    return;
+  }
+  const userRealmPermissionsGroupedByRoles = userPermissionsGroupedByRoles.map(
+    (row) => {
+      return extractRealmPermissions(row.permissions);
+    }
+  );
+  return userRealmPermissionsGroupedByRoles.reduce(
+    (userRealmPermissions, userRealmPermissionsGroup) => {
+      return userRealmPermissions.concat(userRealmPermissionsGroup);
+    },
+    []
+  );
 };
