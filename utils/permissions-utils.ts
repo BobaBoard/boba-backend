@@ -3,6 +3,7 @@ import {
   BoardRestrictions,
   DbRolePermissions,
   PostPermissions,
+  RealmPermissions,
   ThreadPermissions,
   UserBoardPermissions,
   extractBoardRestrictions,
@@ -40,6 +41,10 @@ export const extractThreadPermissions = (permissions?: string[]) => {
 
 export const extractBoardPermissions = (permissions?: string[]) => {
   return extractPermissions(BoardPermissions, permissions);
+};
+
+export const extractRealmPermissions = (permissions?: string[]) => {
+  return extractPermissions(RealmPermissions, permissions);
 };
 
 export const getUserPermissionsForBoard = (
