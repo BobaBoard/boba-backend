@@ -14,7 +14,8 @@ CREATE TYPE role_permissions_type AS ENUM (
     'edit_content',
     'edit_whisper_tags',
     'edit_index_tags',
-    'edit_default_view'
+    'edit_default_view',
+    'create_invite'
 );
 
 CREATE TABLE IF NOT EXISTS roles
