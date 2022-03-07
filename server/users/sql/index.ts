@@ -36,22 +36,12 @@ const updateUserData = `
         avatar_reference_id = $/avatar_url/
     WHERE firebase_id = $/firebase_id/`;
 
-const getInviteDetails = `
-    SELECT 
-      inviter,
-      invitee_email,
-      created + duration < NOW() as expired,
-      used 
-    FROM account_invites WHERE nonce = $/nonce/ 
-    ORDER BY created LIMIT 1`;
-
 export default {
   getUserDetails,
   getSettingType,
   updateUserData,
   getUserSettings,
   updateUserSettings,
-  getInviteDetails,
   getBobadexIdentities: new QueryFile(
     path.join(__dirname, "fetch-bobadex.sql")
   ),

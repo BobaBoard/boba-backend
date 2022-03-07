@@ -1,4 +1,15 @@
 import {
+  BadRequest400Error,
+  Forbidden403Error,
+  Internal500Error,
+  NotFound404Error,
+} from "types/errors/api";
+import {
+  createNewUser,
+  getInviteDetails,
+  markInviteUsed,
+} from "server/realms/queries";
+import {
   dismissAllNotifications,
   getRealmDataBySlug,
   getSettingsBySlug,
@@ -9,11 +20,16 @@ import {
   processBoardsSummary,
 } from "utils/response-utils";
 
-import { NotFound404Error } from "types/errors/api";
+import { RealmPermissions } from "types/permissions";
+import { createInvite } from "server/realms/queries";
 import debug from "debug";
+import { ensureRealmPermission } from "handlers/permissions";
 import express from "express";
+import firebaseAuth from "firebase-admin";
 import { getBoards } from "../boards/queries";
+import { getUserFromFirebaseId } from "server/users/queries";
 import { processRealmActivity } from "./utils";
+import { randomBytes } from "crypto";
 
 const info = debug("bobaserver:users:routes-info");
 const log = debug("bobaserver:users:routes-log");
@@ -290,6 +306,83 @@ router.delete("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
   info(`Dismiss successful`);
 
   res.sendStatus(204);
+});
+
+router.post(
+  "/:realm_id/invite/generate",
+  ensureLoggedIn,
+  ensureRealmPermission(RealmPermissions.createInvite),
+  async (req, res) => {
+    const user = req.currentUser?.uid;
+    // if (user !== ADMIN_ID) {
+    //   return res.sendStatus(403);
+    // }
+    const { email } = req.body;
+    // Generate 64 characters random id string
+    const inviteCode = randomBytes(32).toString("hex");
+    const adminId = await getUserFromFirebaseId({ firebaseId: user });
+
+    log(adminId);
+    const inviteAdded = await createInvite({
+      email,
+      inviteCode,
+      inviterId: adminId.id,
+    });
+
+    if (!inviteAdded) {
+      res.status(500).send(`Couldn't generate invite for email ${email}`);
+    }
+    res
+      .status(200)
+      .json({ inviteUrl: `https://v0.boba.social/invite/${inviteCode}` });
+  }
+);
+
+router.post("/:realm_id/invite/accept", async (req, res) => {
+  const { email, password, nonce } = req.body;
+
+  const inviteDetails = await getInviteDetails({ nonce });
+
+  if (!inviteDetails) {
+    throw new NotFound404Error(`Invite not found`);
+  }
+
+  if (inviteDetails.expired || inviteDetails.used) {
+    throw new Forbidden403Error(`Invite expired or already used`);
+  }
+
+  if (inviteDetails.email.toLowerCase() != (email as string).toLowerCase()) {
+    throw new Forbidden403Error(`Invite email does not match`);
+  }
+  firebaseAuth
+    .auth()
+    .createUser({
+      email,
+      password,
+    })
+    .then(async (user) => {
+      const uid = user.uid;
+      log(`Created new firebase user with uid ${uid}`);
+      // TODO: decide whether to put these together in a transaction.
+      const success = await markInviteUsed({ nonce });
+      if (!success) {
+        throw new Internal500Error(`Failed to mark invite as used`);
+      }
+      const created = await createNewUser({
+        firebaseId: uid,
+        invitedBy: inviteDetails.inviter,
+        createdOn: user.metadata.creationTime,
+      });
+      if (!created) {
+        throw new Internal500Error(`Failed to create new user`);
+      }
+      res.sendStatus(200);
+    })
+    .catch((error) => {
+      throw new BadRequest400Error(
+        `Error creating user: ${error.message} (${error.code})`
+      );
+    });
 });
 
 export default router;
