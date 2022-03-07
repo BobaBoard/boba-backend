@@ -118,6 +118,7 @@ export const getUserPermissionsForRealm = async ({
         realm_id: realmId,
       }
     );
+    log("%O", userPermissionsGroupedByRoles);
     if (!userPermissionsGroupedByRoles.length) {
       return;
     }
