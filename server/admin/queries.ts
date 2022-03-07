@@ -137,30 +137,3 @@ export const createBoardsIfNotExist = async (
     return false;
   }
 };
-
-export const createInvite = async (inviteData: {
-  email: string;
-  inviteCode: string;
-  inviterId: number;
-}) => {
-  const query = `
-    INSERT INTO account_invites(nonce, inviter, invitee_email, duration)
-    VALUES (
-      $/invite_code/,
-      $/inviter_id/,
-      $/email/,
-      INTERVAL '1 WEEK')`;
-  try {
-    await pool.none(query, {
-      invite_code: inviteData.inviteCode,
-      inviter_id: inviteData.inviterId,
-      email: inviteData.email,
-    });
-    log(`Generated invite for email ${inviteData.email}.`);
-    return true;
-  } catch (e) {
-    error(`Error while generating invite.`);
-    error(e);
-    return false;
-  }
-};
