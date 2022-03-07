@@ -14,7 +14,8 @@ VALUES
         'pink', 'A role for the owner.', 
         ARRAY['edit_board_details'::role_permissions_type,
               'post_as_role'::role_permissions_type,
-              'move_thread'::role_permissions_type]);
+              'move_thread'::role_permissions_type,
+              'create_invite'::role_permissions_type]);
 
 INSERT INTO board_user_roles(user_id, board_id, role_id)
 VALUES
@@ -25,10 +26,17 @@ VALUES
      (SELECT id FROM boards WHERE slug = 'memes'),
      (SELECT id FROM roles WHERE name = 'The Memester'));
 
-INSERT INTO realm_user_roles(user_id, role_id)
+INSERT INTO realm_user_roles(realm_id, user_id, role_id)
 VALUES
-    ((SELECT id FROM users WHERE username = 'bobatan'),
-     (SELECT id FROM roles WHERE name = 'The Owner'));
+    ((SELECT id FROM realms WHERE slug = 'twisted-minds'),
+     (SELECT id FROM users WHERE username = 'bobatan'),
+     (SELECT id FROM roles WHERE name = 'The Owner')),
+    ((SELECT id FROM realms WHERE slug = 'twisted-minds'),
+     (SELECT id FROM users WHERE username = 'bobatan'),
+     (SELECT id FROM roles WHERE name = 'GoreMaster5000')),
+    ((SELECT id FROM realms WHERE slug = 'twisted-minds'),
+     (SELECT id FROM users WHERE username = 'oncest5evah'),
+     (SELECT id FROM roles WHERE name = 'GoreMaster5000'));
 
 INSERT INTO content_warnings(warning)
 VALUES
