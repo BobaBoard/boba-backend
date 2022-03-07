@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS realm_user_roles(
     user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
     role_id BIGINT REFERENCES roles(id) ON DELETE RESTRICT NOT NULL
 );
-CREATE UNIQUE INDEX realm_user_roles_entry on realm_user_roles(user_id, realm_id);
+CREATE UNIQUE INDEX realm_user_roles_entry on realm_user_roles(user_id, realm_id, role_id);
 
 CREATE TYPE board_restrictions_type AS ENUM ('lock_access', 'delist');
 CREATE TABLE IF NOT EXISTS board_restrictions(
