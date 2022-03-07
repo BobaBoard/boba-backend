@@ -2,12 +2,14 @@ import {
   BoardPermissions,
   DbRolePermissions,
   PostPermissions,
+  RealmPermissions,
   ThreadPermissions,
   UserBoardPermissions,
 } from "types/permissions";
 import {
   extractBoardPermissions,
   extractPostPermissions,
+  extractRealmPermissions,
   extractThreadPermissions,
   hasPermission,
 } from "utils/permissions-utils";
@@ -92,6 +94,25 @@ describe("extractBoardPermissions tests", () => {
       DbRolePermissions.edit_index_tags,
     ]);
     const expected = [BoardPermissions.editMetadata];
+    expect(permissions.sort()).toEqual(expected.sort());
+  });
+});
+
+describe("extractRealmPermissions tests", () => {
+  test("correctly transforms all existing permissions", () => {
+    const permissions = extractRealmPermissions(
+      Object.values(DbRolePermissions)
+    );
+    const expected = [...Object.values(RealmPermissions)];
+    expect(permissions.sort()).toEqual(expected.sort());
+  });
+
+  test("correctly ignores non-existing permissions", () => {
+    const permissions = extractRealmPermissions([
+      DbRolePermissions.edit_board_details,
+      DbRolePermissions.create_invite,
+    ]);
+    const expected = [RealmPermissions.createInvite];
     expect(permissions.sort()).toEqual(expected.sort());
   });
 });
