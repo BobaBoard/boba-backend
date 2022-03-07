@@ -45,9 +45,10 @@ const getRealmByUuid = `
 
 const getUserPermissionsForRealm = `
     SELECT permissions 
-    FROM realm_user_roles 
-      JOIN roles ON role_id = id 
-    WHERE user_id = $/user_id/ AND realm_id = $/realm_id/`;
+    FROM users
+      JOIN realm_user_roles ON users.id = realm_user_roles.user_id
+      JOIN roles ON realm_user_roles.role_id = roles.id 
+    WHERE firebase_id = $/user_id/ AND realm_user_roles.realm_id = $/realm_id/`;
 
 const getInviteDetails = `
     SELECT 
