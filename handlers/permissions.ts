@@ -247,3 +247,21 @@ export const withRealmPermissions = async (
   req.currentRealmPermissions = currentRealmPermissions;
   next();
 };
+
+export const ensureRealmPermission = (permission: RealmPermissions) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    withRealmPermissions(req, res, async () => {
+      if (
+        !req.currentRealmPermissions ||
+        !req.currentRealmPermissions.includes(permission)
+      ) {
+        res.status(403).json({
+          message:
+            "User does not have required permissions for realm operation.",
+        });
+        return;
+      }
+      next();
+    });
+  };
+};
