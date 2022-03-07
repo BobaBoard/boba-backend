@@ -2,7 +2,6 @@ import { CacheKeys, cache } from "../cache";
 import {
   createBoardsIfNotExist,
   createIdentitiesIfNotExist,
-  createInvite,
   updateIdentities,
 } from "./queries";
 
@@ -11,8 +10,6 @@ import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
 import firebaseAuth from "firebase-admin";
-import { getUserFromFirebaseId } from "../users/queries";
-import { randomBytes } from "crypto";
 
 // import { transformImageUrls, mergeActivityIdentities } from "../response-utils";
 
@@ -125,31 +122,6 @@ router.post(
     res.status(200).json({ added: recordsChanged });
   }
 );
-
-router.post("/invite/generate", ensureLoggedIn, async (req, res) => {
-  const user = req.currentUser?.uid;
-  if (user !== ADMIN_ID) {
-    return res.sendStatus(403);
-  }
-  const { email } = req.body;
-  // Generate 64 characters random id string
-  const inviteCode = randomBytes(32).toString("hex");
-  const adminId = await getUserFromFirebaseId({ firebaseId: user });
-
-  log(adminId);
-  const inviteAdded = await createInvite({
-    email,
-    inviteCode,
-    inviterId: adminId.id,
-  });
-
-  if (!inviteAdded) {
-    res.status(500).send(`Couldn't generate invite for email ${email}`);
-  }
-  res
-    .status(200)
-    .json({ inviteUrl: `https://v0.boba.social/invite/${inviteCode}` });
-});
 
 router.post("/migrate_fb_data", ensureLoggedIn, async (req, res) => {
   // @ts-ignore

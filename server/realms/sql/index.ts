@@ -12,8 +12,18 @@ const getUserPermissionsForRealm = `
       JOIN roles ON role_id = id 
     WHERE user_id = $/user_id/ AND realm_id = $/realm_id/`;
 
+const getInviteDetails = `
+    SELECT 
+      inviter,
+      invitee_email,
+      created + duration < NOW() as expired,
+      used 
+    FROM account_invites WHERE nonce = $/nonce/ 
+    ORDER BY created LIMIT 1`;
+
 export default {
   getRealmBySlug,
   getRealmByUuid,
   getUserPermissionsForRealm,
+  getInviteDetails,
 };
