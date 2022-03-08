@@ -29,13 +29,19 @@ VALUES
 INSERT INTO realm_user_roles(realm_id, user_id, role_id)
 VALUES
     ((SELECT id FROM realms WHERE slug = 'twisted-minds'),
-     (SELECT id FROM users WHERE username = 'bobatan'),
+     (SELECT id FROM users WHERE username = 'bobatan'), -- owner + other
      (SELECT id FROM roles WHERE name = 'The Owner')),
     ((SELECT id FROM realms WHERE slug = 'twisted-minds'),
      (SELECT id FROM users WHERE username = 'bobatan'),
      (SELECT id FROM roles WHERE name = 'GoreMaster5000')),
     ((SELECT id FROM realms WHERE slug = 'twisted-minds'),
-     (SELECT id FROM users WHERE username = 'oncest5evah'),
+     (SELECT id FROM users WHERE username = 'SexyDaddy69'), -- owner only
+     (SELECT id FROM roles WHERE name = 'The Owner')),
+    ((SELECT id FROM realms WHERE slug = 'uwu'),
+     (SELECT id FROM users WHERE username = 'The Zodiac Killer'), -- owner wrong realm
+     (SELECT id FROM roles WHERE name = 'The Owner')),
+    ((SELECT id FROM realms WHERE slug = 'twisted-minds'),
+     (SELECT id FROM users WHERE username = 'oncest5evah'), -- only other perms
      (SELECT id FROM roles WHERE name = 'GoreMaster5000'));
 
 INSERT INTO content_warnings(warning)
