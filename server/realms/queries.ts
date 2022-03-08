@@ -1,4 +1,3 @@
-import { DbRolePermissions, RealmPermissions } from "types/permissions";
 import { filterOutDisabledSettings, getRealmCursorSetting } from "./utils";
 
 import { CssVariableSetting } from "../../types/settings";
@@ -156,20 +155,22 @@ export const getUserPermissionsForRealm = async ({
         realm_id: realmId,
       }
     );
-    log("%O", userPermissionsGroupedByRoles);
     if (!userPermissionsGroupedByRoles.length) {
       return;
     }
     const userRealmPermissionsGroupedByRoles =
       userPermissionsGroupedByRoles.map((row) => {
-        return extractRealmPermissions(row.permissions);
+        return extractRealmPermissions(
+          row.permissions.substring(1, row.permissions.length - 1).split(/,/)
+        );
       });
-    return userRealmPermissionsGroupedByRoles.reduce(
+    const allUserRealmPermissions = userRealmPermissionsGroupedByRoles.reduce(
       (userRealmPermissions, userRealmPermissionsGroup) => {
         return userRealmPermissions.concat(userRealmPermissionsGroup);
       },
       []
     );
+    return allUserRealmPermissions;
   } catch (e) {
     error(`Error while getting user permissions for the realm.`);
     error(e);
