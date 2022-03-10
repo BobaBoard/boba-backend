@@ -221,26 +221,32 @@ router.post(
     info(`sending back data for thread ${serverThread.id}.`);
     res.status(200).json(serverThread);
 
-    info(
+    log(
       `generating webhook for thread ${serverThread.id} in board ${boardSlug}`
     );
-
     const webhooks = await getTriggeredWebhooks({
       slug: boardSlug,
       categories: serverThread.posts[0].tags?.category_tags,
     });
     if (webhooks && webhooks.length > 0) {
       const threadUrl = `https://v0.boba.social/!${boardSlug}/thread/${serverThread.id}`;
-      webhooks.forEach(({ webhook, subscriptionNames }) => {
-        const message = `Your "${subscriptionNames.join(
-          ", "
-        )}" subscription has updated!\n ${threadUrl}`;
-        axios.post(webhook, {
-          content: message,
-          username: serverThread.posts[0].secret_identity.name,
-          avatar_url: serverThread.posts[0].secret_identity.avatar,
-        });
-      });
+      webhooks.forEach(
+        async ({ webhook, subscriptionNames, subscriptionIds }) => {
+          await Promise.all(
+            subscriptionIds.map((subscriptionId) =>
+              cache().hdel(CacheKeys.SUBSCRIPTION, subscriptionId)
+            )
+          );
+          const message = `Your "${subscriptionNames.join(
+            ", "
+          )}" subscription has updated!\n${threadUrl}`;
+          axios.post(webhook, {
+            content: message,
+            username: serverThread.posts[0].secret_identity.name,
+            avatar_url: serverThread.posts[0].secret_identity.avatar,
+          });
+        }
+      );
     }
   }
 );
@@ -624,8 +630,8 @@ router.delete(
 
 /**
  * @openapi
- * /boards/{board_id}/notifications/dismiss:
- *   post:
+ * /boards/{board_id}/notifications:
+ *   delete:
  *     summary: Dismiss all notifications for board
  *     operationId: dismissBoardsByUuid
  *     tags:
@@ -659,7 +665,7 @@ router.delete(
  *         description: Board notifications dismissed.
  */
 router.post(
-  "/:board_id/notifications/dismiss",
+  "/:board_id/notifications",
   ensureLoggedIn,
   ensureBoardAccess,
   async (req, res) => {

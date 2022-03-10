@@ -240,6 +240,7 @@ export const getTriggeredWebhooks = async ({
       webhook: string;
       subscriptionNames: string[];
       triggeredCategories: string[];
+      subscriptionIds: string[];
     }[]
   | false
 > => {
@@ -254,6 +255,7 @@ export const getTriggeredWebhooks = async ({
       webhook: result.webhook,
       subscriptionNames: result.subscription_names,
       triggeredCategories: result.triggered_categories,
+      subscriptionIds: result.subscription_ids,
     }));
   } catch (e) {
     error(`Error while getting triggered webhooks.`);

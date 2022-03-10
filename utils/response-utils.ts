@@ -225,6 +225,7 @@ export const ensureNoIdentityLeakage = (post: any) => {
 const extractLockedBoardMetadata = (metadata: any) => {
   return {
     string_id: metadata.string_id,
+    realm_string_id: metadata.realm_string_id,
     slug: metadata.slug,
     avatar_reference_id: metadata.avatar_reference_id,
     tagline: metadata.tagline,
@@ -326,7 +327,7 @@ export const processBoardsSummary = ({
   // TODO[cleanup]: get correct format from db
   return result.map((result) => ({
     id: result.string_id,
-    realm_id: "v0-fake-id",
+    realm_id: result.realm_string_id || "76ef4cc3-1603-4278-95d7-99c59f481d2e",
     slug: result.slug,
     tagline: result.tagline,
     avatar_url: result.avatarUrl,

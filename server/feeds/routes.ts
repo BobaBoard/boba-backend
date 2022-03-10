@@ -24,7 +24,6 @@ const router = express.Router();
  *     operationId: getBoardsFeedByUuid
  *     tags:
  *       - /feeds/
- *       - todo
  *     parameters:
  *       - name: board_id
  *         in: path
@@ -118,7 +117,6 @@ router.get("/boards/:board_id", ensureBoardAccess, async (req, res) => {
  *     operationId: getPersonalFeed
  *     tags:
  *       - /feeds/
- *       - todo
  *     security:
  *       - firebase: []
  *     parameters:
