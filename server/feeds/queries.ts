@@ -126,14 +126,11 @@ export const getUserStarFeed = async ({
   firebaseId,
   cursor,
   pageSize,
-//  starredOnly,
 }: {
   firebaseId: string;
-//  starredOnly: boolean;
   cursor: string | null;
   pageSize?: number;
 }): Promise<DbFeedType | false> => {
-  try {
     const decodedCursor = cursor && decodeCursor(cursor);
 
     const finalPageSize =
@@ -142,12 +139,10 @@ export const getUserStarFeed = async ({
       firebase_id: firebaseId,
       last_activity_cursor: decodedCursor?.last_activity_cursor || null,
       page_size: finalPageSize,
-//      starred: starredOnly,
     });
 
     if (rows.length == 1 && rows[0].thread_id == null) {
-      // Only one row with just the null thread)
-      log(`Feed empty.`);
+      log(`Star Feed empty.`);
       return { cursor: undefined, activity: [] };
     }
 
@@ -165,9 +160,4 @@ export const getUserStarFeed = async ({
     }
 
     return { cursor: nextCursor, activity: rows };
-  } catch (e) {
-    error(`Error while fetching star feed for user (${firebaseId}).`);
-    error(e);
-    return false;
-  }
 };

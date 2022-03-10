@@ -312,4 +312,3 @@ CREATE TABLE IF NOT EXISTS board_description_section_categories(
     section_id BIGINT REFERENCES board_description_sections(id) ON DELETE RESTRICT NOT NULL,
     category_id BIGINT REFERENCES categories(id) ON DELETE RESTRICT NOT NULL
 );
-CREATE UNIQUE INDEX board_description_section_categories_entry on board_description_section_categories(section_id, category_id);

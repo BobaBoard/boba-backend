@@ -1,6 +1,7 @@
 import { ensureLoggedIn, withLoggedIn } from "handlers/auth";
 import express, { Express, Router } from "express";
 
+import { DbThreadSummaryType } from "Types";
 import { ITask } from "pg-promise";
 import { Server } from "http";
 import bodyParser from "body-parser";
@@ -84,4 +85,51 @@ export const startTestServer = (router: Router) => {
   });
 
   return server;
+};
+
+export const extractActivity = (thread: DbThreadSummaryType) => {
+  return {
+    thread_id: thread.thread_id,
+    created: thread.created_at,
+    thread_last_activity: thread.thread_last_activity,
+    thread_last_activity_micro: thread.thread_last_activity_at_micro,
+    post_id: thread.post_id,
+    is_new: thread.is_new,
+    threads_amount: thread.thread_direct_threads_amount,
+    comments_amount: thread.thread_total_comments_amount,
+    new_comments_amount: thread.thread_new_comments_amount,
+    posts_amount: thread.thread_total_posts_amount,
+    new_posts_amount: thread.thread_new_posts_amount,
+  };
+};
+
+export const extractAuthorData = (thread: any) => {
+  return {
+    author: thread.author,
+    friend: thread.friend,
+    secret_identity_avatar: thread.secret_identity_avatar,
+    secret_identity_name: thread.secret_identity_name,
+    self: thread.self,
+    user_avatar: thread.user_avatar,
+    username: thread.username,
+  };
+};
+
+export const extractsMetadata = (thread: any) => {
+  return {
+    content: thread.content,
+    hidden: thread.hidden,
+    default_view: thread.default_view,
+    muted: thread.muted,
+    starred: thread.starred,
+    options: thread.options,
+    parent_post_id: thread.parent_post_id,
+    post_id: thread.post_id,
+    index_tags: thread.index_tags,
+    category_tags: thread.category_tags,
+    content_warnings: thread.content_warnings,
+    whisper_tags: thread.whisper_tags,
+    board_slug: thread.board_slug,
+    board_id: thread.board_id,
+  };
 };

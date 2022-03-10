@@ -185,8 +185,6 @@ router.get("/users/@me", ensureLoggedIn, async (req, res) => {
  *         schema:
  *           type: string
  *     responses:
- *       404:
- *         description: Star Feed was not found
  *       204:
  *         description: Star Feed request successful, no additional data
  *       200:
@@ -206,6 +204,7 @@ router.get("/users/@me/stars", ensureLoggedIn, async (req, res) => {
     cursor: (cursor as string) || null,
   });
 
+//TODO: remove 404 error
   if (!userStarFeed) {
     res.sendStatus(404);
     return;
@@ -215,15 +214,15 @@ router.get("/users/@me/stars", ensureLoggedIn, async (req, res) => {
     return;
   }
 
-const threadsStarred = userStarFeed.activity.map(
-  makeServerThreadSummary
-  );
-  const response: Feed = {
-    cursor: {
-      next: userStarFeed.cursor,
-    },
-    activity: threadsStarred,
-  };
+  const threadsStarred = userStarFeed.activity.map(
+    makeServerThreadSummary
+    );
+    const response: Feed = {
+      cursor: {
+        next: userStarFeed.cursor,
+      },
+      activity: threadsStarred,
+    };
 
   response.activity.map((post) => ensureNoIdentityLeakage(post));
   res.status(200).json(response);
