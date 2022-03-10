@@ -276,30 +276,7 @@ router.post("/invite/accept", async (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               type: object
- *               properties:
- *                 has_notifications:
- *                   type: boolean
- *                 is_outdated_notifications:
- *                   type: boolean
- *                 realm_boards:
- *                   description: |
- *                     A map from board id to its NotificationsStatus for each realm board.
- *                     If `realm_id` is not present in the params, it will be empty.
- *                   type: object
- *                   additionalProperties:
- *                     $ref: "#/components/schemas/BoardNotifications"
- *                 pinned_boards:
- *                   description: |
- *                     A map from board id to its NotificationsStatus for each pinned board.
- *                   type: object
- *                   additionalProperties:
- *                     $ref: "#/components/schemas/BoardNotifications"
- *               required:
- *                 - has_notifications
- *                 - is_outdated_notifications
- *                 - pinned_boards
- *                 - realm_boards
+ *               $ref: "#/components/schemas/NotificationsResponse" 
  */
 router.get("/@me/notifications", ensureLoggedIn, async (req, res) => {
   const { realm_id } = req.params;
