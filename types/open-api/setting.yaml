@@ -1,7 +1,30 @@
 components:
   schemas:
-    Setting:
+    BooleanSetting:
       type: object
       properties:
-        todo:
+        name:
           type: string
+        type:
+          type: string
+          enum: [BOOLEAN]
+        value:
+          type: boolean
+      required:
+        - name
+        - type
+        - value
+    Setting:
+      oneOf:
+        - $ref: "#/components/schemas/BooleanSetting"
+      discriminator:
+        propertyName: type
+        mapping:
+          BOOLEAN: "#/components/schemas/BooleanSetting"
+    UserSettings:
+      type: object
+      properties:
+        decorations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Setting"

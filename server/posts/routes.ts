@@ -120,7 +120,7 @@ router.post("/:post_id/contributions", ensureLoggedIn, async (req, res) => {
   ensureNoIdentityLeakage(responsePost);
   res.status(200).json({ contribution: responsePost });
 
-  maybeUpdateSubscriptionsOnThreadChange({
+  await maybeUpdateSubscriptionsOnThreadChange({
     threadId: responsePost.parent_thread_id,
     postId: responsePost.id,
     boardSlug,

@@ -1,18 +1,12 @@
+import * as uuid from "uuid";
+
 import {
   BOBATAN_USER_ID,
   GORE_MASTER_IDENTITY_ID,
   SEXY_DADDY_USER_ID,
 } from "test/data/auth";
-import {
-  CREATE_GORE_THREAD_RESPONSE,
-  NULL_ID,
-  NULL_THREAD_NOT_FOUND,
-} from "test/data/threads";
-import {
-  ENSURE_LOGGED_IN_INVALID_TOKEN,
-  ENSURE_LOGGED_IN_NO_TOKEN,
-  ENSURE_THREAD_ACCESS_UNAUTHORIZED,
-} from "test/data/responses";
+import { CREATE_GORE_THREAD_RESPONSE, NULL_ID } from "test/data/threads";
+import { CacheKeys, cache } from "server/cache";
 import { GORE_BOARD_ID, NULL_BOARD_NOT_FOUND } from "test/data/boards";
 import {
   setLoggedInUser,
@@ -20,13 +14,24 @@ import {
   wrapWithTransaction,
 } from "utils/test-utils";
 
+import { ENSURE_LOGGED_IN_NO_TOKEN } from "test/data/responses";
 import { GenericResponse } from "types/rest/responses";
 import { Thread } from "types/rest/threads";
+import axios from "axios";
+import { mocked } from "jest-mock";
 import request from "supertest";
 import router from "../../routes";
 
+jest.mock("uuid", () => ({
+  __esModule: true,
+  // @ts-ignore
+  ...jest.requireActual("uuid"),
+}));
+
 jest.mock("handlers/auth");
+jest.mock("server/cache");
 jest.mock("server/db-pool");
+jest.mock("axios");
 
 export const CREATE_GORE_THREAD_BASE_REQUEST = {
   content: '[{"insert":"Gore. Gore? Gore!"}]',
@@ -36,6 +41,11 @@ export const CREATE_GORE_THREAD_BASE_REQUEST = {
   indexTags: ["search"],
   contentWarnings: ["content notice"],
   categoryTags: ["filter"],
+};
+
+// TODO: remove this hack once the webhook function is better implemented.
+const sleep = (milliseconds: number) => {
+  return new Promise((resolve) => setTimeout(resolve, milliseconds));
 };
 
 describe("Tests threads REST API - create", () => {
@@ -172,6 +182,55 @@ describe("Tests threads REST API - create", () => {
         });
 
       expect(res.status).toBe(403);
+    });
+  });
+
+  test("should trigger webhook when updating subscription", async () => {
+    await wrapWithTransaction(async () => {
+      const newThreadId = "ce875278-d315-4c7f-b2e8-fd6720d9ef5b";
+      jest.spyOn(uuid, "v4").mockReturnValueOnce(newThreadId);
+      setLoggedInUser(BOBATAN_USER_ID);
+      const res = await request(server.app)
+        .post(`/${GORE_BOARD_ID}`)
+        .send({
+          ...CREATE_GORE_THREAD_BASE_REQUEST,
+          categoryTags: ["blood"],
+          identityId: GORE_MASTER_IDENTITY_ID,
+        });
+
+      expect(res.status).toBe(200);
+      await sleep(200);
+      expect(axios.post).toHaveBeenCalledTimes(2);
+      expect(mocked(axios.post).mock.calls).toContainEqual([
+        "http://localhost:4200/hooks/realm_of_terror",
+        {
+          avatar_url:
+            "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F6518df53-2031-4ac5-8d75-57a0051ed924?alt=media&token=23df54b7-297c-42ff-a0ea-b9862c9814f8",
+          content: `Your "blood & bruises" subscription has updated!\nhttps://v0.boba.social/!gore/thread/${newThreadId}`,
+          username: "GoreMaster5000",
+        },
+      ]);
+      expect(mocked(axios.post).mock.calls).toContainEqual([
+        "http://localhost:4200/hooks/volunteers",
+        {
+          avatar_url:
+            "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F6518df53-2031-4ac5-8d75-57a0051ed924?alt=media&token=23df54b7-297c-42ff-a0ea-b9862c9814f8",
+          content: `Your "blood" subscription has updated!\nhttps://v0.boba.social/!gore/thread/${newThreadId}`,
+          username: "GoreMaster5000",
+        },
+      ]);
+
+      expect(cache().hdel).toBeCalledTimes(2);
+      // blood & bruises subscription
+      expect(cache().hdel).toBeCalledWith(
+        CacheKeys.SUBSCRIPTION,
+        "04af1212-e641-414b-bf84-81fae2da8484"
+      );
+      // blood subscription
+      expect(cache().hdel).toBeCalledWith(
+        CacheKeys.SUBSCRIPTION,
+        "11e29fe7-1913-48a5-a3aa-9f01358d212f"
+      );
     });
   });
 });

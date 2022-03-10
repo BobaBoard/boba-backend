@@ -18,9 +18,10 @@ services:
     environment:
       TZ: "America/Los_Angeles"
       JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
-    command:
-      # There is still a race condition here for the init step of the db
-      sh -c "/usr/src/git/wait-for-it/wait-for-it.sh 127.0.0.1:35432 -t 120 -- sleep 10 && yarn run test --ci --testNamePattern='^((?!ci\-disable).)*$$' --reporters=default --reporters=jest-junit"
+    command: >
+      sh -c "/usr/src/git/wait-for-it/wait-for-it.sh 127.0.0.1:35432 -t 120 -- sleep 10 \
+             && yarn run test --ci --testNamePattern='^((?!ci\-disable).)*$$' --reporters=default --reporters=jest-junit \
+             && yarn run test --ci --testNamePattern='^ci\-disable.*$$' --reporters=default --reporters=jest-junit"
     volumes:
       - .:/usr/src/app
       # Below line prevents Docker from mapping the host's node_modules/

@@ -5,7 +5,7 @@ import { AIBA_SUBSCRIPTION_ID } from "test/data/subscriptions";
 import { BOBATAN_USER_ID } from "test/data/auth";
 import { GenericResponse } from "types/rest/responses";
 import { SubscriptionFeed } from "types/rest/subscriptions";
-import { mocked } from "ts-jest/utils";
+import { mocked } from "jest-mock";
 import request from "supertest";
 import router from "../../routes";
 import stringify from "fast-json-stable-stringify";
