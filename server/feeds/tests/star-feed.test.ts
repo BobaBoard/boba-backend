@@ -1,4 +1,4 @@
-import { extractActivity, extractsMetadata } from "./board-feed.test";
+import { extractActivity, extractsMetadata } from "utils/test-utils";
 
 import { getUserStarFeed } from "../queries";
 
@@ -16,6 +16,8 @@ describe("user star feed queries", () => {
 
     expect(feed.activity.map(extractsMetadata)).toEqual([]);
   });
+
+  //TODO: add more items to jersey devil star feed
   test("jersey devil star feed", async () => {
     const feed = await getUserStarFeed({
       // jersey devil
