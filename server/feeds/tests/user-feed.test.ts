@@ -1,4 +1,4 @@
-import { extractActivity } from "./board-feed.test";
+import { extractActivity } from "utils/test-utils";
 import { getUserActivity } from "../queries";
 
 describe("feed activity queries", () => {

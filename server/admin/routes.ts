@@ -126,15 +126,19 @@ router.post(
   }
 );
 
-router.post("/invite/generate", ensureLoggedIn, async (req, res) => {
+router.post(
+  "/invite/generate", 
+  ensureLoggedIn, 
+  async (req, res) => {
   const user = req.currentUser?.uid;
   if (user !== ADMIN_ID) {
     return res.sendStatus(403);
   }
+
   const { email } = req.body;
   // Generate 64 characters random id string
   const inviteCode = randomBytes(32).toString("hex");
-  const adminId = await getUserFromFirebaseId({ firebaseId: user });
+  const adminId = await getUserFromFirebaseId({ firebaseId: req.currentUser?.uid });
 
   log(adminId);
   const inviteAdded = await createInvite({

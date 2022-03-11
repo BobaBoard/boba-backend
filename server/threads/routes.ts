@@ -17,8 +17,10 @@ import {
   hideThread,
   markThreadVisit,
   muteThread,
+  starThread,
   unhideThread,
   unmuteThread,
+  unstarThread,
   updateThreadView,
 } from "./queries";
 
@@ -422,7 +424,7 @@ router.post(
  *         $ref: "#/components/responses/ensureThreadPermission403"
  *       404:
  *         $ref: "#/components/responses/threadNotFound404"
- *       204:
+ *       200:
  *         description: Thread properties successfully changed.
  *         $ref: "#/components/responses/default204"
  */
@@ -494,6 +496,115 @@ router.patch(
     }
 
     res.sendStatus(204);
+  }
+);
+
+/**
+ * @openapi
+ * /threads/{thread_id}/stars:
+ *   post:
+ *     summary: Adds thread to Star Feed
+ *     operationId: starThreadByStringId
+ *     description: Adds selected thread to current user Star Feed.
+ *     tags:
+ *       - /threads/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: thread_id
+ *         in: path
+ *         description: The id of the thread to star.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       500:
+ *         description: Internal Server Error
+ *       401:
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         $ref: "#/components/responses/ensureThreadAccess403"
+ *       404:
+ *         $ref: "#/components/responses/threadNotFound404"
+ *       204:
+ *         description: Thread added to Star Feed successfully.
+ */
+
+router.post(
+  "/:thread_id/stars",
+  ensureLoggedIn,
+  ensureThreadAccess,
+  async (req, res) => {
+    const { thread_id: threadId } = req.params;
+    log(`Adding thread to stars: ${threadId}`);
+
+    if (
+      !(await starThread({
+        firebaseId: req.currentUser.uid,
+        threadId,
+      }))
+    ) {
+      res.sendStatus(500);
+      return;
+    }
+
+    info(`Marked last visited time for thread: ${threadId}.`);
+    res.status(204).json();
+  }
+);
+
+/**
+ * @openapi
+ * /threads/{thread_id}/stars:
+ *   delete:
+ *     summary: Removes thread from Star Feed
+ *     operationId: unstarThreadByStringId
+ *     description: Deletes selected thread from current user Star Feed.
+ *     tags:
+ *       - /threads/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: thread_id
+ *         in: path
+ *         description: The id of the thread to fetch.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       500:
+ *         description: Internal Server Error
+ *       401:
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         $ref: "#/components/responses/ensureThreadAccess403"
+ *       404:
+ *         $ref: "#/components/responses/threadNotFound404"
+ *       204:
+ *         description: Thread removed from Star Feed successfully.
+ */
+
+router.delete(
+  "/:thread_id/stars",
+  ensureLoggedIn,
+  ensureThreadAccess,
+  async (req, res) => {
+    const { thread_id: threadId } = req.params;
+    log(`Removing thread from stars: ${threadId}`);
+
+    if (
+      !(await unstarThread({
+        firebaseId: req.currentUser.uid,
+        threadId,
+      }))
+    ) {
+      res.sendStatus(500);
+      return;
+    }
+
+    info(`Marked last visited time for thread: ${threadId}.`);
+    res.status(204).json();
   }
 );
 
