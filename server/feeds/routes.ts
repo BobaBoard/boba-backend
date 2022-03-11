@@ -185,8 +185,6 @@ router.get("/users/@me", ensureLoggedIn, async (req, res) => {
  *         schema:
  *           type: string
  *     responses:
- *       204:
- *         description: Star Feed request successful, no additional data
  *       200:
  *         description: Star Feed activity
  *         content:
@@ -203,16 +201,6 @@ router.get("/users/@me/stars", ensureLoggedIn, async (req, res) => {
     firebaseId: currentUserId,
     cursor: (cursor as string) || null,
   });
-
-//TODO: remove 404 error
-  if (!userStarFeed) {
-    res.sendStatus(404);
-    return;
-  }
-  if (!userStarFeed.activity.length) {
-    res.sendStatus(204);
-    return;
-  }
 
   const threadsStarred = userStarFeed.activity.map(
     makeServerThreadSummary

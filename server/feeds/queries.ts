@@ -130,7 +130,7 @@ export const getUserStarFeed = async ({
   firebaseId: string;
   cursor: string | null;
   pageSize?: number;
-}): Promise<DbFeedType | false> => {
+}): Promise<DbFeedType> => {
     const decodedCursor = cursor && decodeCursor(cursor);
 
     const finalPageSize =
