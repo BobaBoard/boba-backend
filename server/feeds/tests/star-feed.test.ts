@@ -10,10 +10,6 @@ describe("user star feed queries", () => {
       cursor: null,
     });
 
-    if (feed === false) {
-      throw Error("User star feed fetching encountered an Error.");
-    }
-
     expect(feed.activity.map(extractsMetadata)).toEqual([]);
   });
 
@@ -24,10 +20,6 @@ describe("user star feed queries", () => {
       firebaseId: "fb2",
       cursor: null,
     });
-
-    if (feed === false) {
-      throw Error("User star feed fetching encountered an Error.");
-    }
 
     expect(feed.activity.map(extractsMetadata)).toEqual([
       {
