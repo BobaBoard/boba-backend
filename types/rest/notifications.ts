@@ -1,4 +1,4 @@
-export interface BoardNotifications {
+export interface ActivityNotifications {
   id: string;
   has_updates: boolean;
   is_outdated: boolean;
@@ -10,6 +10,6 @@ export interface BoardNotifications {
 export interface NotificationsResponse {
   has_notifications: boolean;
   is_outdated_notifications: boolean;
-  realm_boards: Record<string, BoardNotifications>;
-  pinned_boards: Record<string, BoardNotifications>;
+  realm_boards: Record<string, ActivityNotifications>;
+  pinned_boards: Record<string, ActivityNotifications>;
 }

@@ -1,5 +1,5 @@
 import { DbFeedType } from "Types";
-import { extractActivity } from "./board-feed.test";
+import { extractActivity } from "utils/test-utils";
 import { getUserActivity } from "../queries";
 import { getUserFromFirebaseId } from "../../users/queries";
 
