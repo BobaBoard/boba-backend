@@ -15,7 +15,7 @@ VALUES
         ARRAY['edit_board_details'::role_permissions_type,
               'post_as_role'::role_permissions_type,
               'move_thread'::role_permissions_type,
-              'create_invite'::role_permissions_type]);
+              'create_realm_invite'::role_permissions_type]);
 
 INSERT INTO board_user_roles(user_id, board_id, role_id)
 VALUES
