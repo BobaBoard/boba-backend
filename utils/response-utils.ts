@@ -118,6 +118,7 @@ export const makeServerThreadSummary = (
     default_view: thread.default_view,
     muted: thread.muted,
     hidden: thread.hidden,
+    starred: thread.starred,
     new: starter.new,
     new_posts_amount: thread.thread_new_posts_amount,
     new_comments_amount: thread.thread_new_comments_amount,

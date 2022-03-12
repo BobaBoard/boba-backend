@@ -20,7 +20,7 @@ const getRandomIdentityId = `
  */
 // TODO: rename to getRoleByStringId
 const getRoleByStringIdAndBoardId = `
-    SELECT 
+    SELECT
       roles.id,
       roles.name,
       roles.avatar_reference_id,
@@ -31,7 +31,7 @@ const getRoleByStringIdAndBoardId = `
       ON roles.id = bur.role_id
     LEFT JOIN realm_user_roles rur
       ON roles.id = rur.role_id
-    INNER JOIN users 
+    INNER JOIN users
       ON users.id = bur.user_id  OR users.id = rur.user_id
     WHERE
       roles.string_id = $/role_id/
@@ -59,6 +59,18 @@ const unmuteThreadByStringId = `
         AND
         thread_id = (SELECT id from threads WHERE threads.string_id = $/thread_string_id/)`;
 
+const starThreadByStringId = `
+  INSERT INTO user_starred_threads(user_id, thread_id) VALUES (
+      (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
+      (SELECT id from threads WHERE threads.string_id = $/thread_string_id/))
+  ON CONFLICT(user_id, thread_id) DO NOTHING`;
+
+const unstarThreadByStringId = `
+  DELETE FROM user_starred_threads WHERE
+      user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
+      AND
+      thread_id = (SELECT id from threads WHERE threads.string_id = $/thread_string_id/)`;
+
 const hideThreadByStringId = `
     INSERT INTO user_hidden_threads(user_id, thread_id) VALUES (
         (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
@@ -72,7 +84,7 @@ const unhideThreadByStringId = `
         thread_id = (SELECT id from threads WHERE threads.string_id = $/thread_string_id/)`;
 
 const updateThreadViewByStringId = `
-    UPDATE threads 
+    UPDATE threads
       SET options = jsonb_set(options, '{default_view}', to_jsonb($/thread_default_view/::text))
       WHERE threads.string_id = $/thread_string_id/
     RETURNING *;
@@ -90,7 +102,7 @@ const getThreadDetails = `
 `;
 
 const getTriggeredWebhooks = `
-    SELECT 
+    SELECT
         webhook,
         array_agg(DISTINCT subscriptions.string_id) AS subscription_ids,
         array_agg(DISTINCT subscriptions.name) AS subscription_names,
@@ -106,7 +118,7 @@ const getTriggeredWebhooks = `
 `;
 
 const moveThread = `
-    UPDATE threads 
+    UPDATE threads
     SET parent_board = (SELECT id FROM boards WHERE boards.string_id = $/board_string_id/)
     WHERE string_id = $/thread_string_id/;
 `;
@@ -123,6 +135,8 @@ export default {
   insertNewIdentity,
   muteThreadByStringId,
   unmuteThreadByStringId,
+  starThreadByStringId,
+  unstarThreadByStringId,
   hideThreadByStringId,
   unhideThreadByStringId,
   updateThreadViewByStringId,

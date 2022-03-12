@@ -1,6 +1,6 @@
 components:
   schemas:
-    BoardNotifications:
+    ActivityNotifications:
       type: object
       properties:
         id:
@@ -37,3 +37,29 @@ components:
         - last_activity_at
         - last_activity_from_others_at
         - last_visited_at
+
+    NotificationsResponse:
+      type: object
+      properties:
+        has_notifications:
+          type: boolean
+        is_outdated_notifications:
+          type: boolean
+        realm_boards:
+          description: |
+            A map from board id to its NotificationStatus for each realm board.
+            If `realm_id` is not present in the params, it will be empty.
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/ActivityNotifications"
+        pinned_boards:
+          description: |
+            A map from board id to its NotiicationStatus for each pinned board.
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/ActivityNotifications"
+      required:
+        - has_notifications
+        - is_outdated_notifications
+        - realm_boards
+        - pinned_boards
