@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS collections
     string_id TEXT NOT NULL,
     title TEXT NOT NULL,
     content_description TEXT NOT NULL,
-    /** 
+    /**
      * Whisper Tags are textual tags that do not get indicized but act as an extra
      * space for comments.
      */
@@ -166,7 +166,7 @@ CREATE TABLE IF NOT EXISTS posts (
     created timestamp NOT NULL DEFAULT now(),
     content TEXT NOT NULL,
     type post_type NOT NULL,
-    /** 
+    /**
      * Whisper Tags are textual tags that do not get indicized but act as an extra
      * space for comments.
      */
@@ -276,6 +276,12 @@ CREATE TABLE IF NOT EXISTS user_muted_boards(
 );
 CREATE UNIQUE INDEX user_muted_boards_entry on user_muted_boards(user_id, board_id);
 
+CREATE TABLE IF NOT EXISTS user_starred_threads(
+    user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
+    thread_id BIGINT REFERENCES threads(id) ON DELETE RESTRICT NOT NULL
+);
+CREATE UNIQUE INDEX user_starred_thread_entry on user_starred_threads(user_id, thread_id);
+
 CREATE TABLE IF NOT EXISTS user_pinned_boards(
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
@@ -306,4 +312,3 @@ CREATE TABLE IF NOT EXISTS board_description_section_categories(
     section_id BIGINT REFERENCES board_description_sections(id) ON DELETE RESTRICT NOT NULL,
     category_id BIGINT REFERENCES categories(id) ON DELETE RESTRICT NOT NULL
 );
-CREATE UNIQUE INDEX board_description_section_categories_entry on board_description_section_categories(section_id, category_id);

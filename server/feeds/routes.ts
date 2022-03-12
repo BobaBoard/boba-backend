@@ -2,7 +2,7 @@ import {
   ensureNoIdentityLeakage,
   makeServerThreadSummary,
 } from "utils/response-utils";
-import { getBoardActivityByUuid, getUserActivity } from "./queries";
+import { getBoardActivityByUuid, getUserActivity, getUserStarFeed } from "./queries";
 
 import { Feed } from "types/rest/threads";
 import { NotFound404Error } from "types/errors/api";
@@ -163,6 +163,54 @@ router.get("/users/@me", ensureLoggedIn, async (req, res) => {
     },
     activity: threadsWithIdentity,
   };
+
+  response.activity.map((post) => ensureNoIdentityLeakage(post));
+  res.status(200).json(response);
+});
+
+/**
+ * @openapi
+ * /feeds/users/@me/stars:
+ *   get:
+ *     summary: Get current users Star Feed.
+ *     operationId: getUserStarFeed
+ *     tags:
+ *       - /feeds/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: cursor
+ *         in: query
+ *         description: The cursor to start feeding the activity of the user star feed from.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Star Feed activity
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/FeedActivity"
+ */
+
+router.get("/users/@me/stars", ensureLoggedIn, async (req, res) => {
+  const { cursor, starred } = req.query;
+  const currentUserId: string = req.currentUser?.uid;
+  
+  const userStarFeed = await getUserStarFeed({
+    firebaseId: currentUserId,
+    cursor: (cursor as string) || null,
+  });
+
+  const threadsStarred = userStarFeed.activity.map(
+    makeServerThreadSummary
+    );
+    const response: Feed = {
+      cursor: {
+        next: userStarFeed.cursor,
+      },
+      activity: threadsStarred,
+    };
 
   response.activity.map((post) => ensureNoIdentityLeakage(post));
   res.status(200).json(response);

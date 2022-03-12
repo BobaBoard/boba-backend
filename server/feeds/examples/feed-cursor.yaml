@@ -38,6 +38,7 @@ components:
             direct_threads_amount: 0
             muted: false
             hidden: false
+            starred: false
             new: false
           - starter:
               id: 07a31562-c7e5-4026-b268-de758299f924
@@ -72,6 +73,7 @@ components:
             direct_threads_amount: 0
             muted: false
             hidden: false
+            starred: false
             new: false
           - starter:
               id: 07fb6be3-b4db-4e44-adaf-4d0d5214fdf8
@@ -106,6 +108,7 @@ components:
             direct_threads_amount: 0
             muted: false
             hidden: false
+            starred: false
             new: false
           - starter:
               id: 77037fd3-3a14-46ce-928c-86ab97c513df
@@ -140,6 +143,7 @@ components:
             direct_threads_amount: 0
             muted: false
             hidden: false
+            starred: false
             new: false
           - starter:
               id: e3b05f4d-fda3-4c4e-ab5c-5f0f0afa626d
@@ -174,6 +178,7 @@ components:
             direct_threads_amount: 0
             muted: false
             hidden: false
+            starred: false
             new: false
           - starter:
               id: 7fbb6b0b-eb1d-4cbf-b610-6aaa3dbf50ba
@@ -208,6 +213,7 @@ components:
             direct_threads_amount: 0
             muted: false
             hidden: false
+            starred: false
             new: false
           - starter:
               id: 946f0408-f0a5-4b7e-90ee-a70f6c1e2082
@@ -242,6 +248,7 @@ components:
             direct_threads_amount: 0
             muted: false
             hidden: false
+            starred: false
             new: false
           - starter:
               id: d3c57555-a40e-4036-a001-e9b6177a4ddc
@@ -276,6 +283,7 @@ components:
             direct_threads_amount: 0
             muted: false
             hidden: false
+            starred: false
             new: false
           - starter:
               id: ec74bcfd-1660-4f84-8656-89ae52b403d7
@@ -310,6 +318,7 @@ components:
             direct_threads_amount: 0
             muted: false
             hidden: false
+            starred: false
             new: false
           - starter:
               id: ce00d513-1c45-4248-8124-d18cc2174631
@@ -344,4 +353,5 @@ components:
             direct_threads_amount: 0
             muted: false
             hidden: false
+            starred: false
             new: false

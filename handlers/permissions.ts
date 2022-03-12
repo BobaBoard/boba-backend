@@ -24,6 +24,7 @@ import {
 
 import { getBoardByUuid } from "server/boards/queries";
 import { getPostFromStringId } from "server/posts/queries";
+import { Internal500Error } from "types/errors/api";
 
 declare global {
   namespace Express {
@@ -48,7 +49,7 @@ export const withThreadPermissions = async (
   next: NextFunction
 ) => {
   if (!req.params.thread_id) {
-    throw new Error(
+    throw new Internal500Error(
       "Thread permissions can only be fetched on a route that includes a thread id."
     );
   }
@@ -88,12 +89,21 @@ export const ensureThreadPermission = (permission: ThreadPermissions) => {
   };
 };
 
+/**
+ * Make sure the requester has access to the requested thread.
+ * Expects the thread's id in a parameter named thread_id.
+ */
 export const ensureThreadAccess = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   const threadId = req.params.thread_id;
+
+  if (!threadId) {
+    throw new Internal500Error("EnsureThreadAccess requires a parameter named thread_id in the request.");
+  }
+
   const thread = await getThreadByStringId({
     threadId,
     firebaseId: req.currentUser?.uid,
@@ -116,7 +126,7 @@ export const withBoardMetadata = async (
   next: NextFunction
 ) => {
   if (!req.params.board_id) {
-    throw new Error(
+    throw new Internal500Error(
       "Board permissions can only be fetched on a route that includes a board id."
     );
   }
@@ -188,8 +198,8 @@ export const withPostPermissions = async (
   next: NextFunction
 ) => {
   if (!req.params.post_id) {
-    throw new Error(
-      "Thread permissions can only be fetched on a route that includes a thread id."
+    throw new Internal500Error(
+      "Post permissions can only be fetched on a route that includes a post id."
     );
   }
   if (!req.currentUser) {

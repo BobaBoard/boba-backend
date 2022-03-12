@@ -55,6 +55,7 @@ export interface ThreadSummary extends ThreadActivitySummary {
   new: boolean;
   muted: boolean;
   hidden: boolean;
+  starred: boolean;
 }
 
 export interface Thread extends ThreadSummary {
