@@ -42,7 +42,7 @@ const getRealmIdsByUuid = `
     SELECT * FROM realms WHERE string_id = $/realm_id/`;
 
 const getUserPermissionsForRealm = `
-    SELECT permissions 
+    SELECT to_json(permissions) AS permissions 
     FROM users
       JOIN realm_user_roles ON users.id = realm_user_roles.user_id
       JOIN roles ON realm_user_roles.role_id = roles.id 
