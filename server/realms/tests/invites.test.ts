@@ -53,7 +53,7 @@ describe("Tests creating invite", () => {
       expect(res.body).toEqual(expect.not.objectContaining(expected));
     });
 
-    test("doesn't create invite when user has create_invite permission on another realm", async () => {
+    test("doesn't create invite when user has create_realm_invite permission on another realm", async () => {
       setLoggedInUser(ZODIAC_KILLER_USER_ID);
       const res = await request(server.app)
         .post("/1/invite/generate")
