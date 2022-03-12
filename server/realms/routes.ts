@@ -311,7 +311,7 @@ router.delete("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
 router.post(
   "/:realm_id/invites",
   ensureLoggedIn,
-  ensureRealmPermission(RealmPermissions.createInvite),
+  ensureRealmPermission(RealmPermissions.createRealmInvite),
   async (req, res) => {
     const user = req.currentUser?.uid;
     // if (user !== ADMIN_ID) {

@@ -36,7 +36,7 @@ export enum BoardPermissions {
 }
 
 export enum RealmPermissions {
-  createInvite = DbRolePermissions["create_realm_invite"],
+  createRealmInvite = DbRolePermissions["create_realm_invite"],
 }
 
 export enum PostPermissions {
