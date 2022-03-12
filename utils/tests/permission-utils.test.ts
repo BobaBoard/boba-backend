@@ -112,7 +112,7 @@ describe("extractRealmPermissions tests", () => {
       DbRolePermissions.edit_board_details,
       DbRolePermissions.create_realm_invite,
     ]);
-    const expected = [RealmPermissions.createInvite];
+    const expected = [RealmPermissions.createRealmInvite];
     expect(permissions.sort()).toEqual(expected.sort());
   });
 });
