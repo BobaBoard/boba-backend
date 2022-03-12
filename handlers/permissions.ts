@@ -14,17 +14,14 @@ import {
   getBoardRestrictions,
 } from "utils/permissions-utils";
 import {
-  getRealmByUuid,
-  getUserPermissionsForRealm,
-} from "server/realms/queries";
-import {
   getThreadByStringId,
   getUserPermissionsForThread,
 } from "server/threads/queries";
 
+import { Internal500Error } from "types/errors/api";
 import { getBoardByUuid } from "server/boards/queries";
 import { getPostFromStringId } from "server/posts/queries";
-import { Internal500Error } from "types/errors/api";
+import { getUserPermissionsForRealm } from "server/realms/queries";
 
 declare global {
   namespace Express {
@@ -101,7 +98,9 @@ export const ensureThreadAccess = async (
   const threadId = req.params.thread_id;
 
   if (!threadId) {
-    throw new Internal500Error("EnsureThreadAccess requires a parameter named thread_id in the request.");
+    throw new Internal500Error(
+      "EnsureThreadAccess requires a parameter named thread_id in the request."
+    );
   }
 
   const thread = await getThreadByStringId({
