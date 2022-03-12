@@ -108,22 +108,21 @@ export const getUserPermissionsForRealm = async ({
   realmId: string;
 }) => {
   try {
-    const userPermissionsGroupedByRoles = await pool.manyOrNone(
+    const userPermissionsGroupedByRole = await pool.manyOrNone(
       sql.getUserPermissionsForRealm,
       {
         user_id: firebaseId,
         realm_id: realmId,
       }
     );
-    if (!userPermissionsGroupedByRoles.length) {
+    if (!userPermissionsGroupedByRole.length) {
       return;
     }
-    const userRealmPermissionsGroupedByRoles =
-      userPermissionsGroupedByRoles.map((row) => {
-        return extractRealmPermissions(
-          row.permissions.substring(1, row.permissions.length - 1).split(/,/)
-        );
-      });
+    const userRealmPermissionsGroupedByRoles = userPermissionsGroupedByRole.map(
+      (row) => {
+        return extractRealmPermissions(row.permissions);
+      }
+    );
     const allUserRealmPermissions = userRealmPermissionsGroupedByRoles.reduce(
       (userRealmPermissions, userRealmPermissionsGroup) => {
         return userRealmPermissions.concat(userRealmPermissionsGroup);
