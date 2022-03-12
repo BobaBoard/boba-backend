@@ -4,12 +4,9 @@ import {
   Internal500Error,
   NotFound404Error,
 } from "types/errors/api";
-import {
-  createNewUser,
-  getInviteDetails,
-  markInviteUsed,
-} from "server/realms/queries";
+import { createNewUser, getUserFromFirebaseId } from "server/users/queries";
 import { ensureLoggedIn, withUserSettings } from "handlers/auth";
+import { getInviteDetails, markInviteUsed } from "server/realms/queries";
 import { getRealmDataBySlug, getSettingsBySlug } from "./queries";
 
 import { RealmPermissions } from "types/permissions";
@@ -19,7 +16,6 @@ import { ensureRealmPermission } from "handlers/permissions";
 import express from "express";
 import firebaseAuth from "firebase-admin";
 import { getBoards } from "../boards/queries";
-import { getUserFromFirebaseId } from "server/users/queries";
 import { processBoardsSummary } from "utils/response-utils";
 import { processRealmActivity } from "./utils";
 import { randomBytes } from "crypto";
@@ -164,7 +160,7 @@ router.get("/:realm_id/activity", async (req, res) => {
 });
 
 router.post(
-  "/:realm_id/invite/generate",
+  "/:realm_id/invites",
   ensureLoggedIn,
   ensureRealmPermission(RealmPermissions.createInvite),
   async (req, res) => {
@@ -193,8 +189,9 @@ router.post(
   }
 );
 
-router.post("/:realm_id/invite/accept", async (req, res) => {
-  const { email, password, nonce } = req.body;
+router.post("/:realm_id/invites/:nonce", async (req, res) => {
+  const { email, password } = req.body;
+  const { nonce } = req.params;
 
   const inviteDetails = await getInviteDetails({ nonce });
 

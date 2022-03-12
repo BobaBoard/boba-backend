@@ -1,10 +1,8 @@
 const getRealmBySlug = `
     SELECT * FROM realms WHERE slug = $/realm_slug/`;
 
-// I added this before realizing I didn't actually need it for what I was doing
-// I can leave it in if it will be helpful in future, or I can delete it?
-const getRealmByUuid = `
-    SELECT * FROM realms WHERE id = $/realm_id/`;
+const getRealmIdsByUuid = `
+    SELECT * FROM realms WHERE string_id = $/realm_id/`;
 
 const getUserPermissionsForRealm = `
     SELECT permissions 
@@ -24,7 +22,7 @@ const getInviteDetails = `
 
 export default {
   getRealmBySlug,
-  getRealmByUuid,
+  getRealmIdsByUuid,
   getUserPermissionsForRealm,
   getInviteDetails,
 };
