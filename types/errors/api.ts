@@ -52,8 +52,8 @@ export class ApiError extends BaseError {
 export class Internal500Error extends ApiError {
   constructor(description: string) {
     super({
-      name: "UNAUTHORIZED_USER",
-      statusCode: HttpStatusCode.UNAUTHORIZED,
+      name: "INTERNAL_SERVER_ERROR",
+      statusCode: HttpStatusCode.INTERNAL_SERVER,
       description,
     });
   }

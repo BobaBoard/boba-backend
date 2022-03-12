@@ -64,9 +64,9 @@ VALUES
      'roleAvatar',
      'roleColor',
      'roleDescription.',
-     ARRAY['post_as_role'::role_permissions_type, 'edit_board_details'::role_permissions_type]);
+     ARRAY['post_as_role'::role_permissions_type]);
 insert into board_user_roles(user_id, board_id, role_id) VALUES(userId, boardId, roleId);
-INSERT INTO realm_user_roles(user_id, role_id) VALUES(user_id, 'role_id');
+INSERT INTO realm_user_roles(user_id, role_id) VALUES(user_id, (SELECT id FROM roles WHERE string_id = 'roleID'));
 
 UPDATE roles SET 
     color = '#fe2cc5',

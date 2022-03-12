@@ -10,6 +10,7 @@ import stringify from "fast-json-stable-stringify";
 const log = debug("bobaserver:auth-log");
 const error = debug("bobaserver:auth-error");
 
+const ADMIN_ID = "c6HimTlg2RhVH3fC1psXZORdLcx2";
 const EXPIRED_TOKEN_ERROR = "Authentication token expired.";
 const NO_USER_FOUND_ERROR = "No authenticated user found.";
 declare global {
