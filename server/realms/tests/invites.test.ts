@@ -18,7 +18,7 @@ describe("Tests creating invite", () => {
     test("creates invite when user only has role with correct permission", async () => {
       setLoggedInUser(SEXY_DADDY_USER_ID);
       const res = await request(server.app)
-        .post("/1/invite/generate")
+        .post("/1/invites")
         .send({ email: "anemail@email.com" });
 
       expect(res.status).toBe(200);
@@ -29,7 +29,7 @@ describe("Tests creating invite", () => {
     test("creates invite when user has correct permission plus another role", async () => {
       setLoggedInUser(BOBATAN_USER_ID);
       const res = await request(server.app)
-        .post("/1/invite/generate")
+        .post("/1/invites")
         .send({ email: "anemail@email.com" });
 
       expect(res.status).toBe(200);
@@ -40,7 +40,7 @@ describe("Tests creating invite", () => {
     test("doesn't create invite when user has only incorrect permissions on realm", async () => {
       setLoggedInUser(ONCEST_USER_ID);
       const res = await request(server.app)
-        .post("/1/invite/generate")
+        .post("/1/invites")
         .field("email", "anemail@email.com");
 
       expect(res.status).toBe(403);
@@ -56,7 +56,7 @@ describe("Tests creating invite", () => {
     test("doesn't create invite when user has create_realm_invite permission on another realm", async () => {
       setLoggedInUser(ZODIAC_KILLER_USER_ID);
       const res = await request(server.app)
-        .post("/1/invite/generate")
+        .post("/1/invites")
         .field("email", "anemail@email.com");
 
       expect(res.status).toBe(403);
@@ -73,7 +73,7 @@ describe("Tests creating invite", () => {
       setLoggedInUser(JERSEY_DEVIL_USER_ID);
 
       const res = await request(server.app)
-        .post("/1/invite/generate")
+        .post("/1/invites")
         .field("email", "anemail@email.com");
 
       expect(res.status).toBe(403);
@@ -84,7 +84,7 @@ describe("Tests creating invite", () => {
 
     test("doesn't create invite when logged out", async () => {
       const res = await request(server.app)
-        .post("/1/invite/generate")
+        .post("/1/invites")
         .field("email", "anemail@email.com");
 
       expect(res.status).toBe(401);

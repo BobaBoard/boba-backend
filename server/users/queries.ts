@@ -130,3 +130,26 @@ export const getBobadexIdentities = async ({
     return false;
   }
 };
+
+export const createNewUser = async (user: {
+  firebaseId: string;
+  invitedBy: number;
+  createdOn: string;
+}) => {
+  const query = `
+    INSERT INTO users(firebase_id, invited_by, created_on)
+    VALUES ($/firebase_id/, $/invited_by/, $/created_on/)`;
+  try {
+    await pool.none(query, {
+      firebase_id: user.firebaseId,
+      invited_by: user.invitedBy,
+      created_on: user.createdOn,
+    });
+    log(`Added new user in DB for firebase ID ${user.firebaseId}`);
+    return true;
+  } catch (e) {
+    error(`Error creating a new user.`);
+    error(e);
+    return false;
+  }
+};
