@@ -309,7 +309,7 @@ router.delete("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
 });
 
 router.post(
-  "/:realm_id/invite/generate",
+  "/:realm_id/invites",
   ensureLoggedIn,
   ensureRealmPermission(RealmPermissions.createInvite),
   async (req, res) => {
@@ -338,8 +338,9 @@ router.post(
   }
 );
 
-router.post("/:realm_id/invite/accept", async (req, res) => {
-  const { email, password, nonce } = req.body;
+router.post("/:realm_id/invites/:nonce", async (req, res) => {
+  const { email, password } = req.body;
+  const { nonce } = req.params;
 
   const inviteDetails = await getInviteDetails({ nonce });
 

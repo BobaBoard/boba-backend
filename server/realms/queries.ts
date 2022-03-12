@@ -124,9 +124,7 @@ export const dismissAllNotifications = async ({
   }
 };
 
-// I added this before realizing I didn't actually need it for what I was doing
-// I can leave it in if it will be helpful in future, or I can delete it?
-export const getRealmByUuid = async ({
+export const getRealmIdsByUuid = async ({
   realmId,
 }: {
   realmId: string;
@@ -135,7 +133,7 @@ export const getRealmByUuid = async ({
   string_id: string;
   slug: string;
 } | null> => {
-  return await pool.oneOrNone(sql.getRealmByUuid, {
+  return await pool.oneOrNone(sql.getRealmIdsByUuid, {
     realm_id: realmId,
   });
 };
