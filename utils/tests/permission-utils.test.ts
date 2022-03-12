@@ -110,7 +110,7 @@ describe("extractRealmPermissions tests", () => {
   test("correctly ignores non-existing permissions", () => {
     const permissions = extractRealmPermissions([
       DbRolePermissions.edit_board_details,
-      DbRolePermissions.create_invite,
+      DbRolePermissions.create_realm_invite,
     ]);
     const expected = [RealmPermissions.createInvite];
     expect(permissions.sort()).toEqual(expected.sort());
