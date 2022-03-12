@@ -86,9 +86,7 @@ export const getRealmDataBySlug = async ({
   });
 };
 
-// I added this before realizing I didn't actually need it for what I was doing
-// I can leave it in if it will be helpful in future, or I can delete it?
-export const getRealmByUuid = async ({
+export const getRealmIdsByUuid = async ({
   realmId,
 }: {
   realmId: string;
@@ -97,7 +95,7 @@ export const getRealmByUuid = async ({
   string_id: string;
   slug: string;
 } | null> => {
-  return await pool.oneOrNone(sql.getRealmByUuid, {
+  return await pool.oneOrNone(sql.getRealmIdsByUuid, {
     realm_id: realmId,
   });
 };
@@ -213,29 +211,6 @@ export const markInviteUsed = async ({
     return true;
   } catch (e) {
     error(`Error while marking invite as used.`);
-    error(e);
-    return false;
-  }
-};
-
-export const createNewUser = async (user: {
-  firebaseId: string;
-  invitedBy: number;
-  createdOn: string;
-}) => {
-  const query = `
-    INSERT INTO users(firebase_id, invited_by, created_on)
-    VALUES ($/firebase_id/, $/invited_by/, $/created_on/)`;
-  try {
-    await pool.none(query, {
-      firebase_id: user.firebaseId,
-      invited_by: user.invitedBy,
-      created_on: user.createdOn,
-    });
-    log(`Added new user in DB for firebase ID ${user.firebaseId}`);
-    return true;
-  } catch (e) {
-    error(`Error creating a new user.`);
     error(e);
     return false;
   }
