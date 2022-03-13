@@ -7,7 +7,7 @@ import {
 } from "test/data/auth";
 import { setLoggedInUser, startTestServer } from "utils/test-utils";
 
-import { TWISTED_MINDS_REALM_ID } from "test/data/realms";
+import { TWISTED_MINDS_REALM_STRING_ID } from "test/data/realms";
 import request from "supertest";
 import router from "../routes";
 
@@ -19,7 +19,7 @@ describe("Tests creat invites endpoint", () => {
   test("creates invite when user only has role with correct permission", async () => {
     setLoggedInUser(SEXY_DADDY_USER_ID);
     const res = await request(server.app)
-      .post(`/${TWISTED_MINDS_REALM_ID}/invites`)
+      .post(`/${TWISTED_MINDS_REALM_STRING_ID}/invites`)
       .send({ email: "anemail@email.com" });
 
     expect(res.status).toBe(200);
@@ -30,7 +30,7 @@ describe("Tests creat invites endpoint", () => {
   test("creates invite when user has correct permission plus another role", async () => {
     setLoggedInUser(BOBATAN_USER_ID);
     const res = await request(server.app)
-      .post(`/${TWISTED_MINDS_REALM_ID}/invites`)
+      .post(`/${TWISTED_MINDS_REALM_STRING_ID}/invites`)
       .send({ email: "anemail@email.com" });
 
     expect(res.status).toBe(200);
@@ -41,7 +41,7 @@ describe("Tests creat invites endpoint", () => {
   test("doesn't create invite when user has only incorrect permissions on realm", async () => {
     setLoggedInUser(ONCEST_USER_ID);
     const res = await request(server.app)
-      .post(`/${TWISTED_MINDS_REALM_ID}/invites`)
+      .post(`/${TWISTED_MINDS_REALM_STRING_ID}/invites`)
       .field("email", "anemail@email.com");
 
     expect(res.status).toBe(403);
@@ -54,7 +54,7 @@ describe("Tests creat invites endpoint", () => {
   test("doesn't create invite when user has create_realm_invite permission on another realm", async () => {
     setLoggedInUser(ZODIAC_KILLER_USER_ID);
     const res = await request(server.app)
-      .post(`/${TWISTED_MINDS_REALM_ID}/invites`)
+      .post(`/${TWISTED_MINDS_REALM_STRING_ID}/invites`)
       .field("email", "anemail@email.com");
 
     expect(res.status).toBe(403);
@@ -68,7 +68,7 @@ describe("Tests creat invites endpoint", () => {
     setLoggedInUser(JERSEY_DEVIL_USER_ID);
 
     const res = await request(server.app)
-      .post(`/${TWISTED_MINDS_REALM_ID}/invites`)
+      .post(`/${TWISTED_MINDS_REALM_STRING_ID}/invites`)
       .field("email", "anemail@email.com");
 
     expect(res.status).toBe(403);
@@ -80,7 +80,7 @@ describe("Tests creat invites endpoint", () => {
 
   test("doesn't create invite when logged out", async () => {
     const res = await request(server.app)
-      .post(`/${TWISTED_MINDS_REALM_ID}/invites`)
+      .post(`/${TWISTED_MINDS_REALM_STRING_ID}/invites`)
       .field("email", "anemail@email.com");
 
     expect(res.status).toBe(401);
