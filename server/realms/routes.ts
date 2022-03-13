@@ -159,6 +159,132 @@ router.get("/:realm_id/activity", async (req, res) => {
   }
 });
 
+/**
+ * @openapi
+ * /realms/{realm_id}/invites:
+ *   get:
+ *     summary: List all invites for the realm
+ *     operationId: getInvitesByRealmId
+ *     tags:
+ *       - /realms/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: realm_id
+ *         in: path
+ *         description: The id of the realm.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         examples:
+ *           twisted_minds:
+ *             summary: the twisted-minds realm id
+ *             value: 76ef4cc3-1603-4278-95d7-99c59f481d2e
+ *     responses:
+ *       200:
+ *         description: The metadata of all invites for the current realm.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 invites:
+ *                   type: array
+ *                   items:
+ *                     $ref: "#/components/schemas/InviteWithDetails"
+ *             examples:
+ *               twisted_minds:
+ *                 value:
+ *                   invites:
+ *                     - realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e
+ *                       invite_url: https://twisted_minds.boba.social/invite/123invite_code456
+ *                       invitee_email: ms.boba@bobaboard.com
+ *                       issued_at: 2021-06-09T04:20:00Z
+ *                       expires_at: 2021-06-09T16:20:00Z
+ *                       note: This is a test invite.
+ *       401:
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         $ref: "#/components/responses/ensurePermission403"
+ *       404:
+ *         description: The realm was not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/genericResponse"
+ */
+router.get(
+  "/:realm_id/invites",
+  ensureLoggedIn,
+  ensureRealmPermission(RealmPermissions.createRealmInvite),
+  async (req, res) => {
+    throw new Internal500Error("not implemented");
+  }
+);
+
+/**
+ * @openapi
+ * /realms/{realm_id}/invites:
+ *   post:
+ *     summary: Create invite for the realm.
+ *     operationId: createInviteByRealmId
+ *     tags:
+ *       - /realms/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: realm_id
+ *         in: path
+ *         description: The id of the realm.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         examples:
+ *           twisted_minds:
+ *             summary: the twisted-minds realm id
+ *             value: 76ef4cc3-1603-4278-95d7-99c59f481d2e
+ *     requestBody:
+ *       description: The invite data.
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *             required:
+ *               - email
+ *           examples:
+ *             twisted_minds:
+ *               value:
+ *                 email: ms.boba@bobaboard.com
+ *     responses:
+ *       200:
+ *         description: The invite metadata.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/Invite"
+ *             examples:
+ *               twisted_minds:
+ *                 value:
+ *                   realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e
+ *                   invite_url: https://twisted_minds.boba.social/invite/123invite_code456
+ *       401:
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         $ref: "#/components/responses/ensurePermission403"
+ *       404:
+ *         description: The realm was not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/genericResponse"
+ */
 router.post(
   "/:realm_id/invites",
   ensureLoggedIn,
@@ -169,6 +295,7 @@ router.post(
     //   return res.sendStatus(403);
     // }
     const { email } = req.body;
+    // TODO: check that email is not empty here.
     // Generate 64 characters random id string
     const inviteCode = randomBytes(32).toString("hex");
     const adminId = await getUserFromFirebaseId({ firebaseId: user });
@@ -189,6 +316,75 @@ router.post(
   }
 );
 
+/**
+ * @openapi
+ * /realms/{realm_id}/invites/{nonce}:
+ *   post:
+ *     summary: Accept invite for the realm.
+ *     operationId: acceptInviteByNonce
+ *     tags:
+ *       - /realms/
+ *     security:
+ *       - firebase: []
+ *       - {}
+ *     parameters:
+ *       - name: realm_id
+ *         in: path
+ *         description: The id of the realm.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         examples:
+ *           twisted_minds:
+ *             summary: the twisted-minds realm id
+ *             value: 76ef4cc3-1603-4278-95d7-99c59f481d2e
+ *       - name: nonce
+ *         in: path
+ *         description: The invite code.
+ *         required: true
+ *         schema:
+ *           type: string
+ *         examples:
+ *           twisted_minds:
+ *             summary: the invite code.
+ *             value: 123invite_code456
+ *     requestBody:
+ *       description: The user data for the invite. Only required if the user is not already logged in.
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               password:
+ *                 type: string
+ *             required:
+ *               - email
+ *               - password
+ *           examples:
+ *             twisted_minds:
+ *               value:
+ *                 email: ms.boba@bobaboard.com
+ *                 password: how_bad_can_i_be
+ *     responses:
+ *       204:
+ *         description: The invite was successfully accepted.
+ *       403:
+ *         description: The invite is not valid anymore, or the user does not correspond to the invited one.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/genericResponse"
+ *       404:
+ *         description: The invite with the given code was not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/genericResponse"
+ */
 router.post("/:realm_id/invites/:nonce", async (req, res) => {
   const { email, password } = req.body;
   const { nonce } = req.params;
