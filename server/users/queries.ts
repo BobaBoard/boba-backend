@@ -128,52 +128,20 @@ export const updateUserSettings = async ({
   }
 };
 
-export const getInviteDetails = async ({
-  nonce,
+export const getBobadexIdentities = async ({
+  firebaseId,
 }: {
-  nonce: string;
-}): Promise<{
-  email: string;
-  used: boolean;
-  expired: boolean;
-  inviter: number;
-} | null> => {
+  firebaseId: string;
+}) => {
   try {
-    const inviteDetails = await pool.one(sql.getInviteDetails, {
-      nonce,
-    });
-    log(`Fetched details for invite ${nonce}:`);
-    log(inviteDetails);
+    log(`Getting boba identities firebase ID ${firebaseId}`);
     return {
-      email: inviteDetails.invitee_email,
-      expired: inviteDetails.expired,
-      used: inviteDetails.used,
-      inviter: inviteDetails.inviter,
+      seasons: await pool.many(sql.getBobadexIdentities, {
+        firebase_id: firebaseId,
+      }),
     };
   } catch (e) {
-    error(`Error while getting invite details.`);
-    error(e);
-    return null;
-  }
-};
-
-export const markInviteUsed = async ({
-  nonce,
-}: {
-  nonce: string;
-}): Promise<boolean> => {
-  const query = `
-    UPDATE account_invites
-    SET used = TRUE
-    WHERE nonce = $/nonce/`;
-  try {
-    await pool.none(query, {
-      nonce,
-    });
-    log(`Marking invite ${nonce} as used.`);
-    return true;
-  } catch (e) {
-    error(`Error while marking invite as used.`);
+    error(`Error getting boba identities.`);
     error(e);
     return false;
   }
@@ -197,25 +165,6 @@ export const createNewUser = async (user: {
     return true;
   } catch (e) {
     error(`Error creating a new user.`);
-    error(e);
-    return false;
-  }
-};
-
-export const getBobadexIdentities = async ({
-  firebaseId,
-}: {
-  firebaseId: string;
-}) => {
-  try {
-    log(`Getting boba identities firebase ID ${firebaseId}`);
-    return {
-      seasons: await pool.many(sql.getBobadexIdentities, {
-        firebase_id: firebaseId,
-      }),
-    };
-  } catch (e) {
-    error(`Error getting boba identities.`);
     error(e);
     return false;
   }

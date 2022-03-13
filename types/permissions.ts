@@ -17,6 +17,7 @@ export enum DbRolePermissions {
   edit_whisper_tags = "edit_whisper_tags",
   edit_index_tags = "edit_index_tags",
   edit_default_view = "edit_default_view",
+  create_realm_invite = "create_realm_invite",
 }
 
 export interface UserBoardPermissions {
@@ -32,6 +33,10 @@ export enum ThreadPermissions {
 
 export enum BoardPermissions {
   editMetadata = DbRolePermissions["edit_board_details"],
+}
+
+export enum RealmPermissions {
+  createRealmInvite = DbRolePermissions["create_realm_invite"],
 }
 
 export enum PostPermissions {
