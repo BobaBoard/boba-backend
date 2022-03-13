@@ -2,8 +2,13 @@ import { filterOutDisabledSettings, getRealmCursorSetting } from "./utils";
 
 import { CssVariableSetting } from "../../types/settings";
 import { SettingEntry } from "../../types/settings";
+import debug from "debug";
+import { extractRealmPermissions } from "utils/permissions-utils";
 import pool from "server/db-pool";
 import sql from "./sql";
+
+const log = debug("bobaserver:realms:queries-log");
+const error = debug("bobaserver:realms:queries-error");
 
 const CURSOR_SETTINGS = {
   // image: "https://cur.cursors-4u.net/nature/nat-2/nat120.cur",
@@ -79,4 +84,133 @@ export const getRealmDataBySlug = async ({
   return await pool.oneOrNone(sql.getRealmBySlug, {
     realm_slug: realmSlug,
   });
+};
+
+export const getRealmIdsByUuid = async ({
+  realmId,
+}: {
+  realmId: string;
+}): Promise<{
+  id: string;
+  string_id: string;
+  slug: string;
+} | null> => {
+  return await pool.oneOrNone(sql.getRealmIdsByUuid, {
+    realm_id: realmId,
+  });
+};
+
+export const getUserPermissionsForRealm = async ({
+  firebaseId,
+  realmId,
+}: {
+  firebaseId: string;
+  realmId: string;
+}) => {
+  try {
+    const userPermissionsGroupedByRole = await pool.manyOrNone(
+      sql.getUserPermissionsForRealm,
+      {
+        user_id: firebaseId,
+        realm_id: realmId,
+      }
+    );
+    if (!userPermissionsGroupedByRole.length) {
+      return;
+    }
+    const userRealmPermissionsGroupedByRoles = userPermissionsGroupedByRole.map(
+      (row) => {
+        return extractRealmPermissions(row.permissions);
+      }
+    );
+    const allUserRealmPermissions = userRealmPermissionsGroupedByRoles.reduce(
+      (userRealmPermissions, userRealmPermissionsGroup) => {
+        return userRealmPermissions.concat(userRealmPermissionsGroup);
+      },
+      []
+    );
+    return allUserRealmPermissions;
+  } catch (e) {
+    error(`Error while getting user permissions for the realm.`);
+    error(e);
+    return false;
+  }
+};
+
+export const createInvite = async (inviteData: {
+  email: string;
+  inviteCode: string;
+  inviterId: number;
+}) => {
+  const query = `
+    INSERT INTO account_invites(nonce, inviter, invitee_email, duration)
+    VALUES (
+      $/invite_code/,
+      $/inviter_id/,
+      $/email/,
+      INTERVAL '1 WEEK')`;
+  try {
+    await pool.none(query, {
+      invite_code: inviteData.inviteCode,
+      inviter_id: inviteData.inviterId,
+      email: inviteData.email,
+    });
+    log(`Generated invite for email ${inviteData.email}.`);
+    return true;
+  } catch (e) {
+    error(`Error while generating invite.`);
+    error(e);
+    return false;
+  }
+};
+
+export const getInviteDetails = async ({
+  nonce,
+}: {
+  nonce: string;
+}): Promise<{
+  email: string;
+  used: boolean;
+  expired: boolean;
+  inviter: number;
+} | null> => {
+  try {
+    const inviteDetails = await pool.one(sql.getInviteDetails, {
+      nonce,
+    });
+    log(`Fetched details for invite ${nonce}:`);
+    log(inviteDetails);
+    return {
+      email: inviteDetails.invitee_email,
+      expired: inviteDetails.expired,
+      used: inviteDetails.used,
+      inviter: inviteDetails.inviter,
+    };
+  } catch (e) {
+    error(`Error while getting invite details.`);
+    error(e);
+    return null;
+  }
+};
+
+export const markInviteUsed = async ({
+  nonce,
+}: {
+  nonce: string;
+}): Promise<boolean> => {
+  const query = `
+    UPDATE account_invites
+    SET used = TRUE
+    WHERE nonce = $/nonce/`;
+  try {
+    await pool.none(query, {
+      nonce,
+    });
+    log(`Marking invite ${nonce} as used.`);
+    return true;
+  } catch (e) {
+    error(`Error while marking invite as used.`);
+    error(e);
+    return false;
+  }
 };

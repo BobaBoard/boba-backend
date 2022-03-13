@@ -83,6 +83,7 @@ const GORE_BOARD_LOGGED_IN: DbBoardMetadata = {
     "edit_category_tags",
     "edit_content_notices",
     "move_thread",
+    "create_realm_invite",
   ],
   pinned_order: 1,
   posting_identities: [

@@ -3,6 +3,7 @@ import {
   BoardRestrictions,
   POST_OWNER_PERMISSIONS,
   PostPermissions,
+  RealmPermissions,
   ThreadPermissions,
 } from "types/permissions";
 import { DbBoardMetadata, DbThreadType } from "Types";
@@ -17,9 +18,10 @@ import {
   getUserPermissionsForThread,
 } from "server/threads/queries";
 
+import { Internal500Error } from "types/errors/api";
 import { getBoardByUuid } from "server/boards/queries";
 import { getPostFromStringId } from "server/posts/queries";
-import { Internal500Error } from "types/errors/api";
+import { getUserPermissionsForRealm } from "server/realms/queries";
 
 declare global {
   namespace Express {
@@ -33,6 +35,7 @@ declare global {
         loggedInBaseRestrictions: BoardRestrictions[];
       };
       currentPostPermissions?: PostPermissions[];
+      currentRealmPermissions?: RealmPermissions[];
     }
   }
 }
@@ -95,7 +98,9 @@ export const ensureThreadAccess = async (
   const threadId = req.params.thread_id;
 
   if (!threadId) {
-    throw new Internal500Error("EnsureThreadAccess requires a parameter named thread_id in the request.");
+    throw new Internal500Error(
+      "EnsureThreadAccess requires a parameter named thread_id in the request."
+    );
   }
 
   const thread = await getThreadByStringId({
@@ -222,4 +227,50 @@ export const withPostPermissions = async (
   });
   req.currentPostPermissions = extractPostPermissions(board.permissions);
   next();
+};
+
+export const withRealmPermissions = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.params.realm_id) {
+    throw new Error(
+      "Realm permissions can only be fetched on a route that includes a realm id."
+    );
+  }
+  if (!req.currentUser) {
+    next();
+    return;
+  }
+
+  const currentRealmPermissions = await getUserPermissionsForRealm({
+    firebaseId: req.currentUser.uid,
+    realmId: req.params.realm_id,
+  });
+
+  if (!currentRealmPermissions) {
+    next();
+    return;
+  }
+  req.currentRealmPermissions = currentRealmPermissions;
+  next();
+};
+
+export const ensureRealmPermission = (permission: RealmPermissions) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    withRealmPermissions(req, res, async () => {
+      if (
+        !req.currentRealmPermissions ||
+        !req.currentRealmPermissions.includes(permission)
+      ) {
+        res.status(403).json({
+          message:
+            "User does not have required permissions for realm operation.",
+        });
+        return;
+      }
+      next();
+    });
+  };
 };

@@ -1,18 +1,10 @@
-import {
-  BadRequest400Error,
-  Forbidden403Error,
-  Internal500Error,
-  NotFound404Error,
-} from "types/errors/api";
+import { BadRequest400Error, Internal500Error } from "types/errors/api";
 import { CacheKeys, cache } from "../cache";
 import {
-  createNewUser,
   dismissAllNotifications,
   getBobadexIdentities,
-  getInviteDetails,
   getUserFromFirebaseId,
   getUserSettings,
-  markInviteUsed,
   updateUserData,
   updateUserSettings,
 } from "./queries";
@@ -26,7 +18,6 @@ import {
 import { aggregateByType } from "utils/settings";
 import debug from "debug";
 import express from "express";
-import firebaseAuth from "firebase-admin";
 import { getBoards } from "../boards/queries";
 import stringify from "fast-json-stable-stringify";
 
@@ -450,53 +441,6 @@ router.patch("/@me/settings", ensureLoggedIn, async (req, res) => {
   } catch (e) {
     throw new Internal500Error(`Failed to update user settings`);
   }
-});
-
-router.post("/invite/accept", async (req, res) => {
-  const { email, password, nonce } = req.body;
-
-  const inviteDetails = await getInviteDetails({ nonce });
-
-  if (!inviteDetails) {
-    throw new NotFound404Error(`Invite not found`);
-  }
-
-  if (inviteDetails.expired || inviteDetails.used) {
-    throw new Forbidden403Error(`Invite expired or already used`);
-  }
-
-  if (inviteDetails.email.toLowerCase() != (email as string).toLowerCase()) {
-    throw new Forbidden403Error(`Invite email does not match`);
-  }
-  firebaseAuth
-    .auth()
-    .createUser({
-      email,
-      password,
-    })
-    .then(async (user) => {
-      const uid = user.uid;
-      log(`Created new firebase user with uid ${uid}`);
-      // TODO: decide whether to put these together in a transaction.
-      const success = await markInviteUsed({ nonce });
-      if (!success) {
-        throw new Internal500Error(`Failed to mark invite as used`);
-      }
-      const created = await createNewUser({
-        firebaseId: uid,
-        invitedBy: inviteDetails.inviter,
-        createdOn: user.metadata.creationTime,
-      });
-      if (!created) {
-        throw new Internal500Error(`Failed to create new user`);
-      }
-      res.sendStatus(200);
-    })
-    .catch((error) => {
-      throw new BadRequest400Error(
-        `Error creating user: ${error.message} (${error.code})`
-      );
-    });
 });
 
 export default router;
