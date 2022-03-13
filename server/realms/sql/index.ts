@@ -8,8 +8,9 @@ const getUserPermissionsForRealm = `
     SELECT to_json(permissions) AS permissions 
     FROM users
       JOIN realm_user_roles ON users.id = realm_user_roles.user_id
-      JOIN roles ON realm_user_roles.role_id = roles.id 
-    WHERE firebase_id = $/user_id/ AND realm_user_roles.realm_id = $/realm_id/`;
+      JOIN roles ON realm_user_roles.role_id = roles.id
+      JOIN realms ON realm_user_roles.realm_id = realms.id 
+    WHERE users.firebase_id = $/user_id/ AND realms.string_id = $/realm_id/`;
 
 const getInviteDetails = `
     SELECT 
