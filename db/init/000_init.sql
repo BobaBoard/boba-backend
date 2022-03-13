@@ -71,6 +71,12 @@ CREATE TABLE IF NOT EXISTS realms
 CREATE UNIQUE INDEX realms_string_id on realms(string_id);
 CREATE UNIQUE INDEX realms_slug on realms(slug);
 
+CREATE TABLE IF NOT EXISTS realm_users (
+    realm_id BIGINT REFERENCES realms(id) ON DELETE RESTRICT NOT NULL,
+    user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL
+);
+CREATE UNIQUE INDEX realm_users_entry on realm_users(realm_id, user_id);
+
 CREATE TABLE IF NOT EXISTS boards
 (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
