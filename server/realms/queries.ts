@@ -138,22 +138,28 @@ export const getUserPermissionsForRealm = async ({
 };
 
 export const createInvite = async (inviteData: {
+  realmId: string;
   email: string;
   inviteCode: string;
   inviterId: number;
+  label: string | null;
 }) => {
   const query = `
-    INSERT INTO account_invites(nonce, inviter, invitee_email, duration)
+    INSERT INTO account_invites(nonce, realm_id, inviter, invitee_email, label, duration)
     VALUES (
       $/invite_code/,
+      (SELECT id FROM realms WHERE string_id = $/realm_id/),
       $/inviter_id/,
       $/email/,
+      $/label/,
       INTERVAL '1 WEEK')`;
   try {
     await pool.none(query, {
+      realm_id: inviteData.realmId,
       invite_code: inviteData.inviteCode,
       inviter_id: inviteData.inviterId,
       email: inviteData.email,
+      label: inviteData.label,
     });
     log(`Generated invite for email ${inviteData.email}.`);
     return true;
