@@ -279,7 +279,7 @@ router.get(
  *               twisted_minds:
  *                 value:
  *                   realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e
- *                   invite_url: https://twisted_minds.boba.social/invite/123invite_code456
+ *                   invite_url: https://twisted_minds.boba.social/invites/123invite_code456
  *       400:
  *         description: The request does not contain required email.
  *         content:
@@ -306,7 +306,6 @@ router.post(
     const realmId = req.params.realm_id;
     const { email, label } = req.body;
 
-    // There was no response for this in your documentation, so I made something up for now
     if (!email || !email.length) {
       res
         .status(400)
@@ -332,10 +331,9 @@ router.post(
     const realm = await getRealmIdsByUuid({ realmId });
     log(realm);
 
-    // I made the response match what you put in the documentation, but in the invite_url, shouldn't "invite/${inviteCode}" be "invites(plural)/${inviteCode}"?
     res.status(200).json({
       realm_id: realmId,
-      invite_url: `https://${realm.slug}.boba.social/invite/${inviteCode}`,
+      invite_url: `https://${realm.slug}.boba.social/invites/${inviteCode}`,
     });
   }
 );
