@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS account_invites (
     nonce TEXT NOT NULL,
     inviter BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
     invitee_email TEXT NOT NULL,
-    /*This is a note admins may add at invite creation for ease of use*/
+    /*This is a note admins may add to the invite for reference*/
     label TEXT,
     /* Timestamp the invite was sent at, UTC. */
     created timestamp NOT NULL DEFAULT now(),
