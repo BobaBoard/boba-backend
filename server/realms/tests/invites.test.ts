@@ -26,7 +26,7 @@ describe("Tests create invites endpoint", () => {
       .send({ email: "anemail@email.com" });
 
     expect(res.status).toBe(200);
-    const expected = `https://${TWISTED_MINDS_REALM_SLUG}.boba.social/invite/`;
+    const expected = `https://${TWISTED_MINDS_REALM_SLUG}.boba.social/invites/`;
     expect(res.body.invite_url).toEqual(expect.stringContaining(expected));
     expect(res.body.realm_id).toEqual(TWISTED_MINDS_REALM_STRING_ID);
   });
@@ -38,7 +38,7 @@ describe("Tests create invites endpoint", () => {
       .send({ email: "anemail@email.com", label: "a note about this invite" });
 
     expect(res.status).toBe(200);
-    const expected = `https://${TWISTED_MINDS_REALM_SLUG}.boba.social/invite/`;
+    const expected = `https://${TWISTED_MINDS_REALM_SLUG}.boba.social/invites/`;
     expect(res.body.invite_url).toEqual(expect.stringContaining(expected));
     expect(res.body.realm_id).toEqual(TWISTED_MINDS_REALM_STRING_ID);
   });
@@ -50,7 +50,7 @@ describe("Tests create invites endpoint", () => {
       .send({ email: "anemail@email.com" });
 
     expect(res.status).toBe(200);
-    const expected = `https://${TWISTED_MINDS_REALM_SLUG}.boba.social/invite/`;
+    const expected = `https://${TWISTED_MINDS_REALM_SLUG}.boba.social/invites/`;
     expect(res.body.invite_url).toEqual(expect.stringContaining(expected));
     expect(res.body.realm_id).toEqual(TWISTED_MINDS_REALM_STRING_ID);
   });
