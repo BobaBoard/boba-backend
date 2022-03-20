@@ -12,6 +12,16 @@ const getUserPermissionsForRealm = `
       JOIN realms ON realm_user_roles.realm_id = realms.id 
     WHERE users.firebase_id = $/user_id/ AND realms.string_id = $/realm_id/`;
 
+const createRealmInvite = `
+    INSERT INTO account_invites(nonce, realm_id, inviter, invitee_email, label, duration)
+    VALUES (
+      $/invite_code/,
+      (SELECT id FROM realms WHERE string_id = $/realm_id/),
+      $/inviter_id/,
+      $/email/,
+      $/label/,
+      INTERVAL '1 WEEK')`;
+
 const getInviteDetails = `
     SELECT 
       inviter,
@@ -26,4 +36,5 @@ export default {
   getRealmIdsByUuid,
   getUserPermissionsForRealm,
   getInviteDetails,
+  createRealmInvite,
 };

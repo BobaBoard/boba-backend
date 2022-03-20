@@ -144,17 +144,8 @@ export const createInvite = async (inviteData: {
   inviterId: number;
   label: string | null;
 }) => {
-  const query = `
-    INSERT INTO account_invites(nonce, realm_id, inviter, invitee_email, label, duration)
-    VALUES (
-      $/invite_code/,
-      (SELECT id FROM realms WHERE string_id = $/realm_id/),
-      $/inviter_id/,
-      $/email/,
-      $/label/,
-      INTERVAL '1 WEEK')`;
   try {
-    await pool.none(query, {
+    await pool.none(sql.createRealmInvite, {
       realm_id: inviteData.realmId,
       invite_code: inviteData.inviteCode,
       inviter_id: inviteData.inviterId,
