@@ -204,6 +204,7 @@ export const getInviteDetails = async ({
 }: {
   nonce: string;
 }): Promise<{
+  realmId: string;
   email: string;
   used: boolean;
   expired: boolean;
@@ -216,6 +217,7 @@ export const getInviteDetails = async ({
     log(`Fetched details for invite ${nonce}:`);
     log(inviteDetails);
     return {
+      realmId: inviteDetails.realm_id,
       email: inviteDetails.invitee_email,
       expired: inviteDetails.expired,
       used: inviteDetails.used,
@@ -247,5 +249,34 @@ export const markInviteUsed = async ({
     error(`Error while marking invite as used.`);
     error(e);
     return false;
+  }
+};
+
+export const getRealmInvites = async ({
+  realmStringId,
+}: {
+  realmStringId: string;
+}): Promise<
+  | {
+      nonce: string;
+      email: string;
+      created: string;
+      expires_at: string;
+      inviter_id: string;
+      label: string | null;
+    }[]
+  | null
+> => {
+  try {
+    const invites = await pool.manyOrNone(sql.getInvites, {
+      realmStringId,
+    });
+    log(`Fetched invites for realm ${realmStringId}:`);
+    log(invites);
+    return invites;
+  } catch (e) {
+    error(`Error while getting invite details.`);
+    error(e);
+    return null;
   }
 };

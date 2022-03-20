@@ -9,6 +9,7 @@ import {
   getInviteDetails,
   getRealmDataBySlug,
   getRealmIdsByUuid,
+  getRealmInvites,
   getSettingsBySlug,
 } from "./queries";
 import { ensureLoggedIn, withUserSettings } from "handlers/auth";
@@ -309,7 +310,7 @@ router.delete("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
  * @openapi
  * /realms/{realm_id}/invites:
  *   get:
- *     summary: List all invites for the realm
+ *     summary: List all pending invites for the realm
  *     operationId: getInvitesByRealmId
  *     tags:
  *       - /realms/
@@ -329,7 +330,7 @@ router.delete("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
  *             value: 76ef4cc3-1603-4278-95d7-99c59f481d2e
  *     responses:
  *       200:
- *         description: The metadata of all invites for the current realm.
+ *         description: The metadata of all pending invites for the current realm.
  *         content:
  *           application/json:
  *             schema:
@@ -348,7 +349,9 @@ router.delete("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
  *                       invitee_email: ms.boba@bobaboard.com
  *                       issued_at: 2021-06-09T04:20:00Z
  *                       expires_at: 2021-06-09T16:20:00Z
- *                       note: This is a test invite.
+ *                       label: This is a test invite.
+ *       204:
+ *         description: There are no pending invites for the current realm.
  *       401:
  *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
@@ -360,12 +363,36 @@ router.delete("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
  *             schema:
  *               $ref: "#/components/schemas/genericResponse"
  */
+
+// I made this only respond with pending invites for now.
+// If we want to change it to unused invites (pending + expired) that's easy.
+// If you want it to return accepted invites as well, we'll need to add a boolean field to the response show whether it's "used",
+// but probably don't want to do that, at least until we get rid of emails.
 router.get(
   "/:realm_id/invites",
   ensureLoggedIn,
   ensureRealmPermission(RealmPermissions.createRealmInvite),
   async (req, res) => {
-    throw new Internal500Error("not implemented");
+    const realmStringId = req.params.realm_id;
+    const realm = await getRealmIdsByUuid({ realmId: realmStringId });
+    const unformattedInvites = await getRealmInvites({ realmStringId });
+    if (unformattedInvites.length === 0) {
+      res.status(204);
+      return;
+    }
+    const formattedInvites = unformattedInvites.map((invite) => {
+      ({
+        realm_id: realmStringId,
+        invite_url: `https://${realm.slug}.boba.social/invites/${invite.nonce}`,
+        invitee_email: invite.email,
+        inviter_id: invite.inviter_id,
+        issued_at: invite.created,
+        expires_at: invite.expires_at,
+        ...(invite.label && { label: invite.label }),
+      });
+    });
+    log(formattedInvites);
+    res.status(200).json({ invites: formattedInvites });
   }
 );
 
