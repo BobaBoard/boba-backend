@@ -74,7 +74,7 @@ const getInviteDetails = `
 const getInvites = `
 SELECT 
 nonce,
-users.string_id AS inviter_id,
+users.firebase_id AS inviter_id,
 invitee_email,
 created + duration AS expires_at,
 created,

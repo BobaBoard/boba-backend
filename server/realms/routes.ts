@@ -29,9 +29,9 @@ import { getUserFromFirebaseId } from "server/users/queries";
 import { processRealmActivity } from "./utils";
 import { randomBytes } from "crypto";
 
-const info = debug("bobaserver:users:routes-info");
-const log = debug("bobaserver:users:routes-log");
-const error = debug("bobaserver:users:routes-error");
+const info = debug("bobaserver:realms:routes-info");
+const log = debug("bobaserver:realms:routes-log");
+const error = debug("bobaserver:realms:routes-error");
 
 const router = express.Router();
 
@@ -376,20 +376,23 @@ router.get(
     const realmStringId = req.params.realm_id;
     const realm = await getRealmIdsByUuid({ realmId: realmStringId });
     const unformattedInvites = await getRealmInvites({ realmStringId });
+    log(unformattedInvites);
     if (unformattedInvites.length === 0) {
       res.status(204);
+      log("O%", res);
       return;
     }
     const formattedInvites = unformattedInvites.map((invite) => {
-      ({
+      const formattedInvite = {
         realm_id: realmStringId,
         invite_url: `https://${realm.slug}.boba.social/invites/${invite.nonce}`,
-        invitee_email: invite.email,
+        invitee_email: invite.invitee_email,
         inviter_id: invite.inviter_id,
         issued_at: invite.created,
         expires_at: invite.expires_at,
         ...(invite.label && { label: invite.label }),
-      });
+      };
+      return formattedInvite;
     });
     log(formattedInvites);
     res.status(200).json({ invites: formattedInvites });
