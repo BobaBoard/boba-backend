@@ -234,10 +234,8 @@ router.get(
     const realmStringId = req.params.realm_id;
     const realm = await getRealmIdsByUuid({ realmId: realmStringId });
     const unformattedInvites = await getRealmInvites({ realmStringId });
-    log(unformattedInvites);
-    if (unformattedInvites.length === 0) {
-      res.status(204);
-      log("O%", res);
+    if (!unformattedInvites.length) {
+      res.status(204).end();
       return;
     }
     const formattedInvites = unformattedInvites.map((invite) => {
