@@ -6,7 +6,11 @@ import {
 } from "types/errors/api";
 import { createNewUser, getUserFromFirebaseId } from "server/users/queries";
 import { ensureLoggedIn, withUserSettings } from "handlers/auth";
-import { getInviteDetails, markInviteUsed } from "server/realms/queries";
+import {
+  getInviteDetails,
+  getRealmIdsByUuid,
+  markInviteUsed,
+} from "server/realms/queries";
 import { getRealmDataBySlug, getSettingsBySlug } from "./queries";
 
 import { RealmPermissions } from "types/permissions";
@@ -256,6 +260,8 @@ router.get(
  *               email:
  *                 type: string
  *                 format: email
+ *               label:
+ *                 type: string
  *             required:
  *               - email
  *           examples:
@@ -273,7 +279,13 @@ router.get(
  *               twisted_minds:
  *                 value:
  *                   realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e
- *                   invite_url: https://twisted_minds.boba.social/invite/123invite_code456
+ *                   invite_url: https://twisted_minds.boba.social/invites/123invite_code456
+ *       400:
+ *         description: The request does not contain required email.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/genericResponse"
  *       401:
  *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
@@ -291,28 +303,38 @@ router.post(
   ensureRealmPermission(RealmPermissions.createRealmInvite),
   async (req, res) => {
     const user = req.currentUser?.uid;
-    // if (user !== ADMIN_ID) {
-    //   return res.sendStatus(403);
-    // }
-    const { email } = req.body;
-    // TODO: check that email is not empty here.
+    const realmId = req.params.realm_id;
+    const { email, label } = req.body;
+
+    if (!email || !email.length) {
+      res
+        .status(400)
+        .send({ message: "Request does not contain required email." });
+      return;
+    }
     // Generate 64 characters random id string
     const inviteCode = randomBytes(32).toString("hex");
     const adminId = await getUserFromFirebaseId({ firebaseId: user });
-
     log(adminId);
+
     const inviteAdded = await createInvite({
+      realmId,
       email,
       inviteCode,
       inviterId: adminId.id,
+      label,
     });
 
     if (!inviteAdded) {
       res.status(500).send(`Couldn't generate invite for email ${email}`);
     }
-    res
-      .status(200)
-      .json({ inviteUrl: `https://v0.boba.social/invite/${inviteCode}` });
+    const realm = await getRealmIdsByUuid({ realmId });
+    log(realm);
+
+    res.status(200).json({
+      realm_id: realmId,
+      invite_url: `https://${realm.slug}.boba.social/invites/${inviteCode}`,
+    });
   }
 );
 
@@ -385,9 +407,10 @@ router.post(
  *             schema:
  *               $ref: "#/components/schemas/genericResponse"
  */
-router.post("/:realm_id/invites/:nonce", async (req, res) => {
+router.post("/:realm_id/invites/:nonce", ensureLoggedIn, async (req, res) => {
   const { email, password } = req.body;
   const { nonce } = req.params;
+  const user = req.currentUser?.uid;
 
   const inviteDetails = await getInviteDetails({ nonce });
 
@@ -402,35 +425,37 @@ router.post("/:realm_id/invites/:nonce", async (req, res) => {
   if (inviteDetails.email.toLowerCase() != (email as string).toLowerCase()) {
     throw new Forbidden403Error(`Invite email does not match`);
   }
-  firebaseAuth
-    .auth()
-    .createUser({
-      email,
-      password,
-    })
-    .then(async (user) => {
-      const uid = user.uid;
-      log(`Created new firebase user with uid ${uid}`);
-      // TODO: decide whether to put these together in a transaction.
-      const success = await markInviteUsed({ nonce });
-      if (!success) {
-        throw new Internal500Error(`Failed to mark invite as used`);
-      }
-      const created = await createNewUser({
-        firebaseId: uid,
-        invitedBy: inviteDetails.inviter,
-        createdOn: user.metadata.creationTime,
-      });
-      if (!created) {
-        throw new Internal500Error(`Failed to create new user`);
-      }
-      res.sendStatus(200);
-    })
-    .catch((error) => {
-      throw new BadRequest400Error(
-        `Error creating user: ${error.message} (${error.code})`
-      );
-    });
+
+  // TODO: decide if sign-up invites should be separated off from Realm invites. If yes, move this.
+  // firebaseAuth
+  //   .auth()
+  //   .createUser({
+  //     email,
+  //     password,
+  //   })
+  //   .then(async (user) => {
+  //     const uid = user.uid;
+  //     log(`Created new firebase user with uid ${uid}`);
+  //     // TODO: decide whether to put these together in a transaction.
+  //     const success = await markInviteUsed({ nonce });
+  //     if (!success) {
+  //       throw new Internal500Error(`Failed to mark invite as used`);
+  //     }
+  //     const created = await createNewUser({
+  //       firebaseId: uid,
+  //       invitedBy: inviteDetails.inviter,
+  //       createdOn: user.metadata.creationTime,
+  //     });
+  //     if (!created) {
+  //       throw new Internal500Error(`Failed to create new user`);
+  //     }
+  //     res.sendStatus(200);
+  //   })
+  //   .catch((error) => {
+  //     throw new BadRequest400Error(
+  //       `Error creating user: ${error.message} (${error.code})`
+  //     );
+  // });
 });
 
 export default router;
