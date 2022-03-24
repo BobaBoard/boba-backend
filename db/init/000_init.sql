@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS users
 CREATE UNIQUE INDEX users_firebase_id on users(firebase_id);
 
 /*
- * This is not a simmetric relationship. Friends must be added in
+ * This is not a symmetric relationship. Friends must be added in
  * both directions.
  */
 CREATE TABLE IF NOT EXISTS friends
@@ -26,11 +26,31 @@ CREATE TABLE IF NOT EXISTS friends
 );
 CREATE INDEX friends_user on friends(user_id);
 
+CREATE TABLE IF NOT EXISTS realms
+(
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    /* The realm's UUID. Used in backend requests. */
+    string_id TEXT NOT NULL,
+    /* Textual id of the realm, e.g. "twisted-minds", "my-cool-space". Used as part of the URL. */
+    slug TEXT NOT NULL
+);
+CREATE UNIQUE INDEX realms_string_id on realms(string_id);
+CREATE UNIQUE INDEX realms_slug on realms(slug);
+
+CREATE TABLE IF NOT EXISTS realm_users (
+    realm_id BIGINT REFERENCES realms(id) ON DELETE RESTRICT NOT NULL,
+    user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL
+);
+CREATE UNIQUE INDEX realm_users_entry on realm_users(realm_id, user_id);
+
 CREATE TABLE IF NOT EXISTS account_invites (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    realm_id BIGINT REFERENCES realms(id) ON DELETE RESTRICT NOT NULL,
     nonce TEXT NOT NULL,
     inviter BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
     invitee_email TEXT NOT NULL,
+    /*This is a note admins may add to the invite for reference*/
+    label TEXT,
     /* Timestamp the invite was sent at, UTC. */
     created timestamp NOT NULL DEFAULT now(),
     duration INTERVAL NOT NULL,
@@ -60,16 +80,6 @@ CREATE TABLE IF NOT EXISTS content_warnings
 );
 CREATE UNIQUE INDEX content_warnings_warning on content_warnings(warning);
 
-CREATE TABLE IF NOT EXISTS realms
-(
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
-    /* The realm's UUID. Used in backend requests. */
-    string_id TEXT NOT NULL,
-    /* Textual id of the realm, e.g. "twisted-minds", "my-cool-space". Used as part of the URL. */
-    slug TEXT NOT NULL
-);
-CREATE UNIQUE INDEX realms_string_id on realms(string_id);
-CREATE UNIQUE INDEX realms_slug on realms(slug);
 
 CREATE TYPE block_type AS ENUM ('rules', 'text', 'subscription');
 CREATE TABLE IF NOT EXISTS blocks

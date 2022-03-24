@@ -30,7 +30,7 @@ components:
         expires_at:
           type: string
           format: date-time
-        note:
+        label:
           type: string
       required:
         - realm_id
