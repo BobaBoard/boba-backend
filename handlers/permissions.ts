@@ -39,6 +39,11 @@ declare global {
       };
       currentPostPermissions?: PostPermissions[];
       currentRealmPermissions?: RealmPermissions[];
+      currentRealmIds?: {
+        id: string;
+        string_id: string;
+        slug: string;
+      };
     }
   }
 }
@@ -247,9 +252,10 @@ export const withRealmPermissions = async (
     return;
   }
 
-  // Checks this here to send correct 404 status, otherwise will send 403 when it hits ensureRealmPermissions
-  const realm = await getRealmIdsByUuid({ realmId: req.params.realm_id });
-  if (!realm) {
+  req.currentRealmIds = await getRealmIdsByUuid({
+    realmId: req.params.realm_id,
+  });
+  if (!req.currentRealmIds) {
     res.status(404).json({ message: "The realm was not found." });
     return;
   }
