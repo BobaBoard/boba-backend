@@ -24,9 +24,11 @@ components:
         invitee_email:
           type: string
           format: email
+        # I add the inviter_id to the response because I figure the admins should be able to see which invites they created vs ones others created.
+        # I'm not sure what the format should be - it the firebase_id, but I couldn't find a full list of allowed formats in the docs
         inviter_id:
           type: string
-          format: uuid
+          # format:
         issued_at:
           type: string
           format: date-time
