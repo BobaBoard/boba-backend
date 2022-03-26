@@ -231,16 +231,17 @@ router.get(
   ensureLoggedIn,
   ensureRealmPermission(RealmPermissions.createRealmInvite),
   async (req, res) => {
-    const realmStringId = req.params.realm_id;
-    const realm = await getRealmIdsByUuid({ realmId: realmStringId });
-    const unformattedInvites = await getRealmInvites({ realmStringId });
+    const realm = req.currentRealmIds;
+    const unformattedInvites = await getRealmInvites({
+      realmStringId: realm.string_id,
+    });
     if (!unformattedInvites.length) {
       res.status(204).end();
       return;
     }
     const formattedInvites = unformattedInvites.map((invite) => {
       const formattedInvite = {
-        realm_id: realmStringId,
+        realm_id: realm.string_id,
         invite_url: `https://${realm.slug}.boba.social/invites/${invite.nonce}`,
         invitee_email: invite.invitee_email,
         inviter_id: invite.inviter_id,
@@ -356,7 +357,7 @@ router.post(
     if (!inviteAdded) {
       res.status(500).send(`Couldn't generate invite for email ${email}`);
     }
-    const realm = await getRealmIdsByUuid({ realmId });
+    const realm = req.currentRealmIds;
     log(realm);
 
     res.status(200).json({
