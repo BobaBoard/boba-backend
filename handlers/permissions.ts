@@ -14,6 +14,10 @@ import {
   getBoardRestrictions,
 } from "utils/permissions-utils";
 import {
+  getRealmIdsByUuid,
+  getUserPermissionsForRealm,
+} from "server/realms/queries";
+import {
   getThreadByStringId,
   getUserPermissionsForThread,
 } from "server/threads/queries";
@@ -21,7 +25,6 @@ import {
 import { Internal500Error } from "types/errors/api";
 import { getBoardByUuid } from "server/boards/queries";
 import { getPostFromStringId } from "server/posts/queries";
-import { getUserPermissionsForRealm } from "server/realms/queries";
 
 declare global {
   namespace Express {
@@ -235,12 +238,19 @@ export const withRealmPermissions = async (
   next: NextFunction
 ) => {
   if (!req.params.realm_id) {
-    throw new Error(
+    throw new Internal500Error(
       "Realm permissions can only be fetched on a route that includes a realm id."
     );
   }
   if (!req.currentUser) {
     next();
+    return;
+  }
+
+  // Checks this here to send correct 404 status, otherwise will send 403 when it hits ensureRealmPermissions
+  const realm = await getRealmIdsByUuid({ realmId: req.params.realm_id });
+  if (!realm) {
+    res.status(404).json({ message: "The realm was not found." });
     return;
   }
 
