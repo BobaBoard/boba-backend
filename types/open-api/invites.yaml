@@ -39,6 +39,6 @@ components:
         - realm_id
         - invite_url
         - invitee_email
-        - inviter
+        - inviter_id
         - issued_at
         - expires_at

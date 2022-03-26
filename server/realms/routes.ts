@@ -347,6 +347,7 @@ router.delete("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
  *                     - realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e
  *                       invite_url: https://twisted_minds.boba.social/invite/123invite_code456
  *                       invitee_email: ms.boba@bobaboard.com
+ *                       inviter_id: c6HimTlg2RhVH3fC1psXZORdLcx2
  *                       issued_at: 2021-06-09T04:20:00Z
  *                       expires_at: 2021-06-09T16:20:00Z
  *                       label: This is a test invite.
