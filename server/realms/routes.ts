@@ -424,7 +424,7 @@ router.post(
  *                 email: ms.boba@bobaboard.com
  *                 password: how_bad_can_i_be
  *     responses:
- *       204:
+ *       201:
  *         description: The invite was successfully accepted.
  *       403:
  *         description: The invite is not valid anymore, or is for a different realm, or the user does not correspond to the invited one.
@@ -434,6 +434,12 @@ router.post(
  *               $ref: "#/components/schemas/genericResponse"
  *       404:
  *         description: The invite with the given code was not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/genericResponse"
+ *       409:
+ *         description: The user is already a member of the requested realm.
  *         content:
  *           application/json:
  *             schema:
@@ -471,7 +477,7 @@ router.post("/:realm_id/invites/:nonce", ensureLoggedIn, async (req, res) => {
       .send({ message: "User is already a member of the requested realm" });
     return;
   } else if (alreadyOnRealm !== false) {
-    throw new Internal500Error(`Failed to check is user already on realm`);
+    throw new Internal500Error(`Failed to check if user is already on realm`);
   }
 
   // TODO: decide if sign-up invites should be separated off from Realm invites. If yes, move this.
@@ -512,7 +518,7 @@ router.post("/:realm_id/invites/:nonce", ensureLoggedIn, async (req, res) => {
   if (!accepted) {
     throw new Internal500Error(`Failed to accept invite`);
   }
-  res.status(204).end();
+  res.status(201).end();
 });
 
 export default router;
