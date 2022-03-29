@@ -1,6 +1,7 @@
 import { filterOutDisabledSettings, getRealmCursorSetting } from "./utils";
 
 import { CssVariableSetting } from "../../types/settings";
+import { Internal500Error } from "types/errors/api";
 import { SettingEntry } from "../../types/settings";
 import debug from "debug";
 import { extractRealmPermissions } from "utils/permissions-utils";
@@ -192,6 +193,27 @@ export const getInviteDetails = async ({
   }
 };
 
+export const addUserToRealm = async ({
+  user,
+  realmStringId,
+}: {
+  user: string;
+  realmStringId: string;
+}): Promise<boolean> => {
+  try {
+    await pool.none(sql.addUserToRealm, {
+      firebase_id: user,
+      realm_string_id: realmStringId,
+    });
+    log(`Added user ${user} to realm ${realmStringId}`);
+    return true;
+  } catch (e) {
+    error(`Error creating a new user.`);
+    error(e);
+    return false;
+  }
+};
+
 export const markInviteUsed = async ({
   nonce,
 }: {
@@ -209,6 +231,34 @@ export const markInviteUsed = async ({
     return true;
   } catch (e) {
     error(`Error while marking invite as used.`);
+    error(e);
+    return false;
+  }
+};
+
+export const acceptInvite = async (
+  nonce: string,
+  user: string,
+  realmStringId: string
+): Promise<boolean> => {
+  try {
+    log("starting transaction");
+    await pool.none("BEGIN TRANSACTION;");
+    const used = await markInviteUsed({ nonce });
+    if (!used) {
+      throw new Error(`Failed to mark invite as used`);
+    }
+    const addedToRealm = await addUserToRealm({ user, realmStringId });
+    if (!addedToRealm) {
+      throw new Error(`Failed to add user to realm`);
+    }
+    await pool.none("COMMIT;");
+    log("completed transaction");
+    return true;
+  } catch (e) {
+    await pool.none("ROLLBACK;");
+    log("rolled back transaction");
+    error(`Error while accepting invite`);
     error(e);
     return false;
   }
@@ -238,6 +288,26 @@ export const getRealmInvites = async ({
     return invites;
   } catch (e) {
     error(`Error while getting invite details.`);
+    error(e);
+    return null;
+  }
+};
+
+export const checkUserOnRealm = async ({
+  user,
+  realmStringId,
+}: {
+  user: string;
+  realmStringId: string;
+}): Promise<boolean | null> => {
+  try {
+    const inRealm = await pool.oneOrNone(sql.findUserOnRealm, {
+      firebase_id: user,
+      realm_string_id: realmStringId,
+    });
+    return inRealm ? true : false;
+  } catch (e) {
+    error(`Error while checking user on realm.`);
     error(e);
     return null;
   }

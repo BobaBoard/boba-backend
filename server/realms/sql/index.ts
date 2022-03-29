@@ -47,6 +47,20 @@ const getInvites = `
     JOIN users ON account_invites.inviter = users.id
     WHERE realms.string_id = $/realmStringId/ AND used = false AND created + duration > NOW()`;
 
+const addUserToRealm = `
+INSERT INTO realm_users(realm_id, user_id)
+VALUES (
+(SELECT id FROM realms WHERE string_id = $/realm_string_id/),
+(SELECT id FROM users WHERE firebase_id = $/firebase_id/)
+)`;
+
+const findUserOnRealm = `
+SELECT * FROM realm_users
+JOIN realms ON realm_users.realm_id = realms.id
+JOIN users ON realm_users.user_id = users.id
+WHERE users.firebase_id = $/firebase_id/ AND realms.string_id = $/realm_string_id/
+`;
+
 export default {
   getRealmBySlug,
   getRealmIdsByUuid,
@@ -54,4 +68,6 @@ export default {
   getInviteDetails,
   createRealmInvite,
   getInvites,
+  addUserToRealm,
+  findUserOnRealm,
 };

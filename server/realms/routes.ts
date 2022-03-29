@@ -4,14 +4,17 @@ import {
   Internal500Error,
   NotFound404Error,
 } from "types/errors/api";
-import { createNewUser, getUserFromFirebaseId } from "server/users/queries";
-import { ensureLoggedIn, withUserSettings } from "handlers/auth";
 import {
+  acceptInvite,
+  addUserToRealm,
+  checkUserOnRealm,
   getInviteDetails,
   getRealmIdsByUuid,
   getRealmInvites,
   markInviteUsed,
 } from "server/realms/queries";
+import { createNewUser, getUserFromFirebaseId } from "server/users/queries";
+import { ensureLoggedIn, withUserSettings } from "handlers/auth";
 import { getRealmDataBySlug, getSettingsBySlug } from "./queries";
 
 import { RealmPermissions } from "types/permissions";
@@ -21,6 +24,7 @@ import { ensureRealmPermission } from "handlers/permissions";
 import express from "express";
 import firebaseAuth from "firebase-admin";
 import { getBoards } from "../boards/queries";
+import pool from "server/db-pool";
 import { processBoardsSummary } from "utils/response-utils";
 import { processRealmActivity } from "./utils";
 import { randomBytes } from "crypto";
@@ -423,7 +427,7 @@ router.post(
  *       204:
  *         description: The invite was successfully accepted.
  *       403:
- *         description: The invite is not valid anymore, or the user does not correspond to the invited one.
+ *         description: The invite is not valid anymore, or is for a different realm, or the user does not correspond to the invited one.
  *         content:
  *           application/json:
  *             schema:
@@ -439,6 +443,7 @@ router.post("/:realm_id/invites/:nonce", ensureLoggedIn, async (req, res) => {
   const { email, password } = req.body;
   const { nonce } = req.params;
   const user = req.currentUser?.uid;
+  const realmStringId = req.currentRealmIds.string_id;
 
   const inviteDetails = await getInviteDetails({ nonce });
 
@@ -452,6 +457,21 @@ router.post("/:realm_id/invites/:nonce", ensureLoggedIn, async (req, res) => {
 
   if (inviteDetails.email.toLowerCase() != (email as string).toLowerCase()) {
     throw new Forbidden403Error(`Invite email does not match`);
+  }
+
+  //It occurred to me that we should also check that the realm matches
+  if (inviteDetails.realmId != realmStringId) {
+    throw new Forbidden403Error(`Invite is not for this realm`);
+  }
+
+  const alreadyOnRealm = await checkUserOnRealm({ user, realmStringId });
+  if (alreadyOnRealm) {
+    res
+      .status(409)
+      .send({ message: "User is already a member of the requested realm" });
+    return;
+  } else if (alreadyOnRealm !== false) {
+    throw new Internal500Error(`Failed to check is user already on realm`);
   }
 
   // TODO: decide if sign-up invites should be separated off from Realm invites. If yes, move this.
@@ -484,6 +504,15 @@ router.post("/:realm_id/invites/:nonce", ensureLoggedIn, async (req, res) => {
   //       `Error creating user: ${error.message} (${error.code})`
   //     );
   // });
+
+  // In the above commented out code you had a TODO to decide if marking th invite as used and creating the new user should be put together in a transaction,
+  // if I am understanding the function of transactions properly, I would think yes, so I wrote a function to so here with marking the invite used and adding the user to the Realm,
+  // but I'm not sure if this is the best way to do this
+  const accepted = await acceptInvite(nonce, user, realmStringId);
+  if (!accepted) {
+    throw new Internal500Error(`Failed to accept invite`);
+  }
+  res.status(204).end();
 });
 
 export default router;
