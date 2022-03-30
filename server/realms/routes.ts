@@ -380,8 +380,8 @@ router.post(
  *       - /realms/
  *     security:
  *       - firebase: []
-// Currently gated to logged-in only, uncomment if we decide not to separate out sign-up invites
-//  *       - {}
+ *       # Currently gated to logged-in only, uncomment if we decide not to separate out sign-up invites
+ *       # - {}
  *     parameters:
  *       - name: realm_id
  *         in: path
@@ -404,27 +404,27 @@ router.post(
  *           twisted_minds:
  *             summary: the invite code.
  *             value: 123invite_code456
-// Currently gated to logged-in only, so email and password not required. Uncomment if we decide not to separate out sign-up invites
-//  *     requestBody:
-//  *       description: The user data for the invite. Only required if the user is not already logged in.
-//  *       content:
-//  *         application/json:
-//  *           schema:
-//  *             type: object
-//  *             properties:
-//  *               email:
-//  *                 type: string
-//  *                 format: email
-//  *               password:
-//  *                 type: string
-//  *             required:
-//  *               - email
-//  *               - password
-//  *           examples:
-//  *             twisted_minds:
-//  *               value:
-//  *                 email: ms.boba@bobaboard.com
-//  *                 password: how_bad_can_i_be
+ *     # Currently gated to logged-in only, so email and password not required. Uncomment if we decide not to separate out sign-up invites
+ *     # requestBody:
+ *       # description: The user data for the invite. Only required if the user is not already logged in.
+ *       # content:
+ *         # application/json:
+ *           # schema:
+ *             # type: object
+ *             # properties:
+ *               # email:
+ *                 # type: string
+ *                 # format: email
+ *               # password:
+ *                 # type: string
+ *             # required:
+ *               # - email
+ *               # - password
+ *           # examples:
+ *             # twisted_minds:
+ *               # value:
+ *                 # email: ms.boba@bobaboard.com
+ *                 # password: how_bad_can_i_be
  *     responses:
  *       201:
  *         description: The invite was successfully accepted.
