@@ -380,7 +380,8 @@ router.post(
  *       - /realms/
  *     security:
  *       - firebase: []
- *       - {}
+// Currently gated to logged-in only, uncomment if we decide not to separate out sign-up invites
+//  *       - {}
  *     parameters:
  *       - name: realm_id
  *         in: path
@@ -403,26 +404,27 @@ router.post(
  *           twisted_minds:
  *             summary: the invite code.
  *             value: 123invite_code456
- *     requestBody:
- *       description: The user data for the invite. Only required if the user is not already logged in.
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *                 format: email
- *               password:
- *                 type: string
- *             required:
- *               - email
- *               - password
- *           examples:
- *             twisted_minds:
- *               value:
- *                 email: ms.boba@bobaboard.com
- *                 password: how_bad_can_i_be
+// Currently gated to logged-in only, so email and password not required. Uncomment if we decide not to separate out sign-up invites
+//  *     requestBody:
+//  *       description: The user data for the invite. Only required if the user is not already logged in.
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             properties:
+//  *               email:
+//  *                 type: string
+//  *                 format: email
+//  *               password:
+//  *                 type: string
+//  *             required:
+//  *               - email
+//  *               - password
+//  *           examples:
+//  *             twisted_minds:
+//  *               value:
+//  *                 email: ms.boba@bobaboard.com
+//  *                 password: how_bad_can_i_be
  *     responses:
  *       201:
  *         description: The invite was successfully accepted.
@@ -446,9 +448,32 @@ router.post(
  *               $ref: "#/components/schemas/genericResponse"
  */
 router.post("/:realm_id/invites/:nonce", ensureLoggedIn, async (req, res) => {
-  const { email, password } = req.body;
   const { nonce } = req.params;
   const user = req.currentUser?.uid;
+
+  // If we decide not to separate out sign-up invites, replace this with the currently commented out code below it.
+  const firebaseUserData = await firebaseAuth.auth().getUser(user);
+  const email = firebaseUserData.email;
+  if (!email) {
+    throw new Internal500Error(`Failed to get user's email`);
+  }
+  // const getEmail = async (user?: string) => {
+  //   if (user) {
+  //     try {
+  //       const firebaseUserData = await firebaseAuth.auth().getUser(user);
+  //       return firebaseUserData.email;
+  //     } catch (e) {
+  //       error(`Error while getting user email from firebase`);
+  //       error(e);
+  //       throw new Internal500Error(`Failed to get user's email`);
+  //     }
+  //   } else {
+  //     return req.body.email;
+  //   }
+  // };
+  // const email = await getEmail(user);
+  // const { password } = req.body;
+
   const realmStringId = req.currentRealmIds.string_id;
 
   const inviteDetails = await getInviteDetails({ nonce });
