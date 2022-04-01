@@ -429,13 +429,13 @@ router.post(
  *       201:
  *         description: The invite was successfully accepted.
  *       403:
- *         description: The invite is not valid anymore, or is for a different realm, or the user does not correspond to the invited one.
+ *         description: The invite is not valid anymore, or is for a different realm, or the user is logged out, or does not correspond to the invited one.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/genericResponse"
  *       404:
- *         description: The invite with the given code was not found.
+ *         description: The invite with the given code was not found, or the requested realm does not exist.
  *         content:
  *           application/json:
  *             schema:
@@ -474,7 +474,14 @@ router.post("/:realm_id/invites/:nonce", ensureLoggedIn, async (req, res) => {
   // const email = await getEmail(user);
   // const { password } = req.body;
 
-  const realmStringId = req.currentRealmIds.string_id;
+  const realmStringId = req.params.realm_id;
+
+  const currentRealmIds = await getRealmIdsByUuid({
+    realmId: req.params.realm_id,
+  });
+  if (!currentRealmIds) {
+    throw new NotFound404Error(`The realm was not found`);
+  }
 
   const inviteDetails = await getInviteDetails({ nonce });
 
@@ -489,7 +496,8 @@ router.post("/:realm_id/invites/:nonce", ensureLoggedIn, async (req, res) => {
   if (inviteDetails.email.toLowerCase() != (email as string).toLowerCase()) {
     throw new Forbidden403Error(`Invite email does not match`);
   }
-
+  log(inviteDetails.realmId);
+  log(realmStringId);
   //It occurred to me that we should also check that the realm matches
   if (inviteDetails.realmId != realmStringId) {
     throw new Forbidden403Error(`Invite is not for this realm`);

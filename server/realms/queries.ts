@@ -180,7 +180,7 @@ export const getInviteDetails = async ({
     log(`Fetched details for invite ${nonce}:`);
     log(inviteDetails);
     return {
-      realmId: inviteDetails.realm_id,
+      realmId: inviteDetails.string_id,
       email: inviteDetails.invitee_email,
       expired: inviteDetails.expired,
       used: inviteDetails.used,
