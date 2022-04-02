@@ -475,6 +475,12 @@ describe("Tests accept invites endpoint", () => {
       WHERE user_id = (SELECT id FROM users WHERE firebase_id = $/firebase_id/);`,
         { firebase_id: JERSEY_DEVIL_USER_ID }
       );
+      await t.none(
+        `
+      DELETE FROM realm_users
+      WHERE user_id = (SELECT id FROM users WHERE firebase_id = $/firebase_id/) AND realm_id = (SELECT id FROM realms WHERE string_id = $/realm_string_id/);`,
+        { firebase_id: ONCEST_USER_ID, realm_string_id: UWU_REALM_STRING_ID }
+      );
     });
   });
 
@@ -491,6 +497,32 @@ describe("Tests accept invites endpoint", () => {
     expect(res.body).toEqual({});
     const addedToRealm = await checkUserOnRealm({
       user: JERSEY_DEVIL_USER_ID,
+      realmStringId: UWU_REALM_STRING_ID,
+    });
+    expect(addedToRealm).toEqual(true);
+  });
+
+  test("accepts invite correctly when invite generated from endpoint", async () => {
+    const onclerEmail = "onceler@email.com";
+    authGetUser.mockReturnValue({ email: onclerEmail });
+
+    setLoggedInUser(ZODIAC_KILLER_USER_ID);
+    const resCreateInvite = await request(server.app)
+      .post(`/${UWU_REALM_STRING_ID}/invites/`)
+      .send({ email: onclerEmail });
+
+    const sliceIndex = resCreateInvite.body.invite_url.lastIndexOf("/") + 1;
+    const nonce = resCreateInvite.body.invite_url.slice(sliceIndex);
+
+    setLoggedInUser(ONCEST_USER_ID);
+    const resAccept = await request(server.app).post(
+      `/${UWU_REALM_STRING_ID}/invites/${nonce}`
+    );
+
+    expect(resAccept.status).toBe(201);
+    expect(resAccept.body).toEqual({});
+    const addedToRealm = await checkUserOnRealm({
+      user: ONCEST_USER_ID,
       realmStringId: UWU_REALM_STRING_ID,
     });
     expect(addedToRealm).toEqual(true);
