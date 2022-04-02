@@ -208,7 +208,7 @@ router.get("/:realm_id/activity", async (req, res) => {
  *                 value:
  *                   invites:
  *                     - realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e
- *                       invite_url: https://twisted_minds.boba.social/invite/123invite_code456
+ *                       invite_url: https://twisted_minds.boba.social/invites/123invite_code456
  *                       invitee_email: ms.boba@bobaboard.com
  *                       own: false
  *                       issued_at: 2021-06-09T04:20:00Z
