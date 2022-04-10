@@ -38,6 +38,6 @@ components:
         - realm_id
         - invite_url
         - invitee_email
-        - inviter_id
+        - own
         - issued_at
         - expires_at
