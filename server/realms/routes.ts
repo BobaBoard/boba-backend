@@ -169,6 +169,7 @@ router.get("/:realm_id/activity", async (req, res) => {
  * /realms/{realm_id}/invites:
  *   get:
  *     summary: List all pending invites for the realm
+ *     description: See https://github.com/essential-randomness/bobaserver/issues/56 for future design intentions to return all invites.
  *     operationId: getInvitesByRealmId
  *     tags:
  *       - /realms/
@@ -223,10 +224,6 @@ router.get("/:realm_id/activity", async (req, res) => {
  *               $ref: "#/components/schemas/genericResponse"
  */
 
-// I made this only respond with pending invites for now.
-// If we want to change it to unused invites (pending + expired) that's easy.
-// If you want it to return accepted invites as well, we'll need to add a boolean field to the response show whether it's "used",
-// but probably don't want to do that, at least until we get rid of emails.
 router.get(
   "/:realm_id/invites",
   ensureLoggedIn,
