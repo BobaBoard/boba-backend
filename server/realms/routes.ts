@@ -169,7 +169,7 @@ router.get("/:realm_id/activity", async (req, res) => {
  * /realms/{realm_id}/invites:
  *   get:
  *     summary: List all pending invites for the realm
- *     # description: See https://github.com/essential-randomness/bobaserver/issues/56 for future design intentions to return all invites.
+ *     description: See https://github.com/essential-randomness/bobaserver/issues/56 for future design intentions to return all invites.
  *     operationId: getInvitesByRealmId
  *     tags:
  *       - /realms/
