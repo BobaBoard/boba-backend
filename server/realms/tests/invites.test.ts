@@ -168,7 +168,7 @@ describe("Tests get invites endpoint", () => {
       expect(resTwistedMinds.body.invites).toHaveLength(3);
       for (const invite of resTwistedMinds.body.invites) {
         expect(invite.realm_id).toEqual(TWISTED_MINDS_REALM_STRING_ID);
-        expect(invite.inviter_id).toEqual(BOBATAN_USER_ID);
+        expect(invite.own).toBeTrue();
         log(invite.issued_at);
         // I think checking the issued_at is failing because of timezones. Not sure it's worth chasing, looks fine in log
         // expect(Date.parse(invite.issued_at)).toBeLessThan(Date.now());
@@ -202,7 +202,7 @@ describe("Tests get invites endpoint", () => {
       expect(resUwu.body.invites).toHaveLength(2);
       for (const invite of resUwu.body.invites) {
         expect(invite.realm_id).toEqual(UWU_REALM_STRING_ID);
-        expect(invite.inviter_id).toEqual(ZODIAC_KILLER_USER_ID);
+        expect(invite.own).toBeFalse();
         // expect(Date.parse(invite.issued_at)).toBeLessThan(Date.now());
         expect(Date.parse(invite.expires_at)).toBeGreaterThan(Date.now());
         if (invite.invitee_email === UWU_INVITES[0].email) {
@@ -257,6 +257,7 @@ describe("Tests get invites endpoint", () => {
       expect(resTwistedMinds.body.invites[0].invitee_email).toBe(
         "anemail@email.com"
       );
+      expect(resTwistedMinds.body.invites[0].own).toBeTrue();
       expect(resTwistedMinds.body.invites[0].label).toBeUndefined();
       expect(resTwistedMinds.body.invites[0].invite_url).toEqual(
         resCreate.body.invite_url
