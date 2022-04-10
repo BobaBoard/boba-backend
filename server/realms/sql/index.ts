@@ -35,17 +35,17 @@ const getInviteDetails = `
     ORDER BY created LIMIT 1`;
 
 const getInvites = `
-SELECT 
-nonce,
-users.firebase_id AS inviter_id,
-invitee_email,
-created + duration AS expires_at,
-created,
-label 
-FROM account_invites
-JOIN realms ON account_invites.realm_id = realms.id 
-JOIN users ON account_invites.inviter = users.id
-WHERE realms.string_id = $/realmStringId/ AND used = false AND created + duration > NOW()`;
+    SELECT 
+      nonce,
+      users.firebase_id AS inviter_id,
+      invitee_email,
+      created + duration AS expires_at,
+      created,
+      label 
+    FROM account_invites
+    JOIN realms ON account_invites.realm_id = realms.id 
+    JOIN users ON account_invites.inviter = users.id
+    WHERE realms.string_id = $/realmStringId/ AND used = false AND created + duration > NOW()`;
 
 export default {
   getRealmBySlug,
