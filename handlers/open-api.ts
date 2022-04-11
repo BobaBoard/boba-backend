@@ -112,6 +112,10 @@ This is just to test that sections work. It will be written better later.
 };
 
 export const specs = swaggerJsdoc(options);
+// This is to fix https://github.com/Surnet/swagger-jsdoc/issues/314
+// TODO: remove it when the issue is closed.
+// @ts-ignore
+delete specs["channels"];
 
 export default (app: express.Express) => {
   app.get("/open-api.json", (req, res) => {
