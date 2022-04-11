@@ -9,6 +9,7 @@ import { ensureLoggedIn, withUserSettings } from "handlers/auth";
 import {
   getInviteDetails,
   getRealmIdsByUuid,
+  getRealmInvites,
   markInviteUsed,
 } from "server/realms/queries";
 import { getRealmDataBySlug, getSettingsBySlug } from "./queries";
@@ -24,9 +25,9 @@ import { processBoardsSummary } from "utils/response-utils";
 import { processRealmActivity } from "./utils";
 import { randomBytes } from "crypto";
 
-const info = debug("bobaserver:users:routes-info");
-const log = debug("bobaserver:users:routes-log");
-const error = debug("bobaserver:users:routes-error");
+const info = debug("bobaserver:realms:routes-info");
+const log = debug("bobaserver:realms:routes-log");
+const error = debug("bobaserver:realms:routes-error");
 
 const router = express.Router();
 
@@ -167,7 +168,8 @@ router.get("/:realm_id/activity", async (req, res) => {
  * @openapi
  * /realms/{realm_id}/invites:
  *   get:
- *     summary: List all invites for the realm
+ *     summary: List all pending invites for the realm
+ *     description: See https://github.com/essential-randomness/bobaserver/issues/56 for future design intentions to return all invites.
  *     operationId: getInvitesByRealmId
  *     tags:
  *       - /realms/
@@ -187,7 +189,7 @@ router.get("/:realm_id/activity", async (req, res) => {
  *             value: 76ef4cc3-1603-4278-95d7-99c59f481d2e
  *     responses:
  *       200:
- *         description: The metadata of all invites for the current realm.
+ *         description: The metadata of all pending invites for the current realm.
  *         content:
  *           application/json:
  *             schema:
@@ -204,9 +206,12 @@ router.get("/:realm_id/activity", async (req, res) => {
  *                     - realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e
  *                       invite_url: https://twisted_minds.boba.social/invite/123invite_code456
  *                       invitee_email: ms.boba@bobaboard.com
+ *                       own: false
  *                       issued_at: 2021-06-09T04:20:00Z
  *                       expires_at: 2021-06-09T16:20:00Z
- *                       note: This is a test invite.
+ *                       label: This is a test invite.
+ *       204:
+ *         description: There are no pending invites for the current realm.
  *       401:
  *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
@@ -218,12 +223,35 @@ router.get("/:realm_id/activity", async (req, res) => {
  *             schema:
  *               $ref: "#/components/schemas/genericResponse"
  */
+
 router.get(
   "/:realm_id/invites",
   ensureLoggedIn,
   ensureRealmPermission(RealmPermissions.createRealmInvite),
   async (req, res) => {
-    throw new Internal500Error("not implemented");
+    const realm = req.currentRealmIds;
+    const userId = req.currentUser.uid;
+    const unformattedInvites = await getRealmInvites({
+      realmStringId: realm.string_id,
+    });
+    if (!unformattedInvites.length) {
+      res.status(204).end();
+      return;
+    }
+    const formattedInvites = unformattedInvites.map((invite) => {
+      const formattedInvite = {
+        realm_id: realm.string_id,
+        invite_url: `https://${realm.slug}.boba.social/invites/${invite.nonce}`,
+        invitee_email: invite.invitee_email,
+        own: invite.inviter_id === userId ? true : false,
+        issued_at: invite.created,
+        expires_at: invite.expires_at,
+        ...(invite.label && { label: invite.label }),
+      };
+      return formattedInvite;
+    });
+    log(formattedInvites);
+    res.status(200).json({ invites: formattedInvites });
   }
 );
 
@@ -328,7 +356,7 @@ router.post(
     if (!inviteAdded) {
       res.status(500).send(`Couldn't generate invite for email ${email}`);
     }
-    const realm = await getRealmIdsByUuid({ realmId });
+    const realm = req.currentRealmIds;
     log(realm);
 
     res.status(200).json({
