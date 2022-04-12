@@ -11,6 +11,7 @@ components:
           index_page: []
           board_page: []
           thread_page: []
+        realm_permissions: [create_realm_invite]
         boards:
           - id: 2fb151eb-c600-4fe4-a542-4662487e5496
             realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e

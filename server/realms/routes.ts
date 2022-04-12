@@ -6,12 +6,11 @@ import {
 } from "types/errors/api";
 import {
   acceptInvite,
-  addUserToRealm,
   checkUserOnRealm,
   getInviteDetails,
   getRealmIdsByUuid,
   getRealmInvites,
-  markInviteUsed,
+  getUserPermissionsForRealm,
 } from "server/realms/queries";
 import { createNewUser, getUserFromFirebaseId } from "server/users/queries";
 import { ensureLoggedIn, withUserSettings } from "handlers/auth";
@@ -85,6 +84,11 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
       throw new NotFound404Error(`The realm ${realm_slug} was not found.`);
     }
 
+    const realmPermissions = await getUserPermissionsForRealm({
+      firebaseId: req.currentUser?.uid,
+      realmId: realmData.string_id,
+    });
+
     const boards = await getBoards({
       firebaseId: req.currentUser?.uid,
       realmId: realmData.string_id,
@@ -101,6 +105,9 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
     res.status(200).json({
       slug: realm_slug,
       settings,
+      ...(!!realmPermissions && {
+        realm_permissions: realmPermissions,
+      }),
       boards: realmBoards,
     });
   } catch (e) {

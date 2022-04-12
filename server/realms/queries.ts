@@ -106,10 +106,13 @@ export const getUserPermissionsForRealm = async ({
   firebaseId,
   realmId,
 }: {
-  firebaseId: string;
+  firebaseId: string | undefined;
   realmId: string;
 }) => {
   try {
+    if (!firebaseId) {
+      return;
+    }
     const userPermissionsGroupedByRole = await pool.manyOrNone(
       sql.getUserPermissionsForRealm,
       {
@@ -135,7 +138,7 @@ export const getUserPermissionsForRealm = async ({
   } catch (e) {
     error(`Error while getting user permissions for the realm.`);
     error(e);
-    return false;
+    return null;
   }
 };
 
