@@ -498,7 +498,7 @@ router.post("/:realm_id/invites/:nonce", ensureLoggedIn, async (req, res) => {
   }
   log(inviteDetails.realmId);
   log(realmStringId);
-  //It occurred to me that we should also check that the realm matches
+
   if (inviteDetails.realmId != realmStringId) {
     throw new Forbidden403Error(`Invite is not for this realm`);
   }
@@ -544,9 +544,6 @@ router.post("/:realm_id/invites/:nonce", ensureLoggedIn, async (req, res) => {
   //     );
   // });
 
-  // In the above commented out code you had a TODO to decide if marking th invite as used and creating the new user should be put together in a transaction,
-  // if I am understanding the function of transactions properly, I would think yes, so I wrote a function to so here with marking the invite used and adding the user to the Realm,
-  // but I'm not sure if this is the best way to do this
   const accepted = await acceptInvite(nonce, user, realmStringId);
   if (!accepted) {
     throw new Internal500Error(`Failed to accept invite`);
