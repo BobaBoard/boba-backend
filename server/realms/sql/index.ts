@@ -24,7 +24,7 @@ const createRealmInvite = `
 
 const getInviteDetails = `
     SELECT 
-      realms.string_id,
+      realms.string_id AS realm_id,
       inviter,
       invitee_email,
       created + duration < NOW() as expired,
