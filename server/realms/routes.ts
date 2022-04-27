@@ -103,6 +103,7 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
       isLoggedIn: !!req.currentUser?.uid,
     });
     res.status(200).json({
+      id: realmData.string_id,
       slug: realm_slug,
       settings,
       ...(!!realmPermissions && {
