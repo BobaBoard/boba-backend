@@ -17,7 +17,9 @@ import {
   wrapWithTransaction,
 } from "utils/test-utils";
 
+import { checkUserOnRealm } from "../queries";
 import debug from "debug";
+import firebaseAuth from "firebase-admin";
 import pool from "server/db-pool";
 import request from "supertest";
 import router from "../routes";
@@ -26,6 +28,16 @@ const log = debug("bobaserver:realms:invites-test-log");
 
 jest.mock("handlers/auth");
 jest.mock("server/db-pool");
+
+const authGetUser = jest.fn();
+
+jest.mock("firebase-admin", () => {
+  return {
+    auth: () => ({
+      getUser: async () => authGetUser(),
+    }),
+  };
+});
 
 const TWISTED_MINDS_INVITES = [
   {
@@ -445,6 +457,235 @@ describe("Tests create invites endpoint", () => {
       expect(res.status).toBe(401);
       expect(res.body.message).toBe("No authenticated user found.");
       expect(res.body.invite_url).toBeUndefined();
+    });
+  });
+});
+
+describe("Tests accept invites endpoint", () => {
+  const server = startTestServer(router);
+
+  test("correctly accepts invite and adds user to the realm", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(JERSEY_DEVIL_USER_ID);
+      authGetUser.mockReturnValue({ email: UWU_INVITES[1].email });
+
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
+      const res = await request(server.app).post(
+        `/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[1].nonce}`
+      );
+
+      expect(res.status).toBe(201);
+      expect(res.body).toEqual({});
+      const addedToRealm = await checkUserOnRealm({
+        user: JERSEY_DEVIL_USER_ID,
+        realmStringId: UWU_REALM_STRING_ID,
+      });
+      expect(addedToRealm).toEqual(true);
+    });
+  });
+
+  test("accepts invite correctly when invite generated from endpoint", async () => {
+    await wrapWithTransaction(async () => {
+      const onclerEmail = "onceler@email.com";
+      authGetUser.mockReturnValue({ email: onclerEmail });
+
+      setLoggedInUser(ZODIAC_KILLER_USER_ID);
+      const resCreateInvite = await request(server.app)
+        .post(`/${UWU_REALM_STRING_ID}/invites/`)
+        .send({ email: onclerEmail });
+
+      const sliceIndex = resCreateInvite.body.invite_url.lastIndexOf("/") + 1;
+      const nonce = resCreateInvite.body.invite_url.slice(sliceIndex);
+
+      setLoggedInUser(ONCEST_USER_ID);
+      const resAccept = await request(server.app).post(
+        `/${UWU_REALM_STRING_ID}/invites/${nonce}`
+      );
+
+      expect(resAccept.status).toBe(201);
+      expect(resAccept.body).toEqual({});
+      const addedToRealm = await checkUserOnRealm({
+        user: ONCEST_USER_ID,
+        realmStringId: UWU_REALM_STRING_ID,
+      });
+      expect(addedToRealm).toEqual(true);
+    });
+  });
+
+  test("doesn't accept invite when user is already a member of the realm", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(BOBATAN_USER_ID);
+      authGetUser.mockReturnValue({ email: UWU_INVITES[0].email });
+
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
+      const res = await request(server.app).post(
+        `/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[0].nonce}`
+      );
+
+      expect(res.status).toBe(409);
+      expect(res.body.message).toBe(
+        "User is already a member of the requested realm"
+      );
+    });
+  });
+
+  test("doesn't accept invite when user email doesn't match invite email", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(JERSEY_DEVIL_USER_ID);
+      authGetUser.mockReturnValue({ email: "differentEmail.email" });
+
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
+      const res = await request(server.app).post(
+        `/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[1].nonce}`
+      );
+      expect(res.status).toBe(403);
+      expect(res.body.message).toBe(`Invite email does not match`);
+      const addedToRealm = await checkUserOnRealm({
+        user: JERSEY_DEVIL_USER_ID,
+        realmStringId: UWU_REALM_STRING_ID,
+      });
+      expect(addedToRealm).toEqual(false);
+    });
+  });
+
+  test("doesn't accept invite when invite is already used", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(JERSEY_DEVIL_USER_ID);
+      authGetUser.mockReturnValue({ email: USED_AND_EXPIRED_INVITES[0].email });
+
+      insertInvites(
+        USED_AND_EXPIRED_INVITES,
+        ZODIAC_KILLER_USER_ID,
+        UWU_REALM_STRING_ID
+      );
+      const res = await request(server.app).post(
+        `/${UWU_REALM_STRING_ID}/invites/${USED_AND_EXPIRED_INVITES[0].nonce}`
+      );
+
+      expect(res.status).toBe(403);
+      expect(res.body.message).toBe(`Invite expired or already used`);
+      const addedToRealm = await checkUserOnRealm({
+        user: JERSEY_DEVIL_USER_ID,
+        realmStringId: UWU_REALM_STRING_ID,
+      });
+      expect(addedToRealm).toEqual(false);
+    });
+  });
+
+  test("doesn't accept invite when invite is expired", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(JERSEY_DEVIL_USER_ID);
+      authGetUser.mockReturnValue({ email: USED_AND_EXPIRED_INVITES[1].email });
+
+      insertInvites(
+        USED_AND_EXPIRED_INVITES,
+        ZODIAC_KILLER_USER_ID,
+        UWU_REALM_STRING_ID
+      );
+      const res = await request(server.app).post(
+        `/${UWU_REALM_STRING_ID}/invites/${USED_AND_EXPIRED_INVITES[1].nonce}`
+      );
+
+      expect(res.status).toBe(403);
+      expect(res.body.message).toBe(`Invite expired or already used`);
+      const addedToRealm = await checkUserOnRealm({
+        user: JERSEY_DEVIL_USER_ID,
+        realmStringId: UWU_REALM_STRING_ID,
+      });
+      expect(addedToRealm).toEqual(false);
+    });
+  });
+
+  test("doesn't accept invite when realm doesn't match invite realm", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(JERSEY_DEVIL_USER_ID);
+      authGetUser.mockReturnValue({ email: UWU_INVITES[1].email });
+
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
+      const res = await request(server.app).post(
+        `/${TWISTED_MINDS_REALM_STRING_ID}/invites/${UWU_INVITES[1].nonce}`
+      );
+
+      expect(res.status).toBe(403);
+      expect(res.body.message).toBe(`Invite is not for this realm`);
+      const addedToRealm = await checkUserOnRealm({
+        user: JERSEY_DEVIL_USER_ID,
+        realmStringId: UWU_REALM_STRING_ID,
+      });
+      expect(addedToRealm).toEqual(false);
+      const addedToWrongRealm = await checkUserOnRealm({
+        user: JERSEY_DEVIL_USER_ID,
+        realmStringId: TWISTED_MINDS_REALM_STRING_ID,
+      });
+      expect(addedToWrongRealm).toEqual(false);
+    });
+  });
+
+  test("doesn't accept invite if requested realm doesn't exist", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(JERSEY_DEVIL_USER_ID);
+      authGetUser.mockReturnValue({ email: UWU_INVITES[1].email });
+
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
+      const res = await request(server.app).post(
+        `/notarealrealm/invites/${UWU_INVITES[1].nonce}`
+      );
+
+      expect(res.status).toBe(404);
+      expect(res.body.message).toBe("The realm was not found");
+      const addedToRealm = await checkUserOnRealm({
+        user: JERSEY_DEVIL_USER_ID,
+        realmStringId: UWU_REALM_STRING_ID,
+      });
+      expect(addedToRealm).toEqual(false);
+    });
+  });
+
+  test("doesn't accept invite if requested invite doesn't exist", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(JERSEY_DEVIL_USER_ID);
+      authGetUser.mockReturnValue({ email: UWU_INVITES[1].email });
+
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
+      const res = await request(server.app).post(
+        `/${UWU_REALM_STRING_ID}/invites/notarealinvite123`
+      );
+
+      expect(res.status).toBe(404);
+      expect(res.body.message).toBe("Invite not found");
+      const addedToRealm = await checkUserOnRealm({
+        user: JERSEY_DEVIL_USER_ID,
+        realmStringId: UWU_REALM_STRING_ID,
+      });
+      expect(addedToRealm).toEqual(false);
+    });
+  });
+
+  test("doesn't accept invite when logged out", async () => {
+    await wrapWithTransaction(async () => {
+      authGetUser.mockReturnValue({ email: UWU_INVITES[1].email });
+
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
+      const res = await request(server.app).post(
+        `/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[1].nonce}`
+      );
+
+      expect(res.status).toBe(401);
+      expect(res.body.message).toBe("No authenticated user found.");
+      const usersInRealm = await pool.many(
+        `SELECT users.firebase_id
+      FROM realm_users
+      JOIN users ON realm_users.user_id = users.id
+      WHERE realm_id = (SELECT id FROM realms WHERE string_id = $/realm_string_id/);`,
+        {
+          realm_string_id: UWU_REALM_STRING_ID,
+        }
+      );
+      expect(usersInRealm).toHaveLength(2);
+      expect(usersInRealm).toEqual([
+        { firebase_id: BOBATAN_USER_ID },
+        { firebase_id: ZODIAC_KILLER_USER_ID },
+      ]);
     });
   });
 });
