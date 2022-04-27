@@ -56,6 +56,14 @@ VALUES
     ('fb4', 'SexyDaddy69', 'mamoru.png', (SELECT id FROM users WHERE username='oncest5evah')),
     ('fb5', 'The Zodiac Killer', 'villains.png', (SELECT id FROM users WHERE username='oncest5evah'));
 
+INSERT INTO realm_users(realm_id, user_id)
+VALUES
+    ((SELECT id FROM realms WHERE slug = 'twisted-minds'), (SELECT id FROM users WHERE username = 'bobatan')),
+    ((SELECT id FROM realms WHERE slug = 'uwu'), (SELECT id FROM users WHERE username = 'bobatan')),
+    ((SELECT id FROM realms WHERE slug = 'twisted-minds'), (SELECT id FROM users WHERE username = 'SexyDaddy69')),
+    ((SELECT id FROM realms WHERE slug = 'twisted-minds'), (SELECT id FROM users WHERE username = 'oncest5evah')),
+    ((SELECT id FROM realms WHERE slug = 'uwu'), (SELECT id FROM users WHERE username = 'The Zodiac Killer'));
+
 -- Set the incremental values of the tables we have overrode the system values of
 -- See: https://stackoverflow.com/questions/9108833/postgres-autoincrement-not-updated-on-explicit-id-inserts
 SELECT setval('realms_id_seq', (SELECT MAX(id) from "realms"));

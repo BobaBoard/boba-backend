@@ -5,6 +5,9 @@ import {
   NotFound404Error,
 } from "types/errors/api";
 import {
+  acceptInvite,
+  addUserToRealm,
+  checkUserOnRealm,
   dismissAllNotifications,
   getInviteDetails,
   getRealmDataBySlug,
@@ -346,7 +349,7 @@ router.delete("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
  *                 value:
  *                   invites:
  *                     - realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e
- *                       invite_url: https://twisted_minds.boba.social/invite/123invite_code456
+ *                       invite_url: https://twisted_minds.boba.social/invites/123invite_code456
  *                       invitee_email: ms.boba@bobaboard.com
  *                       own: false
  *                       issued_at: 2021-06-09T04:20:00Z
@@ -518,7 +521,8 @@ router.post(
  *       - /realms/
  *     security:
  *       - firebase: []
- *       - {}
+ *       # Currently gated to logged-in only, uncomment if we decide not to separate out sign-up invites
+ *       # - {}
  *     parameters:
  *       - name: realm_id
  *         in: path
@@ -541,46 +545,84 @@ router.post(
  *           twisted_minds:
  *             summary: the invite code.
  *             value: 123invite_code456
- *     requestBody:
- *       description: The user data for the invite. Only required if the user is not already logged in.
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               email:
- *                 type: string
- *                 format: email
- *               password:
- *                 type: string
- *             required:
- *               - email
- *               - password
- *           examples:
- *             twisted_minds:
- *               value:
- *                 email: ms.boba@bobaboard.com
- *                 password: how_bad_can_i_be
+ *     # Currently gated to logged-in only, so email and password not required. Uncomment if we decide not to separate out sign-up invites
+ *     # requestBody:
+ *       # description: The user data for the invite. Only required if the user is not already logged in.
+ *       # content:
+ *         # application/json:
+ *           # schema:
+ *             # type: object
+ *             # properties:
+ *               # email:
+ *                 # type: string
+ *                 # format: email
+ *               # password:
+ *                 # type: string
+ *             # required:
+ *               # - email
+ *               # - password
+ *           # examples:
+ *             # twisted_minds:
+ *               # value:
+ *                 # email: ms.boba@bobaboard.com
+ *                 # password: how_bad_can_i_be
  *     responses:
- *       204:
+ *       201:
  *         description: The invite was successfully accepted.
  *       403:
- *         description: The invite is not valid anymore, or the user does not correspond to the invited one.
+ *         description: The invite is not valid anymore, or is for a different realm, or the user is logged out, or does not correspond to the invited one.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/genericResponse"
  *       404:
- *         description: The invite with the given code was not found.
+ *         description: The invite with the given code was not found, or the requested realm does not exist.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/genericResponse"
+ *       409:
+ *         description: The user is already a member of the requested realm.
  *         content:
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/genericResponse"
  */
 router.post("/:realm_id/invites/:nonce", ensureLoggedIn, async (req, res) => {
-  const { email, password } = req.body;
   const { nonce } = req.params;
   const user = req.currentUser?.uid;
+
+  // If we decide not to separate out sign-up invites, replace this with the currently commented out code below it.
+  const firebaseUserData = await firebaseAuth.auth().getUser(user);
+  const email = firebaseUserData.email;
+  if (!email) {
+    throw new Internal500Error(`Failed to get user's email`);
+  }
+  // const getEmail = async (user?: string) => {
+  //   if (user) {
+  //     try {
+  //       const firebaseUserData = await firebaseAuth.auth().getUser(user);
+  //       return firebaseUserData.email;
+  //     } catch (e) {
+  //       error(`Error while getting user email from firebase`);
+  //       error(e);
+  //       throw new Internal500Error(`Failed to get user's email`);
+  //     }
+  //   } else {
+  //     return req.body.email;
+  //   }
+  // };
+  // const email = await getEmail(user);
+  // const { password } = req.body;
+
+  const realmStringId = req.params.realm_id;
+
+  const currentRealmIds = await getRealmIdsByUuid({
+    realmId: req.params.realm_id,
+  });
+  if (!currentRealmIds) {
+    throw new NotFound404Error(`The realm was not found`);
+  }
 
   const inviteDetails = await getInviteDetails({ nonce });
 
@@ -594,6 +636,22 @@ router.post("/:realm_id/invites/:nonce", ensureLoggedIn, async (req, res) => {
 
   if (inviteDetails.email.toLowerCase() != (email as string).toLowerCase()) {
     throw new Forbidden403Error(`Invite email does not match`);
+  }
+  log(inviteDetails.realmId);
+  log(realmStringId);
+
+  if (inviteDetails.realmId != realmStringId) {
+    throw new Forbidden403Error(`Invite is not for this realm`);
+  }
+
+  const alreadyOnRealm = await checkUserOnRealm({ user, realmStringId });
+  if (alreadyOnRealm) {
+    res
+      .status(409)
+      .send({ message: "User is already a member of the requested realm" });
+    return;
+  } else if (alreadyOnRealm !== false) {
+    throw new Internal500Error(`Failed to check if user is already on realm`);
   }
 
   // TODO: decide if sign-up invites should be separated off from Realm invites. If yes, move this.
@@ -626,6 +684,12 @@ router.post("/:realm_id/invites/:nonce", ensureLoggedIn, async (req, res) => {
   //       `Error creating user: ${error.message} (${error.code})`
   //     );
   // });
+
+  const accepted = await acceptInvite(nonce, user, realmStringId);
+  if (!accepted) {
+    throw new Internal500Error(`Failed to accept invite`);
+  }
+  res.status(201).end();
 });
 
 export default router;
