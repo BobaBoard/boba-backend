@@ -246,11 +246,15 @@ export const markInviteUsed = async (
   }
 };
 
-export const acceptInvite = async (
-  nonce: string,
-  user: string,
-  realmStringId: string
-): Promise<boolean> => {
+export const acceptInvite = async ({
+  nonce,
+  user,
+  realmStringId,
+}: {
+  nonce: string;
+  user: string;
+  realmStringId: string;
+}): Promise<boolean> => {
   return pool
     .tx("accept-invite", async (transaction) => {
       const used = await markInviteUsed(transaction, { nonce });

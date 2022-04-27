@@ -475,7 +475,10 @@ describe("Tests accept invites endpoint", () => {
       );
 
       expect(res.status).toBe(201);
-      expect(res.body).toEqual({});
+      expect(res.body).toEqual({
+        realm_id: UWU_REALM_STRING_ID,
+        realm_slug: UWU_REALM_SLUG,
+      });
       const addedToRealm = await checkUserOnRealm({
         user: JERSEY_DEVIL_USER_ID,
         realmStringId: UWU_REALM_STRING_ID,
@@ -503,7 +506,10 @@ describe("Tests accept invites endpoint", () => {
       );
 
       expect(resAccept.status).toBe(201);
-      expect(resAccept.body).toEqual({});
+      expect(resAccept.body).toEqual({
+        realm_id: UWU_REALM_STRING_ID,
+        realm_slug: UWU_REALM_SLUG,
+      });
       const addedToRealm = await checkUserOnRealm({
         user: ONCEST_USER_ID,
         realmStringId: UWU_REALM_STRING_ID,
@@ -596,7 +602,7 @@ describe("Tests accept invites endpoint", () => {
     });
   });
 
-  test("doesn't accept invite when realm doesn't match invite realm", async () => {
+  test("accepts invite when realm doesn't match invite realm, but returns correct realm data", async () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(JERSEY_DEVIL_USER_ID);
       authGetUser.mockReturnValue({ email: UWU_INVITES[1].email });
@@ -606,13 +612,16 @@ describe("Tests accept invites endpoint", () => {
         `/${TWISTED_MINDS_REALM_STRING_ID}/invites/${UWU_INVITES[1].nonce}`
       );
 
-      expect(res.status).toBe(403);
-      expect(res.body.message).toBe(`Invite is not for this realm`);
+      expect(res.status).toBe(201);
+      expect(res.body).toEqual({
+        realm_id: UWU_REALM_STRING_ID,
+        realm_slug: UWU_REALM_SLUG,
+      });
       const addedToRealm = await checkUserOnRealm({
         user: JERSEY_DEVIL_USER_ID,
         realmStringId: UWU_REALM_STRING_ID,
       });
-      expect(addedToRealm).toEqual(false);
+      expect(addedToRealm).toEqual(true);
       const addedToWrongRealm = await checkUserOnRealm({
         user: JERSEY_DEVIL_USER_ID,
         realmStringId: TWISTED_MINDS_REALM_STRING_ID,
