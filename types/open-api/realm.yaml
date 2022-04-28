@@ -45,6 +45,8 @@ components:
         - id
         - slug
         - settings
+        - realm_permissions
+        - boards
     RealmActivity:
       type: object
       properties:
