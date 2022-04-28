@@ -50,6 +50,8 @@ components:
             - blocks
         settings:
           $ref: "#/components/schemas/RealmSettings"
+        realm_permissions:
+          $ref: "#/components/schemas/RealmPermissions"
         boards:
           type: array
           items:
@@ -60,6 +62,8 @@ components:
         - icon
         - settings
         - homepage
+        - realm_permissions
+        - boards
     RealmActivity:
       type: object
       properties:
