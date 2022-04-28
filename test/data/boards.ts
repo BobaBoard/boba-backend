@@ -34,32 +34,25 @@ export const extractBoardSummary = (
     logged_in_only,
     delisted,
   } = metadata;
+  const result = {
+    id,
+    realm_id,
+    slug,
+    avatar_url,
+    tagline,
+    accent_color,
+    logged_in_only,
+    delisted,
+  };
   if ("muted" in metadata) {
     const { muted, pinned } = metadata;
     return {
-      id,
-      realm_id,
-      slug,
-      avatar_url,
-      tagline,
-      accent_color,
-      logged_in_only,
-      delisted,
+      ...result,
       muted,
       pinned,
     };
-  } else {
-    return {
-      id,
-      realm_id,
-      slug,
-      avatar_url,
-      tagline,
-      accent_color,
-      logged_in_only,
-      delisted,
-    };
   }
+  return result;
 };
 
 const GORE_LOGGED_OUT_METADATA: BoardMetadata = {
