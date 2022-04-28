@@ -143,10 +143,13 @@ export const getUserPermissionsForRealm = async ({
   firebaseId,
   realmId,
 }: {
-  firebaseId: string;
+  firebaseId: string | undefined;
   realmId: string;
 }) => {
   try {
+    if (!firebaseId) {
+      return null;
+    }
     const userPermissionsGroupedByRole = await pool.manyOrNone(
       sql.getUserPermissionsForRealm,
       {
@@ -155,7 +158,7 @@ export const getUserPermissionsForRealm = async ({
       }
     );
     if (!userPermissionsGroupedByRole.length) {
-      return;
+      return null;
     }
     const userRealmPermissionsGroupedByRoles = userPermissionsGroupedByRole.map(
       (row) => {
@@ -172,7 +175,7 @@ export const getUserPermissionsForRealm = async ({
   } catch (e) {
     error(`Error while getting user permissions for the realm.`);
     error(e);
-    return false;
+    return null;
   }
 };
 
@@ -280,11 +283,15 @@ export const markInviteUsed = async (
   }
 };
 
-export const acceptInvite = async (
-  nonce: string,
-  user: string,
-  realmStringId: string
-): Promise<boolean> => {
+export const acceptInvite = async ({
+  nonce,
+  user,
+  realmStringId,
+}: {
+  nonce: string;
+  user: string;
+  realmStringId: string;
+}): Promise<boolean> => {
   return pool
     .tx("accept-invite", async (transaction) => {
       const used = await markInviteUsed(transaction, { nonce });

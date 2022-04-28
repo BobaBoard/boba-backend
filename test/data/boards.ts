@@ -2,6 +2,7 @@ import {
   BoardMetadata,
   BoardSummary,
   LoggedInBoardMetadata,
+  LoggedInBoardSummary,
 } from "types/rest/boards";
 import {
   BoardPermissions,
@@ -20,7 +21,9 @@ export const LONG_BOARD_ID = "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83";
 export const NULL_ID = "00000000-0000-0000-0000-000000000000";
 export const MODS_BOARD_ID = "2895f9c8-8419-4ab8-b33d-3ad18e77a589";
 
-export const extractBoardSummary = (metadata: BoardMetadata): BoardSummary => {
+export const extractBoardSummary = (
+  metadata: BoardMetadata | LoggedInBoardMetadata
+): BoardSummary | LoggedInBoardSummary => {
   const {
     id,
     realm_id,
@@ -31,7 +34,7 @@ export const extractBoardSummary = (metadata: BoardMetadata): BoardSummary => {
     logged_in_only,
     delisted,
   } = metadata;
-  return {
+  const result = {
     id,
     realm_id,
     slug,
@@ -41,6 +44,15 @@ export const extractBoardSummary = (metadata: BoardMetadata): BoardSummary => {
     logged_in_only,
     delisted,
   };
+  if ("muted" in metadata) {
+    const { muted, pinned } = metadata;
+    return {
+      ...result,
+      muted,
+      pinned,
+    };
+  }
+  return result;
 };
 
 const GORE_LOGGED_OUT_METADATA: BoardMetadata = {
@@ -137,7 +149,7 @@ const RESTRICTED_LOGGED_OUT_BOARD_SUMMARY: BoardSummary = {
   tagline: "A board to test for logged-in only view",
 };
 
-const RESTRICTED_BOBATAN_SUMMARY: BoardSummary = {
+const RESTRICTED_BOBATAN_SUMMARY: LoggedInBoardSummary = {
   id: RESTRICTED_BOARD_ID,
   realm_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
   avatar_url:
@@ -147,6 +159,8 @@ const RESTRICTED_BOBATAN_SUMMARY: BoardSummary = {
   accent_color: "#234a69",
   slug: "restricted",
   tagline: "A board to test for logged-in only view",
+  muted: false,
+  pinned: false,
 };
 
 export const RESTRICTED_BOARD_SUMMARY = {
