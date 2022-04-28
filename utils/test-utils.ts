@@ -1,4 +1,4 @@
-import { ensureLoggedIn, withLoggedIn } from "handlers/auth";
+import { ensureLoggedIn, withLoggedIn, withUserSettings } from "handlers/auth";
 import express, { Express, Router } from "express";
 
 import { DbThreadSummaryType } from "Types";
@@ -45,7 +45,8 @@ export const wrapWithTransaction = async (test: () => void) => {
 export const setLoggedInUser = (firebaseId: string) => {
   if (
     !jest.isMockFunction(withLoggedIn) ||
-    !jest.isMockFunction(ensureLoggedIn)
+    !jest.isMockFunction(ensureLoggedIn) ||
+    !jest.isMockFunction(withUserSettings)
   ) {
     throw Error(
       "setLoggedInUser requires 'handlers/auth' to be explicitly mocked."
@@ -57,6 +58,11 @@ export const setLoggedInUser = (firebaseId: string) => {
     next();
   });
   mocked(ensureLoggedIn).mockImplementation((req, res, next) => {
+    // @ts-ignore
+    req.currentUser = { uid: firebaseId };
+    next();
+  });
+  mocked(withUserSettings).mockImplementation((req, res, next) => {
     // @ts-ignore
     req.currentUser = { uid: firebaseId };
     next();
