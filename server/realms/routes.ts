@@ -6,12 +6,11 @@ import {
 } from "types/errors/api";
 import {
   acceptInvite,
-  addUserToRealm,
   checkUserOnRealm,
   getInviteDetails,
   getRealmIdsByUuid,
   getRealmInvites,
-  markInviteUsed,
+  getUserPermissionsForRealm,
 } from "server/realms/queries";
 import { createNewUser, getUserFromFirebaseId } from "server/users/queries";
 import { ensureLoggedIn, withUserSettings } from "handlers/auth";
@@ -85,6 +84,11 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
       throw new NotFound404Error(`The realm ${realm_slug} was not found.`);
     }
 
+    const realmPermissions = await getUserPermissionsForRealm({
+      firebaseId: req.currentUser?.uid,
+      realmId: realmData.string_id,
+    });
+
     const boards = await getBoards({
       firebaseId: req.currentUser?.uid,
       realmId: realmData.string_id,
@@ -99,8 +103,10 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
       isLoggedIn: !!req.currentUser?.uid,
     });
     res.status(200).json({
+      id: realmData.string_id,
       slug: realm_slug,
       settings,
+      realm_permissions: realmPermissions || [],
       boards: realmBoards,
     });
   } catch (e) {
@@ -426,8 +432,17 @@ router.post(
  *                 # email: ms.boba@bobaboard.com
  *                 # password: how_bad_can_i_be
  *     responses:
- *       201:
+ *       200:
  *         description: The invite was successfully accepted.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/AcceptedInviteResponse"
+ *             examples:
+ *               twisted_minds:
+ *                 value:
+ *                   realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e
+ *                   realm_slug: twisted-minds
  *       403:
  *         description: The invite is not valid anymore, or is for a different realm, or the user is logged out, or does not correspond to the invited one.
  *         content:
@@ -496,14 +511,15 @@ router.post("/:realm_id/invites/:nonce", ensureLoggedIn, async (req, res) => {
   if (inviteDetails.email.toLowerCase() != (email as string).toLowerCase()) {
     throw new Forbidden403Error(`Invite email does not match`);
   }
-  log(inviteDetails.realmId);
-  log(realmStringId);
 
-  if (inviteDetails.realmId != realmStringId) {
-    throw new Forbidden403Error(`Invite is not for this realm`);
-  }
+  const inviteRealm = await getRealmIdsByUuid({
+    realmId: inviteDetails.realmId,
+  });
 
-  const alreadyOnRealm = await checkUserOnRealm({ user, realmStringId });
+  const alreadyOnRealm = await checkUserOnRealm({
+    user,
+    realmStringId: inviteRealm.string_id,
+  });
   if (alreadyOnRealm) {
     res
       .status(409)
@@ -544,11 +560,18 @@ router.post("/:realm_id/invites/:nonce", ensureLoggedIn, async (req, res) => {
   //     );
   // });
 
-  const accepted = await acceptInvite(nonce, user, realmStringId);
+  const accepted = await acceptInvite({
+    nonce,
+    user,
+    realmStringId: inviteRealm.string_id,
+  });
   if (!accepted) {
     throw new Internal500Error(`Failed to accept invite`);
   }
-  res.status(201).end();
+  res.status(200).json({
+    realm_id: inviteRealm.string_id,
+    realm_slug: inviteRealm.slug,
+  });
 });
 
 export default router;
