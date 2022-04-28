@@ -111,7 +111,7 @@ export const getUserPermissionsForRealm = async ({
 }) => {
   try {
     if (!firebaseId) {
-      return;
+      return null;
     }
     const userPermissionsGroupedByRole = await pool.manyOrNone(
       sql.getUserPermissionsForRealm,
@@ -121,7 +121,7 @@ export const getUserPermissionsForRealm = async ({
       }
     );
     if (!userPermissionsGroupedByRole.length) {
-      return;
+      return null;
     }
     const userRealmPermissionsGroupedByRoles = userPermissionsGroupedByRole.map(
       (row) => {

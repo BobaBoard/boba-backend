@@ -106,9 +106,7 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
       id: realmData.string_id,
       slug: realm_slug,
       settings,
-      ...(!!realmPermissions && {
-        realm_permissions: realmPermissions,
-      }),
+      realm_permissions: realmPermissions || [],
       boards: realmBoards,
     });
   } catch (e) {
@@ -434,7 +432,7 @@ router.post(
  *                 # email: ms.boba@bobaboard.com
  *                 # password: how_bad_can_i_be
  *     responses:
- *       201:
+ *       200:
  *         description: The invite was successfully accepted.
  *         content:
  *           application/json:
@@ -570,8 +568,7 @@ router.post("/:realm_id/invites/:nonce", ensureLoggedIn, async (req, res) => {
   if (!accepted) {
     throw new Internal500Error(`Failed to accept invite`);
   }
-  res.location(`/realms/slug/${inviteRealm.slug}`);
-  res.status(201).json({
+  res.status(200).json({
     realm_id: inviteRealm.string_id,
     realm_slug: inviteRealm.slug,
   });

@@ -474,7 +474,7 @@ describe("Tests accept invites endpoint", () => {
         `/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[1].nonce}`
       );
 
-      expect(res.status).toBe(201);
+      expect(res.status).toBe(200);
       expect(res.body).toEqual({
         realm_id: UWU_REALM_STRING_ID,
         realm_slug: UWU_REALM_SLUG,
@@ -505,7 +505,7 @@ describe("Tests accept invites endpoint", () => {
         `/${UWU_REALM_STRING_ID}/invites/${nonce}`
       );
 
-      expect(resAccept.status).toBe(201);
+      expect(resAccept.status).toBe(200);
       expect(resAccept.body).toEqual({
         realm_id: UWU_REALM_STRING_ID,
         realm_slug: UWU_REALM_SLUG,
@@ -612,7 +612,7 @@ describe("Tests accept invites endpoint", () => {
         `/${TWISTED_MINDS_REALM_STRING_ID}/invites/${UWU_INVITES[1].nonce}`
       );
 
-      expect(res.status).toBe(201);
+      expect(res.status).toBe(200);
       expect(res.body).toEqual({
         realm_id: UWU_REALM_STRING_ID,
         realm_slug: UWU_REALM_SLUG,

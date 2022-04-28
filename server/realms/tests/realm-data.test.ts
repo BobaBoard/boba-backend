@@ -52,7 +52,7 @@ describe("Tests restricted board realm queries", () => {
       );
 
       expect(res.status).toBe(200);
-      expect(res.body.realm_permissions).toBeUndefined();
+      expect(res.body.realm_permissions).toEqual([]);
     });
 
     test("doesn't fetch realm permissions when logged out", async () => {
@@ -61,7 +61,7 @@ describe("Tests restricted board realm queries", () => {
       );
 
       expect(res.status).toBe(200);
-      expect(res.body.realm_permissions).toBeUndefined();
+      expect(res.body.realm_permissions).toEqual([]);
     });
   });
 });
