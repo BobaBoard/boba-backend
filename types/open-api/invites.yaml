@@ -41,3 +41,14 @@ components:
         - own
         - issued_at
         - expires_at
+    AcceptedInviteResponse:
+      type: object
+      properties:
+        realm_id:
+          type: string
+          format: uuid
+        realm_slug:
+          type: string
+      required:
+        - realm_id
+        - realm_slug
