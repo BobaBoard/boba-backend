@@ -13,7 +13,7 @@ import {
   getUserPermissionsForRealm,
 } from "server/realms/queries";
 import { createNewUser, getUserFromFirebaseId } from "server/users/queries";
-import { ensureLoggedIn, withUserSettings } from "handlers/auth";
+import { ensureLoggedIn, withLoggedIn, withUserSettings } from "handlers/auth";
 import { getRealmDataBySlug, getSettingsBySlug } from "./queries";
 
 import { RealmPermissions } from "types/permissions";
@@ -410,27 +410,27 @@ router.post(
  *           twisted_minds:
  *             summary: the invite code.
  *             value: 123invite_code456
- *     # Currently gated to logged-in only, so email and password not required. Uncomment if we decide not to separate out sign-up invites
- *     # requestBody:
- *       # description: The user data for the invite. Only required if the user is not already logged in.
- *       # content:
- *         # application/json:
- *           # schema:
- *             # type: object
- *             # properties:
- *               # email:
- *                 # type: string
- *                 # format: email
- *               # password:
- *                 # type: string
- *             # required:
- *               # - email
- *               # - password
- *           # examples:
- *             # twisted_minds:
- *               # value:
- *                 # email: ms.boba@bobaboard.com
- *                 # password: how_bad_can_i_be
+ *     # Remove email and password requirements if we decide to separate out sign-up invites
+ *     requestBody:
+ *       description: The user data for the invite. Only required if the user is not already logged in.
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               password:
+ *                 type: string
+ *             required:
+ *               - email
+ *               - password
+ *           examples:
+ *             twisted_minds:
+ *               value:
+ *                 email: ms.boba@bobaboard.com
+ *                 password: how_bad_can_i_be
  *     responses:
  *       200:
  *         description: The invite was successfully accepted.
@@ -444,7 +444,7 @@ router.post(
  *                   realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e
  *                   realm_slug: twisted-minds
  *       403:
- *         description: The invite is not valid anymore, or is for a different realm, or the user is logged out, or does not correspond to the invited one.
+ *         description: The invite is not valid anymore, or is for a different realm, or does not correspond to the invited one.
  *         content:
  *           application/json:
  *             schema:
@@ -462,34 +462,31 @@ router.post(
  *             schema:
  *               $ref: "#/components/schemas/genericResponse"
  */
-router.post("/:realm_id/invites/:nonce", ensureLoggedIn, async (req, res) => {
+router.post("/:realm_id/invites/:nonce", withLoggedIn, async (req, res) => {
   const { nonce } = req.params;
   const user = req.currentUser?.uid;
 
-  // If we decide not to separate out sign-up invites, replace this with the currently commented out code below it.
-  const firebaseUserData = await firebaseAuth.auth().getUser(user);
-  const email = firebaseUserData.email;
-  if (!email) {
-    throw new Internal500Error(`Failed to get user's email`);
-  }
-  // const getEmail = async (user?: string) => {
-  //   if (user) {
-  //     try {
-  //       const firebaseUserData = await firebaseAuth.auth().getUser(user);
-  //       return firebaseUserData.email;
-  //     } catch (e) {
-  //       error(`Error while getting user email from firebase`);
-  //       error(e);
-  //       throw new Internal500Error(`Failed to get user's email`);
-  //     }
-  //   } else {
-  //     return req.body.email;
-  //   }
-  // };
-  // const email = await getEmail(user);
-  // const { password } = req.body;
-
-  const realmStringId = req.params.realm_id;
+  // If we decide to separate out sign-up invites, this can be replaced with the currently commented out code below it.
+  const getEmail = async (user?: string) => {
+    if (!user) {
+      return req.body.email;
+    }
+    try {
+      const firebaseUserData = await firebaseAuth.auth().getUser(user);
+      return firebaseUserData.email;
+    } catch (e) {
+      error(`Error while getting user email from firebase`);
+      error(e);
+      throw new Internal500Error(`Failed to get user's email`);
+    }
+  };
+  const email = await getEmail(user);
+  const { password } = req.body;
+  // const firebaseUserData = await firebaseAuth.auth().getUser(user);
+  // const email = firebaseUserData.email;
+  // if (!email) {
+  //   throw new Internal500Error(`Failed to get user's email`);
+  // }
 
   const currentRealmIds = await getRealmIdsByUuid({
     realmId: req.params.realm_id,
@@ -516,53 +513,58 @@ router.post("/:realm_id/invites/:nonce", ensureLoggedIn, async (req, res) => {
     realmId: inviteDetails.realmId,
   });
 
-  const alreadyOnRealm = await checkUserOnRealm({
-    user,
-    realmStringId: inviteRealm.string_id,
-  });
-  if (alreadyOnRealm) {
-    res
-      .status(409)
-      .send({ message: "User is already a member of the requested realm" });
-    return;
-  } else if (alreadyOnRealm !== false) {
-    throw new Internal500Error(`Failed to check if user is already on realm`);
+  if (user) {
+    const alreadyOnRealm = await checkUserOnRealm({
+      user,
+      realmStringId: inviteRealm.string_id,
+    });
+    if (alreadyOnRealm) {
+      res
+        .status(409)
+        .send({ message: "User is already a member of the requested realm" });
+      return;
+    } else if (alreadyOnRealm !== false) {
+      throw new Internal500Error(`Failed to check if user is already on realm`);
+    }
   }
 
-  // TODO: decide if sign-up invites should be separated off from Realm invites. If yes, move this.
-  // firebaseAuth
-  //   .auth()
-  //   .createUser({
-  //     email,
-  //     password,
-  //   })
-  //   .then(async (user) => {
-  //     const uid = user.uid;
-  //     log(`Created new firebase user with uid ${uid}`);
-  //     // TODO: decide whether to put these together in a transaction.
-  //     const success = await markInviteUsed({ nonce });
-  //     if (!success) {
-  //       throw new Internal500Error(`Failed to mark invite as used`);
-  //     }
-  //     const created = await createNewUser({
-  //       firebaseId: uid,
-  //       invitedBy: inviteDetails.inviter,
-  //       createdOn: user.metadata.creationTime,
-  //     });
-  //     if (!created) {
-  //       throw new Internal500Error(`Failed to create new user`);
-  //     }
-  //     res.sendStatus(200);
-  //   })
-  //   .catch((error) => {
-  //     throw new BadRequest400Error(
-  //       `Error creating user: ${error.message} (${error.code})`
-  //     );
-  // });
+  const getUserId = async (user?: string) => {
+    log("user in func:", user);
+    if (!!user) {
+      return user;
+    }
+    // TODO: decide if sign-up invites should be separated off from Realm invites. If yes, move this.
+    try {
+      const newUser = await firebaseAuth.auth().createUser({
+        email,
+        password,
+      });
+      log("newUser: %o", newUser);
+      const uid = newUser.uid;
+      log(`Created new firebase user with uid ${uid}`);
+      const created = await createNewUser({
+        firebaseId: uid,
+        invitedBy: inviteDetails.inviter,
+        createdOn: newUser.metadata.creationTime,
+      });
+      if (!created) {
+        throw new Internal500Error(`Failed to create new user`);
+      }
+      log("uid:", uid);
+      return uid;
+    } catch (error) {
+      throw new Internal500Error(
+        `Error creating user: ${error.message} (${error.code})`
+      );
+    }
+  };
+
+  const userId = await getUserId(user);
+  log("userId:", userId);
 
   const accepted = await acceptInvite({
     nonce,
-    user,
+    user: userId,
     realmStringId: inviteRealm.string_id,
   });
   if (!accepted) {

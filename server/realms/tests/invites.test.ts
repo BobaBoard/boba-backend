@@ -30,11 +30,13 @@ jest.mock("handlers/auth");
 jest.mock("server/db-pool");
 
 const authGetUser = jest.fn();
+const authCreateUser = jest.fn();
 
 jest.mock("firebase-admin", () => {
   return {
     auth: () => ({
       getUser: async () => authGetUser(),
+      createUser: async () => authCreateUser(),
     }),
   };
 });
@@ -670,17 +672,42 @@ describe("Tests accept invites endpoint", () => {
     });
   });
 
-  test("doesn't accept invite when logged out", async () => {
+  test("creates new user when logged out", async () => {
     await wrapWithTransaction(async () => {
       authGetUser.mockReturnValue({ email: UWU_INVITES[1].email });
+      authCreateUser.mockReturnValue({
+        uid: "new_user_firebase_id",
+        metadata: { creationTime: "2022-05-12 19:10:25" },
+      });
 
       insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
-      const res = await request(server.app).post(
-        `/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[1].nonce}`
-      );
+      const res = await request(server.app)
+        .post(`/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[1].nonce}`)
+        .send({
+          email: UWU_INVITES[1].email,
+          password: "secure_password",
+        });
 
-      expect(res.status).toBe(401);
-      expect(res.body.message).toBe("No authenticated user found.");
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({
+        realm_id: UWU_REALM_STRING_ID,
+        realm_slug: UWU_REALM_SLUG,
+      });
+
+      const preExistingUsers = [
+        BOBATAN_USER_ID,
+        JERSEY_DEVIL_USER_ID,
+        ONCEST_USER_ID,
+        SEXY_DADDY_USER_ID,
+        ZODIAC_KILLER_USER_ID,
+      ];
+      const users = await pool.many(`SELECT users.firebase_id FROM users;`);
+      expect(users).toHaveLength(preExistingUsers.length + 1);
+      expect(users[preExistingUsers.length]).toEqual({
+        firebase_id: "new_user_firebase_id",
+      });
+
+      const preExistingUsersInRealm = [BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID];
       const usersInRealm = await pool.many(
         `SELECT users.firebase_id
       FROM realm_users
@@ -690,11 +717,10 @@ describe("Tests accept invites endpoint", () => {
           realm_string_id: UWU_REALM_STRING_ID,
         }
       );
-      expect(usersInRealm).toHaveLength(2);
-      expect(usersInRealm).toEqual([
-        { firebase_id: BOBATAN_USER_ID },
-        { firebase_id: ZODIAC_KILLER_USER_ID },
-      ]);
+      expect(usersInRealm).toHaveLength(preExistingUsersInRealm.length + 1);
+      expect(usersInRealm[preExistingUsersInRealm.length]).toEqual({
+        firebase_id: "new_user_firebase_id",
+      });
     });
   });
 });
