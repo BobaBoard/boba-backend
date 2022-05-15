@@ -137,17 +137,17 @@ const insertInvites = async (
 describe("Tests get invites endpoint", () => {
   const server = startTestServer(router);
 
-  test("correctly sends 204 response if no invites exist", async () => {
+  test("correctly sends empty invites array if no invites exist", async () => {
     setLoggedInUser(BOBATAN_USER_ID);
     const res = await request(server.app).get(
       `/${TWISTED_MINDS_REALM_STRING_ID}/invites`
     );
 
-    expect(res.status).toBe(204);
-    expect(res.body).toEqual({});
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual({ invites: [] });
   });
 
-  test("correctly sends 204 response if no pending invites exist for realm", async () => {
+  test("correctly sends empty invites array if no pending invites exist for realm", async () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(BOBATAN_USER_ID);
       insertInvites(
@@ -160,8 +160,8 @@ describe("Tests get invites endpoint", () => {
         `/${TWISTED_MINDS_REALM_STRING_ID}/invites`
       );
 
-      expect(res.status).toBe(204);
-      expect(res.body).toEqual({});
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({ invites: [] });
     });
   });
 
@@ -311,6 +311,109 @@ describe("Tests get invites endpoint", () => {
     expect(res.status).toBe(401);
     expect(res.body.message).toBe("No authenticated user found.");
     expect(res.body.invites).toBeUndefined();
+  });
+});
+
+describe("Tests get invite by nonce endpoint", () => {
+  const server = startTestServer(router);
+
+  test("correctly sends 404 if no invites exist", async () => {
+    setLoggedInUser(BOBATAN_USER_ID);
+    const res = await request(server.app).get(
+      `/${TWISTED_MINDS_REALM_STRING_ID}/invites/${TWISTED_MINDS_INVITES[0].nonce}`
+    );
+
+    expect(res.status).toBe(404);
+    expect(res.body.message).toBe("The invite was not found");
+  });
+
+  test("correctly sends 404 response if requested invite not found", async () => {
+    await wrapWithTransaction(async () => {
+      insertInvites(
+        USED_AND_EXPIRED_INVITES,
+        BOBATAN_USER_ID,
+        TWISTED_MINDS_REALM_STRING_ID
+      );
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
+      const res = await request(server.app).get(
+        `/${TWISTED_MINDS_REALM_STRING_ID}/invites/${TWISTED_MINDS_INVITES[0].nonce}`
+      );
+
+      expect(res.status).toBe(404);
+      expect(res.body.message).toBe("The invite was not found");
+    });
+  });
+
+  test("Correctly gets invite realm and status for pending invite", async () => {
+    await wrapWithTransaction(async () => {
+      insertInvites(
+        TWISTED_MINDS_INVITES,
+        BOBATAN_USER_ID,
+        TWISTED_MINDS_REALM_STRING_ID
+      );
+      const res = await request(server.app).get(
+        `/${TWISTED_MINDS_REALM_STRING_ID}/invites/${TWISTED_MINDS_INVITES[0].nonce}`
+      );
+
+      expect(res.status).toBe(200);
+      expect(res.body.realm_id).toBe(TWISTED_MINDS_REALM_STRING_ID);
+      expect(res.body.realm_slug).toBe(TWISTED_MINDS_REALM_SLUG);
+      expect(res.body.invite_status).toBe("pending");
+    });
+  });
+
+  test("Correctly gets invite realm when realm in param incorrect", async () => {
+    await wrapWithTransaction(async () => {
+      insertInvites(
+        TWISTED_MINDS_INVITES,
+        BOBATAN_USER_ID,
+        TWISTED_MINDS_REALM_STRING_ID
+      );
+      const res = await request(server.app).get(
+        `/${UWU_REALM_STRING_ID}/invites/${TWISTED_MINDS_INVITES[0].nonce}`
+      );
+
+      expect(res.status).toBe(200);
+      expect(res.body.realm_id).toBe(TWISTED_MINDS_REALM_STRING_ID);
+      expect(res.body.realm_slug).toBe(TWISTED_MINDS_REALM_SLUG);
+      expect(res.body.invite_status).toBe("pending");
+    });
+  });
+
+  test("Correctly gets invite realm and status for expired invite", async () => {
+    await wrapWithTransaction(async () => {
+      insertInvites(
+        TWISTED_MINDS_INVITES,
+        BOBATAN_USER_ID,
+        TWISTED_MINDS_REALM_STRING_ID
+      );
+      const res = await request(server.app).get(
+        `/${TWISTED_MINDS_REALM_STRING_ID}/invites/${TWISTED_MINDS_INVITES[4].nonce}`
+      );
+
+      expect(res.status).toBe(200);
+      expect(res.body.realm_id).toBe(TWISTED_MINDS_REALM_STRING_ID);
+      expect(res.body.realm_slug).toBe(TWISTED_MINDS_REALM_SLUG);
+      expect(res.body.invite_status).toBe("expired");
+    });
+  });
+
+  test("Correctly gets invite realm and status for used invite", async () => {
+    await wrapWithTransaction(async () => {
+      insertInvites(
+        TWISTED_MINDS_INVITES,
+        BOBATAN_USER_ID,
+        TWISTED_MINDS_REALM_STRING_ID
+      );
+      const res = await request(server.app).get(
+        `/${TWISTED_MINDS_REALM_STRING_ID}/invites/${TWISTED_MINDS_INVITES[3].nonce}`
+      );
+
+      expect(res.status).toBe(200);
+      expect(res.body.realm_id).toBe(TWISTED_MINDS_REALM_STRING_ID);
+      expect(res.body.realm_slug).toBe(TWISTED_MINDS_REALM_SLUG);
+      expect(res.body.invite_status).toBe("used");
+    });
   });
 });
 
