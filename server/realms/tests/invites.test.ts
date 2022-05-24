@@ -29,13 +29,11 @@ const log = debug("bobaserver:realms:invites-test-log");
 jest.mock("handlers/auth");
 jest.mock("server/db-pool");
 
-const authGetUser = jest.fn();
 const authCreateUser = jest.fn();
 
 jest.mock("firebase-admin", () => {
   return {
     auth: () => ({
-      getUser: async () => authGetUser(),
       createUser: async () => authCreateUser(),
     }),
   };
@@ -571,8 +569,7 @@ describe("Tests accept invites endpoint", () => {
 
   test("correctly accepts invite and adds user to the realm", async () => {
     await wrapWithTransaction(async () => {
-      setLoggedInUser(JERSEY_DEVIL_USER_ID);
-      authGetUser.mockReturnValue({ email: UWU_INVITES[1].email });
+      setLoggedInUser(JERSEY_DEVIL_USER_ID, UWU_INVITES[1].email);
 
       insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app).post(
@@ -585,7 +582,7 @@ describe("Tests accept invites endpoint", () => {
         realm_slug: UWU_REALM_SLUG,
       });
       const addedToRealm = await checkUserOnRealm({
-        user: JERSEY_DEVIL_USER_ID,
+        firebaseId: JERSEY_DEVIL_USER_ID,
         realmStringId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(true);
@@ -595,7 +592,6 @@ describe("Tests accept invites endpoint", () => {
   test("accepts invite correctly when invite generated from endpoint", async () => {
     await wrapWithTransaction(async () => {
       const onclerEmail = "onceler@email.com";
-      authGetUser.mockReturnValue({ email: onclerEmail });
 
       setLoggedInUser(ZODIAC_KILLER_USER_ID);
       const resCreateInvite = await request(server.app)
@@ -605,7 +601,7 @@ describe("Tests accept invites endpoint", () => {
       const sliceIndex = resCreateInvite.body.invite_url.lastIndexOf("/") + 1;
       const nonce = resCreateInvite.body.invite_url.slice(sliceIndex);
 
-      setLoggedInUser(ONCEST_USER_ID);
+      setLoggedInUser(ONCEST_USER_ID, onclerEmail);
       const resAccept = await request(server.app).post(
         `/${UWU_REALM_STRING_ID}/invites/${nonce}`
       );
@@ -616,7 +612,7 @@ describe("Tests accept invites endpoint", () => {
         realm_slug: UWU_REALM_SLUG,
       });
       const addedToRealm = await checkUserOnRealm({
-        user: ONCEST_USER_ID,
+        firebaseId: ONCEST_USER_ID,
         realmStringId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(true);
@@ -625,8 +621,7 @@ describe("Tests accept invites endpoint", () => {
 
   test("doesn't accept invite when user is already a member of the realm", async () => {
     await wrapWithTransaction(async () => {
-      setLoggedInUser(BOBATAN_USER_ID);
-      authGetUser.mockReturnValue({ email: UWU_INVITES[0].email });
+      setLoggedInUser(BOBATAN_USER_ID, UWU_INVITES[0].email);
 
       insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app).post(
@@ -642,17 +637,16 @@ describe("Tests accept invites endpoint", () => {
 
   test("doesn't accept invite when user email doesn't match invite email", async () => {
     await wrapWithTransaction(async () => {
-      setLoggedInUser(JERSEY_DEVIL_USER_ID);
-      authGetUser.mockReturnValue({ email: "differentEmail.email" });
+      setLoggedInUser(JERSEY_DEVIL_USER_ID, "differentEmail@email.com");
 
       insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app).post(
         `/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[1].nonce}`
       );
-      expect(res.status).toBe(403);
       expect(res.body.message).toBe(`Invite email does not match`);
+      expect(res.status).toBe(403);
       const addedToRealm = await checkUserOnRealm({
-        user: JERSEY_DEVIL_USER_ID,
+        firebaseId: JERSEY_DEVIL_USER_ID,
         realmStringId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(false);
@@ -661,8 +655,7 @@ describe("Tests accept invites endpoint", () => {
 
   test("doesn't accept invite when invite is already used", async () => {
     await wrapWithTransaction(async () => {
-      setLoggedInUser(JERSEY_DEVIL_USER_ID);
-      authGetUser.mockReturnValue({ email: USED_AND_EXPIRED_INVITES[0].email });
+      setLoggedInUser(JERSEY_DEVIL_USER_ID, USED_AND_EXPIRED_INVITES[0].email);
 
       insertInvites(
         USED_AND_EXPIRED_INVITES,
@@ -676,7 +669,7 @@ describe("Tests accept invites endpoint", () => {
       expect(res.status).toBe(403);
       expect(res.body.message).toBe(`Invite expired or already used`);
       const addedToRealm = await checkUserOnRealm({
-        user: JERSEY_DEVIL_USER_ID,
+        firebaseId: JERSEY_DEVIL_USER_ID,
         realmStringId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(false);
@@ -685,8 +678,7 @@ describe("Tests accept invites endpoint", () => {
 
   test("doesn't accept invite when invite is expired", async () => {
     await wrapWithTransaction(async () => {
-      setLoggedInUser(JERSEY_DEVIL_USER_ID);
-      authGetUser.mockReturnValue({ email: USED_AND_EXPIRED_INVITES[1].email });
+      setLoggedInUser(JERSEY_DEVIL_USER_ID, USED_AND_EXPIRED_INVITES[1].email);
 
       insertInvites(
         USED_AND_EXPIRED_INVITES,
@@ -700,7 +692,7 @@ describe("Tests accept invites endpoint", () => {
       expect(res.status).toBe(403);
       expect(res.body.message).toBe(`Invite expired or already used`);
       const addedToRealm = await checkUserOnRealm({
-        user: JERSEY_DEVIL_USER_ID,
+        firebaseId: JERSEY_DEVIL_USER_ID,
         realmStringId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(false);
@@ -709,8 +701,7 @@ describe("Tests accept invites endpoint", () => {
 
   test("accepts invite when realm doesn't match invite realm, but returns correct realm data", async () => {
     await wrapWithTransaction(async () => {
-      setLoggedInUser(JERSEY_DEVIL_USER_ID);
-      authGetUser.mockReturnValue({ email: UWU_INVITES[1].email });
+      setLoggedInUser(JERSEY_DEVIL_USER_ID, UWU_INVITES[1].email);
 
       insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app).post(
@@ -723,12 +714,12 @@ describe("Tests accept invites endpoint", () => {
         realm_slug: UWU_REALM_SLUG,
       });
       const addedToRealm = await checkUserOnRealm({
-        user: JERSEY_DEVIL_USER_ID,
+        firebaseId: JERSEY_DEVIL_USER_ID,
         realmStringId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(true);
       const addedToWrongRealm = await checkUserOnRealm({
-        user: JERSEY_DEVIL_USER_ID,
+        firebaseId: JERSEY_DEVIL_USER_ID,
         realmStringId: TWISTED_MINDS_REALM_STRING_ID,
       });
       expect(addedToWrongRealm).toEqual(false);
@@ -737,8 +728,7 @@ describe("Tests accept invites endpoint", () => {
 
   test("doesn't accept invite if requested realm doesn't exist", async () => {
     await wrapWithTransaction(async () => {
-      setLoggedInUser(JERSEY_DEVIL_USER_ID);
-      authGetUser.mockReturnValue({ email: UWU_INVITES[1].email });
+      setLoggedInUser(JERSEY_DEVIL_USER_ID, UWU_INVITES[1].email);
 
       insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app).post(
@@ -746,9 +736,9 @@ describe("Tests accept invites endpoint", () => {
       );
 
       expect(res.status).toBe(404);
-      expect(res.body.message).toBe("The realm was not found");
+      expect(res.body.message).toBe("The realm was not found.");
       const addedToRealm = await checkUserOnRealm({
-        user: JERSEY_DEVIL_USER_ID,
+        firebaseId: JERSEY_DEVIL_USER_ID,
         realmStringId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(false);
@@ -757,8 +747,7 @@ describe("Tests accept invites endpoint", () => {
 
   test("doesn't accept invite if requested invite doesn't exist", async () => {
     await wrapWithTransaction(async () => {
-      setLoggedInUser(JERSEY_DEVIL_USER_ID);
-      authGetUser.mockReturnValue({ email: UWU_INVITES[1].email });
+      setLoggedInUser(JERSEY_DEVIL_USER_ID, UWU_INVITES[1].email);
 
       insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app).post(
@@ -768,7 +757,7 @@ describe("Tests accept invites endpoint", () => {
       expect(res.status).toBe(404);
       expect(res.body.message).toBe("Invite not found");
       const addedToRealm = await checkUserOnRealm({
-        user: JERSEY_DEVIL_USER_ID,
+        firebaseId: JERSEY_DEVIL_USER_ID,
         realmStringId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(false);
@@ -777,7 +766,6 @@ describe("Tests accept invites endpoint", () => {
 
   test("creates new user when logged out", async () => {
     await wrapWithTransaction(async () => {
-      authGetUser.mockReturnValue({ email: UWU_INVITES[1].email });
       authCreateUser.mockReturnValue({
         uid: "new_user_firebase_id",
         metadata: { creationTime: "2022-05-12 19:10:25" },
