@@ -1,4 +1,9 @@
-import { ensureLoggedIn, withLoggedIn, withUserSettings } from "handlers/auth";
+import {
+  ensureLoggedIn,
+  withFirebaseUserData,
+  withLoggedIn,
+  withUserSettings,
+} from "handlers/auth";
 import express, { Express, Router } from "express";
 
 import { DbThreadSummaryType } from "Types";
@@ -42,10 +47,11 @@ export const wrapWithTransaction = async (test: () => void) => {
   }
 };
 
-export const setLoggedInUser = (firebaseId: string) => {
+export const setLoggedInUser = (firebaseId: string, email?: string) => {
   if (
     !jest.isMockFunction(withLoggedIn) ||
     !jest.isMockFunction(ensureLoggedIn) ||
+    !jest.isMockFunction(withFirebaseUserData) ||
     !jest.isMockFunction(withUserSettings)
   ) {
     throw Error(
@@ -60,6 +66,12 @@ export const setLoggedInUser = (firebaseId: string) => {
   mocked(ensureLoggedIn).mockImplementation((req, res, next) => {
     // @ts-ignore
     req.currentUser = { uid: firebaseId };
+    next();
+  });
+  mocked(withFirebaseUserData).mockImplementation((req, res, next) => {
+    // @ts-ignore
+    req.currentUser = { uid: firebaseId };
+    req.currentFirebaseUserData = { email: email };
     next();
   });
   mocked(withUserSettings).mockImplementation((req, res, next) => {
