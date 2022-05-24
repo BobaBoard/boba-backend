@@ -3,6 +3,7 @@ import { decodeCursor, encodeCursor } from "utils/queries-utils";
 
 import { DbActivityThreadType } from "Types";
 import debug from "debug";
+import firebaseAuth from "firebase-admin";
 import { parseSettings } from "utils/settings";
 import pool from "server/db-pool";
 import sql from "./sql";
@@ -147,7 +148,7 @@ export const getBobadexIdentities = async ({
   }
 };
 
-export const createNewUser = async (user: {
+export const createNewDbUser = async (user: {
   firebaseId: string;
   invitedBy: number;
   createdOn: string;
@@ -167,5 +168,37 @@ export const createNewUser = async (user: {
     error(`Error creating a new user.`);
     error(e);
     return false;
+  }
+};
+
+export const createNewUser = async ({
+  email,
+  password,
+  invitedBy,
+}: {
+  email: string;
+  password: string;
+  invitedBy: number;
+}): Promise<string> => {
+  try {
+    const newUser = await firebaseAuth.auth().createUser({
+      email,
+      password,
+    });
+    const uid = newUser.uid;
+    log(`Created new firebase user with uid ${uid}`);
+    const created = await createNewDbUser({
+      firebaseId: uid,
+      invitedBy,
+      createdOn: newUser.metadata.creationTime,
+    });
+    if (!created) {
+      throw new Error(`Failed to create new user`);
+    }
+    return uid;
+  } catch (e) {
+    error(`Error creating user:`);
+    error(e);
+    return null;
   }
 };
