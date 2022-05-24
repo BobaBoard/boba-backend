@@ -2,6 +2,7 @@ import { CacheKeys, cache } from "server/cache";
 import { NextFunction, Request, Response } from "express";
 import firebaseAuth, { auth } from "firebase-admin";
 
+import { Internal500Error } from "types/errors/api";
 import { SettingEntry } from "../types/settings";
 import debug from "debug";
 import { getUserSettings } from "server/users/queries";
@@ -20,6 +21,7 @@ declare global {
       // type so the possible values will be suggested by the editor.
       currentUser?: auth.DecodedIdToken & { settings?: SettingEntry[] };
       authenticationError?: Error;
+      currentFirebaseUserData?: auth.UserRecord;
     }
   }
 }
@@ -132,6 +134,42 @@ export const withUserSettings = (
         stringify(userSettings)
       );
     }
+    next();
+  });
+};
+
+export const withFirebaseUserData = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  withLoggedIn(req, res, async () => {
+    const currentUserId = req.currentUser?.uid;
+    log("user:", currentUserId);
+    if (!currentUserId) {
+      next();
+      return;
+    }
+
+    if (process.env.NODE_ENV != "production" && process.env.FORCED_USER) {
+      log(`Bypassing firebaseAuth call and substituting test data`);
+      const firebaseUserData = { email: "test@test.com" };
+      if (!firebaseUserData) {
+        error(`Error while getting user data from firebase`);
+        throw new Internal500Error(`Failed to get user's firebase data`);
+      }
+      // @ts-ignore
+      req.currentFirebaseUserData = firebaseUserData;
+      next();
+      return;
+    }
+    const firebaseUserData = await firebaseAuth.auth().getUser(currentUserId);
+    log("firebaseUserData:", firebaseUserData);
+    if (!firebaseUserData) {
+      error(`Error while getting user data from firebase`);
+      throw new Internal500Error(`Failed to get user's firebase data`);
+    }
+    req.currentFirebaseUserData = firebaseUserData;
     next();
   });
 };
