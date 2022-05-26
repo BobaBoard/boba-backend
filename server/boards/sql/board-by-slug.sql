@@ -8,6 +8,7 @@ SELECT
     boards.tagline,
     boards.avatar_reference_id as avatar_url,
     boards.settings,
+    board_categories.string_id as board_categories_string_id,
     json_agg(DISTINCT jsonb_build_object(
         'id', bds.string_id,
         'index', bds.index, 
@@ -78,5 +79,7 @@ FROM boards
         ON boards.id = br.board_id
     LEFT JOIN logged_in_user
         ON 1=1
+    JOIN board_categories
+        on boards.board_category_string_id = board_category_string_categories.id
 WHERE boards.slug=${board_slug}
-GROUP BY boards.id, umb.user_id, opb.index, br.logged_out_restrictions, br.logged_in_base_restrictions, logged_in_user.id
+GROUP BY boards.id, umb.user_id, opb.index, br.logged_out_restrictions, br.logged_in_base_restrictions, logged_in_user.id, board_categories.string_id 
