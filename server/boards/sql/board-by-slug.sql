@@ -8,7 +8,7 @@ SELECT
     boards.tagline,
     boards.avatar_reference_id as avatar_url,
     boards.settings,
-    board_catgories.string_id,
+    board_catgories.string_id as board_categories_string_id,
     json_agg(DISTINCT jsonb_build_object(
         'id', bds.string_id,
         'index', bds.index, 
