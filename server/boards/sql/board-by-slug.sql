@@ -8,6 +8,7 @@ SELECT
     boards.tagline,
     boards.avatar_reference_id as avatar_url,
     boards.settings,
+    boards.board_category_id,
     json_agg(DISTINCT jsonb_build_object(
         'id', bds.string_id,
         'index', bds.index, 
@@ -43,7 +44,7 @@ SELECT
     to_jsonb(COALESCE(logged_out_restrictions, ARRAY[]::board_restrictions_type[])) as logged_out_restrictions,
     to_jsonb(COALESCE(CASE WHEN logged_in_user.id IS NOT NULL THEN logged_in_base_restrictions ELSE NULL END, ARRAY[]::board_restrictions_type[])) as logged_in_base_restrictions
 FROM boards 
-    LEFT JOIN threads 
+    JOIN threads 
         ON boards.id = threads.parent_board
     LEFT JOIN user_muted_boards umb 
         ON boards.id = umb.board_id AND umb.user_id = (SELECT id FROM logged_in_user LIMIT 1)
