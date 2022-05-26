@@ -10,7 +10,7 @@ SELECT
     boards.tagline,
     boards.avatar_reference_id,
     boards.settings,
-    boards.board_category_id,
+    board_categories.string_id,
     MAX(posts.last_activity) as last_post,
     MAX(comments.last_activity) as last_comment,
     GREATEST(MAX(COMMENTS.last_activity), MAX(posts.last_activity)) AS last_activity,
@@ -31,7 +31,7 @@ LEFT JOIN user_muted_boards
 LEFT JOIN ordered_pinned_boards 
     ON boards.id = ordered_pinned_boards.board_id
         AND ordered_pinned_boards.user_id = logged_in_user.id
-JOIN threads 
+LEFT JOIN threads 
     ON boards.id = threads.parent_board
 LEFT JOIN user_muted_threads
     ON user_muted_threads.user_id = logged_in_user.id
@@ -102,5 +102,7 @@ LEFT JOIN LATERAL (
             AND user_hidden_threads.thread_id IS NULL 
             AND comments.parent_thread = threads.id) as comments
     ON 1=1
+    JOIN board_categories
+        on boards.board_category_id = board_categories.id
 WHERE $/realm_string_id/ IS NULL OR realms.string_id = $/realm_string_id/
 GROUP BY boards.id, user_muted_boards.board_id, ordered_pinned_boards.INDEX, logged_out_restrictions, logged_in_base_restrictions, logged_in_user.id, realms.string_id 

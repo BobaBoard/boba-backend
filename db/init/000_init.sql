@@ -71,7 +71,7 @@ CREATE TABLE IF NOT EXISTS realms
 CREATE UNIQUE INDEX realms_string_id on realms(string_id);
 CREATE UNIQUE INDEX realms_slug on realms(slug);
 
-CREATE TABLE IF NOT EXISTS board_category
+CREATE TABLE IF NOT EXISTS board_categories
 (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     string_id TEXT NOT NULL,
