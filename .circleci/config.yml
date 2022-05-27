@@ -1,7 +1,8 @@
 version: 2.1
 jobs:
   build-and-test:
-    machine: true
+    machine:
+      image: ubuntu-2204:2022.04.1
     steps:
       - checkout
       - run:
