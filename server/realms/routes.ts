@@ -110,7 +110,8 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
       icon: "https://images-ext-1.discordapp.net/external/KLz7_JytTOB6vzGDmnAuXTgkDtWuUCluyB6VxiAL8FA/%3Fsize%3D1024/https/cdn.discordapp.com/icons/911351540504199168/d6f98ff59822c22b1ff650796c346166.png",
       settings,
       homepage: {
-        blocks: [FANDOM_CODERS_RULES_BLOCK],
+        blocks:
+          realm_slug == "twisted-minds" ? [FANDOM_CODERS_RULES_BLOCK] : [],
       },
       boards: realmBoards,
     });
