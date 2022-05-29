@@ -10,6 +10,7 @@ export interface ActivityNotifications {
 export interface NotificationsResponse {
   has_notifications: boolean;
   is_outdated_notifications: boolean;
+  realm_id: string | undefined;
   realm_boards: Record<string, ActivityNotifications>;
   pinned_boards: Record<string, ActivityNotifications>;
 }

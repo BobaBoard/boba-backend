@@ -45,6 +45,8 @@ components:
           type: boolean
         is_outdated_notifications:
           type: boolean
+        realm_id:
+          type: string
         realm_boards:
           description: |
             A map from board id to its NotificationStatus for each realm board.
@@ -61,5 +63,6 @@ components:
       required:
         - has_notifications
         - is_outdated_notifications
+        - realm_id
         - realm_boards
         - pinned_boards

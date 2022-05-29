@@ -28,6 +28,7 @@ import debug from "debug";
 import express from "express";
 import firebaseAuth from "firebase-admin";
 import { getBoards } from "../boards/queries";
+import { getRealmDataBySlug } from "server/realms/queries";
 import stringify from "fast-json-stable-stringify";
 
 const info = debug("bobaserver:users:routes-info");
@@ -232,11 +233,14 @@ router.patch("/@me", ensureLoggedIn, async (req, res) => {
  *               $ref: "#/components/schemas/NotificationsResponse" 
  */
 router.get("/@me/notifications", ensureLoggedIn, async (req, res) => {
-  const { realm_id } = req.params;
-
+  const { realm_id } = req.params
+  const realmData = await getRealmDataBySlug({
+    realmSlug: realm_id,
+  });
   // TODO[realms]: this needs a specific per-realm query
   const boards = await getBoards({
     firebaseId: req.currentUser?.uid,
+    realmId: realmData.string_id,
   });
 
   if (!boards) {
@@ -258,7 +262,7 @@ router.get("/@me/notifications", ensureLoggedIn, async (req, res) => {
       };
       return result;
     }, {});
-  const realm = notifications.reduce((result: any, current: any) => {
+  const realmBoards = notifications.reduce((result: any, current: any) => {
     result[current.id] = {
       ...current,
     };
@@ -277,8 +281,9 @@ router.get("/@me/notifications", ensureLoggedIn, async (req, res) => {
   const notificationsDataResponse = {
     has_notifications: hasNotifications,
     is_outdated_notifications: isOutdatedNotifications,
+    realm_id: realmData.string_id,
     pinned_boards: pinned,
-    realm_boards: realm,
+    realm_boards: realmBoards,
   };
   res.status(200).json(notificationsDataResponse);
 });
@@ -307,14 +312,16 @@ router.get("/@me/notifications", ensureLoggedIn, async (req, res) => {
 router.delete("/@me/notifications", ensureLoggedIn, async (req, res) => {
   let currentUserId: string = req.currentUser?.uid;
   log(`Dismissing notifications for firebase id: ${currentUserId}`);
+  const { realm_id } = req.params
+
   const dismissSuccessful = await dismissAllNotifications({
     firebaseId: currentUserId,
+    realmId: realm_id,
   });
 
   if (!dismissSuccessful) {
     error(`Dismiss failed`);
     return res.sendStatus(500);
-    return;
   }
 
   info(`Dismiss successful`);

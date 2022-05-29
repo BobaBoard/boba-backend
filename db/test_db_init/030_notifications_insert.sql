@@ -23,20 +23,23 @@ INSERT INTO user_thread_last_visits(user_id, thread_id, last_visit_time) VALUES
     -- Give jersey_devil_69 a visit so he has unseen posts, but from them.
     to_timestamp('2020-05-01 9:42:00', 'YYYY-MM-DD HH:MI:SS'));
 
-INSERT INTO dismiss_notifications_requests(user_id, dismiss_request_time) VALUES
+INSERT INTO dismiss_notifications_requests(user_id, realm_id, dismiss_request_time) VALUES
   ((SELECT id FROM users WHERE username = 'SexyDaddy69'),
     -- SexyDaddy69 dismissed notifications end of april, so everything from May should be new.
     -- However, despite never having visited any post, everything from before then should be
     -- marked as viewed.
+    (SELECT id FROM realms WHERE slug = 'twisted-minds'),
     to_timestamp('2020-04-30 23:59:59', 'YYYY-MM-DD HH24:MI:SS')),
   ((SELECT id FROM users WHERE username = 'bobatan'),
     -- Give Bobatan a really far in the past dismiss date to check it doesn't interfere with queries
-    -- without changing the logic of other tests.
+    -- without changing the logic of other tests.    
+    (SELECT id FROM realms WHERE slug = 'twisted-minds'),
     to_timestamp('2019-01-01 00:00:00', 'YYYY-MM-DD HH24:MI:SS')),
   ((SELECT id FROM users WHERE username = 'The Zodiac Killer'),
     -- Give The Zodiac Killer a date in-between the new threads in the long board.
     -- He has visited some threads before then, but everything since that date should
-    -- be dismissed.
+    -- be dismissed.    
+    (SELECT id FROM realms WHERE slug = 'twisted-minds'),
     to_timestamp('2020-04-20 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
 
 INSERT INTO dismiss_board_notifications_requests(user_id, board_id, dismiss_request_time) VALUES
