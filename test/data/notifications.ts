@@ -7,6 +7,9 @@ import {
 } from "./boards";
 
 import { NotificationsResponse } from "../../types/rest/notifications";
+import {
+  TWISTED_MINDS_REALM_STRING_ID,
+} from "./realms";
 
 export const BOBATAN_NOTIFICATIONS: NotificationsResponse = {
   has_notifications: true,
@@ -29,6 +32,7 @@ export const BOBATAN_NOTIFICATIONS: NotificationsResponse = {
       last_visited_at: "2020-05-25T16:42:00.000Z",
     },
   },
+  realm_id: TWISTED_MINDS_REALM_STRING_ID,
   realm_boards: {
     "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc": {
       has_updates: false,

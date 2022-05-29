@@ -26,8 +26,17 @@ describe("Tests boards REST API", () => {
     expect(res.status).toBe(200);
     expect(res.body).toEqual(BOBATAN_NOTIFICATIONS);
   });
-
   // TODO: check if any test user has outdated notifications or none, and test there
 });
 
-// TODO: test dismiss notifications
+ describe("Tests boards REST API", () => {
+  const server = startTestServer(router);
+
+  test("should dismiss notifications", async () => {
+    setLoggedInUser(BOBATAN_USER_ID);
+    const res = await request(server.app).delete(`/@me/notifications`);
+    
+    expect(res.status).toBe(204);
+  });
+  
+}); 
