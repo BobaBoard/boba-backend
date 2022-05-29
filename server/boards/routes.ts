@@ -664,7 +664,7 @@ router.delete(
  *       204:
  *         description: Board notifications dismissed.
  */
-router.post(
+router.delete(
   "/:board_id/notifications",
   ensureLoggedIn,
   ensureBoardAccess,
