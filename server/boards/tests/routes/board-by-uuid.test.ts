@@ -5,7 +5,7 @@ import { setLoggedInUser, startTestServer } from "utils/test-utils";
 import { BOBATAN_USER_ID } from "test/data/auth";
 import { BoardMetadata } from "types/rest/boards";
 import debug from "debug";
-import { mocked } from "jest-mock";
+import { mocked } from "ts-jest/utils";
 import request from "supertest";
 import router from "../../routes";
 import stringify from "fast-json-stable-stringify";
