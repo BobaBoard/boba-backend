@@ -13,6 +13,7 @@ import {
 } from "test/data/realms";
 import {
   setLoggedInUser,
+  setLoggedInUserWithEmail,
   startTestServer,
   wrapWithTransaction,
 } from "utils/test-utils";
@@ -569,7 +570,10 @@ describe("Tests accept invites endpoint", () => {
 
   test("correctly accepts invite and adds user to the realm", async () => {
     await wrapWithTransaction(async () => {
-      setLoggedInUser(JERSEY_DEVIL_USER_ID, UWU_INVITES[1].email);
+      setLoggedInUserWithEmail({
+        uid: JERSEY_DEVIL_USER_ID,
+        email: UWU_INVITES[1].email,
+      });
 
       insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app).post(
@@ -601,7 +605,7 @@ describe("Tests accept invites endpoint", () => {
       const sliceIndex = resCreateInvite.body.invite_url.lastIndexOf("/") + 1;
       const nonce = resCreateInvite.body.invite_url.slice(sliceIndex);
 
-      setLoggedInUser(ONCEST_USER_ID, onclerEmail);
+      setLoggedInUserWithEmail({ uid: ONCEST_USER_ID, email: onclerEmail });
       const resAccept = await request(server.app).post(
         `/${UWU_REALM_STRING_ID}/invites/${nonce}`
       );
@@ -621,7 +625,10 @@ describe("Tests accept invites endpoint", () => {
 
   test("doesn't accept invite when user is already a member of the realm", async () => {
     await wrapWithTransaction(async () => {
-      setLoggedInUser(BOBATAN_USER_ID, UWU_INVITES[0].email);
+      setLoggedInUserWithEmail({
+        uid: BOBATAN_USER_ID,
+        email: UWU_INVITES[0].email,
+      });
 
       insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app).post(
@@ -637,7 +644,10 @@ describe("Tests accept invites endpoint", () => {
 
   test("doesn't accept invite when user email doesn't match invite email", async () => {
     await wrapWithTransaction(async () => {
-      setLoggedInUser(JERSEY_DEVIL_USER_ID, "differentEmail@email.com");
+      setLoggedInUserWithEmail({
+        uid: JERSEY_DEVIL_USER_ID,
+        email: "differentEmail@email.com",
+      });
 
       insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app).post(
@@ -655,7 +665,10 @@ describe("Tests accept invites endpoint", () => {
 
   test("doesn't accept invite when invite is already used", async () => {
     await wrapWithTransaction(async () => {
-      setLoggedInUser(JERSEY_DEVIL_USER_ID, USED_AND_EXPIRED_INVITES[0].email);
+      setLoggedInUserWithEmail({
+        uid: JERSEY_DEVIL_USER_ID,
+        email: USED_AND_EXPIRED_INVITES[0].email,
+      });
 
       insertInvites(
         USED_AND_EXPIRED_INVITES,
@@ -678,7 +691,10 @@ describe("Tests accept invites endpoint", () => {
 
   test("doesn't accept invite when invite is expired", async () => {
     await wrapWithTransaction(async () => {
-      setLoggedInUser(JERSEY_DEVIL_USER_ID, USED_AND_EXPIRED_INVITES[1].email);
+      setLoggedInUserWithEmail({
+        uid: JERSEY_DEVIL_USER_ID,
+        email: USED_AND_EXPIRED_INVITES[1].email,
+      });
 
       insertInvites(
         USED_AND_EXPIRED_INVITES,
@@ -701,7 +717,10 @@ describe("Tests accept invites endpoint", () => {
 
   test("accepts invite when realm doesn't match invite realm, but returns correct realm data", async () => {
     await wrapWithTransaction(async () => {
-      setLoggedInUser(JERSEY_DEVIL_USER_ID, UWU_INVITES[1].email);
+      setLoggedInUserWithEmail({
+        uid: JERSEY_DEVIL_USER_ID,
+        email: UWU_INVITES[1].email,
+      });
 
       insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app).post(
@@ -728,7 +747,10 @@ describe("Tests accept invites endpoint", () => {
 
   test("doesn't accept invite if requested realm doesn't exist", async () => {
     await wrapWithTransaction(async () => {
-      setLoggedInUser(JERSEY_DEVIL_USER_ID, UWU_INVITES[1].email);
+      setLoggedInUserWithEmail({
+        uid: JERSEY_DEVIL_USER_ID,
+        email: UWU_INVITES[1].email,
+      });
 
       insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app).post(
@@ -747,7 +769,10 @@ describe("Tests accept invites endpoint", () => {
 
   test("doesn't accept invite if requested invite doesn't exist", async () => {
     await wrapWithTransaction(async () => {
-      setLoggedInUser(JERSEY_DEVIL_USER_ID, UWU_INVITES[1].email);
+      setLoggedInUserWithEmail({
+        uid: JERSEY_DEVIL_USER_ID,
+        email: UWU_INVITES[1].email,
+      });
 
       insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app).post(

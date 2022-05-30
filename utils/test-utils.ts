@@ -1,9 +1,4 @@
-import {
-  ensureLoggedIn,
-  withFirebaseUserData,
-  withLoggedIn,
-  withUserSettings,
-} from "handlers/auth";
+import { ensureLoggedIn, withLoggedIn, withUserSettings } from "handlers/auth";
 import express, { Express, Router } from "express";
 
 import { DbThreadSummaryType } from "Types";
@@ -47,11 +42,10 @@ export const wrapWithTransaction = async (test: () => void) => {
   }
 };
 
-export const setLoggedInUser = (firebaseId: string, email?: string) => {
+export const setLoggedInUser = (firebaseId: string) => {
   if (
     !jest.isMockFunction(withLoggedIn) ||
     !jest.isMockFunction(ensureLoggedIn) ||
-    !jest.isMockFunction(withFirebaseUserData) ||
     !jest.isMockFunction(withUserSettings)
   ) {
     throw Error(
@@ -68,15 +62,39 @@ export const setLoggedInUser = (firebaseId: string, email?: string) => {
     req.currentUser = { uid: firebaseId };
     next();
   });
-  mocked(withFirebaseUserData).mockImplementation((req, res, next) => {
+  mocked(withUserSettings).mockImplementation((req, res, next) => {
     // @ts-ignore
     req.currentUser = { uid: firebaseId };
-    req.currentFirebaseUserData = { email: email };
+    next();
+  });
+};
+
+export const setLoggedInUserWithEmail = (user: {
+  uid: string;
+  email: string;
+}) => {
+  if (
+    !jest.isMockFunction(withLoggedIn) ||
+    !jest.isMockFunction(ensureLoggedIn) ||
+    !jest.isMockFunction(withUserSettings)
+  ) {
+    throw Error(
+      "setLoggedInUserWithEmail requires 'handlers/auth' to be explicitly mocked."
+    );
+  }
+  mocked(withLoggedIn).mockImplementation((req, res, next) => {
+    // @ts-ignore
+    req.currentUser = user;
+    next();
+  });
+  mocked(ensureLoggedIn).mockImplementation((req, res, next) => {
+    // @ts-ignore
+    req.currentUser = user;
     next();
   });
   mocked(withUserSettings).mockImplementation((req, res, next) => {
     // @ts-ignore
-    req.currentUser = { uid: firebaseId };
+    req.currentUser = user;
     next();
   });
 };
