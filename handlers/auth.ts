@@ -51,8 +51,10 @@ export const withLoggedIn = (
         log(
           `Overriding user id with locally configured one (${process.env.FORCED_USER})`
         );
+        log(`User email set as test@test.com`);
         // @ts-ignore
         req.currentUser.uid = process.env.FORCED_USER;
+        req.currentUser.email = "test@test.com";
       }
       next();
     })
@@ -138,38 +140,40 @@ export const withUserSettings = (
   });
 };
 
-export const withFirebaseUserData = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  withLoggedIn(req, res, async () => {
-    const currentUserId = req.currentUser?.uid;
-    log("user:", currentUserId);
-    if (!currentUserId) {
-      next();
-      return;
-    }
+// Leaving this commented out for now rather than deleting it entirely because it does return more info on the user than the decoded token in withLoggedIn does
+// and I will be annoyed with myself if I delete it and need to remake it somewhere down the line.
+// export const withFirebaseUserData = (
+//   req: Request,
+//   res: Response,
+//   next: NextFunction
+// ) => {
+//   withLoggedIn(req, res, async () => {
+//     const currentUserId = req.currentUser?.uid;
+//     log("user:", currentUserId);
+//     if (!currentUserId) {
+//       next();
+//       return;
+//     }
 
-    if (process.env.NODE_ENV != "production" && process.env.FORCED_USER) {
-      log(`Bypassing firebaseAuth call and substituting test data`);
-      const firebaseUserData = { email: "test@test.com" };
-      if (!firebaseUserData) {
-        error(`Error while getting user data from firebase`);
-        throw new Internal500Error(`Failed to get user's firebase data`);
-      }
-      // @ts-ignore
-      req.currentFirebaseUserData = firebaseUserData;
-      next();
-      return;
-    }
-    const firebaseUserData = await firebaseAuth.auth().getUser(currentUserId);
-    log("firebaseUserData:", firebaseUserData);
-    if (!firebaseUserData) {
-      error(`Error while getting user data from firebase`);
-      throw new Internal500Error(`Failed to get user's firebase data`);
-    }
-    req.currentFirebaseUserData = firebaseUserData;
-    next();
-  });
-};
+//     if (process.env.NODE_ENV != "production" && process.env.FORCED_USER) {
+//       log(`Bypassing firebaseAuth call and substituting test data`);
+//       const firebaseUserData = { email: "test@test.com" };
+//       if (!firebaseUserData) {
+//         error(`Error while getting user data from firebase`);
+//         throw new Internal500Error(`Failed to get user's firebase data`);
+//       }
+//       // @ts-ignore
+//       req.currentFirebaseUserData = firebaseUserData;
+//       next();
+//       return;
+//     }
+//     const firebaseUserData = await firebaseAuth.auth().getUser(currentUserId);
+//     log("firebaseUserData:", firebaseUserData);
+//     if (!firebaseUserData) {
+//       error(`Error while getting user data from firebase`);
+//       throw new Internal500Error(`Failed to get user's firebase data`);
+//     }
+//     req.currentFirebaseUserData = firebaseUserData;
+//     next();
+//   });
+// };

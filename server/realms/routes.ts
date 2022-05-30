@@ -13,12 +13,7 @@ import {
   getUserPermissionsForRealm,
 } from "server/realms/queries";
 import { createNewUser, getUserFromFirebaseId } from "server/users/queries";
-import {
-  ensureLoggedIn,
-  withFirebaseUserData,
-  withLoggedIn,
-  withUserSettings,
-} from "handlers/auth";
+import { ensureLoggedIn, withLoggedIn, withUserSettings } from "handlers/auth";
 import { ensureRealmExists, ensureRealmPermission } from "handlers/permissions";
 import { getRealmDataBySlug, getSettingsBySlug } from "./queries";
 
@@ -541,15 +536,14 @@ router.post(
 // TODO: decide if sign-up invites should be separated off from Realm invites.
 router.post(
   "/:realm_id/invites/:nonce",
-  withFirebaseUserData,
+  withLoggedIn,
   ensureRealmExists,
   async (req, res) => {
     const { nonce } = req.params;
     const userId = req.currentUser?.uid;
-    const firebaseUserData = req.currentFirebaseUserData;
 
     // If we decide to separate out sign-up invites, remove getting email and password from req body.
-    const email = firebaseUserData?.email || req.body.email;
+    const email = req.currentUser?.email || req.body.email;
     const { password } = req.body;
 
     const inviteDetails = await getInviteDetails({ nonce });
@@ -587,7 +581,8 @@ router.post(
       }
     }
 
-    // If we decide to separate out sign-up invites, firebaseId is just userId.
+    // If we decide to separate out sign-up invites, move the call to createNewUser to the sign-up endpoint.
+    // Then the firebaseId param for acceptInvite can just be userId.
     const firebaseId =
       userId ??
       (await createNewUser({
