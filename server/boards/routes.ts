@@ -117,7 +117,7 @@ router.get("/:board_id", ensureBoardAccess, async (req, res) => {
  *     operationId: createThread
  *     description: Creates a new thread in the specified board.
  *     tags:
- *       - /threads/
+ *       - /boards/
  *     security:
  *       - firebase: []
  *     parameters:
