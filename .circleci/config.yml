@@ -26,7 +26,7 @@ jobs:
           command: docker-compose -f docker-compose.test.yml up -d database
       - run:
           name: wait for db
-          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+          command: dockerize -wait tcp://localhost:${BBENV_POSTGRES_PORT} -timeout 1m
       - run:
           name: db logs
           command: docker-compose logs
