@@ -4,6 +4,7 @@ import { CacheKeys, cache } from "server/cache";
 
 import axios from "axios";
 import { getTriggeredWebhooks } from "server/threads/queries";
+import { maybeUpdateSubscriptionsOnThreadChange } from "./utils";
 
 threadEvents.register(
   threadEvents.EVENT_TYPES.THREAD_CREATED,
@@ -36,4 +37,15 @@ threadEvents.register(
   }
 );
 
-threadEvents.register(threadEvents.EVENT_TYPES.THREAD_UPDATED, () => {});
+threadEvents.register(
+  threadEvents.EVENT_TYPES.THREAD_UPDATED,
+  async ({ boardSlug, post }) => {
+    await maybeUpdateSubscriptionsOnThreadChange({
+      threadId: post.parent_thread_id,
+      postId: post.id,
+      boardSlug,
+      secretIdentity: post.secret_identity,
+      categoryNames: post.tags?.category_tags,
+    });
+  }
+);
