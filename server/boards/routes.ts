@@ -16,18 +16,14 @@ import {
   ensureNoIdentityLeakage,
   makeServerThread,
 } from "utils/response-utils";
-import {
-  getThreadByStringId,
-  getTriggeredWebhooks,
-} from "server/threads/queries";
 
 import { BoardPermissions } from "types/permissions";
 import { NotFound404Error } from "types/errors/api";
-import axios from "axios";
 import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
 import { getBoardMetadataByUuid } from "./utils";
+import { getThreadByStringId } from "server/threads/queries";
 
 const info = debug("bobaserver:board:routes-info");
 const log = debug("bobaserver:board:routes");
@@ -230,31 +226,6 @@ router.post(
     threadEvents.emit(threadEvents.EVENT_TYPES.THREAD_CREATED, {
       thread: serverThread,
     });
-
-    //   const webhooks = await getTriggeredWebhooks({
-    //     slug: boardSlug,
-    //     categories: serverThread.posts[0].tags?.category_tags,
-    //   });
-    //   if (webhooks && webhooks.length > 0) {
-    //     const threadUrl = `https://v0.boba.social/!${boardSlug}/thread/${serverThread.id}`;
-    //     webhooks.forEach(
-    //       async ({ webhook, subscriptionNames, subscriptionIds }) => {
-    //         await Promise.all(
-    //           subscriptionIds.map((subscriptionId) =>
-    //             cache().hdel(CacheKeys.SUBSCRIPTION, subscriptionId)
-    //           )
-    //         );
-    //         const message = `Your "${subscriptionNames.join(
-    //           ", "
-    //         )}" subscription has updated!\n${threadUrl}`;
-    //         axios.post(webhook, {
-    //           content: message,
-    //           username: serverThread.posts[0].secret_identity.name,
-    //           avatar_url: serverThread.posts[0].secret_identity.avatar,
-    //         });
-    //       }
-    //     );
-    //   }
   }
 );
 
