@@ -18,7 +18,6 @@ import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
 import { getTagsDelta } from "./utils";
-import { maybeUpdateSubscriptionsOnThreadChange } from "../subscriptions/utils";
 import { withPostPermissions } from "handlers/permissions";
 
 const info = debug("bobaserver:posts:routes-info");
