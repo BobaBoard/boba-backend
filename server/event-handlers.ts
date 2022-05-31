@@ -1,3 +1,5 @@
 import { registerAll as registerAllSubscriptionEvents } from "./subscriptions/events";
 
-registerAllSubscriptionEvents();
+export const registerEventHandlers = () => {
+  registerAllSubscriptionEvents();
+};
