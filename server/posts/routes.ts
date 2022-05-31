@@ -1,3 +1,5 @@
+import * as threadEvents from "handlers/events/threads";
+
 import { BadRequest400Error, Forbidden403Error } from "types/errors/api";
 import {
   ensureNoIdentityLeakage,
@@ -120,12 +122,9 @@ router.post("/:post_id/contributions", ensureLoggedIn, async (req, res) => {
   ensureNoIdentityLeakage(responsePost);
   res.status(200).json({ contribution: responsePost });
 
-  await maybeUpdateSubscriptionsOnThreadChange({
-    threadId: responsePost.parent_thread_id,
-    postId: responsePost.id,
+  threadEvents.emit(threadEvents.EVENT_TYPES.THREAD_UPDATED, {
     boardSlug,
-    secretIdentity: responsePost.secret_identity,
-    categoryNames: responsePost.tags?.category_tags,
+    post: responsePost,
   });
 });
 
