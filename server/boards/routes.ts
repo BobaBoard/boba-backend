@@ -1,3 +1,5 @@
+import * as threadEvents from "handlers/events/threads";
+
 import { CacheKeys, cache } from "server/cache";
 import {
   createThread,
@@ -224,30 +226,35 @@ router.post(
     log(
       `generating webhook for thread ${serverThread.id} in board ${boardSlug}`
     );
-    const webhooks = await getTriggeredWebhooks({
-      slug: boardSlug,
-      categories: serverThread.posts[0].tags?.category_tags,
+
+    threadEvents.emit(threadEvents.EVENT_TYPES.THREAD_CREATED, {
+      thread: serverThread,
     });
-    if (webhooks && webhooks.length > 0) {
-      const threadUrl = `https://v0.boba.social/!${boardSlug}/thread/${serverThread.id}`;
-      webhooks.forEach(
-        async ({ webhook, subscriptionNames, subscriptionIds }) => {
-          await Promise.all(
-            subscriptionIds.map((subscriptionId) =>
-              cache().hdel(CacheKeys.SUBSCRIPTION, subscriptionId)
-            )
-          );
-          const message = `Your "${subscriptionNames.join(
-            ", "
-          )}" subscription has updated!\n${threadUrl}`;
-          axios.post(webhook, {
-            content: message,
-            username: serverThread.posts[0].secret_identity.name,
-            avatar_url: serverThread.posts[0].secret_identity.avatar,
-          });
-        }
-      );
-    }
+
+    //   const webhooks = await getTriggeredWebhooks({
+    //     slug: boardSlug,
+    //     categories: serverThread.posts[0].tags?.category_tags,
+    //   });
+    //   if (webhooks && webhooks.length > 0) {
+    //     const threadUrl = `https://v0.boba.social/!${boardSlug}/thread/${serverThread.id}`;
+    //     webhooks.forEach(
+    //       async ({ webhook, subscriptionNames, subscriptionIds }) => {
+    //         await Promise.all(
+    //           subscriptionIds.map((subscriptionId) =>
+    //             cache().hdel(CacheKeys.SUBSCRIPTION, subscriptionId)
+    //           )
+    //         );
+    //         const message = `Your "${subscriptionNames.join(
+    //           ", "
+    //         )}" subscription has updated!\n${threadUrl}`;
+    //         axios.post(webhook, {
+    //           content: message,
+    //           username: serverThread.posts[0].secret_identity.name,
+    //           avatar_url: serverThread.posts[0].secret_identity.avatar,
+    //         });
+    //       }
+    //     );
+    //   }
   }
 );
 
