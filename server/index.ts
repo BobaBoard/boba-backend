@@ -23,6 +23,7 @@ import { initCache } from "./cache";
 import { withLoggedIn } from "handlers/auth";
 import { handleApiErrors } from "handlers/errors";
 import { applyRoutes } from "./all-routes";
+import "./event-handlers";
 
 const serviceAccount = require(process.env.GOOGLE_APPLICATION_CREDENTIALS_PATH);
 
