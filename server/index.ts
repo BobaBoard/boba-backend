@@ -23,7 +23,7 @@ import { initCache } from "./cache";
 import { withLoggedIn } from "handlers/auth";
 import { handleApiErrors } from "handlers/errors";
 import { applyRoutes } from "./all-routes";
-import "./event-handlers";
+import { registerEventHandlers } from "./event-handlers";
 
 const serviceAccount = require(process.env.GOOGLE_APPLICATION_CREDENTIALS_PATH);
 
@@ -50,6 +50,7 @@ app.use(withLoggedIn);
 const port = process.env.PORT || 4200;
 
 applyRoutes(app);
+registerEventHandlers();
 app.set("json spaces", 2);
 
 app.use(handleApiErrors);
