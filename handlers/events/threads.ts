@@ -7,16 +7,16 @@ export enum EVENT_TYPES {
   THREAD_UPDATED,
 }
 
-interface ThreadCreatedPayload {
+export interface ThreadCreatedPayload {
   thread: Thread;
 }
 
-interface ThreadUpdatedPayload {
+export interface ThreadUpdatedPayload {
   boardSlug: string;
   post: Post;
 }
 
-interface EventToPayload {
+export interface EventToPayload {
   [EVENT_TYPES.THREAD_CREATED]: ThreadCreatedPayload;
   [EVENT_TYPES.THREAD_UPDATED]: ThreadUpdatedPayload;
 }
