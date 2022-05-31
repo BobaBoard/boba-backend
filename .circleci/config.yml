@@ -17,23 +17,12 @@ jobs:
           name: stop everything
           command: docker-compose -f docker-compose.test.yml down
       - run:
-          name: install dockerize
-          command: wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && sudo tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
-          environment:
-            DOCKERIZE_VERSION: v0.3.0
-      - run:
-          name: start db
-          command: docker-compose -f docker-compose.test.yml up -d database
-      - run:
-          name: wait for db
-          command: dockerize -wait tcp://localhost:${BBENV_POSTGRES_PORT} -timeout 1m
-      - run:
-          name: db logs
-          command: docker-compose logs
-          when: on_fail
-      - run:
           name: run test
           command: docker-compose -f docker-compose.test.yml run --rm test
+      - run:
+          name: database logs
+          command: docker-compose logs database
+          when: on_fail
       - store_test_results:
           path: ./reports/junit/
       - store_artifacts:
