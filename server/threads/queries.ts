@@ -229,43 +229,6 @@ export const getUserPermissionsForThread = async ({
   }
 };
 
-export const getTriggeredWebhooks = async ({
-  slug,
-  categories,
-}: {
-  slug: string;
-  categories: string[];
-}): Promise<
-  | {
-      webhook: string;
-      webhook_handler_type: "discord" | "rest";
-      subscriptionNames: string[];
-      triggeredCategories: string[];
-      subscriptionIds: string[];
-    }[]
-  | false
-> => {
-  try {
-    const result = await pool.manyOrNone(sql.getTriggeredWebhooks, {
-      board_slug: slug,
-      category_names: categories.map((category) =>
-        category.toLowerCase().trim()
-      ),
-    });
-    return result.map((result) => ({
-      webhook: result.webhook,
-      webhook_handler_type: result.webhook_handler_type,
-      subscriptionNames: result.subscription_names,
-      triggeredCategories: result.triggered_categories,
-      subscriptionIds: result.subscription_ids,
-    }));
-  } catch (e) {
-    error(`Error while getting triggered webhooks.`);
-    error(e);
-    return false;
-  }
-};
-
 export const moveThread = async ({
   threadId,
   destinationId,
