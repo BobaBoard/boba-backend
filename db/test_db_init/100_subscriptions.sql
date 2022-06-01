@@ -12,10 +12,10 @@ INSERT INTO board_category_subscriptions(subscription_id, board_id, category_id)
     -- Maps "blood" to "blood" category in "!gore"
     (2, 2, 1);
 
-INSERT INTO webhooks(id, name, webhook) OVERRIDING SYSTEM VALUE VALUES
-    (1, 'realm of terror', 'http://localhost:4200/hooks/realm_of_terror'),
-    (2, 'volunteers',  'http://localhost:4200/hooks/volunteers'),
-    (3, 'volunteers',  'http://localhost:4200/hooks/aiba');
+INSERT INTO webhooks(id, name, webhook, handler_type) OVERRIDING SYSTEM VALUE VALUES
+    (1, 'realm of terror', 'http://localhost:4200/hooks/realm_of_terror', 'discord'::webhook_handler_type),
+    (2, 'volunteers',  'http://localhost:4200/hooks/volunteers', 'rest'::webhook_handler_type),
+    (3, 'aiba',  'http://localhost:4200/hooks/aiba', 'discord'::webhook_handler_type);
 SELECT setval('webhooks_id_seq', (SELECT MAX(id) from "webhooks"));
 
 INSERT INTO subscription_webhooks (subscription_id, webhook_id) VALUES
