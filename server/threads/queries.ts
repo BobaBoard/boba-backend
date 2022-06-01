@@ -238,6 +238,7 @@ export const getTriggeredWebhooks = async ({
 }): Promise<
   | {
       webhook: string;
+      webhook_handler_type: "discord" | "rest";
       subscriptionNames: string[];
       triggeredCategories: string[];
       subscriptionIds: string[];
@@ -253,6 +254,7 @@ export const getTriggeredWebhooks = async ({
     });
     return result.map((result) => ({
       webhook: result.webhook,
+      webhook_handler_type: result.webhook_handler_type,
       subscriptionNames: result.subscription_names,
       triggeredCategories: result.triggered_categories,
       subscriptionIds: result.subscription_ids,
