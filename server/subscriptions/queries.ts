@@ -46,11 +46,10 @@ export const getTriggeredThreadsSubscriptions = async ({
   threadId: string;
   categoryNames: string[];
 }): Promise<
-  | false
-  | {
-      name: string;
-      string_id: string;
-    }[]
+  {
+    name: string;
+    string_id: string;
+  }[]
 > => {
   try {
     return await pool.manyOrNone(sql.getTriggeredThreadSubscriptions, {
@@ -58,11 +57,13 @@ export const getTriggeredThreadsSubscriptions = async ({
       category_names: categoryNames,
     });
   } catch (e) {
-    error(`Error while fetching triggered thread subscriptions.`);
-    error(e);
-    return false;
+    throw new Internal500Error(
+      `Error while fetching triggered thread subscriptions.`
+    );
   }
 };
+
+export const getTriggeredBVSubscriptions = async ({}) => {};
 
 export const getWebhooksForSubscriptions = async ({
   subscriptions,
@@ -87,5 +88,40 @@ export const getWebhooksForSubscriptions = async ({
         ", "
       )}.`
     );
+  }
+};
+
+export const getTriggeredThreadCreatedWebhooks = async ({
+  slug,
+  categories,
+}: {
+  slug: string;
+  categories: string[];
+}): Promise<
+  | {
+      webhook: string;
+      webhook_handler_type: "discord" | "rest";
+      subscriptionNames: string[];
+      triggeredCategories: string[];
+      subscriptionIds: string[];
+    }[]
+  | false
+> => {
+  try {
+    const result = await pool.manyOrNone(sql.getTriggeredWebhooks, {
+      board_slug: slug,
+      category_names: categories.map((category) =>
+        category.toLowerCase().trim()
+      ),
+    });
+    return result.map((result) => ({
+      webhook: result.webhook,
+      webhook_handler_type: result.webhook_handler_type,
+      subscriptionNames: result.subscription_names,
+      triggeredCategories: result.triggered_categories,
+      subscriptionIds: result.subscription_ids,
+    }));
+  } catch (e) {
+    throw new Internal500Error(`Error while fetching triggered webhooks.`);
   }
 };
