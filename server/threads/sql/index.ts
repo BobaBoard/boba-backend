@@ -101,23 +101,6 @@ const getThreadDetails = `
     WHERE threads.string_id = $/thread_string_id/
 `;
 
-const getTriggeredWebhooks = `
-    SELECT
-        webhook,
-        handler_type AS webhook_handler_type,
-        array_agg(DISTINCT subscriptions.string_id) AS subscription_ids,
-        array_agg(DISTINCT subscriptions.name) AS subscription_names,
-        array_agg(DISTINCT categories.category) AS triggered_categories
-    FROM subscriptions
-        LEFT JOIN board_category_subscriptions bcs ON bcs.subscription_id = subscriptions.id
-        LEFT JOIN boards ON bcs.board_id = boards.id
-        LEFT JOIN categories ON bcs.category_id = categories.id
-        LEFT JOIN subscription_webhooks sw ON subscriptions.id = sw.subscription_id
-        LEFT JOIN webhooks ON sw.webhook_id = webhooks.id
-    WHERE boards.slug = $/board_slug/ AND categories.category = ANY($/category_names/)
-    GROUP BY webhook
-`;
-
 const moveThread = `
     UPDATE threads
     SET parent_board = (SELECT id FROM boards WHERE boards.string_id = $/board_string_id/)
@@ -143,6 +126,5 @@ export default {
   updateThreadViewByStringId,
   getRoleByStringIdAndBoardId,
   getThreadDetails,
-  getTriggeredWebhooks,
   moveThread,
 };
