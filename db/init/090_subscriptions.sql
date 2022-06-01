@@ -1,9 +1,16 @@
 
+/**
+ * REST webhooks will return data in the same format as the REST API endpoint that triggered the webhook.
+ * Discord webhooks will return a JSON object compatible with Discord's webhook endpoints.
+ */
+CREATE TYPE webhook_handler_type AS ENUM ('rest', 'discord');
+
 CREATE TABLE IF NOT EXISTS webhooks
 (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     name TEXT NOT NULL,
-    webhook TEXT NOT NULL
+    webhook TEXT NOT NULL,
+    handler_type webhook_handler_type NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS subscriptions
