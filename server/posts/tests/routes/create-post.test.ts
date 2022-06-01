@@ -1,6 +1,5 @@
 import * as uuid from "uuid";
 
-import { CacheKeys, cache } from "server/cache";
 import {
   EVENT_TYPES as THREAD_EVENT_TYPES,
   ThreadUpdatedPayload,
@@ -15,7 +14,6 @@ import {
 import { BOBATAN_USER_ID } from "test/data/auth";
 import { CHARACTER_TO_MAIM_POST_ID } from "test/data/posts";
 import { Post } from "types/rest/threads";
-import axios from "axios";
 import { mocked } from "ts-jest/utils";
 import request from "supertest";
 import router from "../../routes";
@@ -24,9 +22,6 @@ jest.mock("handlers/auth");
 jest.mock("handlers/events/threads");
 jest.mock("server/db-pool");
 jest.mock("server/cache");
-jest.mock("axios", () => ({
-  post: jest.fn(() => Promise.resolve({ data: {} })),
-}));
 jest.mock("uuid", () => ({
   __esModule: true,
   // @ts-ignore
