@@ -10,7 +10,7 @@ import {
 import { BOBATAN_USER_ID } from "test/data/auth";
 import { CHARACTER_TO_MAIM_POST_ID } from "test/data/posts";
 import axios from "axios";
-import { mocked } from "jest-mock";
+import { mocked } from "ts-jest/utils";
 import request from "supertest";
 import router from "../../routes";
 

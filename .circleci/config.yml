@@ -1,12 +1,15 @@
 version: 2.1
 jobs:
   build-and-test:
-    machine: true
+    machine:
+      image: ubuntu-2204:2022.04.1
     steps:
       - checkout
       - run:
           name: create env file
-          command: env > .env
+          # IMPORTANT: we prefix boba-related env variables with BBENV_ not to accidentally copy
+          # CircleCIs' own variables. We then remove the BBENV_ prefix.
+          command: env | grep "^BBENV_" | sed "s/BBENV_//" > .env
       - run:
           name: see files
           command: ls -la
@@ -16,6 +19,10 @@ jobs:
       - run:
           name: run test
           command: docker-compose -f docker-compose.test.yml run --rm test
+      - run:
+          name: database logs
+          command: docker-compose logs database
+          when: on_fail
       - store_test_results:
           path: ./reports/junit/
       - store_artifacts:
