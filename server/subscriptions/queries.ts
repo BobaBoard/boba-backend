@@ -48,14 +48,19 @@ export const getTriggeredThreadsSubscriptions = async ({
 }): Promise<
   {
     name: string;
-    string_id: string;
+    id: string;
   }[]
 > => {
   try {
-    return await pool.manyOrNone(sql.getTriggeredThreadSubscriptions, {
-      thread_string_id: threadId,
-      category_names: categoryNames,
-    });
+    return (
+      await pool.manyOrNone(sql.getTriggeredThreadSubscriptions, {
+        thread_string_id: threadId,
+        category_names: categoryNames,
+      })
+    )?.map((s) => ({
+      name: s.name,
+      id: s.string_id,
+    }));
   } catch (e) {
     throw new Internal500Error(
       `Error while fetching triggered thread subscriptions.`
@@ -63,65 +68,61 @@ export const getTriggeredThreadsSubscriptions = async ({
   }
 };
 
-export const getTriggeredBVSubscriptions = async ({}) => {};
-
-export const getWebhooksForSubscriptions = async ({
-  subscriptions,
+export const getTriggeredBoardSubscriptions = async ({
+  boardId,
+  categories,
 }: {
-  subscriptions: string[];
+  boardId: string;
+  categories: string[];
 }): Promise<
-  | {
-      webhook: string;
-      subscription_ids: string[];
-    }[]
-  | false
+  {
+    name: string;
+    id: string;
+  }[]
 > => {
   try {
     return (
-      await pool.manyOrNone(sql.getSubscriptionsWebhooks, {
-        subscriptions_string_ids: subscriptions,
+      await pool.manyOrNone(sql.getTriggeredBoardSubscriptions, {
+        board_string_id: boardId,
+        category_names: categories,
       })
-    )?.filter((result: any) => result.webhook != null);
+    )?.map((s) => ({
+      name: s.name,
+      id: s.string_id,
+    }));
   } catch (e) {
     throw new Internal500Error(
-      `Error while getting webhooks for subscriptions ${subscriptions.join(
-        ", "
-      )}.`
+      `Error while fetching triggered thread subscriptions.`
     );
   }
 };
 
-export const getTriggeredThreadCreatedWebhooks = async ({
-  slug,
-  categories,
+export const getWebhooksForSubscriptions = async ({
+  subscriptionIds,
 }: {
-  slug: string;
-  categories: string[];
+  subscriptionIds: string[];
 }): Promise<
   | {
       webhook: string;
-      webhook_handler_type: "discord" | "rest";
-      subscriptionNames: string[];
-      triggeredCategories: string[];
+      webhookHandlerType: "rest" | "discord";
       subscriptionIds: string[];
     }[]
-  | false
 > => {
   try {
-    const result = await pool.manyOrNone(sql.getTriggeredWebhooks, {
-      board_slug: slug,
-      category_names: categories.map((category) =>
-        category.toLowerCase().trim()
-      ),
-    });
-    return result.map((result) => ({
-      webhook: result.webhook,
-      webhook_handler_type: result.webhook_handler_type,
-      subscriptionNames: result.subscription_names,
-      triggeredCategories: result.triggered_categories,
-      subscriptionIds: result.subscription_ids,
+    return (
+      await pool.manyOrNone(sql.getWebhooksForSubscription, {
+        subscriptions_string_ids: subscriptionIds,
+      })
+    ).map((s) => ({
+      webhook: s.webhook,
+      webhookHandlerType: s.webhook_handler_type,
+      subscriptionIds: s.subscription_ids,
     }));
   } catch (e) {
-    throw new Internal500Error(`Error while fetching triggered webhooks.`);
+    throw new Internal500Error(
+      `Error while getting webhooks for subscriptions ${subscriptionIds.join(
+        ", "
+      )}.`
+    );
   }
 };

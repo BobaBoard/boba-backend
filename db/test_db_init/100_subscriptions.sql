@@ -12,6 +12,12 @@ INSERT INTO board_category_subscriptions(subscription_id, board_id, category_id)
     -- Maps "blood" to "blood" category in "!gore"
     (2, 2, 1);
 
+INSERT INTO thread_category_subscriptions (thread_id, category_id, subscription_id) VALUES (
+    -- Somnium files memes thread
+    (SELECT id FROM threads WHERE string_id = '2765f36a-b4f9-4efe-96f2-cb34f055d032'),
+    (SELECT id FROM categories WHERE category = 'aiba'),
+    3);
+
 INSERT INTO webhooks(id, name, webhook, handler_type) OVERRIDING SYSTEM VALUE VALUES
     (1, 'realm of terror', 'http://localhost:4200/hooks/realm_of_terror', 'discord'::webhook_handler_type),
     (2, 'volunteers',  'http://localhost:4200/hooks/volunteers', 'rest'::webhook_handler_type),
@@ -19,12 +25,9 @@ INSERT INTO webhooks(id, name, webhook, handler_type) OVERRIDING SYSTEM VALUE VA
 SELECT setval('webhooks_id_seq', (SELECT MAX(id) from "webhooks"));
 
 INSERT INTO subscription_webhooks (subscription_id, webhook_id) VALUES
+    -- Maps "blood & bruises" to "realm_of_terror" webhook
     (1, 1),
+    -- Maps "blood" to "volunteers" webhook
     (2, 2),
+    -- Maps "aiba" to "aiba" webhook
     (3, 3);
-
-INSERT INTO thread_category_subscriptions (thread_id, category_id, subscription_id) VALUES (
-    -- Somnium files memes thread
-    (SELECT id FROM threads WHERE string_id = '2765f36a-b4f9-4efe-96f2-cb34f055d032'),
-    (SELECT id FROM categories WHERE category = 'aiba'),
-    3);

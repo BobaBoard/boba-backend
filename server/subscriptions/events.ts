@@ -2,103 +2,92 @@ import * as threadEvents from "handlers/events/threads";
 
 import { CacheKeys, cache } from "server/cache";
 import {
-  getTriggeredThreadCreatedWebhooks,
+  getTriggeredBoardSubscriptions,
   getTriggeredThreadsSubscriptions,
   getWebhooksForSubscriptions,
 } from "./queries";
 
 import axios from "axios";
 import debug from "debug";
+import { getWebhookPayload } from "./utils";
 
-const error = debug("bobaserver:subscriptions:utils-error");
-const log = debug("bobaserver:subscriptions:utils-log");
+const log = debug("bobaserver:subscriptions:events-log");
 
-const maybeUpdateSubscriptionsOnThreadCreated = async ({
-  thread,
-}: threadEvents.ThreadCreatedPayload) => {
-  const webhooks = await getTriggeredThreadCreatedWebhooks({
-    slug: thread.parent_board_slug,
-    categories: thread.posts[0].tags?.category_tags,
+const publishSubscriptionsUpdates = async ({
+  subscriptions,
+  eventPayload,
+}: {
+  subscriptions: {
+    name: string;
+    id: string;
+  }[];
+  eventPayload: threadEvents.EventToPayload[keyof threadEvents.EventToPayload];
+}) => {
+  log(
+    `Triggered subscription ids: ${subscriptions.map((s) => s.id).join(", ")}`
+  );
+
+  const webhooks = await getWebhooksForSubscriptions({
+    subscriptionIds: subscriptions.map((s) => s.id),
   });
   if (webhooks && webhooks.length > 0) {
-    // TODO: add parent realm slug to thread
-    const threadUrl = `https://v0.boba.social/!${thread.parent_board_slug}/thread/${thread.id}`;
+    log(webhooks);
     webhooks.forEach(
-      async ({ webhook, subscriptionNames, subscriptionIds }) => {
+      async ({ webhook, webhookHandlerType, subscriptionIds }) => {
         await Promise.all(
           subscriptionIds.map((subscriptionId) =>
             cache().hdel(CacheKeys.SUBSCRIPTION, subscriptionId)
           )
         );
-        const message = `Your "${subscriptionNames.join(
-          ", "
-        )}" subscription has updated!\n${threadUrl}`;
-        axios.post(webhook, {
-          content: message,
-          username: thread.posts[0].secret_identity.name,
-          avatar_url: thread.posts[0].secret_identity.avatar,
-        });
+        axios.post(
+          webhook,
+          getWebhookPayload({
+            webhookHandlerType,
+            subscriptionNames: subscriptionIds.map(
+              (subscriptionId) =>
+                subscriptions.find((s) => s.id === subscriptionId)?.name
+            ),
+            eventPayload,
+          })
+        );
       }
     );
   }
 };
 
-const maybeUpdateSubscriptionsOnThreadChange = async ({
-  boardSlug,
-  post,
-}: threadEvents.ThreadUpdatedPayload) => {
-  const triggeredSubscriptions = await getTriggeredThreadsSubscriptions({
-    threadId: post.parent_thread_id,
-    categoryNames: post.tags?.category_tags,
+const maybeUpdateSubscriptionsOnThreadCreated = async (
+  eventPayload: threadEvents.ThreadCreatedPayload
+) => {
+  const triggeredSubscriptions = await getTriggeredBoardSubscriptions({
+    boardId: eventPayload.thread.parent_board_id,
+    categories: eventPayload.thread.posts[0].tags?.category_tags,
   });
 
-  if (!triggeredSubscriptions || triggeredSubscriptions.length == 0) {
+  if (triggeredSubscriptions?.length == 0) {
+    return;
+  }
+  publishSubscriptionsUpdates({
+    subscriptions: triggeredSubscriptions,
+    eventPayload,
+  });
+};
+
+const maybeUpdateSubscriptionsOnThreadChange = async (
+  eventPayload: threadEvents.ThreadUpdatedPayload
+) => {
+  const triggeredSubscriptions = await getTriggeredThreadsSubscriptions({
+    threadId: eventPayload.post.parent_thread_id,
+    categoryNames: eventPayload.post.tags?.category_tags,
+  });
+
+  if (triggeredSubscriptions?.length == 0) {
     return;
   }
 
-  const triggeredSubscriptionsIds = triggeredSubscriptions.map(
-    (subscription) => subscription.string_id
-  );
-
-  log(`Triggered subscription ids: ${triggeredSubscriptionsIds}`);
-  // Invalidate cached subscriptions that have updated
-  await Promise.all(
-    triggeredSubscriptionsIds.map((subscriptionId) =>
-      cache().hdel(CacheKeys.SUBSCRIPTION, subscriptionId)
-    )
-  );
-
-  const webhooks = await getWebhooksForSubscriptions({
-    subscriptions: triggeredSubscriptionsIds,
+  publishSubscriptionsUpdates({
+    subscriptions: triggeredSubscriptions,
+    eventPayload,
   });
-  log(`Found webhooks: %O`, webhooks);
-
-  if (webhooks && webhooks.length > 0) {
-    const threadUrl = `https://v0.boba.social/!${boardSlug}/thread/${
-      post.parent_thread_id
-    }${post.id ? "/" + post.id : ""}`;
-    webhooks.forEach(async ({ webhook, subscription_ids }) => {
-      const subscriptionNames = subscription_ids.map(
-        (subscription_id) =>
-          triggeredSubscriptions.find(
-            (subscriptionData) => subscriptionData.string_id == subscription_id
-          )?.name
-      );
-      const message = `Your "${subscriptionNames.join(
-        ", "
-      )}" subscription has updated!\n${threadUrl}`;
-
-      axios
-        .post(webhook, {
-          content: message,
-          username: post.secret_identity.name,
-          avatar_url: post.secret_identity.avatar,
-        })
-        .catch(() => {
-          error(`Error while posting to webhook ${webhook}`);
-        });
-    });
-  }
 };
 
 // TODO: figure out this type
