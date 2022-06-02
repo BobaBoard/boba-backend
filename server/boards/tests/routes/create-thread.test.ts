@@ -18,7 +18,7 @@ import { ENSURE_LOGGED_IN_NO_TOKEN } from "test/data/responses";
 import { GenericResponse } from "types/rest/responses";
 import { Thread } from "types/rest/threads";
 import axios from "axios";
-import { mocked } from "jest-mock";
+import { mocked } from "ts-jest/utils";
 import request from "supertest";
 import router from "../../routes";
 

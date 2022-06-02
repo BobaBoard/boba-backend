@@ -5,7 +5,7 @@ import { JERSEY_DEVIL_USER_ID } from "test/data/auth";
 import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
 import { getUserFromFirebaseId } from "../queries";
-import { mocked } from "jest-mock";
+import { mocked } from "ts-jest/utils";
 import request from "supertest";
 import router from "../routes";
 import stringify from "fast-json-stable-stringify";
