@@ -9,7 +9,7 @@ import { CREATE_GORE_THREAD_RESPONSE, NULL_ID } from "test/data/threads";
 import { GORE_BOARD_ID, NULL_BOARD_NOT_FOUND } from "test/data/boards";
 import {
   EVENT_TYPES as THREAD_EVENT_TYPES,
-  emit as threadEventsEmit,
+  ThreadCreatedPayload,
 } from "handlers/events/threads";
 import {
   setLoggedInUser,
@@ -18,6 +18,7 @@ import {
 } from "utils/test-utils";
 
 import { ENSURE_LOGGED_IN_NO_TOKEN } from "test/data/responses";
+import { EventEmitter } from "events";
 import { GenericResponse } from "types/rest/responses";
 import { Thread } from "types/rest/threads";
 import { mocked } from "ts-jest/utils";
@@ -31,7 +32,6 @@ jest.mock("uuid", () => ({
 }));
 
 jest.mock("handlers/auth");
-jest.mock("handlers/events/threads");
 jest.mock("server/cache");
 jest.mock("server/db-pool");
 jest.mock("axios");
@@ -48,11 +48,6 @@ export const CREATE_GORE_THREAD_BASE_REQUEST = {
 
 describe("Tests threads REST API - create", () => {
   const server = startTestServer(router);
-
-  afterEach(() => {
-    // TODO: investigate why this is needed here. Maybe it's only needed when running the tests in filtered mode?
-    mocked(threadEventsEmit).mockClear();
-  });
 
   test("should fail when user is unauthenticated", async () => {
     await wrapWithTransaction(async () => {
@@ -142,6 +137,7 @@ describe("Tests threads REST API - create", () => {
   test("should create thread", async () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(BOBATAN_USER_ID);
+      const mockedEmit = jest.spyOn(EventEmitter.prototype, "emit");
       const res = await request(server.app)
         .post(`/${GORE_BOARD_ID}`)
         .send({
@@ -157,18 +153,24 @@ describe("Tests threads REST API - create", () => {
       expect(res.status).toBe(200);
       expect(res.body).toMatchObject(CREATE_GORE_THREAD_RESPONSE);
 
-      expect(threadEventsEmit).toHaveBeenCalledTimes(1);
-      const eventEmitted = mocked(threadEventsEmit).mock.calls[0];
-      expect(eventEmitted[0]).toBe(THREAD_EVENT_TYPES.THREAD_CREATED);
-      expect(eventEmitted[1]).toMatchObject({
+      const threadCreatedCalls = mockedEmit.mock.calls.filter(
+        (call) => call[0] === THREAD_EVENT_TYPES.THREAD_CREATED
+      );
+      expect(threadCreatedCalls.length).toBe(1);
+      const threadCreatedCall = threadCreatedCalls[0];
+      expect(threadCreatedCall[0]).toBe(THREAD_EVENT_TYPES.THREAD_CREATED);
+      expect(threadCreatedCall[1]).toMatchObject<ThreadCreatedPayload>({
+        eventType: THREAD_EVENT_TYPES.THREAD_CREATED,
         thread: CREATE_GORE_THREAD_RESPONSE,
       });
+      mockedEmit.mockClear();
     });
   });
 
   test("should create thread as role", async () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(BOBATAN_USER_ID);
+      const mockedEmit = jest.spyOn(EventEmitter.prototype, "emit");
       const res = await request(server.app)
         .post(`/${GORE_BOARD_ID}`)
         .send({
@@ -179,12 +181,17 @@ describe("Tests threads REST API - create", () => {
       expect(res.status).toBe(200);
       expect(res.body).toMatchObject(CREATE_GORE_THREAD_RESPONSE);
 
-      expect(threadEventsEmit).toHaveBeenCalledTimes(1);
-      const eventEmitted = mocked(threadEventsEmit).mock.calls[0];
-      expect(eventEmitted[0]).toBe(THREAD_EVENT_TYPES.THREAD_CREATED);
-      expect(eventEmitted[1]).toMatchObject({
+      const threadCreatedCalls = mockedEmit.mock.calls.filter(
+        (call) => call[0] === THREAD_EVENT_TYPES.THREAD_CREATED
+      );
+      expect(threadCreatedCalls.length).toBe(1);
+      const threadCreatedCall = threadCreatedCalls[0];
+      expect(threadCreatedCall[0]).toBe(THREAD_EVENT_TYPES.THREAD_CREATED);
+      expect(threadCreatedCall[1]).toMatchObject<ThreadCreatedPayload>({
+        eventType: THREAD_EVENT_TYPES.THREAD_CREATED,
         thread: CREATE_GORE_THREAD_RESPONSE,
       });
+      mockedEmit.mockClear();
     });
   });
 

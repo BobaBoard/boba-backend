@@ -13,13 +13,13 @@ import {
 
 import { BOBATAN_USER_ID } from "test/data/auth";
 import { CHARACTER_TO_MAIM_POST_ID } from "test/data/posts";
+import { EventEmitter } from "events";
 import { Post } from "types/rest/threads";
 import { mocked } from "ts-jest/utils";
 import request from "supertest";
 import router from "../../routes";
 
 jest.mock("handlers/auth");
-jest.mock("handlers/events/threads");
 jest.mock("server/db-pool");
 jest.mock("server/cache");
 jest.mock("uuid", () => ({
@@ -55,6 +55,7 @@ describe("Test creating new post REST API", () => {
       setLoggedInUser(BOBATAN_USER_ID);
       const newContributionId = "ca62bbb7-1916-4aa6-8796-dc44588afc40";
       jest.spyOn(uuid, "v4").mockReturnValueOnce(newContributionId);
+      const mockedEmit = jest.spyOn(EventEmitter.prototype, "emit");
       const res = await request(server.app)
         .post(`/${CHARACTER_TO_MAIM_POST_ID}/contributions`)
         .send({
@@ -101,10 +102,14 @@ describe("Test creating new post REST API", () => {
       expect(res.body).toEqual({
         contribution: expectedResponse,
       });
-      expect(threadEventsEmit).toHaveBeenCalledTimes(1);
-      const eventEmitted = mocked(threadEventsEmit).mock.calls[0];
-      expect(eventEmitted[0]).toBe(THREAD_EVENT_TYPES.THREAD_UPDATED);
-      expect(eventEmitted[1]).toMatchObject<ThreadUpdatedPayload>({
+
+      const threadUpdatedCalls = mockedEmit.mock.calls.filter(
+        (call) => call[0] === THREAD_EVENT_TYPES.THREAD_UPDATED
+      );
+      expect(threadUpdatedCalls.length).toBe(1);
+      const threadUpdatedCall = threadUpdatedCalls[0];
+      expect(threadUpdatedCall[0]).toBe(THREAD_EVENT_TYPES.THREAD_UPDATED);
+      expect(threadUpdatedCall[1]).toMatchObject<ThreadUpdatedPayload>({
         eventType: THREAD_EVENT_TYPES.THREAD_UPDATED,
         boardSlug: "gore",
         post: expectedResponse,
