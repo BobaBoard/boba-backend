@@ -105,6 +105,7 @@ describe("Test creating new post REST API", () => {
       const eventEmitted = mocked(threadEventsEmit).mock.calls[0];
       expect(eventEmitted[0]).toBe(THREAD_EVENT_TYPES.THREAD_UPDATED);
       expect(eventEmitted[1]).toMatchObject<ThreadUpdatedPayload>({
+        eventType: THREAD_EVENT_TYPES.THREAD_UPDATED,
         boardSlug: "gore",
         post: expectedResponse,
       });
