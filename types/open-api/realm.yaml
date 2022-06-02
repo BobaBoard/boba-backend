@@ -59,7 +59,7 @@ components:
         - slug
         - icon
         - settings
-        - home
+        - homepage
     RealmActivity:
       type: object
       properties:
