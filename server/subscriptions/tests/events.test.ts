@@ -7,6 +7,10 @@ import {
   BLOOD_SUBSCRIPTION_ID,
   BLOOD_SUBSCRIPTION_WEBHOOK,
 } from "test/data/subscriptions";
+import {
+  CREATE_GORE_THREAD_RESPONSE,
+  FAVORITE_CHARACTER_THREAD,
+} from "test/data/threads";
 import { CacheKeys, cache } from "server/cache";
 import {
   EVENT_TYPES as THREAD_EVENT_TYPES,
@@ -14,7 +18,7 @@ import {
 } from "handlers/events/threads";
 import { registerAll, unregisterAll } from "../events";
 
-import { CREATE_GORE_THREAD_RESPONSE } from "test/data/threads";
+import { Thread } from "types/rest/threads";
 import axios from "axios";
 import { mocked } from "ts-jest/utils";
 
@@ -42,23 +46,26 @@ describe("Test subscription updates", () => {
   });
 
   test("should trigger multiple webhooks when creating a +blood thread in !gore", async () => {
-    threadEventsEmit(THREAD_EVENT_TYPES.THREAD_CREATED, {
-      thread: {
-        ...CREATE_GORE_THREAD_RESPONSE,
-        posts: [
-          {
-            ...CREATE_GORE_THREAD_RESPONSE.posts[0],
-            secret_identity: {
-              name: "GoreMaster5000",
-              avatar: "avatar_url",
-            },
-            tags: {
-              ...CREATE_GORE_THREAD_RESPONSE.posts[0].tags,
-              category_tags: ["blood"],
-            },
+    const createdThread: Thread = {
+      ...FAVORITE_CHARACTER_THREAD,
+      posts: [
+        {
+          ...FAVORITE_CHARACTER_THREAD.posts[0],
+          secret_identity: {
+            name: "GoreMaster5000",
+            avatar: "avatar_url",
           },
-        ],
-      },
+          tags: {
+            ...FAVORITE_CHARACTER_THREAD.posts[0].tags,
+            category_tags: ["blood"],
+          },
+        },
+      ],
+      comments: {},
+    };
+
+    threadEventsEmit(THREAD_EVENT_TYPES.THREAD_CREATED, {
+      thread: createdThread,
     });
 
     await sleep(100);
@@ -67,17 +74,13 @@ describe("Test subscription updates", () => {
       BLOOD_AND_BRUISES_SUBSCRIPTION_WEBHOOK,
       {
         avatar_url: "avatar_url",
-        content: `Your "blood & bruises" subscription has updated!\nhttps://v0.boba.social/!gore/thread/${CREATE_GORE_THREAD_RESPONSE.id}`,
+        content: `Your "blood & bruises" subscription has updated!\nhttps://v0.boba.social/!gore/thread/${createdThread.id}`,
         username: "GoreMaster5000",
       },
     ]);
     expect(mocked(axios.post).mock.calls).toContainEqual([
       BLOOD_SUBSCRIPTION_WEBHOOK,
-      {
-        avatar_url: "avatar_url",
-        content: `Your "blood" subscription has updated!\nhttps://v0.boba.social/!gore/thread/${CREATE_GORE_THREAD_RESPONSE.id}`,
-        username: "GoreMaster5000",
-      },
+      createdThread,
     ]);
 
     expect(cache().hdel).toBeCalledTimes(2);

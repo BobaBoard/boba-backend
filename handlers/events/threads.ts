@@ -1,17 +1,19 @@
 import { Post, Thread } from "types/rest/threads";
 
-const events = require("events");
+import { EventEmitter } from "events";
 
 export enum EVENT_TYPES {
-  THREAD_CREATED,
-  THREAD_UPDATED,
+  THREAD_CREATED = "THREAD_CREATED",
+  THREAD_UPDATED = "THREAD_UPDATED",
 }
 
 export interface ThreadCreatedPayload {
+  eventType: EVENT_TYPES.THREAD_CREATED;
   thread: Thread;
 }
 
 export interface ThreadUpdatedPayload {
+  eventType: EVENT_TYPES.THREAD_UPDATED;
   boardSlug: string;
   post: Post;
 }
@@ -21,12 +23,15 @@ export interface EventToPayload {
   [EVENT_TYPES.THREAD_UPDATED]: ThreadUpdatedPayload;
 }
 
-const emitter = new events.EventEmitter();
+const emitter = new EventEmitter();
 export const emit = <K extends EVENT_TYPES>(
   eventType: K,
-  data: EventToPayload[K]
+  data: Omit<EventToPayload[K], "eventType">
 ) => {
-  emitter.emit(eventType, data);
+  emitter.emit(eventType, {
+    ...data,
+    eventType,
+  });
 };
 
 export const register = <K extends EVENT_TYPES>(
