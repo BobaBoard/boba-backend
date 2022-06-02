@@ -5,12 +5,33 @@ components:
       value:
         id: "0d91d28f-182c-4684-aa6c-9159059a5b49"
         slug: v0
+        icon: "https://images-ext-1.discordapp.net/external/KLz7_JytTOB6vzGDmnAuXTgkDtWuUCluyB6VxiAL8FA/%3Fsize%3D1024/https/cdn.discordapp.com/icons/911351540504199168/d6f98ff59822c22b1ff650796c346166.png"
         settings:
           root:
             cursor: {}
           index_page: []
           board_page: []
           thread_page: []
+        homepage:
+          blocks:
+            - id: f8cf1796-c5b4-49c9-9773-eb1a245e222c
+              index: 0
+              title: A description block
+              type: text
+              description: Welcome to the Realm
+            - id: d829b5fb-6343-4700-bf7c-7626950f2c8d
+              index: 1
+              title: A rules block
+              type: rules
+              rules:
+                - index: 0
+                  title: Be nice to each other
+                  description: What it says up there
+                  pinned: true
+                - index: 1
+                  title: This is a hidden rule
+                  description: Congratulations! Here's a cookie
+                  pinned: false
         boards:
           - id: 2fb151eb-c600-4fe4-a542-4662487e5496
             realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e

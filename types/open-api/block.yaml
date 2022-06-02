@@ -1,0 +1,83 @@
+components:
+  schemas:
+    UiBlock:
+      oneOf:
+        - $ref: "#/components/schemas/TextBlock"
+        - $ref: "#/components/schemas/RulesBlock"
+        - $ref: "#/components/schemas/SubscriptionBlock"
+      discriminator:
+        propertyName: type
+        mapping:
+          text: "#/components/schemas/TextBlock"
+          rules: "#/components/schemas/RulesBlock"
+          subscription: "#/components/schemas/SubscriptionBlock"
+    BaseBlock:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        index:
+          type: number
+        title:
+          type: string
+      required:
+        - id
+        - index
+        - title
+    TextBlock:
+      allOf:
+        - $ref: "#/components/schemas/BaseBlock"
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [text]
+            description:
+              type: string
+          required:
+            - type
+            - description
+    RulesBlock:
+      allOf:
+        - $ref: "#/components/schemas/BaseBlock"
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [rules]
+            rules:
+              type: array
+              items:
+                type: object
+                properties:
+                  index:
+                    type: number
+                  title:
+                    type: string
+                  description:
+                    type: string
+                  pinned:
+                    type: boolean
+                required:
+                  - index
+                  - title
+                  - description
+                  - pinned
+          required:
+            - type
+            - rules
+    SubscriptionBlock:
+      allOf:
+        - $ref: "#/components/schemas/BaseBlock"
+        - type: object
+          properties:
+            type:
+              type: string
+              enum: [subscription]
+            subscription_id:
+              type: string
+              format: uuid
+          required:
+            - type
+            - subscription_id
