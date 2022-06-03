@@ -1,7 +1,6 @@
 const getRealmBySlug = `
     SELECT * FROM realms WHERE slug = $/realm_slug/`;
 
-// cant get this to read anything inserted for realms
 const dismissNotifications = `
     INSERT INTO dismiss_notifications_requests(user_id, realm_id, dismiss_request_time) VALUES (
         (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
