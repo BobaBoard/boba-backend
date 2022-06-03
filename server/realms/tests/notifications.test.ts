@@ -6,6 +6,7 @@ import {
 
 import { BOBATAN_NOTIFICATIONS } from "test/data/notifications";
 import { BOBATAN_USER_ID } from "test/data/auth";
+import { TWISTED_MINDS_REALM_STRING_ID } from "test/data/realms";
 import debug from "debug";
 import request from "supertest";
 import router from "../routes";
@@ -19,14 +20,14 @@ describe("Tests boards REST API", () => {
   const server = startTestServer(router);
 
   test("should not return notifications data (logged out)", async () => {
-    const res = await request(server.app).get(`/:realm_id/@me/notifications`);
+    const res = await request(server.app).get(`/${TWISTED_MINDS_REALM_STRING_ID}/notifications`);
 
     expect(res.status).toBe(401);
   });
 
   test("should return notifications data (logged in)", async () => {
     setLoggedInUser(BOBATAN_USER_ID);
-    const res = await request(server.app).get(`/:realm_id/@me/notifications`);
+    const res = await request(server.app).get(`/${TWISTED_MINDS_REALM_STRING_ID}/notifications`);
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual(BOBATAN_NOTIFICATIONS);
@@ -41,7 +42,7 @@ describe("Tests boards REST API", () => {
   test("should dismiss notifications", async () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(BOBATAN_USER_ID);
-      const res = await request(server.app).delete(`/:realm_id/@me/notifications`);
+      const res = await request(server.app).delete(`/${TWISTED_MINDS_REALM_STRING_ID}/notifications`);
     
       expect(res.status).toBe(204);
     });

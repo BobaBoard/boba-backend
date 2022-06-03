@@ -189,7 +189,7 @@ router.get("/:realm_id/activity", async (req, res) => {
 
 /**
  * @openapi
- * /realms/{realm_id}/@me/notifications:
+ * /realms/{realm_id}/notifications:
  *   get:
  *     summary: Gets notifications data for the current user.
  *     operationId: getCurrentUserNotifications
@@ -212,7 +212,7 @@ router.get("/:realm_id/activity", async (req, res) => {
  *             schema:
  *               $ref: "#/components/schemas/NotificationsResponse" 
  */
- router.get("/:realm_id/@me/notifications", ensureLoggedIn, async (req, res) => {
+ router.get("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
   const { realm_id } = req.params
 
   const boards = await getBoards({
@@ -267,7 +267,7 @@ router.get("/:realm_id/activity", async (req, res) => {
 
 /**
  * @openapi
- * /realms/{realm_id}/@me/notifications:
+ * /realms/{realm_id}/notifications:
  *   delete:
  *     summary: Dismisses user notifications.
  *     operationId: dismissUserNotifications
@@ -286,7 +286,7 @@ router.get("/:realm_id/activity", async (req, res) => {
  *       204:
  *         description: The notifications were successfully dismissed.
  */
-router.delete("/:realm_id/@me/notifications", ensureLoggedIn, async (req, res) => {
+router.delete("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
   let currentUserId: string = req.currentUser?.uid;
   log(`Dismissing notifications for firebase id: ${currentUserId}`);
   const { realm_id } = req.params
