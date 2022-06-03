@@ -98,14 +98,6 @@ export const BOBATAN_NOTIFICATIONS: NotificationsResponse = {
       last_activity_at: "2020-04-25T12:42:00.000Z",
       last_activity_from_others_at: "2020-04-25T12:42:00.000Z",
       last_visited_at: null,
-    },
-    [MODS_BOARD_ID]: {
-      has_updates: false,
-      id: MODS_BOARD_ID,
-      is_outdated: false,
-      last_activity_at: null,
-      last_activity_from_others_at: null,
-      last_visited_at: null,
-    },
+    }
   },
 };
