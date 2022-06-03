@@ -200,6 +200,14 @@ router.get("/:realm_id/activity", async (req, res) => {
  *       - /users/
  *     security:
  *       - firebase: []
+ *     parameters:
+ *       - name: realm_id
+ *         in: path
+ *         description: The id of the realm.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
  *     responses:
  *       401:
  *         description: User was not found in request that requires authentication.
@@ -275,6 +283,14 @@ router.get("/:realm_id/activity", async (req, res) => {
  *       - /users/
  *     security:
  *       - firebase: []
+ *     parameters:
+ *       - name: realm_id
+ *         in: path
+ *         description: The id of the realm.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
  *     responses:
  *       401:
  *         $ref: "#/components/responses/ensureLoggedIn401"
