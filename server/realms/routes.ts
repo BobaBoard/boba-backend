@@ -113,6 +113,7 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
       isLoggedIn: !!req.currentUser?.uid,
     });
     res.status(200).json({
+      id: realmData.string_id,
       slug: realm_slug,
       icon: "https://images-ext-1.discordapp.net/external/KLz7_JytTOB6vzGDmnAuXTgkDtWuUCluyB6VxiAL8FA/%3Fsize%3D1024/https/cdn.discordapp.com/icons/911351540504199168/d6f98ff59822c22b1ff650796c346166.png",
       settings,
@@ -218,10 +219,10 @@ router.get("/:realm_id/activity", async (req, res) => {
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/NotificationsResponse" 
+ *               $ref: "#/components/schemas/NotificationsResponse"
  */
- router.get("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
-  const { realm_id } = req.params
+router.get("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
+  const { realm_id } = req.params;
 
   const boards = await getBoards({
     firebaseId: req.currentUser?.uid,
@@ -305,7 +306,7 @@ router.get("/:realm_id/activity", async (req, res) => {
 router.delete("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
   let currentUserId: string = req.currentUser?.uid;
   log(`Dismissing notifications for firebase id: ${currentUserId}`);
-  const { realm_id } = req.params
+  const { realm_id } = req.params;
 
   const dismissSuccessful = await dismissAllNotifications({
     firebaseId: currentUserId,
