@@ -29,22 +29,6 @@ export const getUserFromFirebaseId = async ({
   }
 };
 
-export const dismissAllNotifications = async ({
-  firebaseId,
-}: {
-  firebaseId: string;
-}): Promise<any> => {
-  try {
-    await pool.none(sql.dismissNotifications, { firebase_id: firebaseId });
-    info(`Dismissed all notifications for user with firebaseId: `, firebaseId);
-    return true;
-  } catch (e) {
-    error(`Error while dismissing notifications.`);
-    error(e);
-    return false;
-  }
-};
-
 export const updateUserData = async ({
   firebaseId,
   username,

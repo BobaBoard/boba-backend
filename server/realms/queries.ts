@@ -2,8 +2,13 @@ import { filterOutDisabledSettings, getRealmCursorSetting } from "./utils";
 
 import { CssVariableSetting } from "../../types/settings";
 import { SettingEntry } from "../../types/settings";
+import debug from "debug";
 import pool from "server/db-pool";
 import sql from "./sql";
+
+const log = debug("bobaserver:users:queries-log");
+const error = debug("bobaserver:users:queries-error");
+const info = debug("bobaserver:users:queries-info");
 
 const CURSOR_SETTINGS = {
   // image: "https://cur.cursors-4u.net/nature/nat-2/nat120.cur",
@@ -79,4 +84,25 @@ export const getRealmDataBySlug = async ({
   return await pool.oneOrNone(sql.getRealmBySlug, {
     realm_slug: realmSlug,
   });
+};
+
+export const dismissAllNotifications = async ({
+  firebaseId,
+  realmId,
+}: {
+  firebaseId: string;
+  realmId?: string;
+}): Promise<any> => {
+  try {
+    await pool.none(sql.dismissNotifications, { 
+      firebase_id: firebaseId,
+      realm_id: realmId,
+     });
+    info(`Dismissed all notifications for user with firebaseId: `, firebaseId);
+    return true;
+  } catch (e) {
+    error(`Error while dismissing notifications. `);
+    error(e);
+    return false;
+  }
 };
