@@ -1,4 +1,5 @@
 import pg, { QueryFile } from "pg-promise";
+
 import path from "path";
 
 const updateUserSettings = `
@@ -26,14 +27,6 @@ const getSettingType = `
   WHERE setting_types.name = $/setting_name/
 `;
 
-const dismissNotifications = `
-    INSERT INTO dismiss_notifications_requests(user_id, dismiss_request_time) VALUES (
-        (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
-         DEFAULT)
-    ON CONFLICT(user_id) DO UPDATE 
-        SET dismiss_request_time = DEFAULT
-        WHERE dismiss_notifications_requests.user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)`;
-
 const getUserDetails =
   "SELECT * FROM users WHERE firebase_id = $/firebase_id/ LIMIT 1";
 
@@ -58,7 +51,6 @@ export default {
   updateUserData,
   getUserSettings,
   updateUserSettings,
-  dismissNotifications,
   getInviteDetails,
   getBobadexIdentities: new QueryFile(
     path.join(__dirname, "fetch-bobadex.sql")

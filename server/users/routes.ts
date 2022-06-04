@@ -7,7 +7,6 @@ import {
 import { CacheKeys, cache } from "../cache";
 import {
   createNewUser,
-  dismissAllNotifications,
   getBobadexIdentities,
   getInviteDetails,
   getUserFromFirebaseId,
@@ -18,7 +17,6 @@ import {
 } from "./queries";
 import { ensureLoggedIn, withUserSettings } from "handlers/auth";
 import {
-  processBoardsNotifications,
   processBoardsSummary,
   transformImageUrls,
 } from "utils/response-utils";
@@ -204,122 +202,6 @@ router.patch("/@me", ensureLoggedIn, async (req, res) => {
     username: userData.username,
     avatar_url: userData.avatarUrl,
   });
-});
-
-/**
- * @openapi
- * /users/@me/notifications:
- *   get:
- *     summary: Gets notifications data for the current user.
- *     operationId: getCurrentUserNotifications
- *     description: |
- *       Gets notifications data for the current user, including pinned boards.
- *       If `realm_id` is present, also fetch notification data for the current realm.
- *     tags:
- *       - /users/
- *     security:
- *       - firebase: []
- *     responses:
- *       401:
- *         description: User was not found in request that requires authentication.
- *       403:
- *         description: User is not authorized to perform the action.
- *       200:
- *         description: The notifications data.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/NotificationsResponse" 
- */
-router.get("/@me/notifications", ensureLoggedIn, async (req, res) => {
-  const { realm_id } = req.params;
-
-  // TODO[realms]: this needs a specific per-realm query
-  const boards = await getBoards({
-    firebaseId: req.currentUser?.uid,
-  });
-
-  if (!boards) {
-    res.status(500);
-  }
-  const notifications = processBoardsNotifications({
-    boards,
-  });
-  const pinned = notifications
-    .filter((notification: any) =>
-      boards.find(
-        (board: any) =>
-          board.string_id == notification.id && board.pinned_order !== null
-      )
-    )
-    .reduce((result: any, current: any) => {
-      result[current.id] = {
-        ...current,
-      };
-      return result;
-    }, {});
-  const realm = notifications.reduce((result: any, current: any) => {
-    result[current.id] = {
-      ...current,
-    };
-    return result;
-  }, {});
-
-  const hasNotifications = notifications.some(
-    (notification) => notification.has_updates
-  );
-  const isOutdatedNotifications = hasNotifications
-    ? notifications.every(
-        (notification) =>
-          notification.has_updates === false || notification.is_outdated
-      )
-    : false;
-  const notificationsDataResponse = {
-    has_notifications: hasNotifications,
-    is_outdated_notifications: isOutdatedNotifications,
-    pinned_boards: pinned,
-    realm_boards: realm,
-  };
-  res.status(200).json(notificationsDataResponse);
-});
-
-/**
- * @openapi
- * /users/@me/notifications:
- *   delete:
- *     summary: Dismisses user notifications.
- *     operationId: dismissUserNotifications
- *     tags:
- *       - /users/
- *     security:
- *       - firebase: []
- *     responses:
- *       401:
- *         $ref: "#/components/responses/ensureLoggedIn401"
- *       403:
- *         $ref: "#/components/responses/ensureBoardAccess403"
- *       500:
- *         description: Internal Server Error
- *         $ref: "#/components/responses/default500"
- *       204:
- *         description: The notifications were successfully dismissed.
- */
-router.delete("/@me/notifications", ensureLoggedIn, async (req, res) => {
-  let currentUserId: string = req.currentUser?.uid;
-  log(`Dismissing notifications for firebase id: ${currentUserId}`);
-  const dismissSuccessful = await dismissAllNotifications({
-    firebaseId: currentUserId,
-  });
-
-  if (!dismissSuccessful) {
-    error(`Dismiss failed`);
-    return res.sendStatus(500);
-    return;
-  }
-
-  info(`Dismiss successful`);
-
-  res.sendStatus(204);
 });
 
 /**
