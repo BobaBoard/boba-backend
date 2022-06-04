@@ -2,12 +2,14 @@ const getRealmBySlug = `
     SELECT 
       realms.string_id AS realm_id,
       realms.slug AS realm_slug,
-      array_to_json(
-        array_agg(block_with_rules)) AS homepage_blocks
+      COALESCE(
+        array_to_json(array_agg(block_with_rules) FILTER (WHERE block_with_rules IS NOT null)),
+        '[]'::json
+      ) AS homepage_blocks
     FROM realms 
-      JOIN realm_homepage_blocks AS rhb
+      LEFT JOIN realm_homepage_blocks AS rhb
         ON realms.id = rhb.realm_id 
-      JOIN (
+      LEFT JOIN (
         SELECT 
           blocks.id,
           blocks.string_id,
