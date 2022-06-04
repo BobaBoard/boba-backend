@@ -1,6 +1,7 @@
 import { filterOutDisabledSettings, getRealmCursorSetting } from "./utils";
 
 import { CssVariableSetting } from "../../types/settings";
+import { Realm } from "../../types/rest/realms";
 import { SettingEntry } from "../../types/settings";
 import debug from "debug";
 import pool from "server/db-pool";
@@ -76,14 +77,29 @@ export const getRealmDataBySlug = async ({
   realmSlug,
 }: {
   realmSlug: string;
-}): Promise<{
-  id: string;
-  string_id: string;
-  slug: string;
-} | null> => {
-  return await pool.oneOrNone(sql.getRealmBySlug, {
+}): Promise<Omit<Realm, "boards"> | null> => {
+  const realmDbData = await pool.oneOrNone(sql.getRealmBySlug, {
     realm_slug: realmSlug,
   });
+
+  return {
+    id: realmDbData.realm_id,
+    slug: realmDbData.realm_slug,
+    homepage: {
+      blocks: realmDbData.homepage_blocks.map((block: any) => ({
+        id: block.string_id,
+        type: block.type,
+        title: block.title,
+        index: block.index,
+        rules: block.rules.map((rule: any) => ({
+          title: rule.title,
+          description: rule.description,
+          pinned: rule.pinned,
+          index: rule.index,
+        })),
+      })),
+    },
+  };
 };
 
 export const dismissAllNotifications = async ({
@@ -94,10 +110,10 @@ export const dismissAllNotifications = async ({
   realmId?: string;
 }): Promise<any> => {
   try {
-    await pool.none(sql.dismissNotifications, { 
+    await pool.none(sql.dismissNotifications, {
       firebase_id: firebaseId,
       realm_id: realmId,
-     });
+    });
     info(`Dismissed all notifications for user with firebaseId: `, firebaseId);
     return true;
   } catch (e) {
