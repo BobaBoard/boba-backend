@@ -11,26 +11,71 @@ jest.mock("handlers/auth");
 
 describe("Tests restricted board realm queries", () => {
   const server = startTestServer(router);
-  describe("REST API", () => {
-    test("fetches board details when logged in (REST)", async () => {
-      setLoggedInUser(BOBATAN_USER_ID);
-      const res = await request(server.app).get("/slug/twisted-minds");
+  test("fetches board details when logged in (REST)", async () => {
+    setLoggedInUser(BOBATAN_USER_ID);
+    const res = await request(server.app).get("/slug/twisted-minds");
 
-      expect(res.status).toBe(200);
-      expect(res.body.boards.length).toBe(7);
-      expect(
-        res.body.boards.find((board: any) => board.slug == "gore")
-      ).toEqual(extractBoardSummary(GORE_BOARD_METADATA.BOBATAN));
+    expect(res.status).toBe(200);
+    expect(res.body.boards.length).toBe(7);
+    expect(res.body.boards.find((board: any) => board.slug == "gore")).toEqual(
+      extractBoardSummary(GORE_BOARD_METADATA.BOBATAN)
+    );
+  });
+
+  test("doesn't fetch restricted board details in realm query when logged out", async () => {
+    const res = await request(server.app).get("/slug/twisted-minds");
+
+    expect(res.status).toBe(200);
+    expect(res.body.boards.length).toBe(7);
+    expect(res.body.boards.find((board: any) => board.slug == "gore")).toEqual(
+      extractBoardSummary(GORE_BOARD_METADATA.LOGGED_OUT)
+    );
+  });
+
+  test("returns empty block array in homepage", async () => {
+    const res = await request(server.app).get("/slug/uwu");
+
+    expect(res.status).toBe(200);
+    expect(res.body.homepage).toEqual({
+      blocks: [],
     });
+  });
 
-    test("doesn't fetch restricted board details in realm query when logged out", async () => {
-      const res = await request(server.app).get("/slug/twisted-minds");
+  test("returns rule blocks in homepage", async () => {
+    const res = await request(server.app).get("/slug/twisted-minds");
 
-      expect(res.status).toBe(200);
-      expect(res.body.boards.length).toBe(7);
-      expect(
-        res.body.boards.find((board: any) => board.slug == "gore")
-      ).toEqual(extractBoardSummary(GORE_BOARD_METADATA.LOGGED_OUT));
+    expect(res.status).toBe(200);
+    expect(res.body.homepage).toEqual({
+      blocks: [
+        {
+          id: "82824aa5-f0dc-46b7-ad7b-aefac7f637cc",
+          index: 0,
+          rules: [
+            {
+              description: "Anything above Assembly was a mistake.",
+              index: 2,
+              pinned: true,
+              title: "No language discoursing",
+            },
+            {
+              description:
+                "They're young and scared, but are doing their best.",
+              index: 0,
+              pinned: true,
+              title: "Be nice to baby coders",
+            },
+            {
+              description:
+                "If you feel the need to thirst for a fictional character, the fandom category is your friend.",
+              index: 1,
+              pinned: false,
+              title: "No horny on main (boards)",
+            },
+          ],
+          title: "The twisted rules",
+          type: "rules",
+        },
+      ],
     });
   });
 });
