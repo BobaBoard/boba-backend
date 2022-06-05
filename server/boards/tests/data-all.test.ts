@@ -46,12 +46,6 @@ describe("Tests boards queries", () => {
         realmId: TWISTED_MINDS_REALM_STRING_ID,
       });
 
-      console.log(boards);
-      console.log(boards);
-      console.log(boards);
-      console.log(boards);
-      console.log(boards);
-      console.log(boards);
       expect(boards.map(extractBoardDetails)).toEqual([
         {
           avatar_reference_id: "villains.png",
