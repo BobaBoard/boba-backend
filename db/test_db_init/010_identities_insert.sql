@@ -10,7 +10,8 @@ VALUES
 INSERT INTO bobadex_seasons(id, external_id, name) OVERRIDING SYSTEM VALUE 
 VALUES
     (1, '9f6d41a5-1e00-4071-9f50-555f1686f87f', 'Default'), 
-    (2, '9b496931-ba27-43e0-953b-c38e01803879', 'Halloween');
+    (2, '9b496931-ba27-43e0-953b-c38e01803879', 'Halloween'),
+    (3, 'be93274d-cdb9-4fcc-a4f9-a9c69270ce0d', 'Coders');
 
 INSERT INTO bobadex_season_secret_identities(bobadex_season_id, secret_identity_id)
 VALUES
@@ -19,4 +20,14 @@ VALUES
     (1, 3),
     (2, 4),
     (2, 5),
-    (2, 6);
+    (2, 6),
+    (3, 1),
+    (3, 4),
+    (3, 6);
+
+    INSERT INTO realm_bobadex_seasons(realm_id, bobadex_season_id, active)
+    VALUES
+        ((SELECT id FROM realms WHERE slug = 'twisted-minds'),  1, true),
+        ((SELECT id FROM realms WHERE slug = 'twisted-minds'),  2, true),
+        ((SELECT id FROM realms WHERE slug = 'uwu'),  1, false),
+        ((SELECT id FROM realms WHERE slug = 'uwu'),  3, true);
