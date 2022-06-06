@@ -288,7 +288,7 @@ CREATE TABLE IF NOT EXISTS dismiss_notifications_requests(
     realm_id BIGINT REFERENCES realms(id) ON DELETE RESTRICT NOT NULL,
     dismiss_request_time timestamp NOT NULL DEFAULT now()
 );
-CREATE UNIQUE INDEX dismiss_notifications_request_user on dismiss_notifications_requests(user_id, realm_id);
+CREATE UNIQUE INDEX dismiss_notifications_requests_entry on dismiss_notifications_requests(user_id, realm_id);
 
 CREATE TABLE IF NOT EXISTS dismiss_board_notifications_requests(
     user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
