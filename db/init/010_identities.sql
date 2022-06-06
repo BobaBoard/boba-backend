@@ -13,11 +13,8 @@ CREATE TABLE IF NOT EXISTS secret_identities
     external_id TEXT NOT NULL,
     display_name TEXT NOT NULL,
     /* Reference to the id of the image on external storage provider. */
-    /* This can be null if generated on the fly*/
-    avatar_reference_id TEXT
+    avatar_reference_id TEXT NOT NULL
 );
--- TODO[realms]: remove the following unique index
-CREATE UNIQUE INDEX secret_identities_display_name on secret_identities(display_name);
 CREATE UNIQUE INDEX secret_identities_external_id on secret_identities(external_id);
 
 CREATE TABLE IF NOT EXISTS bobadex_seasons
@@ -38,4 +35,11 @@ CREATE INDEX bobadex_season_secret_identities_bobadex_season_id on bobadex_seaso
 CREATE INDEX bobadex_season_secret_identities_secret_identity_id on bobadex_season_secret_identities(secret_identity_id);
 CREATE UNIQUE INDEX bobadex_season_secret_identities_entry on bobadex_season_secret_identities(bobadex_season_id, secret_identity_id);
 
--- TODO: add realm<-> seasons table once realms are a thing
+CREATE TABLE IF NOT EXISTS realm_bobadex_seasons (
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    realm_id BIGINT REFERENCES realms(id) ON DELETE RESTRICT NOT NULL,
+    bobadex_season_id BIGINT REFERENCES bobadex_seasons(id) ON DELETE RESTRICT NOT NULL,
+    active BOOLEAN NOT NULL
+);
+CREATE INDEX realm_bobadex_seasons_realm_id on realm_bobadex_seasons(realm_id);
+CREATE UNIQUE INDEX realm_bobadex_seasons_entry on realm_bobadex_seasons(realm_id, bobadex_season_id);
