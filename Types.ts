@@ -83,6 +83,8 @@ export interface DbThreadType {
   thread_id: string;
   board_slug: string;
   board_id: string;
+  realm_slug: string;
+  realm_id: string;
   thread_last_activity: string;
   posts: DbPostType[];
   default_view: "thread" | "gallery" | "timeline";
@@ -102,6 +104,8 @@ export interface DbActivityThreadType {
   parent_post_id: null;
   thread_id: string;
   board_slug: string;
+  realm_id: string;
+  realm_slug: string;
   author: number;
   username: string;
   user_avatar: string;
