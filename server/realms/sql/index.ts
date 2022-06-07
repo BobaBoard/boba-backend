@@ -1,3 +1,7 @@
+import pg, { QueryFile } from "pg-promise";
+
+import path from "path";
+
 const getRealmBySlug = `
     SELECT 
       realms.string_id AS realm_id,
@@ -38,7 +42,12 @@ const dismissNotifications = `
         WHERE dismiss_notifications_requests.user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
           AND dismiss_notifications_requests.realm_id = (SELECT id FROM realms WHERE realms.string_id = $/realm_id/)`;
 
+
+
 export default {
   getRealmBySlug,
   dismissNotifications,
+  getBobadexIdentities: new QueryFile(
+    path.join(__dirname, "fetch-bobadex.sql")
+  ),
 };

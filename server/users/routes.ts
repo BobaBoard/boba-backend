@@ -7,7 +7,6 @@ import {
 import { CacheKeys, cache } from "../cache";
 import {
   createNewUser,
-  getBobadexIdentities,
   getInviteDetails,
   getUserFromFirebaseId,
   getUserSettings,
@@ -202,35 +201,6 @@ router.patch("/@me", ensureLoggedIn, async (req, res) => {
     username: userData.username,
     avatar_url: userData.avatarUrl,
   });
-});
-
-/**
- * @openapi
- * /users/@me/bobadex:
- *   get:
- *     summary: Gets bobadex data for the current user.
- *     operationId: getCurrentUserBobadex
- *     tags:
- *       - /users/
- *     security:
- *       - firebase: []
- *     responses:
- *       401:
- *         description: User was not found in request that requires authentication.
- *       200:
- *         description: The bobadex data.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/BobaDex"
- *             examples:
- *               existing:
- *                 $ref: '#/components/examples/BobaDexResponse'
- */
-router.get("/@me/bobadex", ensureLoggedIn, async (req, res) => {
-  let currentUserId: string = req.currentUser.uid;
-  const identities = await getBobadexIdentities({ firebaseId: currentUserId });
-  res.status(200).json(identities);
 });
 
 /**

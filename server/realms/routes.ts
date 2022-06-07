@@ -1,5 +1,6 @@
 import {
   dismissAllNotifications,
+  getBobadexIdentities,
   getRealmDataBySlug,
   getSettingsBySlug,
 } from "./queries";
@@ -290,6 +291,44 @@ router.delete("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
   info(`Dismiss successful`);
 
   res.sendStatus(204);
+});
+
+/**
+ * @openapi
+ * /realms/{realm_id}/bobadex:
+ *   get:
+ *     summary: Gets bobadex data for the current user.
+ *     operationId: getCurrentUserBobadex
+ *     tags:
+ *       - /users/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: realm_id
+ *         in: path
+ *         description: The id of the realm.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       401:
+ *         description: User was not found in request that requires authentication.
+ *       200:
+ *         description: The bobadex data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/BobaDex"
+ *             examples:
+ *               existing:
+ *                 $ref: '#/components/examples/BobaDexResponse'
+ */
+ router.get("/:realm_id/bobadex", ensureLoggedIn, async (req, res) => {
+  let currentUserId: string = req.currentUser.uid;
+  const { realm_id } = req.params;
+  const identities = await getBobadexIdentities({ firebaseId: currentUserId, realmId: realm_id });
+  res.status(200).json(identities);
 });
 
 export default router;
