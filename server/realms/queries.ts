@@ -181,7 +181,7 @@ export const getUserPermissionsForRealm = async ({
 
 export const createInvite = async (inviteData: {
   realmId: string;
-  email: string;
+  email: string | null;
   inviteCode: string;
   inviterId: number;
   label: string | null;
@@ -194,7 +194,7 @@ export const createInvite = async (inviteData: {
       email: inviteData.email,
       label: inviteData.label,
     });
-    log(`Generated invite for email ${inviteData.email}.`);
+    log(`Generated invite for realm ${inviteData.realmId}.`);
     return true;
   } catch (e) {
     error(`Error while generating invite.`);
@@ -209,7 +209,7 @@ export const getInviteDetails = async ({
   nonce: string;
 }): Promise<{
   realmId: string;
-  email: string;
+  email: string | null;
   used: boolean;
   expired: boolean;
   inviter: number;
@@ -321,7 +321,7 @@ export const getRealmInvites = async ({
 }): Promise<
   | {
       nonce: string;
-      invitee_email: string;
+      invitee_email: string | null;
       created: string;
       expires_at: string;
       inviter_id: string;

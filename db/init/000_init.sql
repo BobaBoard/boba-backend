@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS account_invites (
     realm_id BIGINT REFERENCES realms(id) ON DELETE RESTRICT NOT NULL,
     nonce TEXT NOT NULL,
     inviter BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
-    invitee_email TEXT NOT NULL,
+    invitee_email TEXT,
     /*This is a note admins may add to the invite for reference*/
     label TEXT,
     /* Timestamp the invite was sent at, UTC. */
