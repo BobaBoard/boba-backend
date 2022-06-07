@@ -1,11 +1,15 @@
+import { BadRequest400Error, NotFound404Error } from "types/errors/api";
 import {
   ensureNoIdentityLeakage,
   makeServerThreadSummary,
 } from "utils/response-utils";
-import { getBoardActivityByUuid, getUserActivity, getUserStarFeed } from "./queries";
+import {
+  getBoardActivityByUuid,
+  getUserActivity,
+  getUserStarFeed,
+} from "./queries";
 
 import { Feed } from "types/rest/threads";
-import { NotFound404Error } from "types/errors/api";
 import debug from "debug";
 import { ensureBoardAccess } from "handlers/permissions";
 import { ensureLoggedIn } from "handlers/auth";
@@ -136,12 +140,17 @@ router.get("/boards/:board_id", ensureBoardAccess, async (req, res) => {
  *               $ref: "#/components/schemas/FeedActivity"
  */
 router.get("/users/@me", ensureLoggedIn, async (req, res) => {
-  const { cursor, showRead, ownOnly } = req.query;
+  const { cursor, showRead, ownOnly, realmId } = req.query;
   const currentUserId: string = req.currentUser?.uid;
+
+  if (!realmId) {
+    throw new BadRequest400Error(`Expected realm id in personal feed query.`);
+  }
 
   const userActivity = await getUserActivity({
     firebaseId: currentUserId,
     cursor: (cursor as string) || null,
+    realmId: realmId as string,
     updatedOnly: showRead !== "true",
     ownOnly: ownOnly === "true",
   });
@@ -196,21 +205,19 @@ router.get("/users/@me", ensureLoggedIn, async (req, res) => {
 router.get("/users/@me/stars", ensureLoggedIn, async (req, res) => {
   const { cursor, starred } = req.query;
   const currentUserId: string = req.currentUser?.uid;
-  
+
   const userStarFeed = await getUserStarFeed({
     firebaseId: currentUserId,
     cursor: (cursor as string) || null,
   });
 
-  const threadsStarred = userStarFeed.activity.map(
-    makeServerThreadSummary
-    );
-    const response: Feed = {
-      cursor: {
-        next: userStarFeed.cursor,
-      },
-      activity: threadsStarred,
-    };
+  const threadsStarred = userStarFeed.activity.map(makeServerThreadSummary);
+  const response: Feed = {
+    cursor: {
+      next: userStarFeed.cursor,
+    },
+    activity: threadsStarred,
+  };
 
   response.activity.map((post) => ensureNoIdentityLeakage(post));
   res.status(200).json(response);
