@@ -70,5 +70,6 @@ WHERE
    AND (${own_only} IS FALSE OR own_thread IS TRUE)
    AND muted IS FALSE
    AND hidden IS FALSE
+   AND realm_string_id = ${realm_id}
 ORDER BY thread_last_activity DESC
 LIMIT ${page_size} + 1
