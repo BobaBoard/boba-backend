@@ -114,6 +114,8 @@ export const makeServerThreadSummary = (
     id: thread.thread_id,
     parent_board_slug: thread.board_slug,
     parent_board_id: thread.board_id,
+    parent_realm_slug: thread.realm_slug,
+    parent_realm_id: thread.realm_id,
     starter: starter,
     default_view: thread.default_view,
     muted: thread.muted,

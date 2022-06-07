@@ -1,5 +1,7 @@
 import { DbFeedType, DbThreadSummaryType } from "Types";
 
+import { BOBATAN_USER_ID } from "test/data/auth";
+import { TWISTED_MINDS_REALM_STRING_ID } from "test/data/realms";
 import { getUserActivity } from "../queries";
 
 export const extractTags = (thread: DbThreadSummaryType | null | undefined) => {
@@ -25,8 +27,8 @@ export const getThreadFromActivity = (
 describe("feed activity tags", () => {
   test("correctly fetches tags", async () => {
     const feed = await getUserActivity({
-      // Bobatan
-      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      firebaseId: BOBATAN_USER_ID,
+      realmId: TWISTED_MINDS_REALM_STRING_ID,
       cursor: null,
       updatedOnly: false,
       ownOnly: false,
@@ -45,8 +47,8 @@ describe("feed activity tags", () => {
 
   test("correctly fetches categories", async () => {
     const feed = await getUserActivity({
-      // Bobatan
-      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      firebaseId: BOBATAN_USER_ID,
+      realmId: TWISTED_MINDS_REALM_STRING_ID,
       cursor: null,
       updatedOnly: false,
       ownOnly: false,
@@ -65,8 +67,8 @@ describe("feed activity tags", () => {
 
   test("correctly fetches whisper tags", async () => {
     const feed = await getUserActivity({
-      // Bobatan
-      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      firebaseId: BOBATAN_USER_ID,
+      realmId: TWISTED_MINDS_REALM_STRING_ID,
       cursor: null,
       updatedOnly: false,
       ownOnly: false,
@@ -85,8 +87,8 @@ describe("feed activity tags", () => {
 
   test("correctly fetches content warnings", async () => {
     const feed = await getUserActivity({
-      // Bobatan
-      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      firebaseId: BOBATAN_USER_ID,
+      realmId: TWISTED_MINDS_REALM_STRING_ID,
       cursor: null,
       updatedOnly: false,
       ownOnly: false,

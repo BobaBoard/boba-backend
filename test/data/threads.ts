@@ -9,6 +9,7 @@ import { GORE_BOARD_ID, RESTRICTED_BOARD_ID } from "./boards";
 import { Thread, ThreadSummary } from "../../types/rest/threads";
 
 import { GenericResponse } from "../../types/rest/responses";
+import { TWISTED_MINDS_REALM_STRING_ID } from "./realms";
 
 export const EXCELLENT_THREAD_ID = "8b2646af-2778-487e-8e44-7ae530c2549c";
 export const FAVORITE_CHARACTER_THREAD_ID =
@@ -21,6 +22,8 @@ export const EXCELLENT_THREAD_SUMMARY: ThreadSummary = {
   id: EXCELLENT_THREAD_ID,
   parent_board_slug: "gore",
   parent_board_id: GORE_BOARD_ID,
+  parent_realm_slug: "twisted-minds",
+  parent_realm_id: TWISTED_MINDS_REALM_STRING_ID,
   starter: {
     id: "ff9f2ae2-a254-4069-9791-3ac5e6dff5bb",
     parent_post_id: null,
@@ -65,6 +68,8 @@ export const FAVORITE_CHARACTER_THREAD_SUMMARY: ThreadSummary = {
   id: FAVORITE_CHARACTER_THREAD_ID,
   parent_board_slug: "gore",
   parent_board_id: GORE_BOARD_ID,
+  parent_realm_slug: "twisted-minds",
+  parent_realm_id: TWISTED_MINDS_REALM_STRING_ID,
   starter: CHARACTER_TO_MAIM_POST,
   new_posts_amount: 0,
   new_comments_amount: 0,
@@ -83,6 +88,8 @@ export const FAVORITE_MURDER_THREAD_SUMMARY: ThreadSummary = {
   id: FAVORITE_MURDER_THREAD_ID,
   parent_board_slug: "gore",
   parent_board_id: GORE_BOARD_ID,
+  parent_realm_slug: "twisted-minds",
+  parent_realm_id: TWISTED_MINDS_REALM_STRING_ID,
   starter: {
     id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
     parent_thread_id: FAVORITE_MURDER_THREAD_ID,
@@ -134,6 +141,8 @@ export const RESTRICTED_THREAD_SUMMARY: ThreadSummary = {
   new_posts_amount: 1,
   parent_board_id: RESTRICTED_BOARD_ID,
   parent_board_slug: "restricted",
+  parent_realm_slug: "twisted-minds",
+  parent_realm_id: TWISTED_MINDS_REALM_STRING_ID,
   starter: CANT_SEE_ME_POST,
   total_comments_amount: 1,
   total_posts_amount: 1,
@@ -181,7 +190,9 @@ export const RESTRICTED_THREAD: Thread = {
 export const CREATE_GORE_THREAD_RESPONSE: Thread = {
   id: expect.any(String),
   parent_board_slug: "gore",
-  parent_board_id: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
+  parent_board_id: GORE_BOARD_ID,
+  parent_realm_slug: "twisted-minds",
+  parent_realm_id: TWISTED_MINDS_REALM_STRING_ID,
   starter: {
     id: expect.any(String),
     parent_thread_id: expect.any(String),

@@ -50,6 +50,8 @@ export interface ThreadSummary extends ThreadActivitySummary {
   id: string;
   parent_board_slug: string;
   parent_board_id: string;
+  parent_realm_slug: string;
+  parent_realm_id: string;
   starter: Post;
   default_view: "thread" | "gallery" | "timeline";
   new: boolean;
