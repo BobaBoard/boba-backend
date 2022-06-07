@@ -73,12 +73,14 @@ export const getUserActivity = async ({
   firebaseId,
   cursor,
   pageSize,
+  realmId,
   updatedOnly,
   ownOnly,
 }: {
   firebaseId: string;
   updatedOnly: boolean;
   ownOnly: boolean;
+  realmId: string;
   cursor: string | null;
   pageSize?: number;
 }): Promise<DbFeedType | false> => {
@@ -93,6 +95,7 @@ export const getUserActivity = async ({
       page_size: finalPageSize,
       updated_only: updatedOnly,
       own_only: ownOnly,
+      realm_id: realmId,
     });
 
     if (rows.length == 1 && rows[0].thread_id == null) {
@@ -131,33 +134,33 @@ export const getUserStarFeed = async ({
   cursor: string | null;
   pageSize?: number;
 }): Promise<DbFeedType> => {
-    const decodedCursor = cursor && decodeCursor(cursor);
+  const decodedCursor = cursor && decodeCursor(cursor);
 
-    const finalPageSize =
-      decodedCursor?.page_size || pageSize || DEFAULT_PAGE_SIZE;
-    const rows = await pool.manyOrNone(sql.getUserStarThreads, {
-      firebase_id: firebaseId,
-      last_activity_cursor: decodedCursor?.last_activity_cursor || null,
+  const finalPageSize =
+    decodedCursor?.page_size || pageSize || DEFAULT_PAGE_SIZE;
+  const rows = await pool.manyOrNone(sql.getUserStarThreads, {
+    firebase_id: firebaseId,
+    last_activity_cursor: decodedCursor?.last_activity_cursor || null,
+    page_size: finalPageSize,
+  });
+
+  if (rows.length == 1 && rows[0].thread_id == null) {
+    log(`Star Feed empty.`);
+    return { cursor: undefined, activity: [] };
+  }
+
+  let result = rows;
+  let nextCursor = null;
+  log(`Got getBoardActivityByUuid query result`, result);
+  if (result.length > finalPageSize) {
+    nextCursor = encodeCursor({
+      last_activity_cursor:
+        result[result.length - 1].thread_last_activity_at_micro,
       page_size: finalPageSize,
     });
+    // remove last element from array
+    result.pop();
+  }
 
-    if (rows.length == 1 && rows[0].thread_id == null) {
-      log(`Star Feed empty.`);
-      return { cursor: undefined, activity: [] };
-    }
-
-    let result = rows;
-    let nextCursor = null;
-    log(`Got getBoardActivityByUuid query result`, result);
-    if (result.length > finalPageSize) {
-      nextCursor = encodeCursor({
-        last_activity_cursor:
-          result[result.length - 1].thread_last_activity_at_micro,
-        page_size: finalPageSize,
-      });
-      // remove last element from array
-      result.pop();
-    }
-
-    return { cursor: nextCursor, activity: rows };
+  return { cursor: nextCursor, activity: rows };
 };
