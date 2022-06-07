@@ -80,6 +80,10 @@ const UWU_INVITES = [
     email: "jersey_devil@email.com",
     label: "An invite for the Jersey Devil",
   },
+  {
+    nonce: "543noemail567",
+    label: "An invite not locked to an email",
+  },
 ];
 
 const USED_AND_EXPIRED_INVITES = [
@@ -100,7 +104,7 @@ const USED_AND_EXPIRED_INVITES = [
 const insertInvites = async (
   invites: {
     nonce: string;
-    email: string;
+    email?: string;
     label?: string;
     used?: boolean;
     created?: string;
@@ -178,7 +182,9 @@ describe("Tests get invites endpoint", () => {
         `/${TWISTED_MINDS_REALM_STRING_ID}/invites`
       );
       expect(resTwistedMinds.status).toBe(200);
-      expect(resTwistedMinds.body.invites).toHaveLength(3);
+      expect(resTwistedMinds.body.invites).toHaveLength(
+        TWISTED_MINDS_INVITES.length - 2
+      );
       for (const invite of resTwistedMinds.body.invites) {
         expect(invite.realm_id).toEqual(TWISTED_MINDS_REALM_STRING_ID);
         expect(invite.own).toBeTrue();
@@ -212,7 +218,7 @@ describe("Tests get invites endpoint", () => {
         `/${UWU_REALM_STRING_ID}/invites`
       );
       expect(resUwu.status).toBe(200);
-      expect(resUwu.body.invites).toHaveLength(2);
+      expect(resUwu.body.invites).toHaveLength(UWU_INVITES.length);
       for (const invite of resUwu.body.invites) {
         expect(invite.realm_id).toEqual(UWU_REALM_STRING_ID);
         expect(invite.own).toBeFalse();
@@ -228,6 +234,12 @@ describe("Tests get invites endpoint", () => {
           expect(invite.label).toBe(UWU_INVITES[1].label);
           expect(invite.invite_url).toEqual(
             `https://${UWU_REALM_SLUG}.boba.social/invites/${UWU_INVITES[1].nonce}`
+          );
+        }
+        if (!invite.invitee_email) {
+          expect(invite.label).toBe(UWU_INVITES[2].label);
+          expect(invite.invite_url).toEqual(
+            `https://${UWU_REALM_SLUG}.boba.social/invites/${UWU_INVITES[2].nonce}`
           );
         }
       }
@@ -524,7 +536,7 @@ describe("Tests create invites endpoint", () => {
     });
   });
 
-  test("doesn't create invite if no email", async () => {
+  test("Correctly creates invite if no email", async () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(SEXY_DADDY_USER_ID);
 
@@ -532,13 +544,14 @@ describe("Tests create invites endpoint", () => {
         `/${TWISTED_MINDS_REALM_STRING_ID}/invites`
       );
 
-      expect(res.status).toBe(400);
-      expect(res.body.message).toBe("Request does not contain required email.");
-      expect(res.body.invite_url).toBeUndefined();
+      expect(res.status).toBe(200);
+      const expected = `https://${TWISTED_MINDS_REALM_SLUG}.boba.social/invites/`;
+      expect(res.body.invite_url).toEqual(expect.stringContaining(expected));
+      expect(res.body.realm_id).toEqual(TWISTED_MINDS_REALM_STRING_ID);
     });
   });
 
-  test("doesn't create invite if email is an empty string", async () => {
+  test("Correctly creates invite if email is an empty string", async () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(SEXY_DADDY_USER_ID);
 
@@ -546,9 +559,10 @@ describe("Tests create invites endpoint", () => {
         .post(`/${TWISTED_MINDS_REALM_STRING_ID}/invites`)
         .field("email", "");
 
-      expect(res.status).toBe(400);
-      expect(res.body.message).toBe("Request does not contain required email.");
-      expect(res.body.invite_url).toBeUndefined();
+      expect(res.status).toBe(200);
+      const expected = `https://${TWISTED_MINDS_REALM_SLUG}.boba.social/invites/`;
+      expect(res.body.invite_url).toEqual(expect.stringContaining(expected));
+      expect(res.body.realm_id).toEqual(TWISTED_MINDS_REALM_STRING_ID);
     });
   });
 
@@ -568,7 +582,7 @@ describe("Tests create invites endpoint", () => {
 describe("Tests accept invites endpoint", () => {
   const server = startTestServer(router);
 
-  test("correctly accepts invite and adds user to the realm", async () => {
+  test("correctly accepts invite and adds user to the realm when invite locked to invitee email", async () => {
     await wrapWithTransaction(async () => {
       setLoggedInUserWithEmail({
         uid: JERSEY_DEVIL_USER_ID,
@@ -578,6 +592,31 @@ describe("Tests accept invites endpoint", () => {
       insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app).post(
         `/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[1].nonce}`
+      );
+
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({
+        realm_id: UWU_REALM_STRING_ID,
+        realm_slug: UWU_REALM_SLUG,
+      });
+      const addedToRealm = await checkUserOnRealm({
+        firebaseId: JERSEY_DEVIL_USER_ID,
+        realmStringId: UWU_REALM_STRING_ID,
+      });
+      expect(addedToRealm).toEqual(true);
+    });
+  });
+
+  test("correctly accepts invite and adds user to the realm when invite not locked to email", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUserWithEmail({
+        uid: JERSEY_DEVIL_USER_ID,
+        email: UWU_INVITES[1].email,
+      });
+
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
+      const res = await request(server.app).post(
+        `/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[2].nonce}`
       );
 
       expect(res.status).toBe(200);
@@ -789,10 +828,11 @@ describe("Tests accept invites endpoint", () => {
     });
   });
 
-  test("creates new user when logged out", async () => {
+  test("creates new user when logged out, when invite locked to email", async () => {
     await wrapWithTransaction(async () => {
+      const NEW_USER_FIREBASE_ID = "new_user_firebase_id";
       authCreateUser.mockReturnValue({
-        uid: "new_user_firebase_id",
+        uid: NEW_USER_FIREBASE_ID,
         metadata: { creationTime: "2022-05-12 19:10:25" },
       });
 
@@ -820,7 +860,7 @@ describe("Tests accept invites endpoint", () => {
       const users = await pool.many(`SELECT users.firebase_id FROM users;`);
       expect(users).toHaveLength(preExistingUsers.length + 1);
       expect(users[preExistingUsers.length]).toEqual({
-        firebase_id: "new_user_firebase_id",
+        firebase_id: NEW_USER_FIREBASE_ID,
       });
 
       const preExistingUsersInRealm = [BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID];
@@ -835,8 +875,232 @@ describe("Tests accept invites endpoint", () => {
       );
       expect(usersInRealm).toHaveLength(preExistingUsersInRealm.length + 1);
       expect(usersInRealm[preExistingUsersInRealm.length]).toEqual({
-        firebase_id: "new_user_firebase_id",
+        firebase_id: NEW_USER_FIREBASE_ID,
       });
+    });
+  });
+
+  test("creates new user when logged out, when invite not locked to email", async () => {
+    await wrapWithTransaction(async () => {
+      const NEW_USER_FIREBASE_ID = "new_user_firebase_id";
+      authCreateUser.mockReturnValue({
+        uid: NEW_USER_FIREBASE_ID,
+        metadata: { creationTime: "2022-05-12 19:10:25" },
+      });
+
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
+      const res = await request(server.app)
+        .post(`/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[2].nonce}`)
+        .send({
+          email: "this_can_be_any_email@email.com",
+          password: "secure_password",
+        });
+
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({
+        realm_id: UWU_REALM_STRING_ID,
+        realm_slug: UWU_REALM_SLUG,
+      });
+
+      const preExistingUsers = [
+        BOBATAN_USER_ID,
+        JERSEY_DEVIL_USER_ID,
+        ONCEST_USER_ID,
+        SEXY_DADDY_USER_ID,
+        ZODIAC_KILLER_USER_ID,
+      ];
+      const users = await pool.many(`SELECT users.firebase_id FROM users;`);
+      expect(users).toHaveLength(preExistingUsers.length + 1);
+      expect(users[preExistingUsers.length]).toEqual({
+        firebase_id: NEW_USER_FIREBASE_ID,
+      });
+
+      const preExistingUsersInRealm = [BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID];
+      const usersInRealm = await pool.many(
+        `SELECT users.firebase_id
+        FROM realm_users
+        JOIN users ON realm_users.user_id = users.id
+        WHERE realm_id = (SELECT id FROM realms WHERE string_id = $/realm_string_id/);`,
+        {
+          realm_string_id: UWU_REALM_STRING_ID,
+        }
+      );
+      expect(usersInRealm).toHaveLength(preExistingUsersInRealm.length + 1);
+      expect(usersInRealm[preExistingUsersInRealm.length]).toEqual({
+        firebase_id: NEW_USER_FIREBASE_ID,
+      });
+    });
+  });
+
+  test("doesn't accept invite when logged out if email doesn't match invite email", async () => {
+    await wrapWithTransaction(async () => {
+      const NEW_USER_FIREBASE_ID = "new_user_firebase_id";
+      authCreateUser.mockReturnValue({
+        uid: NEW_USER_FIREBASE_ID,
+        metadata: { creationTime: "2022-05-12 19:10:25" },
+      });
+
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
+      const res = await request(server.app)
+        .post(`/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[1].nonce}`)
+        .send({
+          email: "different_email@email.com",
+          password: "secure_password",
+        });
+      expect(res.body.message).toBe(`Invite email does not match`);
+      expect(res.status).toBe(403);
+      const newUser = await pool.oneOrNone(
+        `SELECT users.firebase_id FROM users WHERE users.firebase_id = $/new_user_firebase_id/;`,
+        {
+          new_user_firebase_id: NEW_USER_FIREBASE_ID,
+        }
+      );
+      expect(newUser).toBeNull();
+      const addedToRealm = await checkUserOnRealm({
+        firebaseId: NEW_USER_FIREBASE_ID,
+        realmStringId: UWU_REALM_STRING_ID,
+      });
+      expect(addedToRealm).toEqual(false);
+    });
+  });
+
+  test("Doesn't create new user when logged out if no email provided when invite not locked to email", async () => {
+    await wrapWithTransaction(async () => {
+      const NEW_USER_FIREBASE_ID = "new_user_firebase_id";
+      authCreateUser.mockReturnValue({
+        uid: NEW_USER_FIREBASE_ID,
+        metadata: { creationTime: "2022-05-12 19:10:25" },
+      });
+
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
+      const res = await request(server.app)
+        .post(`/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[2].nonce}`)
+        .send({
+          email: "",
+          password: "secure_password",
+        });
+
+      expect(res.status).toBe(400);
+      expect(res.body.message).toBe(
+        `Email and password required to create new user account`
+      );
+      const newUser = await pool.oneOrNone(
+        `SELECT users.firebase_id FROM users WHERE users.firebase_id = $/new_user_firebase_id/;`,
+        {
+          new_user_firebase_id: NEW_USER_FIREBASE_ID,
+        }
+      );
+      expect(newUser).toBeNull();
+      const addedToRealm = await checkUserOnRealm({
+        firebaseId: NEW_USER_FIREBASE_ID,
+        realmStringId: UWU_REALM_STRING_ID,
+      });
+      expect(addedToRealm).toEqual(false);
+    });
+  });
+
+  test("Doesn't create new user when logged out if no password provided when invite not locked to email", async () => {
+    await wrapWithTransaction(async () => {
+      const NEW_USER_FIREBASE_ID = "new_user_firebase_id";
+      authCreateUser.mockReturnValue({
+        uid: NEW_USER_FIREBASE_ID,
+        metadata: { creationTime: "2022-05-12 19:10:25" },
+      });
+
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
+      const res = await request(server.app)
+        .post(`/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[2].nonce}`)
+        .send({
+          email: "this_can_be_any_email@email.com",
+          password: "",
+        });
+
+      expect(res.status).toBe(400);
+      expect(res.body.message).toBe(
+        `Email and password required to create new user account`
+      );
+      const newUser = await pool.oneOrNone(
+        `SELECT users.firebase_id FROM users WHERE users.firebase_id = $/new_user_firebase_id/;`,
+        {
+          new_user_firebase_id: NEW_USER_FIREBASE_ID,
+        }
+      );
+      expect(newUser).toBeNull();
+      const addedToRealm = await checkUserOnRealm({
+        firebaseId: NEW_USER_FIREBASE_ID,
+        realmStringId: UWU_REALM_STRING_ID,
+      });
+      expect(addedToRealm).toEqual(false);
+    });
+  });
+
+  test("Doesn't create new user when logged out if no email provided when invite locked to email", async () => {
+    await wrapWithTransaction(async () => {
+      const NEW_USER_FIREBASE_ID = "new_user_firebase_id";
+      authCreateUser.mockReturnValue({
+        uid: NEW_USER_FIREBASE_ID,
+        metadata: { creationTime: "2022-05-12 19:10:25" },
+      });
+
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
+      const res = await request(server.app)
+        .post(`/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[1].nonce}`)
+        .send({
+          email: "",
+          password: "secure_password",
+        });
+
+      expect(res.status).toBe(400);
+      expect(res.body.message).toBe(
+        `Email and password required to create new user account`
+      );
+      const newUser = await pool.oneOrNone(
+        `SELECT users.firebase_id FROM users WHERE users.firebase_id = $/new_user_firebase_id/;`,
+        {
+          new_user_firebase_id: NEW_USER_FIREBASE_ID,
+        }
+      );
+      expect(newUser).toBeNull();
+      const addedToRealm = await checkUserOnRealm({
+        firebaseId: NEW_USER_FIREBASE_ID,
+        realmStringId: UWU_REALM_STRING_ID,
+      });
+      expect(addedToRealm).toEqual(false);
+    });
+  });
+
+  test("Doesn't create new user when logged out if no password provided when invite locked to email", async () => {
+    await wrapWithTransaction(async () => {
+      const NEW_USER_FIREBASE_ID = "new_user_firebase_id";
+      authCreateUser.mockReturnValue({
+        uid: NEW_USER_FIREBASE_ID,
+        metadata: { creationTime: "2022-05-12 19:10:25" },
+      });
+
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
+      const res = await request(server.app)
+        .post(`/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[1].nonce}`)
+        .send({
+          email: UWU_INVITES[1].email,
+          password: "",
+        });
+
+      expect(res.status).toBe(400);
+      expect(res.body.message).toBe(
+        `Email and password required to create new user account`
+      );
+      const newUser = await pool.oneOrNone(
+        `SELECT users.firebase_id FROM users WHERE users.firebase_id = $/new_user_firebase_id/;`,
+        {
+          new_user_firebase_id: NEW_USER_FIREBASE_ID,
+        }
+      );
+      expect(newUser).toBeNull();
+      const addedToRealm = await checkUserOnRealm({
+        firebaseId: NEW_USER_FIREBASE_ID,
+        realmStringId: UWU_REALM_STRING_ID,
+      });
+      expect(addedToRealm).toEqual(false);
     });
   });
 });

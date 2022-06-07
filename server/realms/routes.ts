@@ -391,10 +391,10 @@ router.get(
       const formattedInvite = {
         realm_id: realm.string_id,
         invite_url: `https://${realm.slug}.boba.social/invites/${invite.nonce}`,
-        invitee_email: invite.invitee_email,
         own: invite.inviter_id === userId ? true : false,
         issued_at: invite.created,
         expires_at: invite.expires_at,
+        ...(invite.invitee_email && { invitee_email: invite.invitee_email }),
         ...(invite.label && { label: invite.label }),
       };
       return formattedInvite;
@@ -500,7 +500,6 @@ router.get("/:realm_id/invites/:nonce", async (req, res) => {
  *             value: 76ef4cc3-1603-4278-95d7-99c59f481d2e
  *     requestBody:
  *       description: The invite data.
- *       required: true
  *       content:
  *         application/json:
  *           schema:
@@ -511,8 +510,6 @@ router.get("/:realm_id/invites/:nonce", async (req, res) => {
  *                 format: email
  *               label:
  *                 type: string
- *             required:
- *               - email
  *           examples:
  *             twisted_minds:
  *               value:
@@ -529,12 +526,6 @@ router.get("/:realm_id/invites/:nonce", async (req, res) => {
  *                 value:
  *                   realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e
  *                   invite_url: https://twisted_minds.boba.social/invites/123invite_code456
- *       400:
- *         description: The request does not contain required email.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/genericResponse"
  *       401:
  *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
@@ -555,12 +546,6 @@ router.post(
     const realmId = req.params.realm_id;
     const { email, label } = req.body;
 
-    if (!email || !email.length) {
-      res
-        .status(400)
-        .send({ message: "Request does not contain required email." });
-      return;
-    }
     // Generate 64 characters random id string
     const inviteCode = randomBytes(32).toString("hex");
     const adminId = await getUserFromFirebaseId({ firebaseId: user });
@@ -695,7 +680,7 @@ router.get("/:realm_id/invites/:nonce", async (req, res) => {
  *             value: 123invite_code456
  *     # Remove email and password requirements if we decide to separate out sign-up invites
  *     requestBody:
- *       description: The user data for the invite. Only required if the user is not already logged in.
+ *       description: The user data for the invite. Only required if the user does not already have an account.
  *       content:
  *         application/json:
  *           schema:
@@ -726,8 +711,14 @@ router.get("/:realm_id/invites/:nonce", async (req, res) => {
  *                 value:
  *                   realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e
  *                   realm_slug: twisted-minds
+ *       400:
+ *         description: Request does not contain email and password require to create new user account.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/genericResponse"
  *       403:
- *         description: The invite is not valid anymore, or is for a different realm, or does not correspond to the invited one.
+ *         description: The invite is not valid anymore, or the user's email does not correspond to the invited one.
  *         content:
  *           application/json:
  *             schema:
@@ -765,12 +756,22 @@ router.post(
       throw new NotFound404Error(`Invite not found`);
     }
 
+    log("email:", email);
+    if (!userId && (email?.length < 1 || password?.length < 1)) {
+      throw new BadRequest400Error(
+        `Email and password required to create new user account`
+      );
+    }
+
     if (inviteDetails.expired || inviteDetails.used) {
       throw new Forbidden403Error(`Invite expired or already used`);
     }
-    log("email:", email);
-    if (inviteDetails.email.toLowerCase() != (email as string).toLowerCase()) {
-      throw new Forbidden403Error(`Invite email does not match`);
+    if (inviteDetails.email?.length > 0) {
+      if (
+        inviteDetails.email.toLowerCase() != (email as string).toLowerCase()
+      ) {
+        throw new Forbidden403Error(`Invite email does not match`);
+      }
     }
 
     const inviteRealm = await getRealmIdsByUuid({

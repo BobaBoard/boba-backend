@@ -37,7 +37,6 @@ components:
       required:
         - realm_id
         - invite_url
-        - invitee_email
         - own
         - issued_at
         - expires_at
