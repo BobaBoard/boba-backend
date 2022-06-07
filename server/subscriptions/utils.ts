@@ -34,6 +34,7 @@ const getRestWebhookPayload = ({
   eventPayload: threadEvents.EventToPayload[keyof threadEvents.EventToPayload];
 }) => {
   switch (eventPayload.eventType) {
+    // TODO: remove user identity from payload
     case threadEvents.EVENT_TYPES.THREAD_CREATED:
       return eventPayload.thread;
     case threadEvents.EVENT_TYPES.THREAD_UPDATED:
