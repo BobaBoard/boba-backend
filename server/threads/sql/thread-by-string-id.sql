@@ -115,6 +115,8 @@ SELECT
     threads.string_id as thread_id,
     boards.slug as board_slug,
     boards.string_id as board_id,
+    realms.slug as realm_slug,
+    realms.string_id as realm_id,
     TO_CHAR(thread_details.last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as thread_last_activity,
     json_agg(row_to_json(thread_posts) ORDER BY thread_posts.created_at ASC) as posts,
     COALESCE(threads.OPTIONS ->> 'default_view', 'thread')::view_types AS default_view,
@@ -135,6 +137,8 @@ LEFT JOIN thread_details
     ON threads.string_id = thread_details.thread_string_id
 LEFT JOIN boards
     ON threads.parent_board = boards.id
+LEFT JOIN realms
+    ON boards.parent_realm_id = realms.id
 LEFT JOIN user_muted_threads umt
     ON  ${firebase_id} IS NOT NULL AND umt.user_id = (SELECT id FROM users WHERE firebase_id = ${firebase_id}) AND umt.thread_id = threads.id
 LEFT JOIN user_hidden_threads uht
@@ -142,4 +146,4 @@ LEFT JOIN user_hidden_threads uht
 LEFT JOIN user_starred_threads ust
     ON  ${firebase_id} IS NOT NULL AND ust.user_id = (SELECT id FROM users WHERE firebase_id = ${firebase_id}) AND ust.thread_id = threads.id
 WHERE threads.string_id = ${thread_string_id}
-GROUP BY threads.id, boards.slug, uht.user_id, umt.user_id, ust.user_id, thread_details.last_update_timestamp, boards.string_id;
+GROUP BY threads.id, boards.slug, boards.string_id, realms.slug, realms.string_id, uht.user_id, umt.user_id, ust.user_id, thread_details.last_update_timestamp;
