@@ -61,6 +61,9 @@ SELECT
     boards.id as board_id,
     boards.string_id as board_string_id,
     boards.slug as board_slug,
+    realms.id as realm_id,
+    realms.slug as realm_slug,
+    realms.string_id as realm_string_id,
     first_post.id as first_post_id,
     first_post.string_id AS first_post_string_id,
     first_post.content AS content,
@@ -90,6 +93,8 @@ SELECT
 FROM threads
 LEFT JOIN boards
     ON boards.id = threads.parent_board
+LEFT JOIN realms
+    ON boards.parent_realm_id = realms.id
 LEFT JOIN posts AS first_post
     ON first_post.parent_thread = threads.id AND first_post.parent_post IS NULL
 LEFT JOIN LATERAL (
