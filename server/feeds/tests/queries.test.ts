@@ -1,4 +1,7 @@
+import { BOBATAN_USER_ID, ONCEST_USER_ID } from "test/data/auth";
+
 import { DbFeedType } from "Types";
+import { TWISTED_MINDS_REALM_STRING_ID } from "test/data/realms";
 import { extractActivity } from "utils/test-utils";
 import { getUserActivity } from "../queries";
 import { getUserFromFirebaseId } from "../../users/queries";
@@ -21,8 +24,8 @@ describe("Test users query", () => {
 describe("feed activity queries", () => {
   test("updated: TRUE, own: TRUE", async () => {
     const feed = (await getUserActivity({
-      // Bobatan
-      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      firebaseId: BOBATAN_USER_ID,
+      realmId: TWISTED_MINDS_REALM_STRING_ID,
       cursor: null,
       updatedOnly: true,
       ownOnly: true,
@@ -47,8 +50,8 @@ describe("feed activity queries", () => {
 
   test("updated: FALSE, own: TRUE", async () => {
     const feed = (await getUserActivity({
-      // Bobatan
-      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      firebaseId: BOBATAN_USER_ID,
+      realmId: TWISTED_MINDS_REALM_STRING_ID,
       cursor: null,
       updatedOnly: false,
       ownOnly: true,
@@ -86,8 +89,8 @@ describe("feed activity queries", () => {
 
   test("updated: TRUE, own: FALSE", async () => {
     const feed = (await getUserActivity({
-      // Bobatan
-      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      firebaseId: BOBATAN_USER_ID,
+      realmId: TWISTED_MINDS_REALM_STRING_ID,
       cursor: null,
       updatedOnly: true,
       ownOnly: false,
@@ -112,8 +115,8 @@ describe("feed activity queries", () => {
 
   test("updated: FALSE, own: FALSE", async () => {
     const feed = (await getUserActivity({
-      // Bobatan
-      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      firebaseId: BOBATAN_USER_ID,
+      realmId: TWISTED_MINDS_REALM_STRING_ID,
       cursor: null,
       updatedOnly: false,
       ownOnly: false,
@@ -164,8 +167,8 @@ describe("feed activity queries", () => {
 
   test("updated: FALSE, own: FALSE WITH CURSOR", async () => {
     const feed = (await getUserActivity({
-      // Bobatan
-      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      firebaseId: BOBATAN_USER_ID,
+      realmId: TWISTED_MINDS_REALM_STRING_ID,
       cursor: null,
       updatedOnly: false,
       ownOnly: false,
@@ -194,8 +197,8 @@ describe("feed activity queries", () => {
 
   test("updated: FALSE, own: FALSE WITH CURSOR (PAGE 2)", async () => {
     const feed = (await getUserActivity({
-      // Bobatan
-      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      firebaseId: BOBATAN_USER_ID,
+      realmId: TWISTED_MINDS_REALM_STRING_ID,
       cursor:
         "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDUtMjNUMDU6NTI6MDAuMDAwMDAwIiwicGFnZV9zaXplIjoxfQ==",
       updatedOnly: false,
@@ -223,8 +226,8 @@ describe("feed activity queries", () => {
   describe("correctly considers board notifications dismissal", () => {
     test("updated: FALSE, own: FALSE", async () => {
       const feed = (await getUserActivity({
-        // oncest5evah
-        firebaseId: "fb3",
+        firebaseId: ONCEST_USER_ID,
+        realmId: TWISTED_MINDS_REALM_STRING_ID,
         cursor: null,
         updatedOnly: false,
         ownOnly: false,
@@ -254,8 +257,8 @@ describe("feed activity queries", () => {
   describe("correctly considers board notifications dismissal", () => {
     test("updated: true, own: FALSE", async () => {
       const feed = (await getUserActivity({
-        // oncest5evah
-        firebaseId: "fb3",
+        firebaseId: ONCEST_USER_ID,
+        realmId: TWISTED_MINDS_REALM_STRING_ID,
         cursor: null,
         updatedOnly: true,
         ownOnly: false,
