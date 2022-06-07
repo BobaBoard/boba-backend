@@ -122,3 +122,26 @@ export const dismissAllNotifications = async ({
     return false;
   }
 };
+
+export const getBobadexIdentities = async ({
+  firebaseId,
+  realmId,
+}: {
+  firebaseId: string;
+  realmId: string;
+}) => {
+  try {
+    log(`Getting boba identities firebase ID ${firebaseId}`);
+    return {
+      seasons: await pool.many(sql.getBobadexIdentities, {
+        firebase_id: firebaseId,
+        realm_id: realmId,
+      }),
+    };
+  } catch (e) {
+    error(`Error getting boba identities.`);
+    error(e);
+    return false;
+  }
+};
+

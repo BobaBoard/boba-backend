@@ -185,22 +185,3 @@ export const createNewUser = async (user: {
     return false;
   }
 };
-
-export const getBobadexIdentities = async ({
-  firebaseId,
-}: {
-  firebaseId: string;
-}) => {
-  try {
-    log(`Getting boba identities firebase ID ${firebaseId}`);
-    return {
-      seasons: await pool.many(sql.getBobadexIdentities, {
-        firebase_id: firebaseId,
-      }),
-    };
-  } catch (e) {
-    error(`Error getting boba identities.`);
-    error(e);
-    return false;
-  }
-};

@@ -1,7 +1,3 @@
-import pg, { QueryFile } from "pg-promise";
-
-import path from "path";
-
 const updateUserSettings = `
   INSERT INTO user_settings(user_id, setting_name, setting_value) VALUES 
     ((SELECT id FROM users WHERE users.firebase_id = $/firebase_id/), $/setting_name/, $/setting_value/)
@@ -52,7 +48,4 @@ export default {
   getUserSettings,
   updateUserSettings,
   getInviteDetails,
-  getBobadexIdentities: new QueryFile(
-    path.join(__dirname, "fetch-bobadex.sql")
-  ),
 };

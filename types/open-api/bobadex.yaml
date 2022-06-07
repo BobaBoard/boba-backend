@@ -8,7 +8,7 @@ components:
           format: uuid
         realm_id:
           type: string
-          # format: uuid
+          format: uuid
         name:
           type: string
         identities_count:
