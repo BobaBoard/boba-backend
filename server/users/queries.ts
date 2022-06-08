@@ -1,5 +1,6 @@
 import { SettingEntry, SettingValueTypes } from "../../types/settings";
 import { decodeCursor, encodeCursor } from "utils/queries-utils";
+import firebaseAuth, { auth } from "firebase-admin";
 
 import { DbActivityThreadType } from "Types";
 import debug from "debug";
@@ -131,25 +132,59 @@ export const getBobadexIdentities = async ({
   }
 };
 
-export const createNewUser = async (user: {
-  firebaseId: string;
-  invitedBy: number;
-  createdOn: string;
-}) => {
-  const query = `
-    INSERT INTO users(firebase_id, invited_by, created_on)
-    VALUES ($/firebase_id/, $/invited_by/, $/created_on/)`;
+export const createFirebaseUser = async ({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}): Promise<auth.UserRecord> => {
   try {
-    await pool.none(query, {
-      firebase_id: user.firebaseId,
-      invited_by: user.invitedBy,
-      created_on: user.createdOn,
+    const newUser = await firebaseAuth.auth().createUser({
+      email,
+      password,
     });
-    log(`Added new user in DB for firebase ID ${user.firebaseId}`);
-    return true;
+    const uid = newUser.uid;
+    log(`Created new firebase user with uid ${uid}`);
+    return newUser;
   } catch (e) {
-    error(`Error creating a new user.`);
+    error(`Error creating firebase user:`);
     error(e);
-    return false;
+    return null;
+  }
+};
+
+export const createNewUser = async ({
+  email,
+  password,
+  invitedBy,
+}: {
+  email: string;
+  password: string;
+  invitedBy: number;
+}): Promise<string> => {
+  try {
+    const newUser = await createFirebaseUser({
+      email,
+      password,
+    });
+    if (!newUser) {
+      throw new Error("Failed to create firebase user");
+    }
+
+    const firebaseId = newUser.uid;
+    const createdOn = newUser.metadata.creationTime;
+
+    await pool.none(sql.createNewUser, {
+      firebase_id: firebaseId,
+      invited_by: invitedBy,
+      created_on: createdOn,
+    });
+    log(`Added new user in DB for firebase ID ${firebaseId}`);
+    return firebaseId;
+  } catch (e) {
+    error(`Error creating user:`);
+    error(e);
+    return null;
   }
 };

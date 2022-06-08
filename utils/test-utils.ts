@@ -69,6 +69,36 @@ export const setLoggedInUser = (firebaseId: string) => {
   });
 };
 
+export const setLoggedInUserWithEmail = (user: {
+  uid: string;
+  email: string;
+}) => {
+  if (
+    !jest.isMockFunction(withLoggedIn) ||
+    !jest.isMockFunction(ensureLoggedIn) ||
+    !jest.isMockFunction(withUserSettings)
+  ) {
+    throw Error(
+      "setLoggedInUserWithEmail requires 'handlers/auth' to be explicitly mocked."
+    );
+  }
+  mocked(withLoggedIn).mockImplementation((req, res, next) => {
+    // @ts-ignore
+    req.currentUser = user;
+    next();
+  });
+  mocked(ensureLoggedIn).mockImplementation((req, res, next) => {
+    // @ts-ignore
+    req.currentUser = user;
+    next();
+  });
+  mocked(withUserSettings).mockImplementation((req, res, next) => {
+    // @ts-ignore
+    req.currentUser = user;
+    next();
+  });
+};
+
 export const startTestServer = (router: Router) => {
   const server: { app: Express | null } = { app: null };
   let listener: Server;
