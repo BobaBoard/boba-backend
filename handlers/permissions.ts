@@ -237,40 +237,56 @@ export const withPostPermissions = async (
   next();
 };
 
-export const withRealmPermissions = async (
+export const ensureRealmExists = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   if (!req.params.realm_id) {
     throw new Internal500Error(
-      "Realm permissions can only be fetched on a route that includes a realm id."
+      "Realm data can only be fetched on a route that includes a realm id."
     );
   }
-  if (!req.currentUser) {
-    next();
-    return;
-  }
 
-  req.currentRealmIds = await getRealmIdsByUuid({
+  const currentRealmIds = await getRealmIdsByUuid({
     realmId: req.params.realm_id,
   });
-  if (!req.currentRealmIds) {
+  if (!currentRealmIds) {
     res.status(404).json({ message: "The realm was not found." });
     return;
   }
-
-  const currentRealmPermissions = await getUserPermissionsForRealm({
-    firebaseId: req.currentUser.uid,
-    realmId: req.params.realm_id,
-  });
-
-  if (!currentRealmPermissions) {
-    next();
-    return;
-  }
-  req.currentRealmPermissions = currentRealmPermissions;
+  req.currentRealmIds = currentRealmIds;
   next();
+};
+
+export const withRealmPermissions = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  ensureRealmExists(req, res, async () => {
+    if (!req.currentRealmIds) {
+      throw new Internal500Error(
+        "Realm permissions can only be fetched on a route that includes a realm id."
+      );
+    }
+    if (!req.currentUser) {
+      next();
+      return;
+    }
+
+    const currentRealmPermissions = await getUserPermissionsForRealm({
+      firebaseId: req.currentUser.uid,
+      realmId: req.currentRealmIds.string_id,
+    });
+
+    if (!currentRealmPermissions) {
+      next();
+      return;
+    }
+    req.currentRealmPermissions = currentRealmPermissions;
+    next();
+  });
 };
 
 export const ensureRealmPermission = (permission: RealmPermissions) => {
