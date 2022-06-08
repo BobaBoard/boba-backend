@@ -290,3 +290,25 @@ export const ensureRealmPermission = (permission: RealmPermissions) => {
     });
   };
 };
+
+export const ensureRealmExists = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.params.realm_id) {
+    throw new Internal500Error(
+      "Realm data can only be fetched on a route that includes a realm id."
+    );
+  }
+
+  const currentRealmIds = await getRealmIdsByUuid({
+    realmId: req.params.realm_id,
+  });
+  if (!currentRealmIds) {
+    res.status(404).json({ message: "The realm was not found." });
+    return;
+  }
+  req.currentRealmIds = currentRealmIds;
+  next();
+};

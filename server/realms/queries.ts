@@ -79,7 +79,7 @@ export const getRealmDataBySlug = async ({
   realmSlug,
 }: {
   realmSlug: string;
-}): Promise<Omit<Realm, "boards"> | null> => {
+}): Promise<Omit<Realm, "boards" | "permissions"> | null> => {
   const realmDbData = await pool.oneOrNone(sql.getRealmBySlug, {
     realm_slug: realmSlug,
   });
