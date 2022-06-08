@@ -76,6 +76,13 @@ describe("Tests restricted board realm queries", () => {
           title: "The twisted rules",
           type: "rules",
         },
+        {
+          id: "61ab444a-7db3-42f9-86c3-0ac188199fc4",
+          index: 1,
+          subscription_id: "11e29fe7-1913-48a5-a3aa-9f01358d212f",
+          title: "Twisted updates",
+          type: "subscription",
+        },
       ],
     });
   });

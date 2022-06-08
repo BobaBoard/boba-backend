@@ -1,8 +1,13 @@
+import {
+  Realm,
+  RulesBlock,
+  SubscriptionBlock,
+  UiBlocks,
+} from "../../types/rest/realms";
 import { filterOutDisabledSettings, getRealmCursorSetting } from "./utils";
 
 import { CssVariableSetting } from "../../types/settings";
 import { ITask } from "pg-promise";
-import { Realm } from "../../types/rest/realms";
 import { SettingEntry } from "../../types/settings";
 import debug from "debug";
 import { extractRealmPermissions } from "utils/permissions-utils";
@@ -75,6 +80,34 @@ export const getSettingsBySlug = async ({
   return baseSettings;
 };
 
+const getBlocksData = (dbBlocks: any[]): UiBlocks[] => {
+  return dbBlocks.map((dbBlock: { type: UiBlocks["type"] }) => {
+    switch (dbBlock.type) {
+      case "rules":
+        return {
+          id: (dbBlock as any).string_id as string,
+          type: dbBlock.type,
+          title: (dbBlock as any).title as string,
+          index: (dbBlock as any).index as number,
+          rules: (dbBlock as any).rules.map((rule: any) => ({
+            title: rule.title as string,
+            description: rule.description as string,
+            pinned: rule.pinned as boolean,
+            index: rule.index as number,
+          })),
+        } as RulesBlock;
+      case "subscription":
+        return {
+          id: (dbBlock as any).string_id,
+          type: (dbBlock as any).type,
+          title: (dbBlock as any).title,
+          index: (dbBlock as any).index,
+          subscription_id: (dbBlock as any).subscription_id,
+        } as SubscriptionBlock;
+    }
+  });
+};
+
 export const getRealmDataBySlug = async ({
   realmSlug,
 }: {
@@ -88,18 +121,7 @@ export const getRealmDataBySlug = async ({
     id: realmDbData.realm_id,
     slug: realmDbData.realm_slug,
     homepage: {
-      blocks: realmDbData.homepage_blocks.map((block: any) => ({
-        id: block.string_id,
-        type: block.type,
-        title: block.title,
-        index: block.index,
-        rules: block.rules.map((rule: any) => ({
-          title: rule.title,
-          description: rule.description,
-          pinned: rule.pinned,
-          index: rule.index,
-        })),
-      })),
+      blocks: getBlocksData(realmDbData.homepage_blocks),
     },
   };
 };
