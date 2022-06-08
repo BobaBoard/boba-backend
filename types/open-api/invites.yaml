@@ -52,3 +52,18 @@ components:
       required:
         - realm_id
         - realm_slug
+    InviteStatus:
+      type: object
+      properties:
+        realm_id:
+          type: string
+          format: uuid
+        realm_slug:
+          type: string
+        invite_status:
+          type: string
+          enum: [pending, used, expired]
+      required:
+        - realm_id
+        - realm_slug
+        - invite_status

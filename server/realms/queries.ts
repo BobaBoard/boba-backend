@@ -237,19 +237,19 @@ export const getInviteDetails = async ({
 export const addUserToRealm = async (
   transaction: ITask<unknown>,
   {
-    user,
+    firebaseId,
     realmStringId,
   }: {
-    user: string;
+    firebaseId: string;
     realmStringId: string;
   }
 ): Promise<boolean> => {
   try {
     await transaction.none(sql.addUserToRealm, {
-      firebase_id: user,
+      firebase_id: firebaseId,
       realm_string_id: realmStringId,
     });
-    log(`Added user ${user} to realm ${realmStringId}`);
+    log(`Added user ${firebaseId} to realm ${realmStringId}`);
     return true;
   } catch (e) {
     error(`Error adding user to realm.`);
@@ -285,11 +285,11 @@ export const markInviteUsed = async (
 
 export const acceptInvite = async ({
   nonce,
-  user,
+  firebaseId,
   realmStringId,
 }: {
   nonce: string;
-  user: string;
+  firebaseId: string;
   realmStringId: string;
 }): Promise<boolean> => {
   return pool
@@ -299,7 +299,7 @@ export const acceptInvite = async ({
         throw new Error(`Failed to mark invite as used`);
       }
       const addedToRealm = await addUserToRealm(transaction, {
-        user,
+        firebaseId,
         realmStringId,
       });
       if (!addedToRealm) {
@@ -344,15 +344,15 @@ export const getRealmInvites = async ({
 };
 
 export const checkUserOnRealm = async ({
-  user,
+  firebaseId,
   realmStringId,
 }: {
-  user: string;
+  firebaseId: string;
   realmStringId: string;
 }): Promise<boolean | null> => {
   try {
     const inRealm = await pool.oneOrNone(sql.findUserOnRealm, {
-      firebase_id: user,
+      firebase_id: firebaseId,
       realm_string_id: realmStringId,
     });
     return !!inRealm;

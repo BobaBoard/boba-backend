@@ -109,4 +109,34 @@ describe("Tests restricted board realm queries", () => {
     expect(res.status).toBe(200);
     expect(res.body.realm_permissions).toEqual([]);
   });
+
+  test("fetches user realm permissions when user has realm permissions", async () => {
+    setLoggedInUser(BOBATAN_USER_ID);
+    const res = await request(server.app).get(
+      `/slug/${TWISTED_MINDS_REALM_SLUG}`
+    );
+
+    expect(res.status).toBe(200);
+    expect(res.body.realm_permissions.length).toBe(1);
+    expect(res.body.realm_permissions[0]).toEqual("create_realm_invite");
+  });
+
+  test("doesn't fetch realm permissions when user doesn't have realm permissions", async () => {
+    setLoggedInUser(JERSEY_DEVIL_USER_ID);
+    const res = await request(server.app).get(
+      `/slug/${TWISTED_MINDS_REALM_SLUG}`
+    );
+
+    expect(res.status).toBe(200);
+    expect(res.body.realm_permissions).toEqual([]);
+  });
+
+  test("doesn't fetch realm permissions when logged out", async () => {
+    const res = await request(server.app).get(
+      `/slug/${TWISTED_MINDS_REALM_SLUG}`
+    );
+
+    expect(res.status).toBe(200);
+    expect(res.body.realm_permissions).toEqual([]);
+  });
 });
