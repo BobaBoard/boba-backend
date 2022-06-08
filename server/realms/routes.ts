@@ -520,6 +520,78 @@ router.post(
 /**
  * @openapi
  * /realms/{realm_id}/invites/{nonce}:
+ *   get:
+ *     summary: Get an invite's realm and status.
+ *     operationId: getInviteByNonce
+ *     tags:
+ *       - /realms/
+ *     parameters:
+ *       - name: realm_id
+ *         in: path
+ *         description: The id of the realm.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         examples:
+ *           twisted_minds:
+ *             summary: the twisted-minds realm id
+ *             value: 76ef4cc3-1603-4278-95d7-99c59f481d2e
+ *       - name: nonce
+ *         in: path
+ *         description: The invite code.
+ *         required: true
+ *         schema:
+ *           type: string
+ *         examples:
+ *           twisted_minds:
+ *             summary: the invite code.
+ *             value: 123invite_code456
+ *     responses:
+ *       200:
+ *         description: The realm amd status of the requested invite.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/InviteStatus"
+ *             examples:
+ *               twisted_minds:
+ *                 value:
+ *                   realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e
+ *                   realm_slug: twisted-minds
+ *                   invite_status: pending
+ *       404:
+ *         description: The invite with the given code was not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/genericResponse"
+ */
+
+router.get("/:realm_id/invites/:nonce", async (req, res) => {
+  const nonce = req.params.nonce;
+  const invite = await getInviteDetails({ nonce });
+  if (!invite) {
+    throw new NotFound404Error("The invite was not found");
+  }
+  const inviteRealm = await getRealmIdsByUuid({ realmId: invite.realmId });
+  if (!inviteRealm) {
+    throw new Internal500Error("failed to get realm ids");
+  }
+  res.status(200).json({
+    realm_id: inviteRealm.string_id,
+    realm_slug: inviteRealm.slug,
+    invite_status: invite.expired
+      ? "expired"
+      : invite.used
+      ? "used"
+      : "pending",
+  });
+});
+
+/**
+ * @openapi
+ * /realms/{realm_id}/invites/{nonce}:
  *   post:
  *     summary: Accept invite for the realm.
  *     operationId: acceptInviteByNonce
