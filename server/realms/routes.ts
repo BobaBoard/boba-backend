@@ -9,13 +9,14 @@ import {
   checkUserOnRealm,
   dismissAllNotifications,
   getInviteDetails,
-  getRealmDataBySlug,
   getRealmIdsByUuid,
   getRealmInvites,
-  getSettingsBySlug,
   getUserPermissionsForRealm,
-} from "./queries";
-import { ensureLoggedIn, withUserSettings } from "handlers/auth";
+} from "server/realms/queries";
+import { createNewUser, getUserFromFirebaseId } from "server/users/queries";
+import { ensureLoggedIn, withLoggedIn, withUserSettings } from "handlers/auth";
+import { ensureRealmExists, ensureRealmPermission } from "handlers/permissions";
+import { getRealmDataBySlug, getSettingsBySlug } from "./queries";
 import {
   processBoardsNotifications,
   processBoardsSummary,
@@ -24,11 +25,10 @@ import {
 import { RealmPermissions } from "types/permissions";
 import { createInvite } from "server/realms/queries";
 import debug from "debug";
-import { ensureRealmPermission } from "handlers/permissions";
 import express from "express";
 import firebaseAuth from "firebase-admin";
 import { getBoards } from "../boards/queries";
-import { getUserFromFirebaseId } from "server/users/queries";
+import pool from "server/db-pool";
 import { processRealmActivity } from "./utils";
 import { randomBytes } from "crypto";
 
@@ -152,7 +152,7 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
  *       404:
  *         description: The realm was not found.
  */
-router.get("/:realm_id/activity", async (req, res) => {
+router.get("/:realm_id/activity", ensureRealmExists, async (req, res) => {
   try {
     const { realm_id } = req.params;
 
@@ -361,8 +361,6 @@ router.delete("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
  *                       issued_at: 2021-06-09T04:20:00Z
  *                       expires_at: 2021-06-09T16:20:00Z
  *                       label: This is a test invite.
- *       204:
- *         description: There are no pending invites for the current realm.
  *       401:
  *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
@@ -386,7 +384,7 @@ router.get(
       realmStringId: realm.string_id,
     });
     if (!unformattedInvites.length) {
-      res.status(204).end();
+      res.status(200).json({ invites: [] });
       return;
     }
     const formattedInvites = unformattedInvites.map((invite) => {
@@ -402,9 +400,81 @@ router.get(
       return formattedInvite;
     });
     log(formattedInvites);
-    res.status(200).json({ invites: formattedInvites });
+    res.status(200).json({ invites: formattedInvites || [] });
   }
 );
+
+/**
+ * @openapi
+ * /realms/{realm_id}/invites/{nonce}:
+ *   get:
+ *     summary: Get an invite's realm and status.
+ *     operationId: getInviteByNonce
+ *     tags:
+ *       - /realms/
+ *     parameters:
+ *       - name: realm_id
+ *         in: path
+ *         description: The id of the realm.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         examples:
+ *           twisted_minds:
+ *             summary: the twisted-minds realm id
+ *             value: 76ef4cc3-1603-4278-95d7-99c59f481d2e
+ *       - name: nonce
+ *         in: path
+ *         description: The invite code.
+ *         required: true
+ *         schema:
+ *           type: string
+ *         examples:
+ *           twisted_minds:
+ *             summary: the invite code.
+ *             value: 123invite_code456
+ *     responses:
+ *       200:
+ *         description: The realm amd status of the requested invite.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/InviteStatus"
+ *             examples:
+ *               twisted_minds:
+ *                 value:
+ *                   realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e
+ *                   realm_slug: twisted-minds
+ *                   invite_status: pending
+ *       404:
+ *         description: The invite with the given code was not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/genericResponse"
+ */
+
+router.get("/:realm_id/invites/:nonce", async (req, res) => {
+  const nonce = req.params.nonce;
+  const invite = await getInviteDetails({ nonce });
+  if (!invite) {
+    throw new NotFound404Error("The invite was not found");
+  }
+  const inviteRealm = await getRealmIdsByUuid({ realmId: invite.realmId });
+  if (!inviteRealm) {
+    throw new Internal500Error("failed to get realm ids");
+  }
+  res.status(200).json({
+    realm_id: inviteRealm.string_id,
+    realm_slug: inviteRealm.slug,
+    invite_status: invite.expired
+      ? "expired"
+      : invite.used
+      ? "used"
+      : "pending",
+  });
+});
 
 /**
  * @openapi
@@ -599,8 +669,8 @@ router.get("/:realm_id/invites/:nonce", async (req, res) => {
  *       - /realms/
  *     security:
  *       - firebase: []
- *       # Currently gated to logged-in only, uncomment if we decide not to separate out sign-up invites
- *       # - {}
+ *       # Currently does not require logged-in, update if we decide to separate out sign-up invites
+ *       - {}
  *     parameters:
  *       - name: realm_id
  *         in: path
@@ -623,27 +693,27 @@ router.get("/:realm_id/invites/:nonce", async (req, res) => {
  *           twisted_minds:
  *             summary: the invite code.
  *             value: 123invite_code456
- *     # Currently gated to logged-in only, so email and password not required. Uncomment if we decide not to separate out sign-up invites
- *     # requestBody:
- *       # description: The user data for the invite. Only required if the user is not already logged in.
- *       # content:
- *         # application/json:
- *           # schema:
- *             # type: object
- *             # properties:
- *               # email:
- *                 # type: string
- *                 # format: email
- *               # password:
- *                 # type: string
- *             # required:
- *               # - email
- *               # - password
- *           # examples:
- *             # twisted_minds:
- *               # value:
- *                 # email: ms.boba@bobaboard.com
- *                 # password: how_bad_can_i_be
+ *     # Remove email and password requirements if we decide to separate out sign-up invites
+ *     requestBody:
+ *       description: The user data for the invite. Only required if the user is not already logged in.
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               password:
+ *                 type: string
+ *             required:
+ *               - email
+ *               - password
+ *           examples:
+ *             twisted_minds:
+ *               value:
+ *                 email: ms.boba@bobaboard.com
+ *                 password: how_bad_can_i_be
  *     responses:
  *       200:
  *         description: The invite was successfully accepted.
@@ -657,7 +727,7 @@ router.get("/:realm_id/invites/:nonce", async (req, res) => {
  *                   realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e
  *                   realm_slug: twisted-minds
  *       403:
- *         description: The invite is not valid anymore, or is for a different realm, or the user is logged out, or does not correspond to the invited one.
+ *         description: The invite is not valid anymore, or is for a different realm, or does not correspond to the invited one.
  *         content:
  *           application/json:
  *             schema:
@@ -675,116 +745,82 @@ router.get("/:realm_id/invites/:nonce", async (req, res) => {
  *             schema:
  *               $ref: "#/components/schemas/genericResponse"
  */
-router.post("/:realm_id/invites/:nonce", ensureLoggedIn, async (req, res) => {
-  const { nonce } = req.params;
-  const user = req.currentUser?.uid;
 
-  // If we decide not to separate out sign-up invites, replace this with the currently commented out code below it.
-  const firebaseUserData = await firebaseAuth.auth().getUser(user);
-  const email = firebaseUserData.email;
-  if (!email) {
-    throw new Internal500Error(`Failed to get user's email`);
+// TODO: decide if sign-up invites should be separated off from Realm invites.
+router.post(
+  "/:realm_id/invites/:nonce",
+  withLoggedIn,
+  ensureRealmExists,
+  async (req, res) => {
+    const { nonce } = req.params;
+    const userId = req.currentUser?.uid;
+
+    // If we decide to separate out sign-up invites, remove getting email and password from req body.
+    const email = req.currentUser?.email || req.body.email;
+    const { password } = req.body;
+
+    const inviteDetails = await getInviteDetails({ nonce });
+
+    if (!inviteDetails) {
+      throw new NotFound404Error(`Invite not found`);
+    }
+
+    if (inviteDetails.expired || inviteDetails.used) {
+      throw new Forbidden403Error(`Invite expired or already used`);
+    }
+    log("email:", email);
+    if (inviteDetails.email.toLowerCase() != (email as string).toLowerCase()) {
+      throw new Forbidden403Error(`Invite email does not match`);
+    }
+
+    const inviteRealm = await getRealmIdsByUuid({
+      realmId: inviteDetails.realmId,
+    });
+
+    if (userId) {
+      const alreadyOnRealm = await checkUserOnRealm({
+        firebaseId: userId,
+        realmStringId: inviteRealm.string_id,
+      });
+      if (alreadyOnRealm) {
+        res
+          .status(409)
+          .send({ message: "User is already a member of the requested realm" });
+        return;
+      } else if (alreadyOnRealm !== false) {
+        throw new Internal500Error(
+          `Failed to check if user is already on realm`
+        );
+      }
+    }
+
+    // If we decide to separate out sign-up invites, move the call to createNewUser to the sign-up endpoint.
+    // Then the firebaseId param for acceptInvite can just be userId.
+    const firebaseId =
+      userId ??
+      (await createNewUser({
+        email,
+        password,
+        invitedBy: inviteDetails.inviter,
+      }));
+
+    if (!firebaseId) {
+      throw new Internal500Error(`Failed to find or create user`);
+    }
+
+    const accepted = await acceptInvite({
+      nonce,
+      firebaseId,
+      realmStringId: inviteRealm.string_id,
+    });
+    if (!accepted) {
+      throw new Internal500Error(`Failed to accept invite`);
+    }
+    res.status(200).json({
+      realm_id: inviteRealm.string_id,
+      realm_slug: inviteRealm.slug,
+    });
   }
-  // const getEmail = async (user?: string) => {
-  //   if (user) {
-  //     try {
-  //       const firebaseUserData = await firebaseAuth.auth().getUser(user);
-  //       return firebaseUserData.email;
-  //     } catch (e) {
-  //       error(`Error while getting user email from firebase`);
-  //       error(e);
-  //       throw new Internal500Error(`Failed to get user's email`);
-  //     }
-  //   } else {
-  //     return req.body.email;
-  //   }
-  // };
-  // const email = await getEmail(user);
-  // const { password } = req.body;
-
-  const realmStringId = req.params.realm_id;
-
-  const currentRealmIds = await getRealmIdsByUuid({
-    realmId: req.params.realm_id,
-  });
-  if (!currentRealmIds) {
-    throw new NotFound404Error(`The realm was not found`);
-  }
-
-  const inviteDetails = await getInviteDetails({ nonce });
-
-  if (!inviteDetails) {
-    throw new NotFound404Error(`Invite not found`);
-  }
-
-  if (inviteDetails.expired || inviteDetails.used) {
-    throw new Forbidden403Error(`Invite expired or already used`);
-  }
-
-  if (inviteDetails.email.toLowerCase() != (email as string).toLowerCase()) {
-    throw new Forbidden403Error(`Invite email does not match`);
-  }
-
-  const inviteRealm = await getRealmIdsByUuid({
-    realmId: inviteDetails.realmId,
-  });
-
-  const alreadyOnRealm = await checkUserOnRealm({
-    user,
-    realmStringId: inviteRealm.string_id,
-  });
-  if (alreadyOnRealm) {
-    res
-      .status(409)
-      .send({ message: "User is already a member of the requested realm" });
-    return;
-  } else if (alreadyOnRealm !== false) {
-    throw new Internal500Error(`Failed to check if user is already on realm`);
-  }
-
-  // TODO: decide if sign-up invites should be separated off from Realm invites. If yes, move this.
-  // firebaseAuth
-  //   .auth()
-  //   .createUser({
-  //     email,
-  //     password,
-  //   })
-  //   .then(async (user) => {
-  //     const uid = user.uid;
-  //     log(`Created new firebase user with uid ${uid}`);
-  //     // TODO: decide whether to put these together in a transaction.
-  //     const success = await markInviteUsed({ nonce });
-  //     if (!success) {
-  //       throw new Internal500Error(`Failed to mark invite as used`);
-  //     }
-  //     const created = await createNewUser({
-  //       firebaseId: uid,
-  //       invitedBy: inviteDetails.inviter,
-  //       createdOn: user.metadata.creationTime,
-  //     });
-  //     if (!created) {
-  //       throw new Internal500Error(`Failed to create new user`);
-  //     }
-  //     res.sendStatus(200);
-  //   })
-  //   .catch((error) => {
-  //     throw new BadRequest400Error(
-  //       `Error creating user: ${error.message} (${error.code})`
-  //     );
-  // });
-
-  const accepted = await acceptInvite({
-    nonce,
-    user,
-    realmStringId: inviteRealm.string_id,
-  });
-  if (!accepted) {
-    throw new Internal500Error(`Failed to accept invite`);
-  }
-  res.status(200).json({
-    realm_id: inviteRealm.string_id,
-    realm_slug: inviteRealm.slug,
-  });
-});
+);
 
 export default router;

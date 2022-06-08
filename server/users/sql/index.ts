@@ -36,8 +36,13 @@ const updateUserData = `
         avatar_reference_id = $/avatar_url/
     WHERE firebase_id = $/firebase_id/`;
 
+const createNewUser = `
+INSERT INTO users(firebase_id, invited_by, created_on)
+VALUES ($/firebase_id/, $/invited_by/, $/created_on/)`;
+
 export default {
   getUserDetails,
+  createNewUser,
   getSettingType,
   updateUserData,
   getUserSettings,
