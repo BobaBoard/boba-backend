@@ -1,9 +1,13 @@
 import { BoardSummary } from "./boards";
 
-export interface RulesBlock {
+interface BaseBlock {
   id: string;
   title: string;
   index: number;
+  type: "rules" | "subscription";
+}
+
+export interface RulesBlock extends BaseBlock {
   type: "rules";
   rules: {
     title: string;
@@ -13,11 +17,19 @@ export interface RulesBlock {
   }[];
 }
 
+export interface SubscriptionBlock extends BaseBlock {
+  id: string;
+  type: "subscription";
+  subscription_id: string;
+}
+
+export type UiBlocks = RulesBlock | SubscriptionBlock;
+
 export interface Realm {
   id: string;
   slug: string;
   homepage: {
-    blocks: RulesBlock[];
+    blocks: UiBlocks[];
   };
   boards: BoardSummary[];
 }
