@@ -32,7 +32,14 @@ CREATE TABLE IF NOT EXISTS realms
     /* The realm's UUID. Used in backend requests. */
     string_id TEXT NOT NULL,
     /* Textual id of the realm, e.g. "twisted-minds", "my-cool-space". Used as part of the URL. */
-    slug TEXT NOT NULL
+    slug TEXT NOT NULL,
+    icon_reference_id TEXT NOT NULL,
+    /* The realm's favicon */
+    favicon_reference_id TEXT,
+    title TEXT,
+    /* The realm's description, shown on og:card */
+    description TEXT,
+    feedback_form_url TEXT
 );
 CREATE UNIQUE INDEX realms_string_id on realms(string_id);
 CREATE UNIQUE INDEX realms_slug on realms(slug);

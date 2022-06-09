@@ -120,6 +120,11 @@ export const getRealmDataBySlug = async ({
   return {
     id: realmDbData.realm_id,
     slug: realmDbData.realm_slug,
+    icon: realmDbData.realm_icon_url,
+    favicon: realmDbData.realm_favicon_url,
+    title: realmDbData.realm_title,
+    description: realmDbData.realm_description,
+    feedbackFormUrl: realmDbData.realm_feedback_form_url,
     homepage: {
       blocks: getBlocksData(realmDbData.homepage_blocks),
     },

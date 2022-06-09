@@ -28,6 +28,11 @@ export type UiBlocks = RulesBlock | SubscriptionBlock;
 export interface Realm {
   id: string;
   slug: string;
+  icon: string;
+  favicon: string | null;
+  title: string | null;
+  description: string | null;
+  feedbackFormUrl: string | null;
   homepage: {
     blocks: UiBlocks[];
   };
