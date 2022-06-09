@@ -447,6 +447,7 @@ router.get(
  *                   realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e
  *                   realm_slug: twisted-minds
  *                   invite_status: pending
+ *                   requires_email: true
  *       404:
  *         description: The invite with the given code was not found.
  *         content:
@@ -473,6 +474,7 @@ router.get("/:realm_id/invites/:nonce", async (req, res) => {
       : invite.used
       ? "used"
       : "pending",
+    requires_email: !!invite.email,
   });
 });
 
@@ -567,6 +569,9 @@ router.post(
 
     res.status(200).json({
       realm_id: realmId,
+      // TODO: we should probably just return the details here and let the client construct
+      // the URL. If we don't do this, then we leak info that the client is in charge of
+      // to the server.
       invite_url: `https://${realm.slug}.boba.social/invites/${inviteCode}`,
     });
   }

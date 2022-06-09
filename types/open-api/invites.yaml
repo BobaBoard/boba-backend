@@ -62,7 +62,10 @@ components:
         invite_status:
           type: string
           enum: [pending, used, expired]
+        requires_email:
+          type: boolean
       required:
         - realm_id
         - realm_slug
         - invite_status
+        - requires_email
