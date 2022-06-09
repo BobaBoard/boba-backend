@@ -1,7 +1,19 @@
-INSERT INTO Realms(id, string_id, slug)
+INSERT INTO Realms(id, string_id, slug, icon_reference_id, favicon_reference_id, title, description, feedback_form_url)
 OVERRIDING SYSTEM VALUE VALUES
-    (1, '76ef4cc3-1603-4278-95d7-99c59f481d2e', 'twisted-minds'),
-    (2, 'e88590d8-c5fb-44f2-abc2-8cffb5b4cdb1', 'uwu');
+    (1, '76ef4cc3-1603-4278-95d7-99c59f481d2e', 
+        'twisted-minds', 
+        'https://images-ext-1.discordapp.net/external/KLz7_JytTOB6vzGDmnAuXTgkDtWuUCluyB6VxiAL8FA/%3Fsize%3D1024/https/cdn.discordapp.com/icons/911351540504199168/d6f98ff59822c22b1ff650796c346166.png', 
+        'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Ffancoders%2F290eafc5-123d-42d6-925b-2eedaf4f92dc%2F4de67370-8a82-47f4-876a-5f5d455044f8..icon?alt=media&token=8b50403e-e68e-4654-8684-44460a37ca92',
+        'Where the code is buggy, but the people are cool!',
+        'A community of people who love to code and share their love of fandom!',
+        'https://docs.google.com/forms/d/e/1FAIpQLSfyMENg9eDNmRj-jIvIG5_ElJFwpGZ_VPvzAskarqu5kf0MSA/viewform'),
+    (2, 'e88590d8-c5fb-44f2-abc2-8cffb5b4cdb1', 
+        'uwu',
+        'https://images-ext-1.discordapp.net/external/KLz7_JytTOB6vzGDmnAuXTgkDtWuUCluyB6VxiAL8FA/%3Fsize%3D1024/https/cdn.discordapp.com/icons/911351540504199168/d6f98ff59822c22b1ff650796c346166.png', 
+        NULL,
+        'UwwwwwwwU',
+        'We''re very nice here.',
+        NULL);
 
 INSERT INTO Boards(id, string_id, slug, tagline, avatar_reference_id, parent_realm_id, settings)
 OVERRIDING SYSTEM VALUE VALUES
