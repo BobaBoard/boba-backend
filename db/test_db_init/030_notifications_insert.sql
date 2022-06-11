@@ -64,3 +64,21 @@ INSERT INTO user_thread_last_visits(user_id, thread_id, last_visit_time) VALUES
   ((SELECT id FROM users WHERE username = 'The Zodiac Killer'),
    (SELECT id FROM threads WHERE string_id = 'b27710a8-0a9f-4c09-b3a5-54668bab7051'),
     to_timestamp('2020-04-26 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
+
+/**
+ *  Notification dismissal requests for uwu realm.
+ */
+INSERT INTO dismiss_notifications_requests(user_id, realm_id, dismiss_request_time) VALUES
+  -- SexyDaddy69 has dismissed notifications in more than a realm.
+  ((SELECT id FROM users WHERE username = 'SexyDaddy69'),
+    (SELECT id FROM realms WHERE slug = 'uwu'),
+    to_timestamp('2021-04-30 23:59:59', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO dismiss_board_notifications_requests(user_id, board_id, dismiss_request_time) VALUES
+  -- SexyDaddy69 has dismissed notifications in more than a realm.
+  ((SELECT id FROM users WHERE username = 'SexyDaddy69'),
+   (SELECT id FROM boards WHERE slug = 'MODS'),
+    to_timestamp('2022-04-20 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
+INSERT INTO user_thread_last_visits(user_id, thread_id, last_visit_time) VALUES
+  ((SELECT id FROM users WHERE username = 'SexyDaddy69'),
+   (SELECT id FROM threads WHERE string_id = '4d8471e5-a066-419c-96e4-456c95ade41d'),
+    to_timestamp('2022-04-19 00:00:00', 'YYYY-MM-DD HH24:MI:SS'));
