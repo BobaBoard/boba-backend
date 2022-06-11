@@ -1,15 +1,16 @@
 import {
+  ANIME_BOARD_ID,
+  DELISTED_BOARD_ID,
   GORE_BOARD_ID,
+  LONG_BOARD_ID,
   MAIN_STREET_BOARD_ID,
-  MODS_BOARD_ID,
+  MEMES_BOARD_ID,
   MUTED_BOARD_ID,
   RESTRICTED_BOARD_ID,
 } from "./boards";
 
 import { NotificationsResponse } from "../../types/rest/notifications";
-import {
-  TWISTED_MINDS_REALM_STRING_ID,
-} from "./realms";
+import { TWISTED_MINDS_REALM_STRING_ID } from "./realms";
 
 export const BOBATAN_NOTIFICATIONS: NotificationsResponse = {
   has_notifications: true,
@@ -34,9 +35,9 @@ export const BOBATAN_NOTIFICATIONS: NotificationsResponse = {
   },
   realm_id: TWISTED_MINDS_REALM_STRING_ID,
   realm_boards: {
-    "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc": {
+    [MEMES_BOARD_ID]: {
       has_updates: false,
-      id: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
+      id: MEMES_BOARD_ID,
       is_outdated: false,
       last_activity_at: "2020-08-22T10:36:55.850Z",
       last_activity_from_others_at: null,
@@ -59,9 +60,9 @@ export const BOBATAN_NOTIFICATIONS: NotificationsResponse = {
       last_activity_from_others_at: null,
       last_visited_at: null,
     },
-    "4b30fb7c-2aca-4333-aa56-ae8623a92b65": {
+    [ANIME_BOARD_ID]: {
       has_updates: true,
-      id: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
+      id: ANIME_BOARD_ID,
       is_outdated: false,
       last_activity_at: "2020-04-24T12:44:00.000Z",
       last_activity_from_others_at: "2020-04-24T12:44:00.000Z",
@@ -75,9 +76,9 @@ export const BOBATAN_NOTIFICATIONS: NotificationsResponse = {
       last_activity_from_others_at: "2020-04-24T12:44:00.000Z",
       last_visited_at: null,
     },
-    "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b": {
+    [DELISTED_BOARD_ID]: {
       has_updates: false,
-      id: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
+      id: DELISTED_BOARD_ID,
       is_outdated: false,
       last_activity_at: null,
       last_activity_from_others_at: null,
@@ -91,13 +92,13 @@ export const BOBATAN_NOTIFICATIONS: NotificationsResponse = {
       last_activity_from_others_at: "2020-10-02T12:43:00.000Z",
       last_visited_at: "2020-05-25T16:42:00.000Z",
     },
-    "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83": {
+    [LONG_BOARD_ID]: {
       has_updates: true,
-      id: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
+      id: LONG_BOARD_ID,
       is_outdated: false,
       last_activity_at: "2020-04-25T12:42:00.000Z",
       last_activity_from_others_at: "2020-04-25T12:42:00.000Z",
       last_visited_at: null,
-    }
+    },
   },
 };
