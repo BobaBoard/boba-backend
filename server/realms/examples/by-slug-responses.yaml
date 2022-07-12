@@ -32,7 +32,13 @@ components:
                   title: This is a hidden rule
                   description: Congratulations! Here's a cookie
                   pinned: false
-        realm_permissions: [create_realm_invite]
+        realm_permissions:
+          [
+            create_realm_invite,
+            post_on_realm,
+            comment_on_realm,
+            access_member_only_content_on_realm,
+          ]
         boards:
           - id: 2fb151eb-c600-4fe4-a542-4662487e5496
             realm_id: 76ef4cc3-1603-4278-95d7-99c59f481d2e

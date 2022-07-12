@@ -39,4 +39,10 @@ components:
       type: array
       items:
         type: string
-        enum: [create_realm_invite]
+        enum:
+          [
+            create_realm_invite,
+            post_on_realm,
+            comment_on_realm,
+            access_member_only_content_on_realm,
+          ]
