@@ -15,7 +15,10 @@ CREATE TYPE role_permissions_type AS ENUM (
     'edit_whisper_tags',
     'edit_index_tags',
     'edit_default_view',
-    'create_realm_invite'
+    'create_realm_invite',
+    'post_on_realm',
+    'comment_on_realm',
+    'access_member_only_content_on_realm'
 );
 
 CREATE TABLE IF NOT EXISTS roles
