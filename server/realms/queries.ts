@@ -8,6 +8,7 @@ import { filterOutDisabledSettings, getRealmCursorSetting } from "./utils";
 
 import { CssVariableSetting } from "../../types/settings";
 import { ITask } from "pg-promise";
+import { REALM_MEMBER_PERMISSIONS } from "types/permissions";
 import { SettingEntry } from "../../types/settings";
 import debug from "debug";
 import { extractRealmPermissions } from "utils/permissions-utils";
@@ -168,10 +169,10 @@ export const getRealmIdsByUuid = async ({
 
 export const getUserPermissionsForRealm = async ({
   firebaseId,
-  realmId,
+  realmStringId,
 }: {
   firebaseId: string | undefined;
-  realmId: string;
+  realmStringId: string;
 }) => {
   try {
     if (!firebaseId) {
@@ -181,7 +182,7 @@ export const getUserPermissionsForRealm = async ({
       sql.getUserPermissionsForRealm,
       {
         user_id: firebaseId,
-        realm_id: realmId,
+        realm_string_id: realmStringId,
       }
     );
     if (!userPermissionsGroupedByRole.length) {
@@ -198,6 +199,10 @@ export const getUserPermissionsForRealm = async ({
       },
       []
     );
+    const realmMember = checkUserOnRealm({ firebaseId, realmStringId });
+    if (realmMember) {
+      return [...allUserRealmPermissions, ...REALM_MEMBER_PERMISSIONS];
+    }
     return allUserRealmPermissions;
   } catch (e) {
     error(`Error while getting user permissions for the realm.`);

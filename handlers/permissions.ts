@@ -277,7 +277,7 @@ export const withRealmPermissions = async (
 
     const currentRealmPermissions = await getUserPermissionsForRealm({
       firebaseId: req.currentUser.uid,
-      realmId: req.currentRealmIds.string_id,
+      realmStringId: req.currentRealmIds.string_id,
     });
 
     if (!currentRealmPermissions) {
