@@ -90,7 +90,7 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
 
     const realmPermissions = await getUserPermissionsForRealm({
       firebaseId: req.currentUser?.uid,
-      realmId: realmData.id,
+      realmStringId: realmData.id,
     });
 
     const boards = await getBoards({

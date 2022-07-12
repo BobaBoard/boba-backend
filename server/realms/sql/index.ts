@@ -20,7 +20,7 @@ const getUserPermissionsForRealm = `
       JOIN realm_user_roles ON users.id = realm_user_roles.user_id
       JOIN roles ON realm_user_roles.role_id = roles.id
       JOIN realms ON realm_user_roles.realm_id = realms.id 
-    WHERE users.firebase_id = $/user_id/ AND realms.string_id = $/realm_id/`;
+    WHERE users.firebase_id = $/user_id/ AND realms.string_id = $/realm_string_id/`;
 
 const createRealmInvite = `
     INSERT INTO account_invites(nonce, realm_id, inviter, invitee_email, label, duration)
