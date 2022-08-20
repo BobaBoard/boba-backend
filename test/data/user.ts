@@ -1,3 +1,5 @@
+import { REALM_MEMBER_PERMISSIONS, RealmPermissions } from "types/permissions";
+
 import { UserData } from "../../types/rest/user";
 
 export const BOBATAN_USER_DATA: UserData = {
@@ -37,3 +39,8 @@ export const ONCEST_USER_IDENTITY = {
   avatar: "/greedler.jpg",
   name: "oncest5evah",
 };
+
+export const BOBATAN_TWISTED_MINDS_REALM_PERMISSIONS = [
+  RealmPermissions.createRealmInvite,
+  ...REALM_MEMBER_PERMISSIONS,
+];
