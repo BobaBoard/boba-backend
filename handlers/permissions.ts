@@ -3,6 +3,7 @@ import {
   BoardRestrictions,
   POST_OWNER_PERMISSIONS,
   PostPermissions,
+  REALM_MEMBER_PERMISSIONS,
   RealmPermissions,
   ThreadPermissions,
 } from "types/permissions";
@@ -96,19 +97,31 @@ export const ensureThreadPermission = (permission: ThreadPermissions) => {
 
 /**
  * Make sure the requester has access to the requested thread.
- * Expects the thread's id in a parameter named thread_id.
+ * Expects the thread's id in a parameter named thread_id,
+ * or the post's id in a param named post_id.
  */
 export const ensureThreadAccess = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  const threadId = req.params.thread_id;
+  if (!req.params.thread_id && !req.params.post_id) {
+    throw new Internal500Error(
+      "EnsureThreadAccess requires a parameter named thread_id or post_id in the request."
+    );
+  }
+
+  const threadId =
+    req.params.thread_id ??
+    (
+      await getPostFromStringId(null, {
+        firebaseId: req.currentUser?.uid,
+        postId: req.params.post_id,
+      })
+    ).parent_thread_id;
 
   if (!threadId) {
-    throw new Internal500Error(
-      "EnsureThreadAccess requires a parameter named thread_id in the request."
-    );
+    throw new Internal500Error("Error while determining thread ID.");
   }
 
   const thread = await getThreadByStringId({
@@ -123,6 +136,7 @@ export const ensureThreadAccess = async (
     return;
   }
   req.params.board_id = thread.board_id;
+  req.params.realm_id = thread.realm_id;
   req.currentThreadData = thread;
   ensureBoardAccess(req, res, next);
 };
@@ -157,6 +171,13 @@ export const withBoardMetadata = async (
     loggedOutRestrictions: board.logged_out_restrictions,
     loggedInBaseRestrictions: board.logged_in_base_restrictions,
   });
+
+  if (req.params.realm_id) {
+    next();
+    return;
+  }
+
+  req.params.realm_id = board.realm_string_id;
   next();
 };
 
@@ -166,18 +187,33 @@ export const ensureBoardAccess = async (
   next: NextFunction
 ) => {
   withBoardMetadata(req, res, async () => {
-    if (
-      !req.currentUser &&
-      req.currentBoardRestrictions.loggedOutRestrictions.includes(
-        BoardRestrictions.LOCK_ACCESS
-      )
-    ) {
-      res.status(401).json({
-        message: "User must be authenticated to access board.",
-      });
-      return;
-    }
-    next();
+    withRealmPermissions(req, res, async () => {
+      if (
+        !req.currentUser &&
+        req.currentBoardRestrictions.loggedOutRestrictions.includes(
+          BoardRestrictions.LOCK_ACCESS
+        )
+      ) {
+        res.status(401).json({
+          message: "User must be authenticated to access board.",
+        });
+        return;
+      }
+      if (
+        !req.currentRealmPermissions.includes(
+          RealmPermissions.accessMemberOnlyContentOnRealm
+        ) &&
+        req.currentBoardRestrictions.loggedOutRestrictions.includes(
+          BoardRestrictions.LOCK_ACCESS
+        )
+      ) {
+        res.status(403).json({
+          message: "User does not have required permission to access board.",
+        });
+        return;
+      }
+      next();
+    });
   });
 };
 
@@ -271,6 +307,10 @@ export const withRealmPermissions = async (
       );
     }
     if (!req.currentUser) {
+      next();
+      return;
+    }
+    if (req.currentRealmPermissions) {
       next();
       return;
     }
