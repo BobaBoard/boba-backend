@@ -7,18 +7,23 @@ import {
   makeServerPost,
 } from "utils/response-utils";
 import {
+  ensureRealmPermission,
+  ensureThreadAccess,
+  withPostPermissions,
+} from "handlers/permissions";
+import {
   getPostFromStringId,
   postNewCommentChain,
   postNewContribution,
   updatePostTags,
 } from "./queries";
 
+import { RealmPermissions } from "types/permissions";
 import { canDoTagsEdit } from "utils/permissions-utils";
 import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
 import { getTagsDelta } from "./utils";
-import { withPostPermissions } from "handlers/permissions";
 
 const info = debug("bobaserver:posts:routes-info");
 const log = debug("bobaserver:posts:routes-log");
@@ -77,55 +82,61 @@ const router = express.Router();
  *                   $ref: "#/components/schemas/Contribution"
  *                   description: Finalized details of the contributions just posted.
  */
-router.post("/:post_id/contributions", ensureLoggedIn, async (req, res) => {
-  const { post_id } = req.params;
-  const {
-    content,
-    // TODO: remove
-    forceAnonymous,
-    // TODO: remove
-    large,
-    whisper_tags,
-    index_tags,
-    category_tags,
-    content_warnings,
-    accessory_id,
-    identity_id,
-  } = req.body;
+router.post(
+  "/:post_id/contributions",
+  ensureLoggedIn,
+  ensureThreadAccess,
+  ensureRealmPermission(RealmPermissions.postOnRealm),
+  async (req, res) => {
+    const { post_id } = req.params;
+    const {
+      content,
+      // TODO: remove
+      forceAnonymous,
+      // TODO: remove
+      large,
+      whisper_tags,
+      index_tags,
+      category_tags,
+      content_warnings,
+      accessory_id,
+      identity_id,
+    } = req.body;
 
-  log(`Making countribution to post with id ${post_id}`);
+    log(`Making countribution to post with id ${post_id}`);
 
-  const result = await postNewContribution({
-    firebaseId: req.currentUser.uid,
-    identityId: identity_id,
-    accessoryId: accessory_id,
-    parentPostId: post_id,
-    content,
-    isLarge: !!large,
-    anonymityType: forceAnonymous ? "everyone" : "strangers",
-    whisperTags: whisper_tags,
-    indexTags: index_tags,
-    categoryTags: category_tags,
-    contentWarnings: content_warnings,
-  });
-  log(`Contribution posted: `, result);
+    const result = await postNewContribution({
+      firebaseId: req.currentUser.uid,
+      identityId: identity_id,
+      accessoryId: accessory_id,
+      parentPostId: post_id,
+      content,
+      isLarge: !!large,
+      anonymityType: forceAnonymous ? "everyone" : "strangers",
+      whisperTags: whisper_tags,
+      indexTags: index_tags,
+      categoryTags: category_tags,
+      contentWarnings: content_warnings,
+    });
+    log(`Contribution posted: `, result);
 
-  if (!result) {
-    res.sendStatus(500);
-    return;
+    if (!result) {
+      res.sendStatus(500);
+      return;
+    }
+
+    const { contribution, boardSlug } = result;
+    const responsePost = makeServerPost(contribution);
+
+    ensureNoIdentityLeakage(responsePost);
+    res.status(200).json({ contribution: responsePost });
+
+    threadEvents.emit(threadEvents.EVENT_TYPES.THREAD_UPDATED, {
+      boardSlug,
+      post: responsePost,
+    });
   }
-
-  const { contribution, boardSlug } = result;
-  const responsePost = makeServerPost(contribution);
-
-  ensureNoIdentityLeakage(responsePost);
-  res.status(200).json({ contribution: responsePost });
-
-  threadEvents.emit(threadEvents.EVENT_TYPES.THREAD_UPDATED, {
-    boardSlug,
-    post: responsePost,
-  });
-});
+);
 
 /**
  * @openapi
@@ -183,49 +194,55 @@ router.post("/:post_id/contributions", ensureLoggedIn, async (req, res) => {
  *                   items:
  *                     $ref: "#/components/schemas/Comment"
  */
-router.post("/:post_id/comments", ensureLoggedIn, async (req, res) => {
-  const { post_id } = req.params;
-  const {
-    contents,
-    forceAnonymous,
-    reply_to_comment_id,
-    identity_id,
-    accessory_id,
-  } = req.body;
+router.post(
+  "/:post_id/comments",
+  ensureLoggedIn,
+  ensureThreadAccess,
+  ensureRealmPermission(RealmPermissions.commentOnRealm),
+  async (req, res) => {
+    const { post_id } = req.params;
+    const {
+      contents,
+      forceAnonymous,
+      reply_to_comment_id,
+      identity_id,
+      accessory_id,
+    } = req.body;
 
-  log(
-    `Making chained comment to post with id ${post_id} replying to ${reply_to_comment_id}`
-  );
-
-  if (!Array.isArray(contents)) {
-    throw new BadRequest400Error(
-      `Received non-array type as contents of comments.`
+    log(
+      `Making chained comment to post with id ${post_id} replying to ${reply_to_comment_id}`
     );
+
+    if (!Array.isArray(contents)) {
+      throw new BadRequest400Error(
+        `Received non-array type as contents of comments.`
+      );
+    }
+
+    const comments = await postNewCommentChain({
+      firebaseId: req.currentUser.uid,
+      parentPostId: post_id,
+      parentCommentId: reply_to_comment_id,
+      contentArray: contents,
+      anonymityType: forceAnonymous ? "everyone" : "strangers",
+      identityId: identity_id,
+      accessoryId: accessory_id,
+    });
+    log(`Comments posted: `, comments);
+
+    if (!comments) {
+      res.sendStatus(500);
+      return;
+    }
+
+    const responseComments = comments.map((comment) =>
+      makeServerComment(comment)
+    );
+
+    responseComments.map((comment) => ensureNoIdentityLeakage(comment));
+    res.status(200).json({ comments: responseComments });
   }
-
-  const comments = await postNewCommentChain({
-    firebaseId: req.currentUser.uid,
-    parentPostId: post_id,
-    parentCommentId: reply_to_comment_id,
-    contentArray: contents,
-    anonymityType: forceAnonymous ? "everyone" : "strangers",
-    identityId: identity_id,
-    accessoryId: accessory_id,
-  });
-  log(`Comments posted: `, comments);
-
-  if (!comments) {
-    res.sendStatus(500);
-    return;
-  }
-
-  const responseComments = comments.map((comment) =>
-    makeServerComment(comment)
-  );
-
-  responseComments.map((comment) => ensureNoIdentityLeakage(comment));
-  res.status(200).json({ comments: responseComments });
-});
+);
 
 /**
  * @openapi

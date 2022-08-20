@@ -239,9 +239,11 @@ const extractLockedBoardMetadata = (metadata: any) => {
 export const processBoardMetadata = ({
   metadata,
   isLoggedIn,
+  hasBoardAccess,
 }: {
   metadata: DbBoardMetadata;
   isLoggedIn: boolean;
+  hasBoardAccess: boolean;
 }) => {
   let finalMetadata = {
     id: metadata.string_id,
@@ -270,7 +272,7 @@ export const processBoardMetadata = ({
   }
 
   // @ts-expect-error
-  if (!isLoggedIn && metadata.loggedInOnly) {
+  if (!hasBoardAccess && metadata.loggedInOnly) {
     finalMetadata.descriptions = [];
   }
 
@@ -280,12 +282,15 @@ export const processBoardMetadata = ({
 export const processBoardsMetadata = ({
   boards,
   isLoggedIn,
+  hasRealmMemberAccess,
 }: {
   boards: any[];
   isLoggedIn: boolean;
+  hasRealmMemberAccess: boolean;
 }) => {
   const result = boards.map((board: any) => {
     let boardResult = board;
+    // I wasn't sure if we wanted delisting to be based on hasRealmMemberAccess as well, or keep it as is?
     // Remove from list if the board shouldn't be visible in the sidebar
     boardResult.delisted =
       (!isLoggedIn &&
@@ -305,7 +310,7 @@ export const processBoardsMetadata = ({
 
     // Remove details from list if the board is locked and the user doesn't have access
     // (right now we keep only avatar, color & description)
-    if (!isLoggedIn && boardResult.loggedInOnly) {
+    if (!hasRealmMemberAccess && boardResult.loggedInOnly) {
       boardResult = extractLockedBoardMetadata(board);
     }
 
@@ -320,11 +325,17 @@ export const processBoardsMetadata = ({
 export const processBoardsSummary = ({
   boards,
   isLoggedIn,
+  hasRealmMemberAccess,
 }: {
   boards: any[];
   isLoggedIn: boolean;
+  hasRealmMemberAccess: boolean;
 }) => {
-  const result = processBoardsMetadata({ boards, isLoggedIn });
+  const result = processBoardsMetadata({
+    boards,
+    isLoggedIn,
+    hasRealmMemberAccess,
+  });
 
   // TODO[cleanup]: get correct format from db
   return result.map((result) => ({
@@ -336,8 +347,8 @@ export const processBoardsSummary = ({
     accent_color: result.settings.accentColor,
     delisted: !!result.delisted,
     logged_in_only: !!result.loggedInOnly,
-    muted: isLoggedIn ? !!result.muted : undefined,
-    pinned: isLoggedIn ? result.pinned_order !== null : undefined,
+    muted: hasRealmMemberAccess ? !!result.muted : undefined,
+    pinned: hasRealmMemberAccess ? result.pinned_order !== null : undefined,
   }));
 };
 

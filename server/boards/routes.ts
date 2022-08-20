@@ -1,5 +1,6 @@
 import * as threadEvents from "handlers/events/threads";
 
+import { BoardPermissions, RealmPermissions } from "types/permissions";
 import { CacheKeys, cache } from "server/cache";
 import {
   createThread,
@@ -11,13 +12,17 @@ import {
   unpinBoard,
   updateBoardMetadata,
 } from "./queries";
-import { ensureBoardAccess, ensureBoardPermission } from "handlers/permissions";
+import {
+  ensureBoardAccess,
+  ensureBoardPermission,
+  ensureRealmPermission,
+  withRealmPermissions,
+} from "handlers/permissions";
 import {
   ensureNoIdentityLeakage,
   makeServerThread,
 } from "utils/response-utils";
 
-import { BoardPermissions } from "types/permissions";
 import { NotFound404Error } from "types/errors/api";
 import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
@@ -66,7 +71,7 @@ const router = express.Router();
  *               properties:
  *                 message:
  *                   type: string
- *             example: { message: "This board is unavailable to logged out users." }
+ *             example: { message: "User must be authenticated to access board." }
  *       403:
  *         description: User is not authorized to fetch the metadata of this board.
  *         content:
@@ -76,7 +81,7 @@ const router = express.Router();
  *               properties:
  *                 message:
  *                   type: string
- *             example: { message: "You don't have permission to access this board." }
+ *             example: { message: "User does not have required permission to access board." }
  *       404:
  *         description: The board was not found.
  *         $ref: "#/components/responses/default404"
@@ -101,6 +106,7 @@ router.get("/:board_id", ensureBoardAccess, async (req, res) => {
   const boardMetadata = await getBoardMetadataByUuid({
     firebaseId: req.currentUser?.uid,
     boardId,
+    hasBoardAccess: true,
   });
 
   log(`Returning data for board ${boardId} for user ${req.currentUser?.uid}.`);
@@ -161,6 +167,7 @@ router.post(
   "/:board_id",
   ensureLoggedIn,
   ensureBoardAccess,
+  ensureRealmPermission(RealmPermissions.postOnRealm),
   //TODO: ensureBoardPermission(BoardPermissions.createThread),
   async (req, res, next) => {
     const { board_id: boardId } = req.params;
@@ -169,6 +176,7 @@ router.post(
     const boardMetadata = await getBoardMetadataByUuid({
       firebaseId: req.currentUser?.uid,
       boardId,
+      hasBoardAccess: true,
     });
     const boardSlug = boardMetadata.slug;
     log(`Creating thread in board with id ${boardId}`);
@@ -284,6 +292,7 @@ router.post(
 router.patch(
   "/:board_id/",
   ensureLoggedIn,
+  withRealmPermissions,
   ensureBoardPermission(BoardPermissions.editMetadata),
   async (req, res) => {
     const { board_id: boardId } = req.params;
@@ -306,6 +315,9 @@ router.patch(
     const boardMetadata = await getBoardMetadataByUuid({
       firebaseId: req.currentUser?.uid,
       boardId,
+      hasBoardAccess: req.currentRealmPermissions.includes(
+        RealmPermissions.accessMemberOnlyContentOnRealm
+      ),
     });
     res.status(200).json(boardMetadata);
   }

@@ -15,7 +15,11 @@ import {
 } from "server/realms/queries";
 import { createNewUser, getUserFromFirebaseId } from "server/users/queries";
 import { ensureLoggedIn, withLoggedIn, withUserSettings } from "handlers/auth";
-import { ensureRealmExists, ensureRealmPermission } from "handlers/permissions";
+import {
+  ensureRealmExists,
+  ensureRealmPermission,
+  withRealmPermissions,
+} from "handlers/permissions";
 import { getRealmDataBySlug, getSettingsBySlug } from "./queries";
 import {
   processBoardsNotifications,
@@ -105,6 +109,9 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
     const realmBoards = processBoardsSummary({
       boards,
       isLoggedIn: !!req.currentUser?.uid,
+      hasRealmMemberAccess: realmPermissions.includes(
+        RealmPermissions.accessMemberOnlyContentOnRealm
+      ),
     });
     res.status(200).json({
       id: realmData.id,
@@ -581,6 +588,8 @@ router.post(
   }
 );
 
+// This is an old version of the route at line 411, without the requires_email field in the response.
+// Should I delete it?
 /**
  * @openapi
  * /realms/{realm_id}/invites/{nonce}:

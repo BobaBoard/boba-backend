@@ -141,9 +141,11 @@ export const getMetadataDelta = ({
 export const getBoardMetadataByUuid = async ({
   boardId,
   firebaseId,
+  hasBoardAccess,
 }: {
   boardId: string;
   firebaseId?: string;
+  hasBoardAccess: boolean;
 }) => {
   if (!firebaseId) {
     const cachedBoard = await cache().hget(CacheKeys.BOARD_METADATA, boardId);
@@ -166,10 +168,12 @@ export const getBoardMetadataByUuid = async ({
   const boardSummary = processBoardsSummary({
     boards: [board],
     isLoggedIn: !!firebaseId,
+    hasRealmMemberAccess: hasBoardAccess,
   });
   const boardMetadata = processBoardMetadata({
     metadata: board,
     isLoggedIn: !!firebaseId,
+    hasBoardAccess,
   });
   const finalMetadata = {
     ...boardSummary[0],

@@ -10,11 +10,13 @@ import {
 } from "./queries";
 import { processBoardsSummary, transformImageUrls } from "utils/response-utils";
 
+import { RealmPermissions } from "types/permissions";
 import { aggregateByType } from "utils/settings";
 import debug from "debug";
 import express from "express";
 import { getBoards } from "../boards/queries";
 import stringify from "fast-json-stable-stringify";
+import { withRealmPermissions } from "handlers/permissions";
 
 const info = debug("bobaserver:users:routes-info");
 const log = debug("bobaserver:users:routes-log");
@@ -24,7 +26,7 @@ const router = express.Router();
 
 /**
  * @openapi
- * /users/@me:
+ * /users/@me/{realm_id}:
  *   get:
  *     summary: Gets data for the current user.
  *     operationId: getCurrentUser
@@ -32,6 +34,18 @@ const router = express.Router();
  *       - /users/
  *     security:
  *       - firebase: []
+ *     parameters:
+ *       - name: realm_id
+ *         in: path
+ *         description: The id of the realm.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         examples:
+ *           twisted_minds:
+ *             summary: the twisted-minds realm id
+ *             value: 76ef4cc3-1603-4278-95d7-99c59f481d2e
  *     responses:
  *       401:
  *         description: User was not found in request that requires authentication.
@@ -65,55 +79,63 @@ const router = express.Router();
  *               required:
  *                 - pinned_boards
  */
-router.get("/@me", ensureLoggedIn, async (req, res) => {
-  let currentUserId: string = req.currentUser?.uid;
-  const cachedData = await cache().hget(CacheKeys.USER, currentUserId);
+router.get(
+  "/@me/:realm_id",
+  ensureLoggedIn,
+  withRealmPermissions,
+  async (req, res) => {
+    let currentUserId: string = req.currentUser?.uid;
+    const cachedData = await cache().hget(CacheKeys.USER, currentUserId);
 
-  if (cachedData) {
-    log(`Returning cached data for user ${currentUserId}`);
-    return res.status(200).json(JSON.parse(cachedData));
+    if (cachedData) {
+      log(`Returning cached data for user ${currentUserId}`);
+      return res.status(200).json(JSON.parse(cachedData));
+    }
+
+    log(`Fetching user data for firebase id: ${currentUserId}`);
+    const userData = transformImageUrls(
+      await getUserFromFirebaseId({
+        firebaseId: currentUserId,
+      })
+    );
+    info(`Found user data : `, userData);
+
+    const boards = await getBoards({
+      firebaseId: req.currentUser?.uid,
+      realmId: req.currentRealmIds?.string_id,
+    });
+
+    if (!boards) {
+      res.status(500);
+    }
+
+    const summaries = processBoardsSummary({
+      boards,
+      isLoggedIn: !!req.currentUser?.uid,
+      hasRealmMemberAccess: req.currentRealmPermissions.includes(
+        RealmPermissions.accessMemberOnlyContentOnRealm
+      ),
+    });
+    const pins = summaries
+      .filter((board: any) => board.pinned)
+      .reduce((result: any, current: any) => {
+        result[current.slug] = {
+          ...current,
+          index: boards.find(({ slug }: any) => current.slug == slug)
+            .pinned_order,
+        };
+        return result;
+      }, {});
+
+    const userDataResponse = {
+      username: userData.username,
+      avatar_url: userData.avatarUrl,
+      pinned_boards: pins,
+    };
+    res.status(200).json(userDataResponse);
+    cache().hset(CacheKeys.USER, currentUserId, stringify(userDataResponse));
   }
-
-  log(`Fetching user data for firebase id: ${currentUserId}`);
-  const userData = transformImageUrls(
-    await getUserFromFirebaseId({
-      firebaseId: currentUserId,
-    })
-  );
-  info(`Found user data : `, userData);
-
-  // TODO[realms]: this needs a specific per-user query
-  const boards = await getBoards({
-    firebaseId: req.currentUser?.uid,
-  });
-
-  if (!boards) {
-    res.status(500);
-  }
-
-  const summaries = processBoardsSummary({
-    boards,
-    isLoggedIn: !!req.currentUser?.uid,
-  });
-  const pins = summaries
-    .filter((board: any) => board.pinned)
-    .reduce((result: any, current: any) => {
-      result[current.slug] = {
-        ...current,
-        index: boards.find(({ slug }: any) => current.slug == slug)
-          .pinned_order,
-      };
-      return result;
-    }, {});
-
-  const userDataResponse = {
-    username: userData.username,
-    avatar_url: userData.avatarUrl,
-    pinned_boards: pins,
-  };
-  res.status(200).json(userDataResponse);
-  cache().hset(CacheKeys.USER, currentUserId, stringify(userDataResponse));
-});
+);
 
 /**
  * @openapi
