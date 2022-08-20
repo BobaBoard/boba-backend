@@ -11,7 +11,7 @@ import {
   wrapWithTransaction,
 } from "utils/test-utils";
 
-import { BOBATAN_USER_ID } from "test/data/auth";
+import { BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID } from "test/data/auth";
 import { CHARACTER_TO_MAIM_POST_ID } from "test/data/posts";
 import { EventEmitter } from "events";
 import { Post } from "types/rest/threads";
@@ -33,6 +33,26 @@ describe("Test creating new post REST API", () => {
 
   test("doesn't allow replying to post when logged out", async () => {
     await wrapWithTransaction(async () => {
+      const res = await request(server.app)
+        .post(`/${CHARACTER_TO_MAIM_POST_ID}/contributions`)
+        .send({
+          content: "this is a new contribution",
+          index_tags: [],
+          category_tags: [],
+          content_warnings: ["new_warning_1"],
+          whisper_tags: [],
+        });
+
+      expect(res.status).toBe(401);
+      expect(res.body).toEqual({
+        message: "No authenticated user found.",
+      });
+    });
+  });
+
+  test("doesn't allow replying to post when user not a member of realm", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(ZODIAC_KILLER_USER_ID);
       const res = await request(server.app)
         .post(`/${CHARACTER_TO_MAIM_POST_ID}/contributions`)
         .send({

@@ -4,6 +4,7 @@ import { GORE_BOARD_METADATA, extractBoardSummary } from "test/data/boards";
 import express, { Express } from "express";
 import { setLoggedInUser, startTestServer } from "utils/test-utils";
 
+import { BOBATAN_TWISTED_MINDS_REALM_PERMISSIONS } from "test/data/user";
 import { TWISTED_MINDS_REALM_SLUG } from "test/data/realms";
 import request from "supertest";
 import router from "../routes";
@@ -94,38 +95,10 @@ describe("Tests restricted board realm queries", () => {
     );
 
     expect(res.status).toBe(200);
-    expect(res.body.realm_permissions.length).toBe(1);
-    expect(res.body.realm_permissions[0]).toEqual("create_realm_invite");
-  });
-
-  test("doesn't fetch realm permissions when user doesn't have realm permissions", async () => {
-    setLoggedInUser(JERSEY_DEVIL_USER_ID);
-    const res = await request(server.app).get(
-      `/slug/${TWISTED_MINDS_REALM_SLUG}`
+    expect(res.body.realm_permissions.length).toBe(4);
+    expect(res.body.realm_permissions).toEqual(
+      BOBATAN_TWISTED_MINDS_REALM_PERMISSIONS
     );
-
-    expect(res.status).toBe(200);
-    expect(res.body.realm_permissions).toEqual([]);
-  });
-
-  test("doesn't fetch realm permissions when logged out", async () => {
-    const res = await request(server.app).get(
-      `/slug/${TWISTED_MINDS_REALM_SLUG}`
-    );
-
-    expect(res.status).toBe(200);
-    expect(res.body.realm_permissions).toEqual([]);
-  });
-
-  test("fetches user realm permissions when user has realm permissions", async () => {
-    setLoggedInUser(BOBATAN_USER_ID);
-    const res = await request(server.app).get(
-      `/slug/${TWISTED_MINDS_REALM_SLUG}`
-    );
-
-    expect(res.status).toBe(200);
-    expect(res.body.realm_permissions.length).toBe(1);
-    expect(res.body.realm_permissions[0]).toEqual("create_realm_invite");
   });
 
   test("doesn't fetch realm permissions when user doesn't have realm permissions", async () => {
