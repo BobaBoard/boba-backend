@@ -306,17 +306,13 @@ export const withRealmPermissions = async (
         "Realm permissions can only be fetched on a route that includes a realm id."
       );
     }
-    if (!req.currentUser) {
-      next();
-      return;
-    }
-    if (req.currentRealmPermissions) {
+    if (!!req.currentRealmPermissions) {
       next();
       return;
     }
 
     const currentRealmPermissions = await getUserPermissionsForRealm({
-      firebaseId: req.currentUser.uid,
+      firebaseId: req.currentUser?.uid,
       realmStringId: req.currentRealmIds.string_id,
     });
 

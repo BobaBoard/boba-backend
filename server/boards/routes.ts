@@ -106,7 +106,7 @@ router.get("/:board_id", ensureBoardAccess, async (req, res) => {
   const boardMetadata = await getBoardMetadataByUuid({
     firebaseId: req.currentUser?.uid,
     boardId,
-    hasBoardAccess: true,
+    hasBoardAccess: req.currentUser ? true : false,
   });
 
   log(`Returning data for board ${boardId} for user ${req.currentUser?.uid}.`);
@@ -292,8 +292,8 @@ router.post(
 router.patch(
   "/:board_id/",
   ensureLoggedIn,
-  withRealmPermissions,
   ensureBoardPermission(BoardPermissions.editMetadata),
+  withRealmPermissions,
   async (req, res) => {
     const { board_id: boardId } = req.params;
     const { descriptions, accentColor, tagline } = req.body;

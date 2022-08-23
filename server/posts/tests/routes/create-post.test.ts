@@ -1,5 +1,6 @@
 import * as uuid from "uuid";
 
+import { BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID } from "test/data/auth";
 import {
   EVENT_TYPES as THREAD_EVENT_TYPES,
   ThreadUpdatedPayload,
@@ -11,13 +12,15 @@ import {
   wrapWithTransaction,
 } from "utils/test-utils";
 
-import { BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID } from "test/data/auth";
 import { CHARACTER_TO_MAIM_POST_ID } from "test/data/posts";
 import { EventEmitter } from "events";
 import { Post } from "types/rest/threads";
+import debug from "debug";
 import { mocked } from "ts-jest/utils";
 import request from "supertest";
 import router from "../../routes";
+
+const log = debug("bobaserver:posts:create-post-test-log");
 
 jest.mock("handlers/auth");
 jest.mock("server/db-pool");
@@ -63,9 +66,9 @@ describe("Test creating new post REST API", () => {
           whisper_tags: [],
         });
 
-      expect(res.status).toBe(401);
+      expect(res.status).toBe(403);
       expect(res.body).toEqual({
-        message: "No authenticated user found.",
+        message: "User does not have required permissions for realm operation.",
       });
     });
   });
