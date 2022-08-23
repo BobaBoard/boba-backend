@@ -1,8 +1,12 @@
+import { BOBATAN_USER_ID, JERSEY_DEVIL_USER_ID } from "test/data/auth";
 import { CacheKeys, cache } from "server/cache";
-import { GORE_BOARD_ID, GORE_BOARD_METADATA } from "test/data/boards";
+import {
+  GORE_BOARD_ID,
+  GORE_BOARD_METADATA,
+  RESTRICTED_BOARD_ID,
+} from "test/data/boards";
 import { setLoggedInUser, startTestServer } from "utils/test-utils";
 
-import { BOBATAN_USER_ID } from "test/data/auth";
 import { BoardMetadata } from "types/rest/boards";
 import debug from "debug";
 import { mocked } from "ts-jest/utils";
@@ -58,5 +62,24 @@ describe("Tests boards REST API", () => {
     );
     expect(res.status).toBe(200);
     expect(res.body).toEqual(modifiedData);
+  });
+
+  test("Correctly does not return board data for restricted board if user not a realm member", async () => {
+    setLoggedInUser(JERSEY_DEVIL_USER_ID);
+    const res = await request(server.app).get(`/${RESTRICTED_BOARD_ID}`);
+
+    expect(res.status).toBe(403);
+    expect(res.body).toEqual({
+      message: "User does not have required permission to access board.",
+    });
+  });
+
+  test("Correctly does not return board data for restricted board if not logged in", async () => {
+    const res = await request(server.app).get(`/${RESTRICTED_BOARD_ID}`);
+
+    expect(res.status).toBe(401);
+    expect(res.body).toEqual({
+      message: "User must be authenticated to access board.",
+    });
   });
 });

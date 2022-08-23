@@ -4,6 +4,7 @@ import {
   GORE_BOARD_ID,
   GORE_BOARD_METADATA,
   MAIN_STREET_BOARD_ID,
+  RESTRICTED_BOARD_ID,
 } from "test/data/boards";
 import {
   setLoggedInUser,
@@ -36,15 +37,15 @@ describe("Tests pin boards REST API", () => {
     expect(res.status).toBe(404);
   });
 
-  //   test("Should return 403 if user does not have required permissions", async () => {
-  //     setLoggedInUser(JERSEY_DEVIL_USER_ID);
-  //     const res = await request(server.app).post(`/${GORE_BOARD_ID}/pin`);
+  test("Should return 403 if user does not have required permissions", async () => {
+    setLoggedInUser(JERSEY_DEVIL_USER_ID);
+    const res = await request(server.app).post(`/${RESTRICTED_BOARD_ID}/pin`);
 
-  //     expect(res.status).toBe(403);
-  //     expect(res.body).toEqual({
-  //       message: `User cannot access board with id "c6d3d10e-8e49-4d73-b28a-9d652b41beec".`,
-  //     });
-  //   });
+    expect(res.status).toBe(403);
+    expect(res.body).toEqual({
+      message: "User does not have required permission to access board.",
+    });
+  });
 
   test("Should pin board", async () => {
     await wrapWithTransaction(async () => {
@@ -94,15 +95,15 @@ describe("Tests unpin boards REST API", () => {
     });
   });
 
-  //   test("Should return 403 if user does not have required permissions", async () => {
-  //     setLoggedInUser(JERSEY_DEVIL_USER_ID);
-  //     const res = await request(server.app).delete(`/${GORE_BOARD_ID}/pin`);
+  test("Should return 403 if user does not have required permissions", async () => {
+    setLoggedInUser(JERSEY_DEVIL_USER_ID);
+    const res = await request(server.app).delete(`/${RESTRICTED_BOARD_ID}/pin`);
 
-  //     expect(res.status).toBe(403);
-  //     expect(res.body).toEqual({
-  //       message: `User cannot access board with id "c6d3d10e-8e49-4d73-b28a-9d652b41beec".`,
-  //     });
-  //   });
+    expect(res.status).toBe(403);
+    expect(res.body).toEqual({
+      message: "User does not have required permission to access board.",
+    });
+  });
 
   test("Should unpin board", async () => {
     await wrapWithTransaction(async () => {

@@ -3,6 +3,7 @@ import * as uuid from "uuid";
 import {
   BOBATAN_USER_ID,
   GORE_MASTER_IDENTITY_ID,
+  JERSEY_DEVIL_USER_ID,
   SEXY_DADDY_USER_ID,
 } from "test/data/auth";
 import { CREATE_GORE_THREAD_RESPONSE, NULL_ID } from "test/data/threads";
@@ -206,6 +207,19 @@ describe("Tests threads REST API - create", () => {
         });
 
       expect(res.status).toBe(403);
+    });
+  });
+
+  test("Does not create thread when user not a member of realm", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(JERSEY_DEVIL_USER_ID);
+      const res = await request(server.app)
+        .post(`/${GORE_BOARD_ID}`)
+        .send(CREATE_GORE_THREAD_BASE_REQUEST);
+      expect(res.status).toBe(403);
+      expect(res.body).toEqual({
+        message: "User does not have required permissions for realm operation.",
+      });
     });
   });
 });
