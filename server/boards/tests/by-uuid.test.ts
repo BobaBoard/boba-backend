@@ -2,6 +2,7 @@ import { BOBATAN_USER_ID } from "test/data/auth";
 import { DbBoardMetadata } from "Types";
 import { GORE_BOARD_ID } from "test/data/boards";
 import { getBoardByUuid } from "../queries";
+import { TWISTED_MINDS_REALM_STRING_ID } from "test/data/realms";
 
 const GORE_BOARD_LOGGED_OUT: DbBoardMetadata = {
   settings: {
@@ -29,6 +30,7 @@ const GORE_BOARD_LOGGED_OUT: DbBoardMetadata = {
   string_id: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
   tagline: "Blood! Blood! Blood!",
   avatar_url: "gore.png",
+  realm_string_id: TWISTED_MINDS_REALM_STRING_ID,
   // TODO: do we want to surface accessories for
   // non-logged in users?
   accessories: [
@@ -77,6 +79,7 @@ const GORE_BOARD_LOGGED_IN: DbBoardMetadata = {
   string_id: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
   tagline: "Blood! Blood! Blood!",
   avatar_url: "gore.png",
+  realm_string_id: TWISTED_MINDS_REALM_STRING_ID,
   muted: false,
   permissions: [
     "edit_board_details",

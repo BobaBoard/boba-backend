@@ -11,8 +11,11 @@ import {
   wrapWithTransaction,
 } from "utils/test-utils";
 
+import debug from "debug";
 import request from "supertest";
 import router from "../../routes";
+
+const log = debug("bobaserver:test:boards:routes:update-board-metadata-log");
 
 jest.mock("server/cache");
 jest.mock("handlers/auth");

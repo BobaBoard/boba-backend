@@ -2,6 +2,7 @@ import { CacheKeys, cache } from "../../cache";
 import { setLoggedInUser, startTestServer } from "utils/test-utils";
 
 import { JERSEY_DEVIL_USER_ID } from "test/data/auth";
+import { TWISTED_MINDS_REALM_STRING_ID } from "test/data/realms";
 import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
 import { getUserFromFirebaseId } from "../queries";
@@ -43,7 +44,9 @@ describe("Test users routes", () => {
     mocked(cache().hget).mockResolvedValueOnce(stringify(cachedData));
     setLoggedInUser(JERSEY_DEVIL_USER_ID);
 
-    const res = await request(server.app).get("/@me");
+    const res = await request(server.app).get(
+      `/@me/${TWISTED_MINDS_REALM_STRING_ID}`
+    );
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual(cachedData);
@@ -52,13 +55,17 @@ describe("Test users routes", () => {
   });
 
   test("Prevents unauthorized access", async () => {
-    const res = await request(server.app).get("/@me");
+    const res = await request(server.app).get(
+      `/@me/${TWISTED_MINDS_REALM_STRING_ID}`
+    );
     expect(res.status).toBe(401);
   });
 
   test("Returns data for the logged in user", async () => {
     setLoggedInUser(JERSEY_DEVIL_USER_ID);
-    const res = await request(server.app).get("/@me");
+    const res = await request(server.app).get(
+      `/@me/${TWISTED_MINDS_REALM_STRING_ID}`
+    );
     expect(res.status).toBe(200);
     expect(res.body).toEqual({
       avatar_url: "/hannibal.png",
@@ -70,7 +77,9 @@ describe("Test users routes", () => {
   test("caches logged in user data", async function () {
     setLoggedInUser(JERSEY_DEVIL_USER_ID);
 
-    const res = await request(server.app).get("/@me");
+    const res = await request(server.app).get(
+      `/@me/${TWISTED_MINDS_REALM_STRING_ID}`
+    );
     expect(res.status).toBe(200);
     expect(cache().hset).toBeCalledTimes(1);
     expect(cache().hset).toBeCalledWith(

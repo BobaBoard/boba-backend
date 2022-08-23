@@ -105,7 +105,7 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
     if (!boards) {
       res.status(500);
     }
-
+    log("realmPermissions", realmPermissions);
     const realmBoards = processBoardsSummary({
       boards,
       isLoggedIn: !!req.currentUser?.uid,
