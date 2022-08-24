@@ -10,6 +10,14 @@ jobs:
           # IMPORTANT: we prefix boba-related env variables with BBENV_ not to accidentally copy
           # CircleCIs' own variables. We then remove the BBENV_ prefix.
           command: env | grep "^BBENV_" | sed "s/BBENV_//" > .env
+          environment:
+            # We add the non-secret but necessary environment variables here too so builds can correctly run
+            # for contributors who are using untrusted forks.
+            BBENV_POSTGRES_USER: the_amazing_bobaboard2
+            BBENV_POSTGRES_PASSWORD: how_secure_can_this_db_be
+            BBENV_POSTGRES_DB: bobaboard_test
+            BBENV_POSTGRES_PORT: 35432
+            BBENV_DATABASE_URL: postgres://\${POSTGRES_USER}:\${POSTGRES_PASSWORD}@localhost:\${POSTGRES_PORT}/\${POSTGRES_DB}
       - run:
           name: see files
           command: ls -la
