@@ -6,6 +6,11 @@ jobs:
     steps:
       - checkout
       - run:
+          name: create env variables
+          command: |
+            echo ${BASH_ENV}
+            echo WORDPRESS_USER="$USER" >> "${BASH_ENV}"
+      - run:
           name: create env file
           # IMPORTANT: we prefix boba-related env variables with BBENV_ not to accidentally copy
           # CircleCIs' own variables. We then remove the BBENV_ prefix.
