@@ -11,24 +11,30 @@ jobs:
           # CircleCIs' own variables. We then remove the BBENV_ prefix.
           command: env | grep "^BBENV_" | sed "s/BBENV_//" > .env
           environment:
-            BBENV_THIS_IS_A_TEST: a_test
+            # We add the non-secret but necessary environment variables here too so builds can correctly run
+            # for contributors who are using untrusted forks.
+            BBENV_POSTGRES_USER: the_amazing_bobaboard
+            BBENV_POSTGRES_PASSWORD: how_secure_can_this_db_be
+            BBENV_POSTGRES_DB: bobaboard_test
+            BBENV_POSTGRES_PORT: 35432
+            BBENV_DATABASE_URL: postgres://\${POSTGRES_USER}:\${POSTGRES_PASSWORD}@localhost:\${POSTGRES_PORT}/\${POSTGRES_DB}
       - run:
           name: see files
           command: cat .env
-      # - run:
-      #     name: stop everything
-      #     command: docker-compose -f docker-compose.test.yml down
-      # - run:
-      #     name: run test
-      #     command: docker-compose -f docker-compose.test.yml run --rm test
-      # - run:
-      #     name: database logs
-      #     command: docker-compose logs database
-      #     when: on_fail
-      # - store_test_results:
-      #     path: ./reports/junit/
-      # - store_artifacts:
-      #     path: ./reports/junit
+      - run:
+          name: stop everything
+          command: docker-compose -f docker-compose.test.yml down
+      - run:
+          name: run test
+          command: docker-compose -f docker-compose.test.yml run --rm test
+      - run:
+          name: database logs
+          command: docker-compose logs database
+          when: on_fail
+      - store_test_results:
+          path: ./reports/junit/
+      - store_artifacts:
+          path: ./reports/junit
   open-api-validate:
     machine: true
     steps:
