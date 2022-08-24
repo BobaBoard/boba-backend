@@ -13,7 +13,7 @@ jobs:
           environment:
             # We add the non-secret but necessary environment variables here too so builds can correctly run
             # for contributors who are using untrusted forks.
-            BBENV_POSTGRES_USER: the_amazing_bobaboard
+            BBENV_POSTGRES_USER: the_amazing_bobaboard2
             BBENV_POSTGRES_PASSWORD: how_secure_can_this_db_be
             BBENV_POSTGRES_DB: bobaboard_test
             BBENV_POSTGRES_PORT: 35432
