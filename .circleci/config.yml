@@ -20,7 +20,7 @@ jobs:
             BBENV_DATABASE_URL: postgres://\${POSTGRES_USER}:\${POSTGRES_PASSWORD}@localhost:\${POSTGRES_PORT}/\${POSTGRES_DB}
       - run:
           name: see files
-          command: cat .env
+          command: ls -la
       - run:
           name: stop everything
           command: docker-compose -f docker-compose.test.yml down
