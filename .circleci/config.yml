@@ -9,7 +9,9 @@ jobs:
           name: create env variables
           command: |
             echo ${BASH_ENV}
-            echo WORDPRESS_USER="$USER" >> "${BASH_ENV}"
+            echo "hello"
+            echo WORDPRESS_USER="user" >> "${BASH_ENV}"
+            echo "goodbye"
             echo ${WORDPRESS_USER}
       - run:
           name: create env file
