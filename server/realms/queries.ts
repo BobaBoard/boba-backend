@@ -1,4 +1,9 @@
 import {
+  DbRolePermissions,
+  REALM_MEMBER_PERMISSIONS,
+  RealmPermissions,
+} from "types/permissions";
+import {
   Realm,
   RulesBlock,
   SubscriptionBlock,
@@ -8,7 +13,6 @@ import { filterOutDisabledSettings, getRealmCursorSetting } from "./utils";
 
 import { CssVariableSetting } from "../../types/settings";
 import { ITask } from "pg-promise";
-import { REALM_MEMBER_PERMISSIONS } from "types/permissions";
 import { SettingEntry } from "../../types/settings";
 import debug from "debug";
 import { extractRealmPermissions } from "utils/permissions-utils";
@@ -188,22 +192,24 @@ export const getUserPermissionsForRealm = async ({
     if (!userPermissionsGroupedByRole.length) {
       return [];
     }
-    const userRealmPermissionsGroupedByRoles = userPermissionsGroupedByRole.map(
-      (row) => {
-        return extractRealmPermissions(row.permissions);
-      }
-    );
-    const allUserRealmPermissions = userRealmPermissionsGroupedByRoles.reduce(
-      (userRealmPermissions, userRealmPermissionsGroup) => {
-        return userRealmPermissions.concat(userRealmPermissionsGroup);
+    const allUserRolePermissions = userPermissionsGroupedByRole.reduce(
+      (userRolePermissions, userRolePermissionsGroup) => {
+        return userRolePermissions.concat(userRolePermissionsGroup.permissions);
       },
       []
     );
+    if (allUserRolePermissions.includes(DbRolePermissions.all)) {
+      log("user has all permissions");
+      return [...REALM_MEMBER_PERMISSIONS, RealmPermissions.createRealmInvite];
+    }
+    const userRoleRealmPermissions = extractRealmPermissions(
+      allUserRolePermissions
+    );
     const realmMember = checkUserOnRealm({ firebaseId, realmStringId });
     if (realmMember) {
-      return [...allUserRealmPermissions, ...REALM_MEMBER_PERMISSIONS];
+      return [...userRoleRealmPermissions, ...REALM_MEMBER_PERMISSIONS];
     }
-    return allUserRealmPermissions;
+    return userRoleRealmPermissions;
   } catch (e) {
     error(`Error while getting user permissions for the realm.`);
     error(e);

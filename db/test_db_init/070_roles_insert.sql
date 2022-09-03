@@ -33,7 +33,7 @@ VALUES
      (SELECT id FROM roles WHERE name = 'The Owner')),
     ((SELECT id FROM realms WHERE slug = 'uwu'),
      (SELECT id FROM users WHERE username = 'bobatan'), 
-     (SELECT id FROM roles WHERE name = 'The Owner')),
+     (SELECT id FROM roles WHERE name = 'The Memester')),
     ((SELECT id FROM realms WHERE slug = 'twisted-minds'),
      (SELECT id FROM users WHERE username = 'bobatan'),
      (SELECT id FROM roles WHERE name = 'GoreMaster5000')),
