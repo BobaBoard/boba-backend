@@ -54,7 +54,7 @@ FROM boards
     LEFT JOIN board_user_roles bur 
         ON boards.id = bur.board_id AND bur.user_id = (SELECT id FROM logged_in_user LIMIT 1)
     LEFT JOIN realm_user_roles rur
-        ON rur.user_id = (SELECT id FROM logged_in_user LIMIT 1)
+        ON boards.parent_realm_id = rur.realm_id AND rur.user_id = (SELECT id FROM logged_in_user LIMIT 1)
     LEFT JOIN realm_accessories
         ON TRUE 
     LEFT JOIN accessories
