@@ -167,7 +167,7 @@ router.post(
   "/:board_id",
   ensureLoggedIn,
   ensureBoardAccess,
-  ensureRealmPermission(RealmPermissions.postOnRealm),
+  ensureRealmPermission(RealmPermissions.createThreadOnRealm),
   //TODO: ensureBoardPermission(BoardPermissions.createThread),
   async (req, res, next) => {
     const { board_id: boardId } = req.params;
@@ -316,7 +316,7 @@ router.patch(
       firebaseId: req.currentUser?.uid,
       boardId,
       hasBoardAccess: req.currentRealmPermissions.includes(
-        RealmPermissions.accessMemberOnlyContentOnRealm
+        RealmPermissions.accessLockedBoardsOnRealm
       ),
     });
     res.status(200).json(boardMetadata);

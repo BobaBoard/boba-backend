@@ -110,7 +110,7 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
       boards,
       isLoggedIn: !!req.currentUser?.uid,
       hasRealmMemberAccess: realmPermissions.includes(
-        RealmPermissions.accessMemberOnlyContentOnRealm
+        RealmPermissions.accessLockedBoardsOnRealm
       ),
     });
     res.status(200).json({

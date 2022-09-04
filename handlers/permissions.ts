@@ -201,7 +201,7 @@ export const ensureBoardAccess = async (
       }
       if (
         !req.currentRealmPermissions.includes(
-          RealmPermissions.accessMemberOnlyContentOnRealm
+          RealmPermissions.accessLockedBoardsOnRealm
         ) &&
         req.currentBoardRestrictions.loggedOutRestrictions.includes(
           BoardRestrictions.LOCK_ACCESS

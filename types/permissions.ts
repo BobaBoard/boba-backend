@@ -20,7 +20,8 @@ export enum DbRolePermissions {
   create_realm_invite = "create_realm_invite",
   post_on_realm = "post_on_realm",
   comment_on_realm = "comment_on_realm",
-  access_member_only_content_on_realm = "access_member_only_content_on_realm",
+  create_thread_on_realm = "create_thread_on_realm",
+  access_locked_boards_on_realm = "access_locked_boards_on_realm",
 }
 
 export interface UserBoardPermissions {
@@ -42,8 +43,9 @@ export enum RealmPermissions {
   createRealmInvite = DbRolePermissions["create_realm_invite"],
   postOnRealm = DbRolePermissions["post_on_realm"],
   commentOnRealm = DbRolePermissions["comment_on_realm"],
-  accessMemberOnlyContentOnRealm = DbRolePermissions[
-    "access_member_only_content_on_realm"
+  createThreadOnRealm = DbRolePermissions["create_thread_on_realm"],
+  accessLockedBoardsOnRealm = DbRolePermissions[
+    "access_locked_boards_on_realm"
   ],
 }
 
@@ -92,9 +94,10 @@ export const THREAD_OWNER_PERMISSIONS = [ThreadPermissions.editDefaultView];
  * The set of realm permissions associated with every realm member.
  */
 export const REALM_MEMBER_PERMISSIONS = [
-  RealmPermissions.accessMemberOnlyContentOnRealm,
+  RealmPermissions.accessLockedBoardsOnRealm,
   RealmPermissions.commentOnRealm,
   RealmPermissions.postOnRealm,
+  RealmPermissions.createThreadOnRealm,
 ];
 
 export enum BoardRestrictions {

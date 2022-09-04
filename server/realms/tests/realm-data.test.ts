@@ -95,7 +95,7 @@ describe("Tests restricted board realm queries", () => {
     );
 
     expect(res.status).toBe(200);
-    expect(res.body.realm_permissions.length).toBe(4);
+    expect(res.body.realm_permissions.length).toBe(BOBATAN_TWISTED_MINDS_REALM_PERMISSIONS.length);
     expect(res.body.realm_permissions).toEqual(
       BOBATAN_TWISTED_MINDS_REALM_PERMISSIONS
     );

@@ -113,7 +113,7 @@ router.get(
       boards,
       isLoggedIn: !!req.currentUser?.uid,
       hasRealmMemberAccess: req.currentRealmPermissions.includes(
-        RealmPermissions.accessMemberOnlyContentOnRealm
+        RealmPermissions.accessLockedBoardsOnRealm
       ),
     });
     const pins = summaries
