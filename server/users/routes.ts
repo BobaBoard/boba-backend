@@ -26,10 +26,63 @@ const router = express.Router();
 
 /**
  * @openapi
- * /users/@me/{realm_id}:
+ * /users/@me:
  *   get:
  *     summary: Gets data for the current user.
  *     operationId: getCurrentUser
+ *     tags:
+ *       - /users/
+ *     security:
+ *       - firebase: []
+ *     responses:
+ *       401:
+ *         description: User was not found in request that requires authentication.
+ *       403:
+ *         description: User is not authorized to perform the action.
+ *       200:
+ *         description: The user data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 username:
+ *                   type: string
+ *                 avatar_url:
+ *                   type: string
+ *                   format: uri
+ */
+router.get("/@me", ensureLoggedIn, async (req, res) => {
+  let currentUserId: string = req.currentUser?.uid;
+  const cachedData = await cache().hget(CacheKeys.USER, currentUserId);
+
+  if (cachedData) {
+    log(`Returning cached data for user ${currentUserId}`);
+    return res.status(200).json(JSON.parse(cachedData));
+  }
+
+  log(`Fetching user data for firebase id: ${currentUserId}`);
+  const userData = transformImageUrls(
+    await getUserFromFirebaseId({
+      firebaseId: currentUserId,
+    })
+  );
+  info(`Found user data : `, userData);
+
+  const userDataResponse = {
+    username: userData.username,
+    avatar_url: userData.avatarUrl,
+  };
+  res.status(200).json(userDataResponse);
+  cache().hset(CacheKeys.USER, currentUserId, stringify(userDataResponse));
+});
+
+/**
+ * @openapi
+ * /users/@me/pins/realms/{realm_id}:
+ *   get:
+ *     summary: Gets pinned boards for the current user on the current realm.
+ *     operationId: getCurrentUserPinnedBoardsForRealm
  *     tags:
  *       - /users/
  *     security:
@@ -58,11 +111,6 @@ const router = express.Router();
  *             schema:
  *               type: object
  *               properties:
- *                 username:
- *                   type: string
- *                 avatar_url:
- *                   type: string
- *                   format: uri
  *                 pinned_boards:
  *                   description: |
  *                     A map from board id to its LoggedInSummary for each pinned board.
@@ -80,33 +128,17 @@ const router = express.Router();
  *                 - pinned_boards
  */
 router.get(
-  "/@me/:realm_id",
+  "/@me/pins/realms/:realm_id",
   ensureLoggedIn,
   withRealmPermissions,
   async (req, res) => {
-    let currentUserId: string = req.currentUser?.uid;
-    const cachedData = await cache().hget(CacheKeys.USER, currentUserId);
-
-    if (cachedData) {
-      log(`Returning cached data for user ${currentUserId}`);
-      return res.status(200).json(JSON.parse(cachedData));
-    }
-
-    log(`Fetching user data for firebase id: ${currentUserId}`);
-    const userData = transformImageUrls(
-      await getUserFromFirebaseId({
-        firebaseId: currentUserId,
-      })
-    );
-    info(`Found user data : `, userData);
-
     const boards = await getBoards({
       firebaseId: req.currentUser?.uid,
       realmId: req.currentRealmIds?.string_id,
     });
 
     if (!boards) {
-      res.status(500);
+      throw new Internal500Error(`Failed to get boards.`);
     }
 
     const summaries = processBoardsSummary({
@@ -127,13 +159,7 @@ router.get(
         return result;
       }, {});
 
-    const userDataResponse = {
-      username: userData.username,
-      avatar_url: userData.avatarUrl,
-      pinned_boards: pins,
-    };
-    res.status(200).json(userDataResponse);
-    cache().hset(CacheKeys.USER, currentUserId, stringify(userDataResponse));
+    res.status(200).json({ pinned_boards: pins });
   }
 );
 
