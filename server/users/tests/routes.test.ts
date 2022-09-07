@@ -37,16 +37,11 @@ describe("Test users routes", () => {
     const cachedData = {
       avatar_url: "/this_was_cached.png",
       username: "super_cached",
-      pinned_boards: {
-        cached_board: {},
-      },
     };
     mocked(cache().hget).mockResolvedValueOnce(stringify(cachedData));
     setLoggedInUser(JERSEY_DEVIL_USER_ID);
 
-    const res = await request(server.app).get(
-      `/@me/${TWISTED_MINDS_REALM_STRING_ID}`
-    );
+    const res = await request(server.app).get(`/@me`);
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual(cachedData);
@@ -55,31 +50,24 @@ describe("Test users routes", () => {
   });
 
   test("Prevents unauthorized access", async () => {
-    const res = await request(server.app).get(
-      `/@me/${TWISTED_MINDS_REALM_STRING_ID}`
-    );
+    const res = await request(server.app).get(`/@me`);
     expect(res.status).toBe(401);
   });
 
   test("Returns data for the logged in user", async () => {
     setLoggedInUser(JERSEY_DEVIL_USER_ID);
-    const res = await request(server.app).get(
-      `/@me/${TWISTED_MINDS_REALM_STRING_ID}`
-    );
+    const res = await request(server.app).get(`/@me`);
     expect(res.status).toBe(200);
     expect(res.body).toEqual({
       avatar_url: "/hannibal.png",
       username: "jersey_devil_69",
-      pinned_boards: {},
     });
   });
 
   test("caches logged in user data", async function () {
     setLoggedInUser(JERSEY_DEVIL_USER_ID);
 
-    const res = await request(server.app).get(
-      `/@me/${TWISTED_MINDS_REALM_STRING_ID}`
-    );
+    const res = await request(server.app).get(`/@me`);
     expect(res.status).toBe(200);
     expect(cache().hset).toBeCalledTimes(1);
     expect(cache().hset).toBeCalledWith(

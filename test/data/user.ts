@@ -4,6 +4,10 @@ import { UserData } from "../../types/rest/user";
 
 export const BOBATAN_USER_DATA: UserData = {
   avatar_url: "/bobatan.png",
+  username: "bobatan",
+};
+
+export const BOBATAN_PINNED_BOARDS = {
   pinned_boards: {
     anime: {
       accent_color: "#24d282",
@@ -32,7 +36,6 @@ export const BOBATAN_USER_DATA: UserData = {
       tagline: "Blood! Blood! Blood!",
     },
   },
-  username: "bobatan",
 };
 
 export const ONCEST_USER_IDENTITY = {
