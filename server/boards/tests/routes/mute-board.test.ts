@@ -58,9 +58,9 @@ describe("Tests mute boards REST API", () => {
       expect(res.status).toBe(204);
       // Ensure that the user cache was cleared since that contains the muted boards.
       // TODO: this is an implementation details and it should be tested by checking the
-      // users/@me endpoint.
+      // users/@me/pins/realm/:realm_id endpoint.
       expect(cache().hdel).toBeCalledTimes(2);
-      expect(cache().hdel).toBeCalledWith(CacheKeys.USER, BOBATAN_USER_ID);
+      expect(cache().hdel).toBeCalledWith(CacheKeys.USER_PINS, BOBATAN_USER_ID);
       expect(cache().hdel).toBeCalledWith(
         CacheKeys.BOARD,
         MAIN_STREET_BOARD_ID
@@ -119,9 +119,12 @@ describe("Tests unmute boards REST API", () => {
       expect(res.status).toBe(204);
       // Ensure that the user cache was cleared since that contains the muted boards.
       // TODO: this is an implementation details and it should be tested by checking the
-      // users/@me endpoint.
+      // users/@me/pins/realm/:realm_id endpoint.
       expect(cache().hdel).toBeCalledTimes(2);
-      expect(cache().hdel).toBeCalledWith(CacheKeys.USER, JERSEY_DEVIL_USER_ID);
+      expect(cache().hdel).toBeCalledWith(
+        CacheKeys.USER_PINS,
+        JERSEY_DEVIL_USER_ID
+      );
       expect(cache().hdel).toBeCalledWith(CacheKeys.BOARD, MUTED_BOARD_ID);
 
       const boardMetadata = await request(server.app).get(`/${MUTED_BOARD_ID}`);
