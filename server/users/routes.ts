@@ -79,92 +79,6 @@ router.get("/@me", ensureLoggedIn, async (req, res) => {
 
 /**
  * @openapi
- * /users/@me/pins/realms/{realm_id}:
- *   get:
- *     summary: Gets pinned boards for the current user on the current realm.
- *     operationId: getCurrentUserPinnedBoardsForRealm
- *     tags:
- *       - /users/
- *     security:
- *       - firebase: []
- *     parameters:
- *       - name: realm_id
- *         in: path
- *         description: The id of the realm.
- *         required: true
- *         schema:
- *           type: string
- *           format: uuid
- *         examples:
- *           twisted_minds:
- *             summary: the twisted-minds realm id
- *             value: 76ef4cc3-1603-4278-95d7-99c59f481d2e
- *     responses:
- *       401:
- *         description: User was not found in request that requires authentication.
- *       403:
- *         description: User is not authorized to perform the action.
- *       200:
- *         description: The user data.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 pinned_boards:
- *                   description: |
- *                     A map from board id to its LoggedInSummary for each pinned board.
- *                   type: object
- *                   additionalProperties:
- *                     allOf:
- *                       - $ref: "#/components/schemas/LoggedInBoardSummary"
- *                       - type: object
- *                         properties:
- *                           index:
- *                             type: number
- *                         required:
- *                           - index
- *               required:
- *                 - pinned_boards
- */
-router.get(
-  "/@me/pins/realms/:realm_id",
-  ensureLoggedIn,
-  withRealmPermissions,
-  async (req, res) => {
-    const boards = await getBoards({
-      firebaseId: req.currentUser?.uid,
-      realmId: req.currentRealmIds?.string_id,
-    });
-
-    if (!boards) {
-      throw new Internal500Error(`Failed to get boards.`);
-    }
-
-    const summaries = processBoardsSummary({
-      boards,
-      isLoggedIn: !!req.currentUser?.uid,
-      hasRealmMemberAccess: req.currentRealmPermissions.includes(
-        RealmPermissions.accessLockedBoardsOnRealm
-      ),
-    });
-    const pins = summaries
-      .filter((board: any) => board.pinned)
-      .reduce((result: any, current: any) => {
-        result[current.slug] = {
-          ...current,
-          index: boards.find(({ slug }: any) => current.slug == slug)
-            .pinned_order,
-        };
-        return result;
-      }, {});
-
-    res.status(200).json({ pinned_boards: pins });
-  }
-);
-
-/**
- * @openapi
  * /users/@me:
  *   patch:
  *     summary: Update data for the current user.
@@ -239,6 +153,105 @@ router.patch("/@me", ensureLoggedIn, async (req, res) => {
     avatar_url: userData.avatarUrl,
   });
 });
+
+/**
+ * @openapi
+ * /users/@me/pins/realms/{realm_id}:
+ *   get:
+ *     summary: Gets pinned boards for the current user on the current realm.
+ *     operationId: getCurrentUserPinnedBoardsForRealm
+ *     tags:
+ *       - /users/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: realm_id
+ *         in: path
+ *         description: The id of the realm.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         examples:
+ *           twisted_minds:
+ *             summary: the twisted-minds realm id
+ *             value: 76ef4cc3-1603-4278-95d7-99c59f481d2e
+ *     responses:
+ *       401:
+ *         description: User was not found in request that requires authentication.
+ *       403:
+ *         description: User is not authorized to perform the action.
+ *       200:
+ *         description: The user data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 pinned_boards:
+ *                   description: |
+ *                     A map from board id to its LoggedInSummary for each pinned board.
+ *                   type: object
+ *                   additionalProperties:
+ *                     allOf:
+ *                       - $ref: "#/components/schemas/LoggedInBoardSummary"
+ *                       - type: object
+ *                         properties:
+ *                           index:
+ *                             type: number
+ *                         required:
+ *                           - index
+ *               required:
+ *                 - pinned_boards
+ */
+router.get(
+  "/@me/pins/realms/:realm_id",
+  ensureLoggedIn,
+  withRealmPermissions,
+  async (req, res) => {
+    let currentUserId: string = req.currentUser?.uid;
+    const cachedData = await cache().hget(CacheKeys.USER_PINS, currentUserId);
+
+    if (cachedData) {
+      log(`Returning cached pinned boards data for user ${currentUserId}`);
+      return res.status(200).json(JSON.parse(cachedData));
+    }
+    const boards = await getBoards({
+      firebaseId: req.currentUser?.uid,
+      realmId: req.currentRealmIds?.string_id,
+    });
+
+    if (!boards) {
+      throw new Internal500Error(`Failed to get boards.`);
+    }
+
+    const summaries = processBoardsSummary({
+      boards,
+      isLoggedIn: !!req.currentUser?.uid,
+      hasRealmMemberAccess: req.currentRealmPermissions.includes(
+        RealmPermissions.accessLockedBoardsOnRealm
+      ),
+    });
+    const pins = summaries
+      .filter((board: any) => board.pinned)
+      .reduce((result: any, current: any) => {
+        result[current.slug] = {
+          ...current,
+          index: boards.find(({ slug }: any) => current.slug == slug)
+            .pinned_order,
+        };
+        return result;
+      }, {});
+
+    const pinsDataResponse = { pinned_boards: pins };
+    res.status(200).json(pinsDataResponse);
+    cache().hset(
+      CacheKeys.USER_PINS,
+      currentUserId,
+      stringify(pinsDataResponse)
+    );
+  }
+);
 
 /**
  * @openapi

@@ -69,4 +69,6 @@ export enum CacheKeys {
   USER = "USER",
   // Data pertaining to user settings, keyed by the user's firebase id.
   USER_SETTINGS = "USER_SETTINGS",
+  // Data pertaining to the user's pinned boards, keyed by the user's firebase id.
+  USER_PINS = "USER_PINS",
 }

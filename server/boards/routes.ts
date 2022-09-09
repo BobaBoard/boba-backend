@@ -436,7 +436,7 @@ router.post(
     }
 
     await cache().hdel(CacheKeys.BOARD, boardId);
-    await cache().hdel(CacheKeys.USER, req.currentUser.uid);
+    await cache().hdel(CacheKeys.USER_PINS, req.currentUser.uid);
 
     info(`Muted board: ${boardId} for user ${req.currentUser.uid}.`);
     res.sendStatus(204);
@@ -493,7 +493,7 @@ router.delete(
     }
 
     await cache().hdel(CacheKeys.BOARD, boardId);
-    await cache().hdel(CacheKeys.USER, req.currentUser.uid);
+    await cache().hdel(CacheKeys.USER_PINS, req.currentUser.uid);
 
     info(`Unmuted board: ${boardId} for user ${req.currentUser.uid}.`);
     res.sendStatus(204);
@@ -551,7 +551,7 @@ router.post(
     }
 
     await cache().hdel(CacheKeys.BOARD, boardId);
-    await cache().hdel(CacheKeys.USER, req.currentUser.uid);
+    await cache().hdel(CacheKeys.USER_PINS, req.currentUser.uid);
 
     info(`Pinned board: ${boardId} for user ${req.currentUser.uid}.`);
     res.sendStatus(204);
@@ -611,7 +611,7 @@ router.delete(
     }
 
     await cache().hdel(CacheKeys.BOARD, boardId);
-    await cache().hdel(CacheKeys.USER, req.currentUser.uid);
+    await cache().hdel(CacheKeys.USER_PINS, req.currentUser.uid);
 
     info(`Unpinned board: ${boardId} for user ${req.currentUser?.uid}.`);
     res.sendStatus(204);
