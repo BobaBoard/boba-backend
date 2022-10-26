@@ -59,7 +59,7 @@ components:
             - id: d3c21e0c-7ab9-4cb6-b1ed-1b7e558ba375
               parent_comment_id: null
               chain_parent_id: null
-              parent_post_id: 8b2646af-2778-487e-8e44-7ae530c2549c
+              parent_post_id: ff9f2ae2-a254-4069-9791-3ac5e6dff5bb
               created_at: "2020-10-02T05:43:00.00Z"
               content: '[{"insert":"But can we be mean to you?"}]'
               secret_identity:
@@ -73,7 +73,7 @@ components:
             - id: 146d4087-e11e-4912-9d67-93065b9a0c78
               parent_comment_id: d3c21e0c-7ab9-4cb6-b1ed-1b7e558ba375
               chain_parent_id: null
-              parent_post_id: 8b2646af-2778-487e-8e44-7ae530c2549c
+              parent_post_id: ff9f2ae2-a254-4069-9791-3ac5e6dff5bb
               created_at: "2020-10-04T05:44:00.00Z"
               content: '[{"insert":"BobaNitro users can be mean to the webmaster once a month."}]'
               secret_identity:
