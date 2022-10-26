@@ -7,7 +7,7 @@ WITH
             COALESCE(COUNT(*), 0) as total_comments,
             json_agg(json_build_object(
                 'comment_id', thread_comments.string_id,
-                'parent_post', thread_comments.parent_thread_string_id,
+                'parent_post', thread_comments.post_string_id,
                 'parent_comment', (SELECT string_id FROM comments WHERE comments.id = thread_comments.parent_comment),
                 'chain_parent_id', (SELECT string_id FROM comments WHERE comments.id = thread_comments.chain_parent_comment),
                 'author', thread_comments.author,
@@ -28,6 +28,7 @@ WITH
          FROM (
             SELECT
                 comments.*,
+                posts.string_id as post_string_id,
                 thread_identities.*,
                 ${firebase_id} IS NOT NULL AND comments.author = (SELECT id FROM users WHERE firebase_id = ${firebase_id}) as is_own,
                 ${firebase_id} IS NOT NULL AND comments.author = ANY(
@@ -43,6 +44,8 @@ WITH
             FROM comments
             LEFT JOIN threads
                 ON comments.parent_thread = threads.id
+            LEFT JOIN posts
+                ON posts.id = comments.parent_post
             LEFT JOIN thread_identities
                 ON thread_identities.user_id = comments.author AND threads.id = thread_identities.thread_id
             LEFT JOIN thread_notification_dismissals tnd

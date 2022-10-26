@@ -172,7 +172,7 @@ export const RESTRICTED_THREAD: Thread = {
         new: true,
         own: false,
         parent_comment_id: null,
-        parent_post_id: "b3f4174e-c9e2-4f79-9d22-7232aa48744e",
+        parent_post_id: "d1c0784b-0b72-40d0-801d-eb718b5ad011",
         secret_identity: {
           accessory: null,
           avatar:

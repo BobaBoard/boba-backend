@@ -95,7 +95,7 @@ export const KERMIT_COMMENTS: Comment[] = [
     new: false,
     own: false,
     friend: false,
-    parent_post_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+    parent_post_id: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
     parent_comment_id: null,
     secret_identity: {
       avatar:
@@ -115,7 +115,7 @@ export const KERMIT_COMMENTS: Comment[] = [
     own: false,
     friend: false,
     parent_comment_id: null,
-    parent_post_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+    parent_post_id: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
     secret_identity: {
       avatar:
         "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
