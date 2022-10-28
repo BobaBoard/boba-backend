@@ -460,10 +460,10 @@ const postNewCommentWithTransaction = async ({
 
   const result = await transaction.one(sql.makeComment, {
     comment_string_id: uuidv4(),
-    parent_post: post_id,
-    parent_comment: comment_id,
-    parent_thread: thread_id,
-    chain_parent_comment: chainParentId,
+    parent_post_id: post_id,
+    parent_comment_id: comment_id,
+    parent_thread_id: thread_id,
+    chain_parent_comment_id: chainParentId,
     user_id,
     content,
     anonymity_type: anonymityType,
@@ -473,9 +473,9 @@ const postNewCommentWithTransaction = async ({
     id: result.id,
     comment: {
       comment_id: result.string_id,
-      parent_post: parentPostId,
-      parent_comment: parentCommentId,
-      chain_parent_id: result.chain_parent_comment,
+      parent_post_id: parentPostId,
+      parent_comment_id: parentCommentId,
+      chain_parent_id: result.chain_parent_comment_id,
       author: user_id,
       content: result.content,
       created_at: result.created_at,

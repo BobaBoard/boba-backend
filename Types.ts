@@ -60,8 +60,8 @@ export interface DbPostType {
 }
 export interface DbCommentType {
   comment_id: string;
-  parent_post: string;
-  parent_comment: string;
+  parent_post_id: string;
+  parent_comment_id: string;
   chain_parent_id: string | null;
   author: number;
   username: string;

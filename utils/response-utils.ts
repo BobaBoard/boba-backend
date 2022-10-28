@@ -194,9 +194,9 @@ export const makeServerComment = (comment: DbCommentType): Comment => {
   const identityPost = mergeObjectIdentity<DbCommentType>(comment);
   return {
     id: comment.comment_id,
-    parent_comment_id: comment.parent_comment,
+    parent_comment_id: comment.parent_comment_id,
     chain_parent_id: comment.chain_parent_id,
-    parent_post_id: comment.parent_post,
+    parent_post_id: comment.parent_post_id,
     created_at: comment.created_at,
     content: comment.content,
     secret_identity: identityPost.secret_identity,

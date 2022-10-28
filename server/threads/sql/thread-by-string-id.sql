@@ -7,8 +7,8 @@ WITH
             COALESCE(COUNT(*), 0) as total_comments,
             json_agg(json_build_object(
                 'comment_id', thread_comments.string_id,
-                'parent_post', thread_comments.post_string_id,
-                'parent_comment', (SELECT string_id FROM comments WHERE comments.id = thread_comments.parent_comment),
+                'parent_post_id', thread_comments.post_string_id,
+                'parent_comment_id', (SELECT string_id FROM comments WHERE comments.id = thread_comments.parent_comment),
                 'chain_parent_id', (SELECT string_id FROM comments WHERE comments.id = thread_comments.chain_parent_comment),
                 'author', thread_comments.author,
                 'username', thread_comments.username,
