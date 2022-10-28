@@ -1,18 +1,14 @@
-import {
-  FAVORITE_CHARACTER_THREAD_ID,
-  FAVORITE_MURDER_THREAD_ID,
-} from "test/data/threads";
-
-import { BOBATAN_USER_ID } from "test/data/auth";
+import { BOBATAN_ID } from "test/data/user";
+import { FAVORITE_CHARACTER_THREAD_ID } from "test/data/threads";
 import { GORE_BOARD_ID } from "test/data/boards";
-import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
-import { getThreadByExternalId } from "../queries";
+import { TWISTED_MINDS_REALM_STRING_ID } from "test/data/realms";
+import { getThreadByStringId } from "../queries";
 
 describe("threads queries", () => {
   test("fetches threads by string id (with comments)", async () => {
-    const thread = await getThreadByExternalId({
-      threadExternalId: FAVORITE_CHARACTER_THREAD_ID,
-      firebaseId: BOBATAN_USER_ID,
+    const thread = await getThreadByStringId({
+      threadId: FAVORITE_CHARACTER_THREAD_ID,
+      firebaseId: BOBATAN_ID,
     });
 
     expect(thread).toEqual({
@@ -20,7 +16,7 @@ describe("threads queries", () => {
       board_slug: "gore",
       board_id: GORE_BOARD_ID,
       realm_slug: "twisted-minds",
-      realm_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+      realm_id: TWISTED_MINDS_REALM_STRING_ID,
       thread_total_comments_amount: 2,
       thread_new_comments_amount: 0,
       thread_total_posts_amount: 3,
@@ -53,7 +49,7 @@ describe("threads queries", () => {
           is_own: false,
           new_comments_amount: 0,
           parent_post_id: null,
-          parent_thread_id: FAVORITE_CHARACTER_THREAD_ID,
+          parent_thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
           total_comments_amount: 0,
           type: "text",
           index_tags: ["evil", "bobapost"],
@@ -69,7 +65,7 @@ describe("threads queries", () => {
           username: "bobatan",
           secret_identity_name: "Old Time-y Anon",
           secret_identity_avatar:
-            "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2F5c2c3867-2323-4209-8bd4-9dfcc88808f3%2Fd931f284-5c22-422d-9343-e509cfb44ffc.png?alt=media&token=94e52fff-4e6b-4110-94c3-90b8800f541c",
+            "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
           secret_identity_color: null,
           accessory_avatar:
             "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",
@@ -83,7 +79,7 @@ describe("threads queries", () => {
           is_own: true,
           new_comments_amount: 0,
           parent_post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
-          parent_thread_id: FAVORITE_CHARACTER_THREAD_ID,
+          parent_thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
           total_comments_amount: 0,
           type: "text",
           index_tags: ["evil", "oddly specific", "metal gear", "bobapost"],
@@ -113,7 +109,7 @@ describe("threads queries", () => {
               username: "bobatan",
               secret_identity_name: "Old Time-y Anon",
               secret_identity_avatar:
-                "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2F5c2c3867-2323-4209-8bd4-9dfcc88808f3%2Fd931f284-5c22-422d-9343-e509cfb44ffc.png?alt=media&token=94e52fff-4e6b-4110-94c3-90b8800f541c",
+                "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
               secret_identity_color: null,
               accessory_avatar:
                 "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",
@@ -135,7 +131,7 @@ describe("threads queries", () => {
               username: "bobatan",
               secret_identity_name: "Old Time-y Anon",
               secret_identity_avatar:
-                "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2F5c2c3867-2323-4209-8bd4-9dfcc88808f3%2Fd931f284-5c22-422d-9343-e509cfb44ffc.png?alt=media&token=94e52fff-4e6b-4110-94c3-90b8800f541c",
+                "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
               secret_identity_color: null,
               accessory_avatar:
                 "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",
@@ -158,7 +154,7 @@ describe("threads queries", () => {
           is_own: false,
           new_comments_amount: 0,
           parent_post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
-          parent_thread_id: FAVORITE_CHARACTER_THREAD_ID,
+          parent_thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
           total_comments_amount: 2,
           type: "text",
           index_tags: ["good", "oddly specific", "bobapost"],
@@ -176,17 +172,17 @@ describe("threads queries", () => {
   });
 
   test("fetches threads by string id (no comments)", async () => {
-    const thread = await getThreadByExternalId({
-      threadExternalId: FAVORITE_MURDER_THREAD_ID,
+    const thread = await getThreadByStringId({
+      threadId: "a5c903df-35e8-43b2-a41a-208c43154671",
       // Oncest
       firebaseId: "fb3",
     });
     expect(thread).toEqual({
-      thread_id: FAVORITE_MURDER_THREAD_ID,
+      thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
       board_slug: "gore",
       board_id: GORE_BOARD_ID,
       realm_slug: "twisted-minds",
-      realm_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+      realm_id: TWISTED_MINDS_REALM_STRING_ID,
       thread_total_comments_amount: 0,
       thread_new_comments_amount: 0,
       thread_total_posts_amount: 3,
@@ -218,7 +214,7 @@ describe("threads queries", () => {
           is_own: false,
           new_comments_amount: 0,
           parent_post_id: null,
-          parent_thread_id: FAVORITE_MURDER_THREAD_ID,
+          parent_thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
           total_comments_amount: 0,
           type: "text",
           index_tags: [],
@@ -246,7 +242,7 @@ describe("threads queries", () => {
           is_own: true,
           new_comments_amount: 0,
           parent_post_id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
-          parent_thread_id: FAVORITE_MURDER_THREAD_ID,
+          parent_thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
           total_comments_amount: 0,
           type: "text",
           index_tags: [],
@@ -262,7 +258,7 @@ describe("threads queries", () => {
           user_avatar: "hannibal.png",
           secret_identity_name: "Old Time-y Anon",
           secret_identity_avatar:
-            "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2F5c2c3867-2323-4209-8bd4-9dfcc88808f3%2Fd931f284-5c22-422d-9343-e509cfb44ffc.png?alt=media&token=94e52fff-4e6b-4110-94c3-90b8800f541c",
+            "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
           secret_identity_color: null,
           accessory_avatar: null,
           friend: false,
@@ -276,7 +272,7 @@ describe("threads queries", () => {
           is_own: false,
           new_comments_amount: 0,
           parent_post_id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
-          parent_thread_id: FAVORITE_MURDER_THREAD_ID,
+          parent_thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
           total_comments_amount: 0,
           type: "text",
           index_tags: [],
@@ -292,17 +288,17 @@ describe("threads queries", () => {
   });
 
   test("fetches threads by string id (logged out)", async () => {
-    const thread = await getThreadByExternalId({
-      threadExternalId: FAVORITE_CHARACTER_THREAD_ID,
+    const thread = await getThreadByStringId({
+      threadId: "29d1b2da-3289-454a-9089-2ed47db4967b",
       firebaseId: null,
     });
 
     expect(thread).toEqual({
-      thread_id: FAVORITE_CHARACTER_THREAD_ID,
+      thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
       board_slug: "gore",
       board_id: GORE_BOARD_ID,
       realm_slug: "twisted-minds",
-      realm_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+      realm_id: TWISTED_MINDS_REALM_STRING_ID,
       thread_total_comments_amount: 2,
       thread_new_comments_amount: 0,
       thread_total_posts_amount: 3,
@@ -335,7 +331,7 @@ describe("threads queries", () => {
           is_own: false,
           new_comments_amount: 0,
           parent_post_id: null,
-          parent_thread_id: FAVORITE_CHARACTER_THREAD_ID,
+          parent_thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
           total_comments_amount: 0,
           type: "text",
           index_tags: ["evil", "bobapost"],
@@ -351,7 +347,7 @@ describe("threads queries", () => {
           username: "bobatan",
           secret_identity_name: "Old Time-y Anon",
           secret_identity_avatar:
-            "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2F5c2c3867-2323-4209-8bd4-9dfcc88808f3%2Fd931f284-5c22-422d-9343-e509cfb44ffc.png?alt=media&token=94e52fff-4e6b-4110-94c3-90b8800f541c",
+            "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
           secret_identity_color: null,
           accessory_avatar:
             "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",
@@ -365,7 +361,7 @@ describe("threads queries", () => {
           is_own: false,
           new_comments_amount: 0,
           parent_post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
-          parent_thread_id: FAVORITE_CHARACTER_THREAD_ID,
+          parent_thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
           total_comments_amount: 0,
           type: "text",
           index_tags: ["evil", "oddly specific", "metal gear", "bobapost"],
@@ -395,7 +391,7 @@ describe("threads queries", () => {
               username: "bobatan",
               secret_identity_name: "Old Time-y Anon",
               secret_identity_avatar:
-                "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2F5c2c3867-2323-4209-8bd4-9dfcc88808f3%2Fd931f284-5c22-422d-9343-e509cfb44ffc.png?alt=media&token=94e52fff-4e6b-4110-94c3-90b8800f541c",
+                "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
               secret_identity_color: null,
               accessory_avatar:
                 "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",
@@ -417,7 +413,7 @@ describe("threads queries", () => {
               username: "bobatan",
               secret_identity_name: "Old Time-y Anon",
               secret_identity_avatar:
-                "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2F5c2c3867-2323-4209-8bd4-9dfcc88808f3%2Fd931f284-5c22-422d-9343-e509cfb44ffc.png?alt=media&token=94e52fff-4e6b-4110-94c3-90b8800f541c",
+                "https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png",
               secret_identity_color: null,
               accessory_avatar:
                 "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",
@@ -440,7 +436,7 @@ describe("threads queries", () => {
           is_own: false,
           new_comments_amount: 0,
           parent_post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
-          parent_thread_id: FAVORITE_CHARACTER_THREAD_ID,
+          parent_thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
           total_comments_amount: 2,
           type: "text",
           index_tags: ["good", "oddly specific", "bobapost"],
@@ -458,8 +454,8 @@ describe("threads queries", () => {
   });
 
   test("returns null thread when id not found", async () => {
-    const thread = await getThreadByExternalId({
-      threadExternalId: "this_will_not_be_in_the_db",
+    const thread = await getThreadByStringId({
+      threadId: "this_will_not_be_in_the_db",
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
     });
 
