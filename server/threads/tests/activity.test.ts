@@ -22,7 +22,7 @@ describe("threads activity queries", () => {
     // Since there was no visit we expect every post/comment to be marked as new
     const thread = await getThreadByStringId({
       // Favorite character
-      threadId: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      threadStringId: "29d1b2da-3289-454a-9089-2ed47db4967b",
       // Jersey Devil
       firebaseId: "fb2",
     });
@@ -67,7 +67,7 @@ describe("threads activity queries", () => {
     // The only new comments are from the user itself
     const thread = await getThreadByStringId({
       // Favorite character
-      threadId: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      threadStringId: "29d1b2da-3289-454a-9089-2ed47db4967b",
       // Bobatan
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
     });
@@ -113,7 +113,7 @@ describe("threads activity queries", () => {
     // The new comments are not from the user itself
     const thread = await getThreadByStringId({
       // Favorite character
-      threadId: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      threadStringId: "29d1b2da-3289-454a-9089-2ed47db4967b",
       // Oncest
       firebaseId: "fb3",
     });
@@ -158,7 +158,7 @@ describe("threads activity queries", () => {
   test("gets correct amounts with new posts (self)", async () => {
     // Since we made the last posts since the visit we expect no new ones
     const thread = await getThreadByStringId({
-      threadId: "a5c903df-35e8-43b2-a41a-208c43154671",
+      threadStringId: "a5c903df-35e8-43b2-a41a-208c43154671",
       // Jersey Devil
       firebaseId: "fb2",
     });
@@ -194,7 +194,7 @@ describe("threads activity queries", () => {
   test("gets correct amounts with new posts (not self)", async () => {
     // We expect new posts after the last visit
     const thread = await getThreadByStringId({
-      threadId: "a5c903df-35e8-43b2-a41a-208c43154671",
+      threadStringId: "a5c903df-35e8-43b2-a41a-208c43154671",
       // Oncest
       firebaseId: "fb3",
     });
@@ -230,7 +230,7 @@ describe("threads activity queries", () => {
   test("gets correct amounts with no updates", async () => {
     // Since the last visit was after the last post we expect no updates
     const thread = await getThreadByStringId({
-      threadId: "a5c903df-35e8-43b2-a41a-208c43154671",
+      threadStringId: "a5c903df-35e8-43b2-a41a-208c43154671",
       // Bobatan
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
     });
@@ -266,7 +266,7 @@ describe("threads activity queries", () => {
   test("gets correct amounts (logged out)", async () => {
     const thread = await getThreadByStringId({
       // Favorite character
-      threadId: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      threadStringId: "29d1b2da-3289-454a-9089-2ed47db4967b",
       firebaseId: undefined,
     });
 
@@ -311,7 +311,7 @@ describe("threads activity queries", () => {
     // The only new comments are from the user itself
     const thread = await getThreadByStringId({
       // Favorite character
-      threadId: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      threadStringId: "29d1b2da-3289-454a-9089-2ed47db4967b",
       // SexyDaddy69
       firebaseId: "fb4",
     });
@@ -357,7 +357,7 @@ describe("threads activity queries", () => {
     // The only new comments are from the user itself
     const thread = await getThreadByStringId({
       // Anime board
-      threadId: "b27710a8-0a9f-4c09-b3a5-54668bab7051",
+      threadStringId: "b27710a8-0a9f-4c09-b3a5-54668bab7051",
       // SexyDaddy69
       firebaseId: "fb4",
     });
@@ -392,7 +392,7 @@ describe("threads activity queries", () => {
       // The only new comments are from the user itself
       const thread = await getThreadByStringId({
         // Visited earlier than dismiss
-        threadId: "32a0174b-091e-4fe6-82f3-bffd6c6026ae",
+        threadStringId: "32a0174b-091e-4fe6-82f3-bffd6c6026ae",
         // Zodiac Killer
         firebaseId: "fb5",
       });
@@ -417,7 +417,7 @@ describe("threads activity queries", () => {
       // The only new comments are from the user itself
       const thread = await getThreadByStringId({
         // Visited after dismiss
-        threadId: "c55314b4-0b61-41c9-aa2f-b7fa28adf651",
+        threadStringId: "c55314b4-0b61-41c9-aa2f-b7fa28adf651",
         // Zodiac Killer
         firebaseId: "fb5",
       });
@@ -440,7 +440,7 @@ describe("threads activity queries", () => {
       // The only new comments are from the user itself
       const thread = await getThreadByStringId({
         // Never visited, before dismiss
-        threadId: "dacfb175-0d47-4c5e-8ecc-7fbf176ad915",
+        threadStringId: "dacfb175-0d47-4c5e-8ecc-7fbf176ad915",
         // Zodiac Killer
         firebaseId: "fb5",
       });
@@ -463,7 +463,7 @@ describe("threads activity queries", () => {
       // The only new comments are from the user itself
       const thread = await getThreadByStringId({
         // Never visited, after dismiss
-        threadId: "7d88a537-f23f-46de-970e-29ae392cd5f9",
+        threadStringId: "7d88a537-f23f-46de-970e-29ae392cd5f9",
         // Zodiac Killer
         firebaseId: "fb5",
       });

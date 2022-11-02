@@ -174,7 +174,7 @@ const getThreadDetails = async (
   transaction: ITask<any>,
   {
     parentPostId,
-    threadId,
+    threadStringId,
     firebaseId,
     parentCommentId,
     identityId,
@@ -182,7 +182,7 @@ const getThreadDetails = async (
   }: {
     firebaseId: string;
     parentPostId?: string;
-    threadId?: string;
+    threadStringId?: string;
     parentCommentId?: string;
     identityId?: string;
     accessoryId?: string;
@@ -203,8 +203,8 @@ const getThreadDetails = async (
   board_string_id: string;
 }> => {
   invariant(
-    parentPostId || threadId,
-    "ParentPostId (${parentPostId}) or threadId (${threadId}) is required when getting details for a thread."
+    parentPostId || threadStringId,
+    "ParentPostId (${parentPostId}) or threadStringId (${threadStringId}) is required when getting details for a thread."
   );
   let {
     user_id,
@@ -226,7 +226,7 @@ const getThreadDetails = async (
     parentPostId ? sql.getPostDetails : sql.getThreadDetails,
     {
       post_string_id: parentPostId,
-      thread_string_id: threadId,
+      thread_string_id: threadStringId,
       firebase_id: firebaseId,
       parent_comment_string_id: parentCommentId,
     }
@@ -287,7 +287,7 @@ export const postNewContribution = async (
     identityId,
     accessoryId,
     parentPostId,
-    threadId,
+    threadStringId,
     content,
     isLarge,
     anonymityType,
@@ -307,7 +307,7 @@ export const postNewContribution = async (
     categoryTags: string[];
     contentWarnings: string[];
     parentPostId?: string;
-    threadId?: string;
+    threadStringId?: string;
   },
   tx?: ITask<unknown>
 ): Promise<{ contribution: DbPostType; boardSlug: string } | false> => {
@@ -315,8 +315,8 @@ export const postNewContribution = async (
     t: ITask<unknown>
   ): Promise<{ contribution: DbPostType; boardSlug: string }> => {
     invariant(
-      parentPostId || threadId,
-      `ParentPostId (${parentPostId}) or threadId (${threadId}) is required when creating a new contribution`
+      parentPostId || threadStringId,
+      `ParentPostId (${parentPostId}) or threadStringId (${threadStringId}) is required when creating a new contribution`
     );
     let {
       board_slug,
@@ -335,7 +335,7 @@ export const postNewContribution = async (
       identityId,
       accessoryId,
       parentPostId,
-      threadId,
+      threadStringId,
       firebaseId,
     });
     const result = await t.one(sql.makePost, {

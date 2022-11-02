@@ -66,7 +66,7 @@ export const withThreadPermissions = async (
 
   const currentThreadPermissions = await getUserPermissionsForThread({
     firebaseId: req.currentUser.uid,
-    threadId: req.params.thread_id,
+    threadStringId: req.params.thread_id,
   });
 
   if (!currentThreadPermissions) {
@@ -111,7 +111,7 @@ export const ensureThreadAccess = async (
     );
   }
 
-  const threadId =
+  const threadStringId =
     req.params.thread_id ??
     (
       await getPostFromStringId(null, {
@@ -120,19 +120,19 @@ export const ensureThreadAccess = async (
       })
     ).parent_thread_id;
 
-  if (!threadId) {
+  if (!threadStringId) {
     throw new Internal500Error("Error while determining thread ID.");
   }
 
   const thread = await getThreadByStringId({
-    threadId,
+    threadStringId,
     firebaseId: req.currentUser?.uid,
   });
 
   if (!thread) {
     res
       .status(404)
-      .send({ message: `The thread with id "${threadId}" was not found.` });
+      .send({ message: `The thread with id "${threadStringId}" was not found.` });
     return;
   }
   req.params.board_id = thread.board_id;

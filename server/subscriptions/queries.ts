@@ -40,10 +40,10 @@ export const getLatestSubscriptionData = async ({
 };
 
 export const getTriggeredThreadsSubscriptions = async ({
-  threadId,
+  threadStringId,
   categoryNames,
 }: {
-  threadId: string;
+  threadStringId: string;
   categoryNames: string[];
 }): Promise<
   {
@@ -54,7 +54,7 @@ export const getTriggeredThreadsSubscriptions = async ({
   try {
     return (
       await pool.manyOrNone(sql.getTriggeredThreadSubscriptions, {
-        thread_string_id: threadId,
+        thread_string_id: threadStringId,
         category_names: categoryNames,
       })
     )?.map((s) => ({

@@ -78,8 +78,8 @@ const router = express.Router();
  *                 $ref: '#/components/examples/ThreadWithCommentsThreadResponse'
  */
 router.get("/:thread_id", ensureThreadAccess, async (req, res) => {
-  const { thread_id: threadId } = req.params;
-  log(`Fetching data for thread with id ${threadId}`);
+  const { thread_id: threadStringId } = req.params;
+  log(`Fetching data for thread with id ${threadStringId}`);
 
   const serverThread = makeServerThread(req.currentThreadData);
   ensureNoIdentityLeakage(serverThread);
@@ -108,7 +108,7 @@ router.get("/:thread_id", ensureThreadAccess, async (req, res) => {
  *           type: string
  *           format: uuid
  *         examples:
- *           goreThreadId:
+ *           gorethreadStringId:
  *             summary: A thread from the gore board.
  *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
  *     responses:
@@ -126,20 +126,20 @@ router.post(
   ensureLoggedIn,
   ensureThreadAccess,
   async (req, res) => {
-    const { thread_id: threadId } = req.params;
-    log(`Setting thread muted: ${threadId}`);
+    const { thread_id: threadStringId } = req.params;
+    log(`Setting thread muted: ${threadStringId}`);
 
     if (
       !(await muteThread({
         firebaseId: req.currentUser.uid,
-        threadId,
+        threadStringId,
       }))
     ) {
       res.sendStatus(500);
       return;
     }
 
-    info(`Marked last visited time for thread: ${threadId}.`);
+    info(`Marked last visited time for thread: ${threadStringId}.`);
     res.status(204).json();
   }
 );
@@ -164,7 +164,7 @@ router.post(
  *           type: string
  *           format: uuid
  *         examples:
- *           goreThreadId:
+ *           gorethreadStringId:
  *             summary: A thread from the gore board.
  *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
  *     responses:
@@ -182,20 +182,20 @@ router.delete(
   ensureLoggedIn,
   ensureThreadAccess,
   async (req, res) => {
-    const { thread_id: threadId } = req.params;
-    log(`Setting thread unmuted: ${threadId}`);
+    const { thread_id: threadStringId } = req.params;
+    log(`Setting thread unmuted: ${threadStringId}`);
 
     if (
       !(await unmuteThread({
         firebaseId: req.currentUser.uid,
-        threadId,
+        threadStringId,
       }))
     ) {
       res.sendStatus(500);
       return;
     }
 
-    info(`Marked last visited time for thread: ${threadId}.`);
+    info(`Marked last visited time for thread: ${threadStringId}.`);
     res.status(204).json();
   }
 );
@@ -220,7 +220,7 @@ router.delete(
  *           type: string
  *           format: uuid
  *         examples:
- *           goreThreadId:
+ *           gorethreadStringId:
  *             summary: A thread from the gore board.
  *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
  *     responses:
@@ -238,20 +238,20 @@ router.post(
   ensureLoggedIn,
   ensureThreadAccess,
   async (req, res) => {
-    const { thread_id: threadId } = req.params;
-    log(`Setting thread hidden: ${threadId}`);
+    const { thread_id: threadStringId } = req.params;
+    log(`Setting thread hidden: ${threadStringId}`);
 
     if (
       !(await hideThread({
         firebaseId: req.currentUser.uid,
-        threadId,
+        threadStringId,
       }))
     ) {
       res.sendStatus(500);
       return;
     }
 
-    info(`Marked last visited time for thread: ${threadId}.`);
+    info(`Marked last visited time for thread: ${threadStringId}.`);
     res.status(204).json();
   }
 );
@@ -276,7 +276,7 @@ router.post(
  *           type: string
  *           format: uuid
  *         examples:
- *           goreThreadId:
+ *           gorethreadStringId:
  *             summary: A thread from the gore board.
  *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
  *     responses:
@@ -294,20 +294,20 @@ router.delete(
   ensureLoggedIn,
   ensureThreadAccess,
   async (req, res) => {
-    const { thread_id: threadId } = req.params;
-    log(`Setting thread visible: ${threadId}`);
+    const { thread_id: threadStringId } = req.params;
+    log(`Setting thread visible: ${threadStringId}`);
 
     if (
       !(await unhideThread({
         firebaseId: req.currentUser.uid,
-        threadId,
+        threadStringId,
       }))
     ) {
       res.sendStatus(500);
       return;
     }
 
-    info(`Marked last visited time for thread: ${threadId}.`);
+    info(`Marked last visited time for thread: ${threadStringId}.`);
     res.status(204).json();
   }
 );
@@ -332,7 +332,7 @@ router.delete(
  *           type: string
  *           format: uuid
  *         examples:
- *           goreThreadId:
+ *           gorethreadStringId:
  *             summary: A thread from the gore board.
  *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
  *     responses:
@@ -350,20 +350,20 @@ router.post(
   ensureLoggedIn,
   ensureThreadAccess,
   async (req, res) => {
-    const { thread_id: threadId } = req.params;
-    log(`Setting last visited time for thread: ${threadId}`);
+    const { thread_id: threadStringId } = req.params;
+    log(`Setting last visited time for thread: ${threadStringId}`);
 
     if (
       !(await markThreadVisit({
         firebaseId: req.currentUser.uid,
-        threadId,
+        threadStringId,
       }))
     ) {
       res.sendStatus(500);
       return;
     }
 
-    info(`Marked last visited time for thread: ${threadId}.`);
+    info(`Marked last visited time for thread: ${threadStringId}.`);
     res.status(204).json();
   }
 );
@@ -455,7 +455,7 @@ router.patch(
 
       if (
         !(await updateThreadView({
-          threadId: thread_id,
+          threadStringId: thread_id,
           defaultView,
         }))
       ) {
@@ -487,7 +487,7 @@ router.patch(
 
       if (
         !(await moveThread({
-          threadId: thread_id,
+          threadStringId: thread_id,
           destinationId: parentBoardId,
         }))
       ) {
@@ -536,20 +536,20 @@ router.post(
   ensureLoggedIn,
   ensureThreadAccess,
   async (req, res) => {
-    const { thread_id: threadId } = req.params;
-    log(`Adding thread to stars: ${threadId}`);
+    const { thread_id: threadStringId } = req.params;
+    log(`Adding thread to stars: ${threadStringId}`);
 
     if (
       !(await starThread({
         firebaseId: req.currentUser.uid,
-        threadId,
+        threadStringId,
       }))
     ) {
       res.sendStatus(500);
       return;
     }
 
-    info(`Marked last visited time for thread: ${threadId}.`);
+    info(`Marked last visited time for thread: ${threadStringId}.`);
     res.status(204).json();
   }
 );
@@ -590,20 +590,20 @@ router.delete(
   ensureLoggedIn,
   ensureThreadAccess,
   async (req, res) => {
-    const { thread_id: threadId } = req.params;
-    log(`Removing thread from stars: ${threadId}`);
+    const { thread_id: threadStringId } = req.params;
+    log(`Removing thread from stars: ${threadStringId}`);
 
     if (
       !(await unstarThread({
         firebaseId: req.currentUser.uid,
-        threadId,
+        threadStringId,
       }))
     ) {
       res.sendStatus(500);
       return;
     }
 
-    info(`Marked last visited time for thread: ${threadId}.`);
+    info(`Marked last visited time for thread: ${threadStringId}.`);
     res.status(204).json();
   }
 );

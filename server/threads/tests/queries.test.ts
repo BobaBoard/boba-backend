@@ -7,7 +7,7 @@ import { getThreadByStringId } from "../queries";
 describe("threads queries", () => {
   test("fetches threads by string id (with comments)", async () => {
     const thread = await getThreadByStringId({
-      threadId: FAVORITE_CHARACTER_THREAD_ID,
+      threadStringId: FAVORITE_CHARACTER_THREAD_ID,
       firebaseId: BOBATAN_ID,
     });
 
@@ -173,7 +173,7 @@ describe("threads queries", () => {
 
   test("fetches threads by string id (no comments)", async () => {
     const thread = await getThreadByStringId({
-      threadId: "a5c903df-35e8-43b2-a41a-208c43154671",
+      threadStringId: "a5c903df-35e8-43b2-a41a-208c43154671",
       // Oncest
       firebaseId: "fb3",
     });
@@ -289,7 +289,7 @@ describe("threads queries", () => {
 
   test("fetches threads by string id (logged out)", async () => {
     const thread = await getThreadByStringId({
-      threadId: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      threadStringId: "29d1b2da-3289-454a-9089-2ed47db4967b",
       firebaseId: null,
     });
 
@@ -455,7 +455,7 @@ describe("threads queries", () => {
 
   test("returns null thread when id not found", async () => {
     const thread = await getThreadByStringId({
-      threadId: "this_will_not_be_in_the_db",
+      threadStringId: "this_will_not_be_in_the_db",
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
     });
 

@@ -193,7 +193,7 @@ router.post(
       accessoryId,
     } = req.body;
 
-    const threadStringId = await createThread({
+    const newThreadStringId = await createThread({
       firebaseId: req.currentUser.uid,
       content,
       defaultView,
@@ -207,16 +207,16 @@ router.post(
       identityId,
       accessoryId,
     });
-    info(`Created new thread`, threadStringId);
+    info(`Created new thread`, newThreadStringId);
 
     const thread = await getThreadByStringId({
-      threadId: threadStringId as string,
+      threadStringId: newThreadStringId as string,
       firebaseId: req.currentUser?.uid,
     });
 
     if (!thread) {
       throw new NotFound404Error(
-        `Thread with id ${threadStringId} was not found after being created.`
+        `Thread with id ${newThreadStringId} was not found after being created.`
       );
     }
 

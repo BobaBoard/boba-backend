@@ -18,10 +18,10 @@ export const extractTags = (thread: DbThreadSummaryType | null | undefined) => {
 };
 
 export const getThreadFromActivity = (
-  threadId: string,
+  threadStringId: string,
   activity: DbFeedType
 ) => {
-  return activity.activity.find((thread) => thread.thread_id == threadId);
+  return activity.activity.find((thread) => thread.thread_id == threadStringId);
 };
 
 describe("feed activity tags", () => {

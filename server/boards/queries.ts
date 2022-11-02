@@ -424,15 +424,15 @@ export const createThread = async ({
   accessoryId?: string;
 }) => {
   return pool.tx("create-thread", async (t) => {
-    const threadStringId = uuidv4();
+    const newThreadStringId = uuidv4();
     await t.one(threadsSql.createThread, {
-      thread_string_id: threadStringId,
+      thread_string_id: newThreadStringId,
       board_string_id: boardStringId,
       thread_options: {
         default_view: defaultView,
       },
     });
-    log(`Created thread entry for thread ${threadStringId}`);
+    log(`Created thread entry for thread ${newThreadStringId}`);
 
     await postNewContribution(
       {
@@ -446,10 +446,10 @@ export const createThread = async ({
         indexTags,
         contentWarnings,
         categoryTags,
-        threadId: threadStringId,
+        threadStringId: newThreadStringId,
       },
       t
     );
-    return threadStringId;
+    return newThreadStringId;
   });
 };

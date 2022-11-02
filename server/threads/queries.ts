@@ -18,19 +18,19 @@ const log = debug("bobaserver:threads:queries-log");
 const error = debug("bobaserver:threads:queries-error");
 
 export const getThreadByStringId = async ({
-  threadId,
+  threadStringId,
   firebaseId,
 }: {
-  threadId: string;
+  threadStringId: string;
   firebaseId?: string;
 }): Promise<DbThreadType | null> => {
   const thread = await pool.oneOrNone<DbThreadType>(sql.threadByStringId, {
-    thread_string_id: threadId,
+    thread_string_id: threadStringId,
     firebase_id: firebaseId,
   });
 
   if (!thread) {
-    log(`Thread not found: ${threadId}`);
+    log(`Thread not found: ${threadStringId}`);
     return null;
   }
 
@@ -38,15 +38,15 @@ export const getThreadByStringId = async ({
 };
 
 export const updateThreadView = async ({
-  threadId,
+  threadStringId,
   defaultView,
 }: {
-  threadId: string;
+  threadStringId: string;
   defaultView: string;
 }) => {
   try {
     await pool.one(sql.updateThreadViewByStringId, {
-      thread_string_id: threadId,
+      thread_string_id: threadStringId,
       thread_default_view: defaultView,
     });
     return true;
@@ -58,16 +58,16 @@ export const updateThreadView = async ({
 };
 
 export const markThreadVisit = async ({
-  threadId,
+  threadStringId,
   firebaseId,
 }: {
-  threadId: string;
+  threadStringId: string;
   firebaseId: string;
 }) => {
   try {
     await pool.none(sql.visitThreadByStringId, {
       firebase_id: firebaseId,
-      thread_string_id: threadId,
+      thread_string_id: threadStringId,
     });
     return true;
   } catch (e) {
@@ -78,16 +78,16 @@ export const markThreadVisit = async ({
 };
 
 export const muteThread = async ({
-  threadId,
+  threadStringId,
   firebaseId,
 }: {
-  threadId: string;
+  threadStringId: string;
   firebaseId: string;
 }) => {
   try {
     await pool.none(sql.muteThreadByStringId, {
       firebase_id: firebaseId,
-      thread_string_id: threadId,
+      thread_string_id: threadStringId,
     });
     return true;
   } catch (e) {
@@ -98,16 +98,16 @@ export const muteThread = async ({
 };
 
 export const unmuteThread = async ({
-  threadId,
+  threadStringId,
   firebaseId,
 }: {
-  threadId: string;
+  threadStringId: string;
   firebaseId: string;
 }) => {
   try {
     await pool.none(sql.unmuteThreadByStringId, {
       firebase_id: firebaseId,
-      thread_string_id: threadId,
+      thread_string_id: threadStringId,
     });
     return true;
   } catch (e) {
@@ -118,16 +118,16 @@ export const unmuteThread = async ({
 };
 
 export const starThread = async ({
-  threadId,
+  threadStringId,
   firebaseId,
 }: {
-  threadId: string;
+  threadStringId: string;
   firebaseId: string;
 }) => {
   try {
     await pool.none(sql.starThreadByStringId, {
       firebase_id: firebaseId,
-      thread_string_id: threadId,
+      thread_string_id: threadStringId,
     });
     return true;
   } catch (e) {
@@ -138,16 +138,16 @@ export const starThread = async ({
 };
 
 export const unstarThread = async ({
-  threadId,
+  threadStringId,
   firebaseId,
 }: {
-  threadId: string;
+  threadStringId: string;
   firebaseId: string;
 }) => {
   try {
     await pool.none(sql.unstarThreadByStringId, {
       firebase_id: firebaseId,
-      thread_string_id: threadId,
+      thread_string_id: threadStringId,
     });
     return true;
   } catch (e) {
@@ -158,16 +158,16 @@ export const unstarThread = async ({
 };
 
 export const hideThread = async ({
-  threadId,
+  threadStringId,
   firebaseId,
 }: {
-  threadId: string;
+  threadStringId: string;
   firebaseId: string;
 }) => {
   try {
     await pool.none(sql.hideThreadByStringId, {
       firebase_id: firebaseId,
-      thread_string_id: threadId,
+      thread_string_id: threadStringId,
     });
     return true;
   } catch (e) {
@@ -178,16 +178,16 @@ export const hideThread = async ({
 };
 
 export const unhideThread = async ({
-  threadId,
+  threadStringId,
   firebaseId,
 }: {
-  threadId: string;
+  threadStringId: string;
   firebaseId: string;
 }) => {
   try {
     await pool.none(sql.unhideThreadByStringId, {
       firebase_id: firebaseId,
-      thread_string_id: threadId,
+      thread_string_id: threadStringId,
     });
     return true;
   } catch (e) {
@@ -198,17 +198,17 @@ export const unhideThread = async ({
 };
 
 export const getUserPermissionsForThread = async ({
-  threadId,
+  threadStringId,
   firebaseId,
 }: {
-  threadId: string;
+  threadStringId: string;
   firebaseId: string;
 }) => {
   try {
     const permissions = [];
     const threadDetails = await pool.one(sql.getThreadDetails, {
       firebase_id: firebaseId,
-      thread_string_id: threadId,
+      thread_string_id: threadStringId,
     });
 
     if (threadDetails.is_thread_owner) {
@@ -230,16 +230,16 @@ export const getUserPermissionsForThread = async ({
 };
 
 export const moveThread = async ({
-  threadId,
+  threadStringId,
   destinationId,
 }: {
-  threadId: string;
+  threadStringId: string;
   destinationId: string;
 }) => {
   try {
     const result = await pool.none(sql.moveThread, {
       board_string_id: destinationId,
-      thread_string_id: threadId,
+      thread_string_id: threadStringId,
     });
     return true;
   } catch (e) {
