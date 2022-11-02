@@ -1,5 +1,4 @@
-import { BoardByExternalId, BoardByExternalIdSchema } from "./sql/types";
-
+import { DbBoardMetadata } from "Types";
 import { ITask } from "pg-promise";
 import debug from "debug";
 import { getMetadataDelta } from "./utils";
@@ -16,15 +15,15 @@ const error = debug("bobaserver:board:queries-error");
 
 export const getBoards = async ({
   firebaseId,
-  realmExternalId,
+  realmId,
 }: {
-  firebaseId: string | null;
-  realmExternalId?: string;
+  firebaseId: string;
+  realmId?: string;
 }): Promise<any> => {
   try {
     return await pool.many(sql.getAllBoards, {
       firebase_id: firebaseId,
-      realm_external_id: realmExternalId,
+      realm_string_id: realmId,
     });
   } catch (e) {
     error(`Error while fetching boards.`);
@@ -33,35 +32,69 @@ export const getBoards = async ({
   }
 };
 
-export const getBoardByExternalId = async ({
+export const getBoardBySlug = async ({
   firebaseId,
-  boardExternalId,
+  slug,
 }: {
   firebaseId: string | undefined;
-  boardExternalId: string;
-}) => {
-  const rows = await pool.oneOrNone(sql.getBoardByExternalId, {
-    firebase_id: firebaseId,
-    board_id: boardExternalId,
-  });
+  slug: string;
+}): Promise<DbBoardMetadata> => {
+  try {
+    const rows = await pool.oneOrNone(sql.getBoardBySlug, {
+      firebase_id: firebaseId,
+      board_slug: slug,
+    });
 
-  if (!rows) {
-    log(`Board not found: ${boardExternalId}`);
+    if (!rows) {
+      log(`Board not found: ${slug}`);
+      return null;
+    }
+
+    info(`Got getBoardBySlug query result:`, rows);
+    log(`Fetched board ${slug} for user ${firebaseId}`);
+    return rows;
+  } catch (e) {
+    error(`Error while fetching board by slug (${slug}).`);
+    error(e);
     return null;
   }
+};
 
-  info(`Got getBoardByExternalId query result:`, rows);
-  log(`Fetched board ${boardExternalId} for user ${firebaseId}`);
-  return BoardByExternalIdSchema.parse(rows);
+export const getBoardByUuid = async ({
+  firebaseId,
+  boardId,
+}: {
+  firebaseId: string | undefined;
+  boardId: string;
+}): Promise<DbBoardMetadata> => {
+  try {
+    const rows = await pool.oneOrNone(sql.getBoardByUuid, {
+      firebase_id: firebaseId,
+      board_uuid: boardId,
+    });
+
+    if (!rows) {
+      log(`Board not found: ${boardId}`);
+      return null;
+    }
+
+    info(`Got getBoardByUuid query result:`, rows);
+    log(`Fetched board ${boardId} for user ${firebaseId}`);
+    return rows;
+  } catch (e) {
+    error(`Error while fetching board by uuid (${boardId}).`);
+    error(e);
+    return null;
+  }
 };
 
 const updateCategoriesDescriptions = async (
   tx: ITask<unknown>,
   {
-    boardExternalId,
+    boardId,
     categoryFilters,
   }: {
-    boardExternalId: string;
+    boardId: string;
     categoryFilters: ReturnType<typeof getMetadataDelta>["categoryFilters"];
   }
 ) => {
@@ -70,12 +103,12 @@ const updateCategoriesDescriptions = async (
     categoryFilters.deleted.map(async (filter) => {
       await tx.none(sql.deleteSectionCategories, {
         section_id: filter.id,
-        board_id: boardExternalId,
+        board_uuid: boardId,
         category_names: null,
       });
       await tx.none(sql.deleteSection, {
         section_id: filter.id,
-        board_id: boardExternalId,
+        board_uuid: boardId,
       });
     })
   );
@@ -90,7 +123,7 @@ const updateCategoriesDescriptions = async (
           title: category.title,
           description: category.description,
           index: category.index,
-          board_id: boardExternalId,
+          board_uuid: boardId,
           section_id: category.id,
         });
       } else {
@@ -99,27 +132,27 @@ const updateCategoriesDescriptions = async (
           title: category.title,
           description: category.description,
           index: category.index,
-          board_id: boardExternalId,
+          board_uuid: boardId,
           type: "category_filter",
         });
       }
       log("Created new category section (or updated old one).");
-      if (category.categories!.deleted.length > 0) {
+      if (category.categories.deleted.length > 0) {
         await tx.none(sql.deleteSectionCategories, {
           section_id: category.id,
-          board_id: boardExternalId,
-          category_names: category.categories!.deleted,
+          board_uuid: boardId,
+          category_names: category.categories.deleted,
         });
         log("Removed obsolete categories from filter.");
       }
-      if (category.categories!.new.length > 0) {
+      if (category.categories.new.length > 0) {
         await tx.manyOrNone(
-          postsSQL.createAddCategoriesQuery(category.categories!.new)
+          postsSQL.createAddCategoriesQuery(category.categories.new)
         );
         await tx.manyOrNone(
           sql.createAddCategoriesToFilterSectionQuery(
             category.id,
-            category.categories!.new
+            category.categories.new
           )
         );
         log("Added new categories to filter.");
@@ -132,10 +165,10 @@ const updateCategoriesDescriptions = async (
 const updateTextDescriptions = async (
   tx: ITask<unknown>,
   {
-    boardExternalId,
+    boardId,
     texts,
   }: {
-    boardExternalId: string;
+    boardId: string;
     texts: ReturnType<typeof getMetadataDelta>["texts"];
   }
 ) => {
@@ -144,7 +177,7 @@ const updateTextDescriptions = async (
     texts.deleted.map(async (text) => {
       await tx.none(sql.deleteSection, {
         section_id: text.id,
-        board_id: boardExternalId,
+        board_uuid: boardId,
       });
     })
   );
@@ -159,7 +192,7 @@ const updateTextDescriptions = async (
           title: text.title,
           description: text.description,
           index: text.index,
-          board_id: boardExternalId,
+          board_uuid: boardId,
           section_id: text.id,
         });
       } else {
@@ -168,7 +201,7 @@ const updateTextDescriptions = async (
           title: text.title,
           description: text.description,
           index: text.index,
-          board_id: boardExternalId,
+          board_uuid: boardId,
           type: "text",
         });
       }
@@ -178,15 +211,15 @@ const updateTextDescriptions = async (
 };
 
 export const updateBoardMetadata = async ({
-  boardExternalId,
+  boardId,
   firebaseId,
   oldMetadata,
   newMetadata,
 }: {
-  boardExternalId: string;
+  boardId: string;
   firebaseId: string;
-  oldMetadata: BoardByExternalId;
-  newMetadata: Partial<BoardByExternalId>;
+  oldMetadata: DbBoardMetadata;
+  newMetadata: Partial<DbBoardMetadata>;
 }): Promise<any> => {
   try {
     const delta = getMetadataDelta({
@@ -194,14 +227,14 @@ export const updateBoardMetadata = async ({
       newMetadata,
     });
 
-    log(`Received metadata delta for update to board ${boardExternalId}`);
+    log(`Received metadata delta for update to board ${boardId}`);
     info(delta);
 
     const success = await pool
       .tx("update-descriptions", async (transaction) => {
         if (delta.tagline || delta.accentColor) {
           await transaction.none(sql.updateBoardSettings, {
-            board_id: boardExternalId,
+            board_uuid: boardId,
             tagline: delta.tagline || oldMetadata.tagline,
             settings: {
               accentColor:
@@ -211,11 +244,11 @@ export const updateBoardMetadata = async ({
         }
 
         await updateCategoriesDescriptions(transaction, {
-          boardExternalId,
+          boardId,
           categoryFilters: delta.categoryFilters,
         });
         await updateTextDescriptions(transaction, {
-          boardExternalId,
+          boardId,
           texts: delta.texts,
         });
 
@@ -232,28 +265,28 @@ export const updateBoardMetadata = async ({
     }
 
     // Now return the new result
-    return await pool.oneOrNone(sql.getBoardByExternalId, {
-      board_id: boardExternalId,
+    return await pool.oneOrNone(sql.getBoardByUuid, {
+      board_uuid: boardId,
       firebase_id: firebaseId,
     });
   } catch (e) {
-    error(`Error while updating board (${boardExternalId}) metadata.`);
+    error(`Error while updating board (${boardId}) metadata.`);
     error(e);
     return false;
   }
 };
 
 export const markBoardVisit = async ({
-  boardExternalId,
+  boardId,
   firebaseId,
 }: {
-  boardExternalId: string;
+  boardId: string;
   firebaseId: string;
 }) => {
   try {
     await pool.none(sql.markBoardVisit, {
       firebase_id: firebaseId,
-      board_id: boardExternalId,
+      board_uuid: boardId,
     });
     return true;
   } catch (e) {
@@ -264,16 +297,16 @@ export const markBoardVisit = async ({
 };
 
 export const muteBoard = async ({
-  boardExternalId,
+  boardId,
   firebaseId,
 }: {
-  boardExternalId: string;
+  boardId: string;
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.muteBoardByExternalId, {
+    await pool.none(sql.muteBoardByUuid, {
       firebase_id: firebaseId,
-      board_id: boardExternalId,
+      board_uuid: boardId,
     });
     return true;
   } catch (e) {
@@ -284,16 +317,16 @@ export const muteBoard = async ({
 };
 
 export const unmuteBoard = async ({
-  boardExternalId,
+  boardId,
   firebaseId,
 }: {
-  boardExternalId: string;
+  boardId: string;
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.unmuteBoardByExternalId, {
+    await pool.none(sql.unmuteBoardByUuid, {
       firebase_id: firebaseId,
-      board_id: boardExternalId,
+      board_uuid: boardId,
     });
     return true;
   } catch (e) {
@@ -304,16 +337,16 @@ export const unmuteBoard = async ({
 };
 
 export const pinBoard = async ({
-  boardExternalId,
+  boardId,
   firebaseId,
 }: {
-  boardExternalId: string;
+  boardId: string;
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.pinBoardByExternalId, {
+    await pool.none(sql.pinBoardByUuid, {
       firebase_id: firebaseId,
-      board_id: boardExternalId,
+      board_uuid: boardId,
     });
     return true;
   } catch (e) {
@@ -324,16 +357,16 @@ export const pinBoard = async ({
 };
 
 export const unpinBoard = async ({
-  boardExternalId,
+  boardId,
   firebaseId,
 }: {
-  boardExternalId: string;
+  boardId: string;
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.unpinBoardByExternalId, {
+    await pool.none(sql.unpinBoardByUuid, {
       firebase_id: firebaseId,
-      board_id: boardExternalId,
+      board_uuid: boardId,
     });
     return true;
   } catch (e) {
@@ -344,16 +377,16 @@ export const unpinBoard = async ({
 };
 
 export const dismissBoardNotifications = async ({
-  boardExternalId,
+  boardId,
   firebaseId,
 }: {
-  boardExternalId: string;
+  boardId: string;
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.dismissNotificationsByExternalId, {
+    await pool.none(sql.dismissNotificationsByUuid, {
       firebase_id: firebaseId,
-      board_id: boardExternalId,
+      board_uuid: boardId,
     });
     return true;
   } catch (e) {
@@ -368,7 +401,7 @@ export const createThread = async ({
   content,
   isLarge,
   anonymityType,
-  boardExternalId,
+  boardStringId,
   whisperTags,
   indexTags,
   categoryTags,
@@ -382,7 +415,7 @@ export const createThread = async ({
   isLarge: boolean;
   defaultView: string;
   anonymityType: string;
-  boardExternalId: string;
+  boardStringId: string;
   whisperTags: string[];
   indexTags: string[];
   categoryTags: string[];
@@ -391,15 +424,15 @@ export const createThread = async ({
   accessoryId?: string;
 }) => {
   return pool.tx("create-thread", async (t) => {
-    const newThreadExternalId = uuidv4();
+    const newThreadStringId = uuidv4();
     await t.one(threadsSql.createThread, {
-      thread_external_id: newThreadExternalId,
-      board_external_id: boardExternalId,
+      thread_string_id: newThreadStringId,
+      board_string_id: boardStringId,
       thread_options: {
         default_view: defaultView,
       },
     });
-    log(`Created thread entry for thread ${newThreadExternalId}`);
+    log(`Created thread entry for thread ${newThreadStringId}`);
 
     await postNewContribution(
       {
@@ -413,10 +446,10 @@ export const createThread = async ({
         indexTags,
         contentWarnings,
         categoryTags,
-        threadExternalId: newThreadExternalId,
+        threadStringId: newThreadStringId,
       },
       t
     );
-    return newThreadExternalId;
+    return newThreadStringId;
   });
 };

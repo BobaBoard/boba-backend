@@ -7,6 +7,7 @@ import {
   RealmPermissions,
   ThreadPermissions,
 } from "types/permissions";
+import { DbBoardMetadata, DbThreadType } from "Types";
 import { NextFunction, Request, Response } from "express";
 import {
   extractBoardPermissions,
@@ -14,19 +15,17 @@ import {
   getBoardRestrictions,
 } from "utils/permissions-utils";
 import {
-  getRealmByExternalId,
+  getRealmIdsByUuid,
   getUserPermissionsForRealm,
 } from "server/realms/queries";
 import {
-  getThreadByExternalId,
+  getThreadByStringId,
   getUserPermissionsForThread,
 } from "server/threads/queries";
 
-import { BoardByExternalId } from "server/boards/sql/types";
-import { DbThreadType } from "Types";
 import { Internal500Error } from "types/errors/api";
-import { getBoardByExternalId } from "server/boards/queries";
-import { getPostByExternalId } from "server/posts/queries";
+import { getBoardByUuid } from "server/boards/queries";
+import { getPostFromStringId } from "server/posts/queries";
 
 declare global {
   namespace Express {
@@ -34,7 +33,7 @@ declare global {
       currentThreadPermissions?: ThreadPermissions[];
       currentThreadData?: DbThreadType;
       currentBoardPermissions?: BoardPermissions[];
-      currentBoardMetadata?: BoardByExternalId;
+      currentBoardMetadata?: DbBoardMetadata;
       currentBoardRestrictions?: {
         loggedOutRestrictions: BoardRestrictions[];
         loggedInBaseRestrictions: BoardRestrictions[];
@@ -67,7 +66,7 @@ export const withThreadPermissions = async (
 
   const currentThreadPermissions = await getUserPermissionsForThread({
     firebaseId: req.currentUser.uid,
-    threadExternalId: req.params.thread_id,
+    threadStringId: req.params.thread_id,
   });
 
   if (!currentThreadPermissions) {
@@ -112,28 +111,28 @@ export const ensureThreadAccess = async (
     );
   }
 
-  const threadExternalId =
+  const threadStringId =
     req.params.thread_id ??
     (
-      await getPostByExternalId(null, {
+      await getPostFromStringId(null, {
         firebaseId: req.currentUser?.uid,
-        postExternalId: req.params.post_id,
+        postId: req.params.post_id,
       })
     ).parent_thread_id;
 
-  if (!threadExternalId) {
+  if (!threadStringId) {
     throw new Internal500Error("Error while determining thread ID.");
   }
 
-  const thread = await getThreadByExternalId({
-    threadExternalId,
+  const thread = await getThreadByStringId({
+    threadStringId,
     firebaseId: req.currentUser?.uid,
   });
 
   if (!thread) {
-    res.status(404).send({
-      message: `The thread with id "${threadExternalId}" was not found.`,
-    });
+    res
+      .status(404)
+      .send({ message: `The thread with id "${threadStringId}" was not found.` });
     return;
   }
   req.params.board_id = thread.board_id;
@@ -153,16 +152,16 @@ export const withBoardMetadata = async (
     );
   }
 
-  const boardExternalId = req.params.board_id;
-  const board = await getBoardByExternalId({
+  const boardId = req.params.board_id;
+  const board = await getBoardByUuid({
     firebaseId: req.currentUser?.uid,
-    boardExternalId,
+    boardId,
   });
 
   if (!board) {
-    res.status(404).send({
-      message: `The board with id "${boardExternalId}" was not found.`,
-    });
+    res
+      .status(404)
+      .send({ message: `The board with id "${boardId}" was not found.` });
     return;
   }
 
@@ -178,7 +177,7 @@ export const withBoardMetadata = async (
     return;
   }
 
-  req.params.realm_id = board.realm_external_id;
+  req.params.realm_id = board.realm_string_id;
   next();
 };
 
@@ -191,7 +190,7 @@ export const ensureBoardAccess = async (
     withRealmPermissions(req, res, async () => {
       if (
         !req.currentUser &&
-        req.currentBoardRestrictions?.loggedOutRestrictions.includes(
+        req.currentBoardRestrictions.loggedOutRestrictions.includes(
           BoardRestrictions.LOCK_ACCESS
         )
       ) {
@@ -201,10 +200,10 @@ export const ensureBoardAccess = async (
         return;
       }
       if (
-        !req.currentRealmPermissions?.includes(
+        !req.currentRealmPermissions.includes(
           RealmPermissions.accessLockedBoardsOnRealm
         ) &&
-        req.currentBoardRestrictions?.loggedOutRestrictions.includes(
+        req.currentBoardRestrictions.loggedOutRestrictions.includes(
           BoardRestrictions.LOCK_ACCESS
         )
       ) {
@@ -251,9 +250,9 @@ export const withPostPermissions = async (
     return;
   }
 
-  const post = await getPostByExternalId(null, {
+  const post = await getPostFromStringId(null, {
     firebaseId: req.currentUser.uid,
-    postExternalId: req.params.post_id,
+    postId: req.params.post_id,
   });
   if (!post) {
     res.status(404).send({
@@ -266,11 +265,11 @@ export const withPostPermissions = async (
     next();
     return;
   }
-  const board = await getBoardByExternalId({
+  const board = await getBoardByUuid({
     firebaseId: req.currentUser.uid,
-    boardExternalId: post.parent_board_id,
+    boardId: post.parent_board_id,
   });
-  req.currentPostPermissions = extractPostPermissions(board?.permissions);
+  req.currentPostPermissions = extractPostPermissions(board.permissions);
   next();
 };
 
@@ -285,8 +284,8 @@ export const ensureRealmExists = async (
     );
   }
 
-  const currentRealmIds = await getRealmByExternalId({
-    realmExternalId: req.params.realm_id,
+  const currentRealmIds = await getRealmIdsByUuid({
+    realmId: req.params.realm_id,
   });
   if (!currentRealmIds) {
     res.status(404).json({ message: "The realm was not found." });
@@ -314,7 +313,7 @@ export const withRealmPermissions = async (
 
     const currentRealmPermissions = await getUserPermissionsForRealm({
       firebaseId: req.currentUser?.uid,
-      realmExternalId: req.currentRealmIds.string_id,
+      realmStringId: req.currentRealmIds.string_id,
     });
 
     if (!currentRealmPermissions) {
