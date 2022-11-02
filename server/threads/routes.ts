@@ -3,6 +3,7 @@ import {
   Forbidden403Error,
   NotFound404Error,
 } from "types/errors/api";
+import { canAccessBoard, canAccessBoardByUuid } from "utils/permissions-utils";
 import {
   ensureNoIdentityLeakage,
   makeServerThread,
@@ -24,7 +25,6 @@ import {
 } from "./queries";
 
 import { ThreadPermissions } from "types/permissions";
-import { canAccessBoardByExternalId } from "utils/permissions-utils";
 import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
@@ -40,7 +40,7 @@ const router = express.Router();
  * /threads/{thread_id}:
  *   get:
  *     summary: Fetches thread data.
- *     operationId: getThreadByExternalId
+ *     operationId: getThreadByStringId
  *     description: Fetches data for the specified thread.
  *     tags:
  *       - /threads/
@@ -78,10 +78,10 @@ const router = express.Router();
  *                 $ref: '#/components/examples/ThreadWithCommentsThreadResponse'
  */
 router.get("/:thread_id", ensureThreadAccess, async (req, res) => {
-  const { thread_id: threadExternalId } = req.params;
-  log(`Fetching data for thread with id ${threadExternalId}`);
+  const { thread_id: threadStringId } = req.params;
+  log(`Fetching data for thread with id ${threadStringId}`);
 
-  const serverThread = makeServerThread(req.currentThreadData!);
+  const serverThread = makeServerThread(req.currentThreadData);
   ensureNoIdentityLeakage(serverThread);
 
   info(`sending back data for thread ${serverThread.id}.`);
@@ -93,7 +93,7 @@ router.get("/:thread_id", ensureThreadAccess, async (req, res) => {
  * /threads/{thread_id}/mute:
  *   post:
  *     summary: Mutes a thread.
- *     operationId: muteThreadByExternalId
+ *     operationId: muteThreadByStringId
  *     description: Mutes the specified thread for the current user.
  *     tags:
  *       - /threads/
@@ -108,7 +108,7 @@ router.get("/:thread_id", ensureThreadAccess, async (req, res) => {
  *           type: string
  *           format: uuid
  *         examples:
- *           gorethreadExternalId:
+ *           gorethreadStringId:
  *             summary: A thread from the gore board.
  *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
  *     responses:
@@ -126,20 +126,20 @@ router.post(
   ensureLoggedIn,
   ensureThreadAccess,
   async (req, res) => {
-    const { thread_id: threadExternalId } = req.params;
-    log(`Setting thread muted: ${threadExternalId}`);
+    const { thread_id: threadStringId } = req.params;
+    log(`Setting thread muted: ${threadStringId}`);
 
     if (
       !(await muteThread({
-        firebaseId: req.currentUser!.uid,
-        threadExternalId,
+        firebaseId: req.currentUser.uid,
+        threadStringId,
       }))
     ) {
       res.sendStatus(500);
       return;
     }
 
-    info(`Marked last visited time for thread: ${threadExternalId}.`);
+    info(`Marked last visited time for thread: ${threadStringId}.`);
     res.status(204).json();
   }
 );
@@ -149,7 +149,7 @@ router.post(
  * /threads/{thread_id}/mute:
  *   delete:
  *     summary: Unmutes a thread.
- *     operationId: unmuteThreadByExternalId
+ *     operationId: unmuteThreadByStringId
  *     description: Unmutes a specified thread.
  *     tags:
  *       - /threads/
@@ -164,7 +164,7 @@ router.post(
  *           type: string
  *           format: uuid
  *         examples:
- *           gorethreadExternalId:
+ *           gorethreadStringId:
  *             summary: A thread from the gore board.
  *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
  *     responses:
@@ -182,20 +182,20 @@ router.delete(
   ensureLoggedIn,
   ensureThreadAccess,
   async (req, res) => {
-    const { thread_id: threadExternalId } = req.params;
-    log(`Setting thread unmuted: ${threadExternalId}`);
+    const { thread_id: threadStringId } = req.params;
+    log(`Setting thread unmuted: ${threadStringId}`);
 
     if (
       !(await unmuteThread({
-        firebaseId: req.currentUser!.uid,
-        threadExternalId,
+        firebaseId: req.currentUser.uid,
+        threadStringId,
       }))
     ) {
       res.sendStatus(500);
       return;
     }
 
-    info(`Marked last visited time for thread: ${threadExternalId}.`);
+    info(`Marked last visited time for thread: ${threadStringId}.`);
     res.status(204).json();
   }
 );
@@ -205,7 +205,7 @@ router.delete(
  * /threads/{thread_id}/hide:
  *   post:
  *     summary: Hides a thread.
- *     operationId: hideThreadByExternalId
+ *     operationId: hideThreadByStringId
  *     description: Hides the specified thread for the current user.
  *     tags:
  *       - /threads/
@@ -220,7 +220,7 @@ router.delete(
  *           type: string
  *           format: uuid
  *         examples:
- *           gorethreadExternalId:
+ *           gorethreadStringId:
  *             summary: A thread from the gore board.
  *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
  *     responses:
@@ -238,20 +238,20 @@ router.post(
   ensureLoggedIn,
   ensureThreadAccess,
   async (req, res) => {
-    const { thread_id: threadExternalId } = req.params;
-    log(`Setting thread hidden: ${threadExternalId}`);
+    const { thread_id: threadStringId } = req.params;
+    log(`Setting thread hidden: ${threadStringId}`);
 
     if (
       !(await hideThread({
-        firebaseId: req.currentUser!.uid,
-        threadExternalId,
+        firebaseId: req.currentUser.uid,
+        threadStringId,
       }))
     ) {
       res.sendStatus(500);
       return;
     }
 
-    info(`Marked last visited time for thread: ${threadExternalId}.`);
+    info(`Marked last visited time for thread: ${threadStringId}.`);
     res.status(204).json();
   }
 );
@@ -261,7 +261,7 @@ router.post(
  * /threads/{thread_id}/hide:
  *   delete:
  *     summary: Unhides a thread.
- *     operationId: unhideThreadByExternalId
+ *     operationId: unhideThreadByStringId
  *     description: Unhides the specified thread for the current user.
  *     tags:
  *       - /threads/
@@ -276,7 +276,7 @@ router.post(
  *           type: string
  *           format: uuid
  *         examples:
- *           gorethreadExternalId:
+ *           gorethreadStringId:
  *             summary: A thread from the gore board.
  *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
  *     responses:
@@ -294,20 +294,20 @@ router.delete(
   ensureLoggedIn,
   ensureThreadAccess,
   async (req, res) => {
-    const { thread_id: threadExternalId } = req.params;
-    log(`Setting thread visible: ${threadExternalId}`);
+    const { thread_id: threadStringId } = req.params;
+    log(`Setting thread visible: ${threadStringId}`);
 
     if (
       !(await unhideThread({
-        firebaseId: req.currentUser!.uid,
-        threadExternalId,
+        firebaseId: req.currentUser.uid,
+        threadStringId,
       }))
     ) {
       res.sendStatus(500);
       return;
     }
 
-    info(`Marked last visited time for thread: ${threadExternalId}.`);
+    info(`Marked last visited time for thread: ${threadStringId}.`);
     res.status(204).json();
   }
 );
@@ -317,7 +317,7 @@ router.delete(
  * /threads/{thread_id}/visits:
  *   post:
  *     summary: Records a visit to a thread by the current user.
- *     operationId: visitThreadByExternalId
+ *     operationId: visitThreadByStringId
  *     description: Records a visit to a thread by the current user.
  *     tags:
  *       - /threads/
@@ -332,7 +332,7 @@ router.delete(
  *           type: string
  *           format: uuid
  *         examples:
- *           gorethreadExternalId:
+ *           gorethreadStringId:
  *             summary: A thread from the gore board.
  *             value: 29d1b2da-3289-454a-9089-2ed47db4967b
  *     responses:
@@ -350,20 +350,20 @@ router.post(
   ensureLoggedIn,
   ensureThreadAccess,
   async (req, res) => {
-    const { thread_id: threadExternalId } = req.params;
-    log(`Setting last visited time for thread: ${threadExternalId}`);
+    const { thread_id: threadStringId } = req.params;
+    log(`Setting last visited time for thread: ${threadStringId}`);
 
     if (
       !(await markThreadVisit({
-        firebaseId: req.currentUser!.uid,
-        threadExternalId,
+        firebaseId: req.currentUser.uid,
+        threadStringId,
       }))
     ) {
       res.sendStatus(500);
       return;
     }
 
-    info(`Marked last visited time for thread: ${threadExternalId}.`);
+    info(`Marked last visited time for thread: ${threadStringId}.`);
     res.status(204).json();
   }
 );
@@ -373,7 +373,7 @@ router.post(
  * /threads/{thread_id}:
  *   patch:
  *     summary: Update thread properties.
- *     operationId: updateThreadExternalId
+ *     operationId: updateThreadStringId
  *     description: Updates the default view that the thread uses or the parent board of the thread.
  *     tags:
  *       - /threads/
@@ -444,7 +444,7 @@ router.patch(
 
     if (defaultView) {
       if (
-        !req.currentThreadPermissions!.includes(
+        !req.currentThreadPermissions.includes(
           ThreadPermissions.editDefaultView
         )
       ) {
@@ -455,7 +455,7 @@ router.patch(
 
       if (
         !(await updateThreadView({
-          threadExternalId: thread_id,
+          threadStringId: thread_id,
           defaultView,
         }))
       ) {
@@ -465,7 +465,7 @@ router.patch(
 
     if (parentBoardId) {
       if (
-        !req.currentThreadPermissions!.includes(ThreadPermissions.moveThread)
+        !req.currentThreadPermissions.includes(ThreadPermissions.moveThread)
       ) {
         throw new Forbidden403Error(
           `User does not have permission to move thread thread with id ${thread_id}.`
@@ -473,9 +473,9 @@ router.patch(
       }
       // TODO: add a test for this case once there's boards that are not accessible to everyone.
       if (
-        !(await canAccessBoardByExternalId({
-          boardExternalId: parentBoardId,
-          firebaseId: req.currentUser!.uid,
+        !(await canAccessBoardByUuid({
+          boardId: parentBoardId,
+          firebaseId: req.currentUser.uid,
         }))
       ) {
         throw new NotFound404Error(
@@ -487,7 +487,7 @@ router.patch(
 
       if (
         !(await moveThread({
-          threadExternalId: thread_id,
+          threadStringId: thread_id,
           destinationId: parentBoardId,
         }))
       ) {
@@ -504,7 +504,7 @@ router.patch(
  * /threads/{thread_id}/stars:
  *   post:
  *     summary: Adds thread to Star Feed
- *     operationId: starThreadByExternalId
+ *     operationId: starThreadByStringId
  *     description: Adds selected thread to current user Star Feed.
  *     tags:
  *       - /threads/
@@ -536,20 +536,20 @@ router.post(
   ensureLoggedIn,
   ensureThreadAccess,
   async (req, res) => {
-    const { thread_id: threadExternalId } = req.params;
-    log(`Adding thread to stars: ${threadExternalId}`);
+    const { thread_id: threadStringId } = req.params;
+    log(`Adding thread to stars: ${threadStringId}`);
 
     if (
       !(await starThread({
-        firebaseId: req.currentUser!.uid,
-        threadExternalId,
+        firebaseId: req.currentUser.uid,
+        threadStringId,
       }))
     ) {
       res.sendStatus(500);
       return;
     }
 
-    info(`Marked last visited time for thread: ${threadExternalId}.`);
+    info(`Marked last visited time for thread: ${threadStringId}.`);
     res.status(204).json();
   }
 );
@@ -559,7 +559,7 @@ router.post(
  * /threads/{thread_id}/stars:
  *   delete:
  *     summary: Removes thread from Star Feed
- *     operationId: unstarThreadByExternalId
+ *     operationId: unstarThreadByStringId
  *     description: Deletes selected thread from current user Star Feed.
  *     tags:
  *       - /threads/
@@ -590,20 +590,20 @@ router.delete(
   ensureLoggedIn,
   ensureThreadAccess,
   async (req, res) => {
-    const { thread_id: threadExternalId } = req.params;
-    log(`Removing thread from stars: ${threadExternalId}`);
+    const { thread_id: threadStringId } = req.params;
+    log(`Removing thread from stars: ${threadStringId}`);
 
     if (
       !(await unstarThread({
-        firebaseId: req.currentUser!.uid,
-        threadExternalId,
+        firebaseId: req.currentUser.uid,
+        threadStringId,
       }))
     ) {
       res.sendStatus(500);
       return;
     }
 
-    info(`Marked last visited time for thread: ${threadExternalId}.`);
+    info(`Marked last visited time for thread: ${threadStringId}.`);
     res.status(204).json();
   }
 );

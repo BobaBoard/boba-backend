@@ -6,44 +6,44 @@ import sql from "./sql";
 const error = debug("bobaserver:subscriptions:queries-error");
 
 export const getLatestSubscriptionData = async ({
-  subscriptionExternalId,
+  subscriptionId,
 }: {
-  subscriptionExternalId: string;
+  subscriptionId: string;
 }): Promise<
   | {
       subscription_id: number;
       subscription_name: string;
-      subscription_external_id: string;
+      subscription_string_id: string;
       last_updated_at: string;
       secret_identity_name: string | null;
       secret_identity_avatar: string | null;
       secret_identity_color: string | null;
       secret_identity_accessory: string | null;
       post_content: string;
-      thread_external_id: string;
+      thread_string_id: string;
       latest_post_string_id: string | null;
     }[]
   | false
 > => {
   try {
-    return (await pool.manyOrNone(sql.getSubscriptionActivityByExternalId, {
-      subscription_external_id: subscriptionExternalId,
+    return (await pool.manyOrNone(sql.getSubscriptionActivityByStringId, {
+      subscription_string_id: subscriptionId,
       // we use page_size = 0 because the query returns always one more for the cursor
       page_size: 0,
       last_activity_cursor: null,
     })) as any;
   } catch (e) {
     throw new Internal500Error(
-      `Error while getting webhooks for subscription ${subscriptionExternalId}`
+      `Error while getting webhooks for subscription ${subscriptionId}`
     );
   }
 };
 
 export const getTriggeredThreadsSubscriptions = async ({
-  threadExternalId,
+  threadStringId,
   categoryNames,
 }: {
-  threadExternalId: string;
+  threadStringId: string;
   categoryNames: string[];
 }): Promise<
   {
@@ -54,7 +54,7 @@ export const getTriggeredThreadsSubscriptions = async ({
   try {
     return (
       await pool.manyOrNone(sql.getTriggeredThreadSubscriptions, {
-        thread_external_id: threadExternalId,
+        thread_string_id: threadStringId,
         category_names: categoryNames,
       })
     )?.map((s) => ({
@@ -69,10 +69,10 @@ export const getTriggeredThreadsSubscriptions = async ({
 };
 
 export const getTriggeredBoardSubscriptions = async ({
-  boardExternalId,
+  boardId,
   categories,
 }: {
-  boardExternalId: string;
+  boardId: string;
   categories: string[];
 }): Promise<
   {
@@ -83,7 +83,7 @@ export const getTriggeredBoardSubscriptions = async ({
   try {
     return (
       await pool.manyOrNone(sql.getTriggeredBoardSubscriptions, {
-        board_external_id: boardExternalId,
+        board_string_id: boardId,
         category_names: categories,
       })
     )?.map((s) => ({

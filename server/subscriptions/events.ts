@@ -36,25 +36,17 @@ const publishSubscriptionsUpdates = async ({
       async ({ webhook, webhookHandlerType, subscriptionIds }) => {
         await Promise.all(
           subscriptionIds.map((subscriptionId) =>
-            cache().hDel(CacheKeys.SUBSCRIPTION, subscriptionId)
+            cache().hdel(CacheKeys.SUBSCRIPTION, subscriptionId)
           )
         );
         axios.post(
           webhook,
           getWebhookPayload({
             webhookHandlerType,
-            subscriptionNames: subscriptionIds
-              .map(
-                (subscriptionId) =>
-                  subscriptions.find((s) => s.id === subscriptionId)?.name
-              )
-              .filter(
-                // Typescript function to assert subscriptionName will be not null.
-                // Should extract to its own utility function.
-                <TValue>(
-                  subscriptionName: undefined | null | TValue
-                ): subscriptionName is TValue => !!subscriptionName
-              ),
+            subscriptionNames: subscriptionIds.map(
+              (subscriptionId) =>
+                subscriptions.find((s) => s.id === subscriptionId)?.name
+            ),
             eventPayload,
           })
         );
@@ -67,7 +59,7 @@ const maybeUpdateSubscriptionsOnThreadCreated = async (
   eventPayload: threadEvents.ThreadCreatedPayload
 ) => {
   const triggeredSubscriptions = await getTriggeredBoardSubscriptions({
-    boardExternalId: eventPayload.thread.parent_board_id,
+    boardId: eventPayload.thread.parent_board_id,
     categories: eventPayload.thread.posts[0].tags?.category_tags,
   });
 
@@ -84,7 +76,7 @@ const maybeUpdateSubscriptionsOnThreadChange = async (
   eventPayload: threadEvents.ThreadUpdatedPayload
 ) => {
   const triggeredSubscriptions = await getTriggeredThreadsSubscriptions({
-    threadExternalId: eventPayload.post.parent_thread_id,
+    threadStringId: eventPayload.post.parent_thread_id,
     categoryNames: eventPayload.post.tags?.category_tags,
   });
 
@@ -98,29 +90,30 @@ const maybeUpdateSubscriptionsOnThreadChange = async (
   });
 };
 
-type EventsWithHandlers = {
-  [eventType in threadEvents.EVENT_TYPES]: (
-    e: threadEvents.EventToPayload[eventType]
-  ) => void;
-};
+// TODO: figure out this type
+type EventsWithHandlers<
+  T extends threadEvents.EVENT_TYPES = threadEvents.EVENT_TYPES
+> = [T, (eventPayload: threadEvents.EventToPayload[T]) => void];
 
-const EVENTS_WITH_HANDLERS: EventsWithHandlers = {
-  [threadEvents.EVENT_TYPES.THREAD_CREATED]:
+const EVENTS_WITH_HANDLERS: EventsWithHandlers[] = [
+  [
+    threadEvents.EVENT_TYPES.THREAD_CREATED,
     maybeUpdateSubscriptionsOnThreadCreated,
-  [threadEvents.EVENT_TYPES.THREAD_UPDATED]:
+  ],
+  [
+    threadEvents.EVENT_TYPES.THREAD_UPDATED,
     maybeUpdateSubscriptionsOnThreadChange,
-};
+  ],
+];
 
 export const registerAll = () => {
-  Object.entries(EVENTS_WITH_HANDLERS).forEach(([eventType, handler]) => {
-    // @ts-ignore Type safety is given by the EVENTS_WITH_HANDLERS definition
+  EVENTS_WITH_HANDLERS.forEach(([eventType, handler]) => {
     threadEvents.register(eventType, handler);
   });
 };
 
 export const unregisterAll = () => {
-  Object.entries(EVENTS_WITH_HANDLERS).forEach(([eventType, handler]) => {
-    // @ts-ignore Type safety is given by the EVENTS_WITH_HANDLERS definition
+  EVENTS_WITH_HANDLERS.forEach(([eventType, handler]) => {
     threadEvents.register(eventType, handler);
   });
 };
