@@ -1,6 +1,8 @@
 tasks:
   - name: start db
-    before: cp gitpod.env .env
+    before: |
+      cp gitpod.env .env
+      cp .gitpod-firebase-sdk.json firebase-sdk.json
     command: yarn run start-db
   - name: start server
     init: yarn install
