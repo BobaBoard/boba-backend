@@ -14,6 +14,7 @@ import {
 
 import { CHARACTER_TO_MAIM_POST_ID } from "test/data/posts";
 import { EventEmitter } from "events";
+import { FAVORITE_CHARACTER_THREAD_ID } from "test/data/threads";
 import { Post } from "types/rest/threads";
 import debug from "debug";
 import { mocked } from "ts-jest/utils";
@@ -100,7 +101,7 @@ describe("Test creating new post REST API", () => {
         new_comments_amount: 0,
         own: true,
         parent_post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
-        parent_thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+        parent_thread_id: FAVORITE_CHARACTER_THREAD_ID,
         secret_identity: {
           accessory:
             "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",

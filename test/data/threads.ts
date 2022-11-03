@@ -11,6 +11,8 @@ import { Thread, ThreadSummary } from "../../types/rest/threads";
 import { GenericResponse } from "../../types/rest/responses";
 import { TWISTED_MINDS_REALM_STRING_ID } from "./realms";
 
+// TODO: add thread b27710a8-0a9f-4c09-b3a5-54668bab7051 and info
+
 export const EXCELLENT_THREAD_ID = "8b2646af-2778-487e-8e44-7ae530c2549c";
 export const FAVORITE_CHARACTER_THREAD_ID =
   "29d1b2da-3289-454a-9089-2ed47db4967b";

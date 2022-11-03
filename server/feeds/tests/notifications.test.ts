@@ -6,6 +6,7 @@ import {
   SEXY_DADDY_USER_ID,
   ZODIAC_KILLER_USER_ID,
 } from "test/data/auth";
+import { FAVORITE_CHARACTER_THREAD_ID, FAVORITE_MURDER_THREAD_ID } from "test/data/threads";
 
 import { getBoardActivityByUuid } from "../queries";
 
@@ -14,7 +15,6 @@ describe("Tests notifications", () => {
     // Since there was no visit we expect every post/comment to be marked as new
     const boardActivity = await getBoardActivityByUuid({
       boardId: GORE_BOARD_ID,
-      // Jersey Devil
       firebaseId: JERSEY_DEVIL_USER_ID,
       cursor: null,
     });
@@ -34,12 +34,11 @@ describe("Tests notifications", () => {
         }))
         .filter(
           (activity: any) =>
-            // Favorite character
-            activity.thread_id == "29d1b2da-3289-454a-9089-2ed47db4967b"
+            activity.thread_id == FAVORITE_CHARACTER_THREAD_ID
         )
     ).toEqual([
       {
-        thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+        thread_id: FAVORITE_CHARACTER_THREAD_ID,
         is_new: true,
         new_comments_amount: 2,
         new_posts_amount: 3,
@@ -50,7 +49,6 @@ describe("Tests notifications", () => {
     // The only new comments are from the user itself
     const boardActivity = await getBoardActivityByUuid({
       boardId: GORE_BOARD_ID,
-      // Bobatan
       firebaseId: BOBATAN_USER_ID,
       cursor: null,
     });
@@ -70,12 +68,11 @@ describe("Tests notifications", () => {
         }))
         .filter(
           (activity: any) =>
-            // Favorite character
-            activity.thread_id == "29d1b2da-3289-454a-9089-2ed47db4967b"
+            activity.thread_id == FAVORITE_CHARACTER_THREAD_ID
         )
     ).toEqual([
       {
-        thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+        thread_id: FAVORITE_CHARACTER_THREAD_ID,
         is_new: false,
         new_comments_amount: 0,
         new_posts_amount: 0,
@@ -87,7 +84,6 @@ describe("Tests notifications", () => {
     // The new comments are not from the user itself
     const boardActivity = await getBoardActivityByUuid({
       boardId: GORE_BOARD_ID,
-      // Oncest
       firebaseId: ONCEST_USER_ID,
       cursor: null,
     });
@@ -107,12 +103,11 @@ describe("Tests notifications", () => {
         }))
         .filter(
           (activity: any) =>
-            // Favorite character
-            activity.thread_id == "29d1b2da-3289-454a-9089-2ed47db4967b"
+            activity.thread_id == FAVORITE_CHARACTER_THREAD_ID
         )
     ).toEqual([
       {
-        thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+        thread_id: FAVORITE_CHARACTER_THREAD_ID,
         is_new: false,
         new_comments_amount: 2,
         new_posts_amount: 0,
@@ -143,12 +138,11 @@ describe("Tests notifications", () => {
         }))
         .filter(
           (activity: any) =>
-            // Favorite murder
-            activity.thread_id == "a5c903df-35e8-43b2-a41a-208c43154671"
+            activity.thread_id == FAVORITE_MURDER_THREAD_ID
         )
     ).toEqual([
       {
-        thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+        thread_id: FAVORITE_MURDER_THREAD_ID,
         is_new: false,
         new_comments_amount: 0,
         new_posts_amount: 0,
@@ -160,7 +154,6 @@ describe("Tests notifications", () => {
     // We expect new posts after the last visit
     const boardActivity = await getBoardActivityByUuid({
       boardId: GORE_BOARD_ID,
-      // Oncest
       firebaseId: ONCEST_USER_ID,
       cursor: null,
     });
@@ -180,12 +173,11 @@ describe("Tests notifications", () => {
         }))
         .filter(
           (activity: any) =>
-            // Favorite murder
-            activity.thread_id == "a5c903df-35e8-43b2-a41a-208c43154671"
+            activity.thread_id == FAVORITE_MURDER_THREAD_ID
         )
     ).toEqual([
       {
-        thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+        thread_id: FAVORITE_MURDER_THREAD_ID,
         is_new: false,
         new_comments_amount: 0,
         new_posts_amount: 1,
@@ -197,7 +189,6 @@ describe("Tests notifications", () => {
     // Since there was no visit we expect every post/comment to be marked as new
     const boardActivity = await getBoardActivityByUuid({
       boardId: GORE_BOARD_ID,
-      // Bobatan
       firebaseId: BOBATAN_USER_ID,
       cursor: null,
     });
@@ -217,12 +208,11 @@ describe("Tests notifications", () => {
         }))
         .filter(
           (activity: any) =>
-            // Favorite murder
-            activity.thread_id == "a5c903df-35e8-43b2-a41a-208c43154671"
+            activity.thread_id == FAVORITE_MURDER_THREAD_ID
         )
     ).toEqual([
       {
-        thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+        thread_id: FAVORITE_MURDER_THREAD_ID,
         is_new: false,
         new_comments_amount: 0,
         new_posts_amount: 0,
@@ -256,13 +246,13 @@ describe("Tests notifications", () => {
         new_posts_amount: 0,
       },
       {
-        thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+        thread_id: FAVORITE_CHARACTER_THREAD_ID,
         is_new: false,
         new_comments_amount: 0,
         new_posts_amount: 0,
       },
       {
-        thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+        thread_id: FAVORITE_MURDER_THREAD_ID,
         is_new: false,
         new_comments_amount: 0,
         new_posts_amount: 0,
@@ -273,7 +263,6 @@ describe("Tests notifications", () => {
   test("gets correct amounts with dismissed notifs (new entries)", async () => {
     const boardActivity = await getBoardActivityByUuid({
       boardId: GORE_BOARD_ID,
-      // SexyDaddy69
       firebaseId: SEXY_DADDY_USER_ID,
       cursor: null,
     });
@@ -298,13 +287,13 @@ describe("Tests notifications", () => {
         new_posts_amount: 1,
       },
       {
-        thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+        thread_id: FAVORITE_CHARACTER_THREAD_ID,
         is_new: false,
         new_comments_amount: 2,
         new_posts_amount: 2,
       },
       {
-        thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+        thread_id: FAVORITE_MURDER_THREAD_ID,
         is_new: false,
         new_comments_amount: 0,
         new_posts_amount: 1,
@@ -315,7 +304,6 @@ describe("Tests notifications", () => {
   test("gets correct amounts with dismissed notifs (no new entries)", async () => {
     const boardActivity = await getBoardActivityByUuid({
       boardId: ANIME_BOARD_ID,
-      // SexyDaddy69
       firebaseId: SEXY_DADDY_USER_ID,
       cursor: null,
     });
@@ -345,7 +333,6 @@ describe("Tests notifications", () => {
   test("gets correct amounts with dismissed notifs (mixed visits and dismiss)", async () => {
     const boardActivity = await getBoardActivityByUuid({
       boardId: LONG_BOARD_ID,
-      // The Zodiac Killer
       firebaseId: ZODIAC_KILLER_USER_ID,
       cursor: null,
       pageSize: 50,
@@ -584,7 +571,6 @@ describe("Tests notifications", () => {
   test("gets correct amounts with dismissed BOARD notifs (only dismiss)", async () => {
     const boardActivity = await getBoardActivityByUuid({
       boardId: LONG_BOARD_ID,
-      // oncest5evah
       firebaseId: ONCEST_USER_ID,
       cursor: null,
       pageSize: 50,

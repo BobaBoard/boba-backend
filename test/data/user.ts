@@ -2,12 +2,6 @@ import { REALM_MEMBER_PERMISSIONS, RealmPermissions } from "types/permissions";
 
 import { UserData } from "../../types/rest/user";
 
-export const BOBATAN_ID = "c6HimTlg2RhVH3fC1psXZORdLcx2";
-export const JERSEY_DEVIL_ID = "fb2";
-export const ONCEST_ID = "fb3";
-export const SEXY_ID = "fb4";
-export const ZODIAC_KILLER_ID = "fb5";
-
 export const BOBATAN_USER_DATA: UserData = {
   avatar_url: "/bobatan.png",
   username: "bobatan",

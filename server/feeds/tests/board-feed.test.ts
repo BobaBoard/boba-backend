@@ -1,3 +1,4 @@
+import { FAVORITE_CHARACTER_THREAD_ID, FAVORITE_MURDER_THREAD_ID } from "test/data/threads";
 import { GORE_BOARD_ID, MAIN_STREET_BOARD_ID } from "test/data/boards";
 import { extractActivity, extractAuthorData, extractsMetadata } from "utils/test-utils";
 
@@ -41,7 +42,7 @@ describe("Tests boards activity queries", () => {
           new_posts_amount: 0,
           post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
           posts_amount: 3,
-          thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+          thread_id: FAVORITE_CHARACTER_THREAD_ID,
           threads_amount: 2,
         },
         {
@@ -54,7 +55,7 @@ describe("Tests boards activity queries", () => {
           new_posts_amount: 1,
           post_id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
           posts_amount: 3,
-          thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+          thread_id: FAVORITE_MURDER_THREAD_ID,
           threads_amount: 2,
         },
       ]);
@@ -95,7 +96,7 @@ describe("Tests boards activity queries", () => {
           new_posts_amount: 0,
           post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
           posts_amount: 3,
-          thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+          thread_id: FAVORITE_CHARACTER_THREAD_ID,
           threads_amount: 2,
         },
         {
@@ -108,7 +109,7 @@ describe("Tests boards activity queries", () => {
           new_posts_amount: 0,
           post_id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
           posts_amount: 3,
-          thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+          thread_id: FAVORITE_MURDER_THREAD_ID,
           threads_amount: 2,
         },
       ]);
