@@ -110,7 +110,7 @@ const insertInvites = async (
     created?: string;
   }[],
   inviter: string,
-  realmId: string
+  realmStringId: string
 ) => {
   await pool.task(async (t) => {
     for (const invite of invites) {
@@ -122,7 +122,7 @@ const insertInvites = async (
   (SELECT id FROM users WHERE firebase_id = $/inviter_id/),
   $/nonce/, $/email/, $/label/, $/created/, INTERVAL '1 WEEK', $/used/)`,
         {
-          realm_id: realmId,
+          realm_id: realmStringId,
           inviter_id: inviter,
           nonce: invite.nonce,
           email: invite.email,

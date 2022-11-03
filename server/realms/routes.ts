@@ -99,7 +99,7 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
 
     const boards = await getBoards({
       firebaseId: req.currentUser?.uid,
-      realmId: realmData.id,
+      realmStringId: realmData.id,
     });
 
     if (!boards) {
@@ -170,7 +170,7 @@ router.get("/:realm_id/activity", ensureRealmExists, async (req, res) => {
     // TODO[realms]: use a per-realm query here
     const boards = await getBoards({
       firebaseId: req.currentUser?.uid,
-      realmId: realm_id,
+      realmStringId: realm_id,
     });
 
     if (!boards) {
@@ -229,7 +229,7 @@ router.get("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
 
   const boards = await getBoards({
     firebaseId: req.currentUser?.uid,
-    realmId: realm_id,
+    realmStringId: realm_id,
   });
 
   if (!boards) {
@@ -313,7 +313,7 @@ router.delete("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
 
   const dismissSuccessful = await dismissAllNotifications({
     firebaseId: currentUserId,
-    realmId: realm_id,
+    realmStringId: realm_id,
   });
 
   if (!dismissSuccessful) {
@@ -473,7 +473,7 @@ router.get("/:realm_id/invites/:nonce", async (req, res) => {
   if (!invite) {
     throw new NotFound404Error("The invite was not found");
   }
-  const inviteRealm = await getRealmIdsByUuid({ realmId: invite.realmId });
+  const inviteRealm = await getRealmIdsByUuid({ realmStringId: invite.realmStringId });
   if (!inviteRealm) {
     throw new Internal500Error("failed to get realm ids");
   }
@@ -556,7 +556,7 @@ router.post(
   ensureRealmPermission(RealmPermissions.createRealmInvite),
   async (req, res) => {
     const user = req.currentUser?.uid;
-    const realmId = req.params.realm_id;
+    const realmStringId = req.params.realm_id;
     const { email, label } = req.body;
 
     // Generate 64 characters random id string
@@ -565,7 +565,7 @@ router.post(
     log(adminId);
 
     const inviteAdded = await createInvite({
-      realmId,
+      realmStringId,
       email,
       inviteCode,
       inviterId: adminId.id,
@@ -579,7 +579,7 @@ router.post(
     log(realm);
 
     res.status(200).json({
-      realm_id: realmId,
+      realm_id: realmStringId,
       // TODO: we should probably just return the details here and let the client construct
       // the URL. If we don't do this, then we leak info that the client is in charge of
       // to the server.
@@ -647,7 +647,7 @@ router.get("/:realm_id/invites/:nonce", async (req, res) => {
   if (!invite) {
     throw new NotFound404Error("The invite was not found");
   }
-  const inviteRealm = await getRealmIdsByUuid({ realmId: invite.realmId });
+  const inviteRealm = await getRealmIdsByUuid({ realmStringId: invite.realmStringId });
   if (!inviteRealm) {
     throw new Internal500Error("failed to get realm ids");
   }
@@ -793,7 +793,7 @@ router.post(
     }
 
     const inviteRealm = await getRealmIdsByUuid({
-      realmId: inviteDetails.realmId,
+      realmStringId: inviteDetails.realmStringId,
     });
 
     if (userId) {

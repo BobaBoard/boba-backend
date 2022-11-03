@@ -138,15 +138,15 @@ export const getRealmDataBySlug = async ({
 
 export const dismissAllNotifications = async ({
   firebaseId,
-  realmId,
+  realmStringId,
 }: {
   firebaseId: string;
-  realmId?: string;
+  realmStringId?: string;
 }): Promise<any> => {
   try {
     await pool.none(sql.dismissNotifications, {
       firebase_id: firebaseId,
-      realm_id: realmId,
+      realm_id: realmStringId,
     });
     info(`Dismissed all notifications for user with firebaseId: `, firebaseId);
     return true;
@@ -158,16 +158,16 @@ export const dismissAllNotifications = async ({
 };
 
 export const getRealmIdsByUuid = async ({
-  realmId,
+  realmStringId,
 }: {
-  realmId: string;
+  realmStringId: string;
 }): Promise<{
   id: string;
   string_id: string;
   slug: string;
 } | null> => {
   return await pool.oneOrNone(sql.getRealmIdsByUuid, {
-    realm_id: realmId,
+    realm_id: realmStringId,
   });
 };
 
@@ -218,7 +218,7 @@ export const getUserPermissionsForRealm = async ({
 };
 
 export const createInvite = async (inviteData: {
-  realmId: string;
+  realmStringId: string;
   email: string | null;
   inviteCode: string;
   inviterId: number;
@@ -226,13 +226,13 @@ export const createInvite = async (inviteData: {
 }) => {
   try {
     await pool.none(sql.createRealmInvite, {
-      realm_id: inviteData.realmId,
+      realm_id: inviteData.realmStringId,
       invite_code: inviteData.inviteCode,
       inviter_id: inviteData.inviterId,
       email: inviteData.email,
       label: inviteData.label,
     });
-    log(`Generated invite for realm ${inviteData.realmId}.`);
+    log(`Generated invite for realm ${inviteData.realmStringId}.`);
     return true;
   } catch (e) {
     error(`Error while generating invite.`);
@@ -246,7 +246,7 @@ export const getInviteDetails = async ({
 }: {
   nonce: string;
 }): Promise<{
-  realmId: string;
+  realmStringId: string;
   email: string | null;
   used: boolean;
   expired: boolean;
@@ -259,7 +259,7 @@ export const getInviteDetails = async ({
     log(`Fetched details for invite ${nonce}:`);
     log(inviteDetails);
     return {
-      realmId: inviteDetails.realm_id,
+      realmStringId: inviteDetails.realm_id,
       email: inviteDetails.invitee_email,
       expired: inviteDetails.expired,
       used: inviteDetails.used,

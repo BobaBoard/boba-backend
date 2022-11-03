@@ -285,7 +285,7 @@ export const ensureRealmExists = async (
   }
 
   const currentRealmIds = await getRealmIdsByUuid({
-    realmId: req.params.realm_id,
+    realmStringId: req.params.realm_id,
   });
   if (!currentRealmIds) {
     res.status(404).json({ message: "The realm was not found." });

@@ -73,14 +73,14 @@ export const getUserActivity = async ({
   firebaseId,
   cursor,
   pageSize,
-  realmId,
+  realmStringId,
   updatedOnly,
   ownOnly,
 }: {
   firebaseId: string;
   updatedOnly: boolean;
   ownOnly: boolean;
-  realmId: string;
+  realmStringId: string;
   cursor: string | null;
   pageSize?: number;
 }): Promise<DbFeedType | false> => {
@@ -95,7 +95,7 @@ export const getUserActivity = async ({
       page_size: finalPageSize,
       updated_only: updatedOnly,
       own_only: ownOnly,
-      realm_id: realmId,
+      realm_id: realmStringId,
     });
 
     if (rows.length == 1 && rows[0].thread_id == null) {

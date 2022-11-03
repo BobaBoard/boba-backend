@@ -43,7 +43,7 @@ describe("Tests boards queries", () => {
     test("fetches boards details(with user)", async () => {
       const boards = await getBoards({
         firebaseId: BOBATAN_USER_ID,
-        realmId: TWISTED_MINDS_REALM_STRING_ID,
+        realmStringId: TWISTED_MINDS_REALM_STRING_ID,
       });
 
       expect(boards.map(extractBoardDetails)).toEqual([
@@ -138,7 +138,7 @@ describe("Tests boards queries", () => {
     test("fetches all boards updates (with user)", async () => {
       const boards = await getBoards({
         firebaseId: BOBATAN_USER_ID,
-        realmId: TWISTED_MINDS_REALM_STRING_ID,
+        realmStringId: TWISTED_MINDS_REALM_STRING_ID,
       });
 
       expect(boards.map(extractBoardUpdates)).toEqual([
@@ -236,7 +236,7 @@ describe("Tests boards queries", () => {
     test("fetches all boards updates (no user)", async () => {
       const boards = await getBoards({
         firebaseId: undefined,
-        realmId: TWISTED_MINDS_REALM_STRING_ID,
+        realmStringId: TWISTED_MINDS_REALM_STRING_ID,
       });
 
       expect(boards.map(extractBoardUpdates)).toEqual([
@@ -334,7 +334,7 @@ describe("Tests boards queries", () => {
     test("fetches all boards updates (dismissed notifications)", async () => {
       const boards = await getBoards({
         firebaseId: ZODIAC_KILLER_USER_ID,
-        realmId: TWISTED_MINDS_REALM_STRING_ID,
+        realmStringId: TWISTED_MINDS_REALM_STRING_ID,
       });
 
       expect(boards.map(extractBoardUpdates)).toEqual([
@@ -437,7 +437,7 @@ describe("Tests boards queries", () => {
     test("fetches all boards (with user)", async () => {
       const boards = await getBoards({
         firebaseId: BOBATAN_USER_ID,
-        realmId: TWISTED_MINDS_REALM_STRING_ID,
+        realmStringId: TWISTED_MINDS_REALM_STRING_ID,
       });
 
       expect(boards.map(extractBoardUserSettings)).toEqual([
@@ -502,7 +502,7 @@ describe("Tests boards queries", () => {
     test("fetches all boards user settings (no user)", async () => {
       const boards = await getBoards({
         firebaseId: undefined,
-        realmId: TWISTED_MINDS_REALM_STRING_ID,
+        realmStringId: TWISTED_MINDS_REALM_STRING_ID,
       });
 
       expect(boards.map(extractBoardUserSettings)).toEqual([
@@ -573,7 +573,7 @@ describe("Tests boards queries", () => {
     test("fetches all boards (with user)", async () => {
       const boards = await getBoards({
         firebaseId: BOBATAN_USER_ID,
-        realmId: TWISTED_MINDS_REALM_STRING_ID,
+        realmStringId: TWISTED_MINDS_REALM_STRING_ID,
       });
 
       expect(boards[0]).toEqual({
