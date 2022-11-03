@@ -1,0 +1,9 @@
+tasks:
+  - init: yarn install
+    command: yarn install
+  - name: start db
+    command: yarn start-db
+
+ports:
+  - port: 4200
+    onOpen: open-preview
