@@ -10,9 +10,13 @@ tasks:
     openMode: tab-after
 
 ports:
-  - port: 6379
+  - name: redis
+    port: 6379
     onOpen: ignore
-  - port: 35432
+  - name: postgres
+    port: 35432
     onOpen: ignore
-  - port: 4200
+  - name: server
+    port: 4200
     onOpen: open-browser
+    visibility: public
