@@ -15,15 +15,15 @@ const error = debug("bobaserver:board:queries-error");
 
 export const getBoards = async ({
   firebaseId,
-  realmId,
+  realmStringId,
 }: {
   firebaseId: string;
-  realmId?: string;
+  realmStringId?: string;
 }): Promise<any> => {
   try {
     return await pool.many(sql.getAllBoards, {
       firebase_id: firebaseId,
-      realm_string_id: realmId,
+      realm_string_id: realmStringId,
     });
   } catch (e) {
     error(`Error while fetching boards.`);

@@ -1,6 +1,6 @@
 import { BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID } from "test/data/auth";
 
-import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
+import { TWISTED_MINDS_REALM_STRING_ID } from "test/data/realms";
 import { getBoards } from "../queries";
 
 const extractBoardDetails = (boardData: any) => {
@@ -8,8 +8,8 @@ const extractBoardDetails = (boardData: any) => {
     avatar_reference_id: boardData.avatar_reference_id,
     settings: boardData.settings,
     slug: boardData.slug,
-    external_id: boardData.string_id,
-    realm_external_id: boardData.realm_external_id,
+    uuid: boardData.string_id,
+    realm_string_id: boardData.realm_string_id,
     tagline: boardData.tagline,
   };
 };
@@ -17,8 +17,8 @@ const extractBoardDetails = (boardData: any) => {
 const extractBoardUpdates = (boardData: any) => {
   return {
     slug: boardData.slug,
-    external_id: boardData.string_id,
-    realm_external_id: boardData.realm_external_id,
+    uuid: boardData.string_id,
+    realm_string_id: boardData.realm_string_id,
     has_updates: boardData.has_updates,
     last_comment: boardData.last_comment,
     last_post: boardData.last_post,
@@ -31,8 +31,8 @@ const extractBoardUpdates = (boardData: any) => {
 const extractBoardUserSettings = (boardData: any) => {
   return {
     slug: boardData.slug,
-    external_id: boardData.string_id,
-    realm_external_id: boardData.realm_external_id,
+    uuid: boardData.string_id,
+    realm_string_id: boardData.realm_string_id,
     muted: boardData.muted,
     pinned_order: boardData.pinned_order,
   };
@@ -43,7 +43,7 @@ describe("Tests boards queries", () => {
     test("fetches boards details(with user)", async () => {
       const boards = await getBoards({
         firebaseId: BOBATAN_USER_ID,
-        realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
+        realmStringId: TWISTED_MINDS_REALM_STRING_ID,
       });
 
       expect(boards.map(extractBoardDetails)).toEqual([
@@ -53,8 +53,8 @@ describe("Tests boards queries", () => {
             accentColor: "#ff5252",
           },
           slug: "main_street",
-          external_id: "2fb151eb-c600-4fe4-a542-4662487e5496",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "2fb151eb-c600-4fe4-a542-4662487e5496",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           tagline: "For BobaBoard-related discussions.",
         },
         {
@@ -63,8 +63,8 @@ describe("Tests boards queries", () => {
             accentColor: "#f96680",
           },
           slug: "gore",
-          external_id: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           tagline: "Blood! Blood! Blood!",
         },
         {
@@ -73,8 +73,8 @@ describe("Tests boards queries", () => {
             accentColor: "#24d282",
           },
           slug: "anime",
-          external_id: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           tagline: "I wish I had a funny one for this.",
         },
         {
@@ -83,8 +83,8 @@ describe("Tests boards queries", () => {
             accentColor: "#00b8ff",
           },
           slug: "long",
-          external_id: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           tagline: "A board to test with many posts.",
         },
         {
@@ -93,8 +93,8 @@ describe("Tests boards queries", () => {
             accentColor: "#7b00ff",
           },
           slug: "memes",
-          external_id: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           tagline: "A board to test collections view.",
         },
         {
@@ -104,20 +104,9 @@ describe("Tests boards queries", () => {
             accentColor: "#9b433b",
           },
           slug: "muted",
-          external_id: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
-          tagline: "A board to test for thread muting.",
-        },
-        {
-          avatar_reference_id:
-            "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F7a4c4b8c-dce4-49ad-b292-f799473fbcd6?alt=media&token=f0aa1b5a-80ba-4c32-8bc3-5aa5633cf4e4",
-          settings: {
-            accentColor: "#00A0B0",
-          },
-          slug: "ssshh",
-          external_id: "58a10fba-dd66-4862-83fd-c0a233c59599",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
-          tagline: "A board to test for board muting.",
+          uuid: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
+          tagline: "A board to test for muting.",
         },
         {
           avatar_reference_id:
@@ -126,8 +115,8 @@ describe("Tests boards queries", () => {
             accentColor: "#234a69",
           },
           slug: "restricted",
-          external_id: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           tagline: "A board to test for logged-in only view",
         },
         {
@@ -137,8 +126,8 @@ describe("Tests boards queries", () => {
             accentColor: "#fa8628",
           },
           slug: "delisted",
-          external_id: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           tagline: "A board to test for link-only view",
         },
       ]);
@@ -149,14 +138,14 @@ describe("Tests boards queries", () => {
     test("fetches all boards updates (with user)", async () => {
       const boards = await getBoards({
         firebaseId: BOBATAN_USER_ID,
-        realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
+        realmStringId: TWISTED_MINDS_REALM_STRING_ID,
       });
 
       expect(boards.map(extractBoardUpdates)).toEqual([
         {
           slug: "main_street",
-          external_id: "2fb151eb-c600-4fe4-a542-4662487e5496",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "2fb151eb-c600-4fe4-a542-4662487e5496",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: null,
           last_post: null,
@@ -166,8 +155,8 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "gore",
-          external_id: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: true,
           last_comment: new Date(Date.UTC(2020, 9, 4, 12, 44)),
           last_post: new Date(Date.UTC(2020, 8, 25, 12, 42)),
@@ -178,19 +167,19 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "anime",
-          external_id: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: true,
           last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
           last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
           last_activity: new Date(Date.UTC(2020, 3, 24, 12, 44)),
           last_activity_from_others: new Date(Date.UTC(2020, 3, 24, 12, 44)),
-          last_visit: new Date(Date.UTC(2022, 4, 10, 16, 42)),
+          last_visit: null,
         },
         {
           slug: "long",
-          external_id: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: true,
           last_comment: new Date(Date.UTC(2020, 3, 1, 12, 22)),
           last_post: new Date(Date.UTC(2020, 3, 25, 12, 42)),
@@ -200,8 +189,8 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "memes",
-          external_id: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: null,
           last_post: new Date(Date.UTC(2020, 7, 22, 10, 36, 55, 850)),
@@ -211,8 +200,8 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "muted",
-          external_id: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: null,
           last_post: null,
@@ -221,20 +210,9 @@ describe("Tests boards queries", () => {
           last_visit: null,
         },
         {
-          slug: "ssshh",
-          external_id: "58a10fba-dd66-4862-83fd-c0a233c59599",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
-          has_updates: false,
-          last_comment: null,
-          last_post: new Date(Date.UTC(2022, 9, 24, 15, 40)),
-          last_activity: new Date(Date.UTC(2022, 9, 24, 15, 40)),
-          last_activity_from_others: null,
-          last_visit: null,
-        },
-        {
           slug: "restricted",
-          external_id: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: true,
           last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
           last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
@@ -244,8 +222,8 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "delisted",
-          external_id: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: null,
           last_post: null,
@@ -257,15 +235,15 @@ describe("Tests boards queries", () => {
     });
     test("fetches all boards updates (no user)", async () => {
       const boards = await getBoards({
-        realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
-        firebaseId: null,
+        firebaseId: undefined,
+        realmStringId: TWISTED_MINDS_REALM_STRING_ID,
       });
 
       expect(boards.map(extractBoardUpdates)).toEqual([
         {
           slug: "main_street",
-          external_id: "2fb151eb-c600-4fe4-a542-4662487e5496",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "2fb151eb-c600-4fe4-a542-4662487e5496",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: null,
           last_post: null,
@@ -275,8 +253,8 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "gore",
-          external_id: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: new Date(Date.UTC(2020, 9, 4, 12, 44)),
           last_post: new Date(Date.UTC(2020, 8, 25, 12, 42)),
@@ -286,8 +264,8 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "anime",
-          external_id: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
           last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
@@ -297,8 +275,8 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "long",
-          external_id: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: new Date(Date.UTC(2020, 3, 1, 12, 22)),
           last_post: new Date(Date.UTC(2020, 3, 25, 12, 42)),
@@ -308,8 +286,8 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "memes",
-          external_id: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: null,
           last_post: new Date(Date.UTC(2020, 7, 22, 10, 36, 55, 850)),
@@ -319,8 +297,8 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "muted",
-          external_id: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: null,
           last_post: new Date(Date.UTC(2020, 0, 14, 8, 42)),
@@ -329,20 +307,9 @@ describe("Tests boards queries", () => {
           last_visit: null,
         },
         {
-          slug: "ssshh",
-          external_id: "58a10fba-dd66-4862-83fd-c0a233c59599",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
-          has_updates: false,
-          last_comment: null,
-          last_post: new Date(Date.UTC(2022, 9, 24, 15, 40)),
-          last_activity: new Date(Date.UTC(2022, 9, 24, 15, 40)),
-          last_activity_from_others: null,
-          last_visit: null,
-        },
-        {
           slug: "restricted",
-          external_id: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
           last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
@@ -352,8 +319,8 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "delisted",
-          external_id: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: null,
           last_post: null,
@@ -367,14 +334,14 @@ describe("Tests boards queries", () => {
     test("fetches all boards updates (dismissed notifications)", async () => {
       const boards = await getBoards({
         firebaseId: ZODIAC_KILLER_USER_ID,
-        realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
+        realmStringId: TWISTED_MINDS_REALM_STRING_ID,
       });
 
       expect(boards.map(extractBoardUpdates)).toEqual([
         {
           slug: "main_street",
-          external_id: "2fb151eb-c600-4fe4-a542-4662487e5496",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "2fb151eb-c600-4fe4-a542-4662487e5496",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: null,
           last_post: null,
@@ -384,8 +351,8 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "gore",
-          external_id: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: true,
           last_comment: new Date(Date.UTC(2020, 9, 4, 12, 44)),
           last_post: new Date(Date.UTC(2020, 8, 25, 12, 42)),
@@ -396,8 +363,8 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "anime",
-          external_id: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
           last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
@@ -407,8 +374,8 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "long",
-          external_id: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: true,
           last_comment: new Date(Date.UTC(2020, 3, 1, 12, 22)),
           last_post: new Date(Date.UTC(2020, 3, 25, 12, 42)),
@@ -418,8 +385,8 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "memes",
-          external_id: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: true,
           last_comment: null,
           last_post: new Date(Date.UTC(2020, 7, 22, 10, 36, 55, 850)),
@@ -431,8 +398,8 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "muted",
-          external_id: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: null,
           last_post: new Date(Date.UTC(2020, 0, 14, 8, 42)),
@@ -441,20 +408,9 @@ describe("Tests boards queries", () => {
           last_visit: null,
         },
         {
-          slug: "ssshh",
-          external_id: "58a10fba-dd66-4862-83fd-c0a233c59599",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
-          has_updates: true,
-          last_comment: null,
-          last_post: new Date(Date.UTC(2022, 9, 24, 15, 40)),
-          last_activity: new Date(Date.UTC(2022, 9, 24, 15, 40)),
-          last_activity_from_others: new Date(Date.UTC(2022, 9, 24, 15, 40)),
-          last_visit: null,
-        },
-        {
           slug: "restricted",
-          external_id: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: true,
           last_comment: new Date(Date.UTC(2020, 3, 24, 12, 44)),
           last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
@@ -464,8 +420,8 @@ describe("Tests boards queries", () => {
         },
         {
           slug: "delisted",
-          external_id: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           has_updates: false,
           last_comment: null,
           last_post: null,
@@ -481,70 +437,63 @@ describe("Tests boards queries", () => {
     test("fetches all boards (with user)", async () => {
       const boards = await getBoards({
         firebaseId: BOBATAN_USER_ID,
-        realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
+        realmStringId: TWISTED_MINDS_REALM_STRING_ID,
       });
 
       expect(boards.map(extractBoardUserSettings)).toEqual([
         {
           slug: "main_street",
-          external_id: "2fb151eb-c600-4fe4-a542-4662487e5496",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "2fb151eb-c600-4fe4-a542-4662487e5496",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
         {
           slug: "gore",
-          external_id: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: "1",
         },
         {
           slug: "anime",
-          external_id: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: "2",
         },
         {
           slug: "long",
-          external_id: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
         {
           slug: "memes",
-          external_id: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
         {
           slug: "muted",
-          external_id: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
         {
-          slug: "ssshh",
-          external_id: "58a10fba-dd66-4862-83fd-c0a233c59599",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
-          muted: true,
-          pinned_order: null,
-        },
-        {
           slug: "restricted",
-          external_id: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
         {
           slug: "delisted",
-          external_id: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
@@ -552,71 +501,64 @@ describe("Tests boards queries", () => {
     });
     test("fetches all boards user settings (no user)", async () => {
       const boards = await getBoards({
-        firebaseId: null,
-        realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
+        firebaseId: undefined,
+        realmStringId: TWISTED_MINDS_REALM_STRING_ID,
       });
 
       expect(boards.map(extractBoardUserSettings)).toEqual([
         {
           slug: "main_street",
-          external_id: "2fb151eb-c600-4fe4-a542-4662487e5496",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "2fb151eb-c600-4fe4-a542-4662487e5496",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
         {
           slug: "gore",
-          external_id: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
         {
           slug: "anime",
-          external_id: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
         {
           slug: "long",
-          external_id: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "db8dc5b3-5b4a-4bfe-a303-e176c9b00b83",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
         {
           slug: "memes",
-          external_id: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "0e0d1ee6-f996-4415-89c1-c9dc1fe991dc",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
         {
           slug: "muted",
-          external_id: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
-          muted: false,
-          pinned_order: null,
-        },
-        {
-          slug: "ssshh",
-          external_id: "58a10fba-dd66-4862-83fd-c0a233c59599",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
         {
           slug: "restricted",
-          external_id: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
         {
           slug: "delisted",
-          external_id: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
-          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          uuid: "bb62b150-62ae-40a8-8ce2-7e5cdeae9d0b",
+          realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
           muted: false,
           pinned_order: null,
         },
@@ -631,7 +573,7 @@ describe("Tests boards queries", () => {
     test("fetches all boards (with user)", async () => {
       const boards = await getBoards({
         firebaseId: BOBATAN_USER_ID,
-        realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
+        realmStringId: TWISTED_MINDS_REALM_STRING_ID,
       });
 
       expect(boards[0]).toEqual({
@@ -649,7 +591,7 @@ describe("Tests boards queries", () => {
         },
         slug: "main_street",
         string_id: "2fb151eb-c600-4fe4-a542-4662487e5496",
-        realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+        realm_string_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e",
         tagline: "For BobaBoard-related discussions.",
         logged_in_base_restrictions: [],
         logged_out_restrictions: [],

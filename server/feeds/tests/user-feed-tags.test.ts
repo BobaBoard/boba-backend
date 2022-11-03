@@ -29,7 +29,7 @@ describe("feed activity tags", () => {
   test("correctly fetches tags", async () => {
     const feed = await getUserActivity({
       firebaseId: BOBATAN_USER_ID,
-      realmId: TWISTED_MINDS_REALM_STRING_ID,
+      realmStringId: TWISTED_MINDS_REALM_STRING_ID,
       cursor: null,
       updatedOnly: false,
       ownOnly: false,
@@ -49,7 +49,7 @@ describe("feed activity tags", () => {
   test("correctly fetches categories", async () => {
     const feed = await getUserActivity({
       firebaseId: BOBATAN_USER_ID,
-      realmId: TWISTED_MINDS_REALM_STRING_ID,
+      realmStringId: TWISTED_MINDS_REALM_STRING_ID,
       cursor: null,
       updatedOnly: false,
       ownOnly: false,
@@ -69,7 +69,7 @@ describe("feed activity tags", () => {
   test("correctly fetches whisper tags", async () => {
     const feed = await getUserActivity({
       firebaseId: BOBATAN_USER_ID,
-      realmId: TWISTED_MINDS_REALM_STRING_ID,
+      realmStringId: TWISTED_MINDS_REALM_STRING_ID,
       cursor: null,
       updatedOnly: false,
       ownOnly: false,
@@ -89,7 +89,7 @@ describe("feed activity tags", () => {
   test("correctly fetches content warnings", async () => {
     const feed = await getUserActivity({
       firebaseId: BOBATAN_USER_ID,
-      realmId: TWISTED_MINDS_REALM_STRING_ID,
+      realmStringId: TWISTED_MINDS_REALM_STRING_ID,
       cursor: null,
       updatedOnly: false,
       ownOnly: false,
