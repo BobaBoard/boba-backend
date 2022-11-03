@@ -1,9 +1,16 @@
 tasks:
+  - before: create env
+    command: cp gitpod.env .env
   - init: yarn install
     command: yarn install
   - name: start db
-    command: yarn start-db
+    command: yarn run start-db
+  - name: run tests
+    command: yarn run tests
+    openMode: tab-after
 
 ports:
-  - port: 4200
-    onOpen: open-preview
+  - port: 6379
+    onOpen: ignore
+  - port: 35432
+    onOpen: ignore
