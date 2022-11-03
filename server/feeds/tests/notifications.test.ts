@@ -6,18 +6,15 @@ import {
   SEXY_DADDY_USER_ID,
   ZODIAC_KILLER_USER_ID,
 } from "test/data/auth";
-import {
-  FAVORITE_CHARACTER_THREAD_ID,
-  FAVORITE_MURDER_THREAD_ID,
-} from "test/data/threads";
+import { FAVORITE_CHARACTER_THREAD_ID, FAVORITE_MURDER_THREAD_ID } from "test/data/threads";
 
-import { getBoardActivityByExternalId } from "../queries";
+import { getBoardActivityByUuid } from "../queries";
 
 describe("Tests notifications", () => {
   test("gets correct amounts with no visit", async () => {
     // Since there was no visit we expect every post/comment to be marked as new
-    const boardActivity = await getBoardActivityByExternalId({
-      boardExternalId: GORE_BOARD_ID,
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: GORE_BOARD_ID,
       firebaseId: JERSEY_DEVIL_USER_ID,
       cursor: null,
     });
@@ -28,7 +25,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity!.activity
+      boardActivity.activity
         .map((activity: any) => ({
           thread_id: activity.thread_id,
           new_comments_amount: activity.thread_new_comments_amount,
@@ -36,7 +33,8 @@ describe("Tests notifications", () => {
           is_new: activity.is_new,
         }))
         .filter(
-          (activity: any) => activity.thread_id == FAVORITE_CHARACTER_THREAD_ID
+          (activity: any) =>
+            activity.thread_id == FAVORITE_CHARACTER_THREAD_ID
         )
     ).toEqual([
       {
@@ -49,8 +47,8 @@ describe("Tests notifications", () => {
   });
   test("gets correct amounts with new comments (self)", async () => {
     // The only new comments are from the user itself
-    const boardActivity = await getBoardActivityByExternalId({
-      boardExternalId: GORE_BOARD_ID,
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: GORE_BOARD_ID,
       firebaseId: BOBATAN_USER_ID,
       cursor: null,
     });
@@ -61,7 +59,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity!.activity
+      boardActivity.activity
         .map((activity: any) => ({
           thread_id: activity.thread_id,
           new_comments_amount: activity.thread_new_comments_amount,
@@ -69,7 +67,8 @@ describe("Tests notifications", () => {
           is_new: activity.is_new,
         }))
         .filter(
-          (activity: any) => activity.thread_id == FAVORITE_CHARACTER_THREAD_ID
+          (activity: any) =>
+            activity.thread_id == FAVORITE_CHARACTER_THREAD_ID
         )
     ).toEqual([
       {
@@ -83,8 +82,8 @@ describe("Tests notifications", () => {
 
   test("gets correct amounts with new comments (not self)", async () => {
     // The new comments are not from the user itself
-    const boardActivity = await getBoardActivityByExternalId({
-      boardExternalId: GORE_BOARD_ID,
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: GORE_BOARD_ID,
       firebaseId: ONCEST_USER_ID,
       cursor: null,
     });
@@ -95,7 +94,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity!.activity
+      boardActivity.activity
         .map((activity: any) => ({
           thread_id: activity.thread_id,
           new_comments_amount: activity.thread_new_comments_amount,
@@ -103,7 +102,8 @@ describe("Tests notifications", () => {
           is_new: activity.is_new,
         }))
         .filter(
-          (activity: any) => activity.thread_id == FAVORITE_CHARACTER_THREAD_ID
+          (activity: any) =>
+            activity.thread_id == FAVORITE_CHARACTER_THREAD_ID
         )
     ).toEqual([
       {
@@ -117,8 +117,8 @@ describe("Tests notifications", () => {
 
   test("gets correct amounts with new posts (self)", async () => {
     // Since we made the last posts since the visit we expect no new ones
-    const boardActivity = await getBoardActivityByExternalId({
-      boardExternalId: GORE_BOARD_ID,
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: GORE_BOARD_ID,
       firebaseId: JERSEY_DEVIL_USER_ID,
       cursor: null,
     });
@@ -129,7 +129,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity!.activity
+      boardActivity.activity
         .map((activity: any) => ({
           thread_id: activity.thread_id,
           new_comments_amount: activity.thread_new_comments_amount,
@@ -137,7 +137,8 @@ describe("Tests notifications", () => {
           is_new: activity.is_new,
         }))
         .filter(
-          (activity: any) => activity.thread_id == FAVORITE_MURDER_THREAD_ID
+          (activity: any) =>
+            activity.thread_id == FAVORITE_MURDER_THREAD_ID
         )
     ).toEqual([
       {
@@ -151,8 +152,8 @@ describe("Tests notifications", () => {
 
   test("gets correct amounts with new posts (not self)", async () => {
     // We expect new posts after the last visit
-    const boardActivity = await getBoardActivityByExternalId({
-      boardExternalId: GORE_BOARD_ID,
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: GORE_BOARD_ID,
       firebaseId: ONCEST_USER_ID,
       cursor: null,
     });
@@ -163,7 +164,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity!.activity
+      boardActivity.activity
         .map((activity: any) => ({
           thread_id: activity.thread_id,
           new_comments_amount: activity.thread_new_comments_amount,
@@ -171,7 +172,8 @@ describe("Tests notifications", () => {
           is_new: activity.is_new,
         }))
         .filter(
-          (activity: any) => activity.thread_id == FAVORITE_MURDER_THREAD_ID
+          (activity: any) =>
+            activity.thread_id == FAVORITE_MURDER_THREAD_ID
         )
     ).toEqual([
       {
@@ -185,8 +187,8 @@ describe("Tests notifications", () => {
 
   test("gets correct amounts with no updates", async () => {
     // Since there was no visit we expect every post/comment to be marked as new
-    const boardActivity = await getBoardActivityByExternalId({
-      boardExternalId: GORE_BOARD_ID,
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: GORE_BOARD_ID,
       firebaseId: BOBATAN_USER_ID,
       cursor: null,
     });
@@ -197,7 +199,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity!.activity
+      boardActivity.activity
         .map((activity: any) => ({
           thread_id: activity.thread_id,
           new_comments_amount: activity.thread_new_comments_amount,
@@ -205,7 +207,8 @@ describe("Tests notifications", () => {
           is_new: activity.is_new,
         }))
         .filter(
-          (activity: any) => activity.thread_id == FAVORITE_MURDER_THREAD_ID
+          (activity: any) =>
+            activity.thread_id == FAVORITE_MURDER_THREAD_ID
         )
     ).toEqual([
       {
@@ -217,9 +220,9 @@ describe("Tests notifications", () => {
     ]);
   });
   test("gets correct amounts (logged out)", async () => {
-    const boardActivity = await getBoardActivityByExternalId({
-      boardExternalId: GORE_BOARD_ID,
-      firebaseId: null,
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: GORE_BOARD_ID,
+      firebaseId: undefined,
       cursor: null,
     });
 
@@ -229,7 +232,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity!.activity.map((activity: any) => ({
+      boardActivity.activity.map((activity: any) => ({
         thread_id: activity.thread_id,
         new_comments_amount: activity.thread_new_comments_amount,
         new_posts_amount: activity.thread_new_posts_amount,
@@ -258,8 +261,8 @@ describe("Tests notifications", () => {
   });
 
   test("gets correct amounts with dismissed notifs (new entries)", async () => {
-    const boardActivity = await getBoardActivityByExternalId({
-      boardExternalId: GORE_BOARD_ID,
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: GORE_BOARD_ID,
       firebaseId: SEXY_DADDY_USER_ID,
       cursor: null,
     });
@@ -270,7 +273,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity!.activity.map((activity: any) => ({
+      boardActivity.activity.map((activity: any) => ({
         thread_id: activity.thread_id,
         new_comments_amount: activity.thread_new_comments_amount,
         new_posts_amount: activity.thread_new_posts_amount,
@@ -299,8 +302,8 @@ describe("Tests notifications", () => {
   });
 
   test("gets correct amounts with dismissed notifs (no new entries)", async () => {
-    const boardActivity = await getBoardActivityByExternalId({
-      boardExternalId: ANIME_BOARD_ID,
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: ANIME_BOARD_ID,
       firebaseId: SEXY_DADDY_USER_ID,
       cursor: null,
     });
@@ -311,7 +314,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity!.activity.map((activity: any) => ({
+      boardActivity.activity.map((activity: any) => ({
         thread_id: activity.thread_id,
         new_comments_amount: activity.thread_new_comments_amount,
         new_posts_amount: activity.thread_new_posts_amount,
@@ -328,8 +331,8 @@ describe("Tests notifications", () => {
   });
 
   test("gets correct amounts with dismissed notifs (mixed visits and dismiss)", async () => {
-    const boardActivity = await getBoardActivityByExternalId({
-      boardExternalId: LONG_BOARD_ID,
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: LONG_BOARD_ID,
       firebaseId: ZODIAC_KILLER_USER_ID,
       cursor: null,
       pageSize: 50,
@@ -340,12 +343,12 @@ describe("Tests notifications", () => {
     }
 
     // get only activity-related values
-    expect(boardActivity!.activity.length).toEqual(26);
+    expect(boardActivity.activity.length).toEqual(26);
     expect(
-      boardActivity!.activity.filter((thread: any) => !thread.is_new).length
+      boardActivity.activity.filter((thread: any) => !thread.is_new).length
     ).toEqual(21);
     expect(
-      boardActivity!.activity.map((activity: any) => ({
+      boardActivity.activity.map((activity: any) => ({
         thread_id: activity.thread_id,
         last_activity: activity.thread_last_activity,
         last_activity_micro: activity.thread_last_activity_at_micro,
@@ -566,8 +569,8 @@ describe("Tests notifications", () => {
   });
 
   test("gets correct amounts with dismissed BOARD notifs (only dismiss)", async () => {
-    const boardActivity = await getBoardActivityByExternalId({
-      boardExternalId: LONG_BOARD_ID,
+    const boardActivity = await getBoardActivityByUuid({
+      boardId: LONG_BOARD_ID,
       firebaseId: ONCEST_USER_ID,
       cursor: null,
       pageSize: 50,
@@ -578,12 +581,12 @@ describe("Tests notifications", () => {
     }
 
     // get only activity-related values
-    expect(boardActivity!.activity.length).toEqual(26);
+    expect(boardActivity.activity.length).toEqual(26);
     // expect(
-    //   boardActivity!.activity.filter((thread: any) => !thread.is_new).length
+    //   boardActivity.activity.filter((thread: any) => !thread.is_new).length
     // ).to.eql(21);
     expect(
-      boardActivity!.activity.map((activity: any) => ({
+      boardActivity.activity.map((activity: any) => ({
         thread_id: activity.thread_id,
         last_activity: activity.thread_last_activity,
         last_activity_micro: activity.thread_last_activity_at_micro,

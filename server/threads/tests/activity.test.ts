@@ -1,3 +1,12 @@
+import {
+  BOBATAN_USER_ID,
+  JERSEY_DEVIL_USER_ID,
+  ONCEST_USER_ID,
+  SEXY_DADDY_USER_ID,
+  ZODIAC_KILLER_USER_ID
+} from "test/data/auth";
+import { FAVORITE_CHARACTER_THREAD_ID, FAVORITE_MURDER_THREAD_ID } from "test/data/threads";
+
 import { getThreadByStringId } from "../queries";
 
 const extractActivityFromThread = (thread: any) => {
@@ -21,15 +30,13 @@ describe("threads activity queries", () => {
   test("gets correct amounts with no visit", async () => {
     // Since there was no visit we expect every post/comment to be marked as new
     const thread = await getThreadByStringId({
-      // Favorite character
-      threadStringId: "29d1b2da-3289-454a-9089-2ed47db4967b",
-      // Jersey Devil
-      firebaseId: "fb2",
+      threadStringId: FAVORITE_CHARACTER_THREAD_ID,
+      firebaseId: JERSEY_DEVIL_USER_ID,
     });
 
     // get only activity-related values
     expect(extractActivityFromThread(thread)).toEqual({
-      thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      thread_id: FAVORITE_CHARACTER_THREAD_ID,
       new_comments_amount: 2,
       new_posts_amount: 3,
       posts: [
@@ -66,15 +73,13 @@ describe("threads activity queries", () => {
   test("gets correct amounts with new comments (self)", async () => {
     // The only new comments are from the user itself
     const thread = await getThreadByStringId({
-      // Favorite character
-      threadStringId: "29d1b2da-3289-454a-9089-2ed47db4967b",
-      // Bobatan
-      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      threadStringId: FAVORITE_CHARACTER_THREAD_ID,
+      firebaseId: BOBATAN_USER_ID,
     });
 
     // get only activity-related values
     expect(extractActivityFromThread(thread)).toEqual({
-      thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      thread_id: FAVORITE_CHARACTER_THREAD_ID,
       new_comments_amount: 0,
       new_posts_amount: 0,
       posts: [
@@ -112,15 +117,13 @@ describe("threads activity queries", () => {
   test("gets correct amounts with new comments (not self)", async () => {
     // The new comments are not from the user itself
     const thread = await getThreadByStringId({
-      // Favorite character
-      threadStringId: "29d1b2da-3289-454a-9089-2ed47db4967b",
-      // Oncest
-      firebaseId: "fb3",
+      threadStringId: FAVORITE_CHARACTER_THREAD_ID,
+      firebaseId: ONCEST_USER_ID,
     });
 
     // get only activity-related values
     expect(extractActivityFromThread(thread)).toEqual({
-      thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      thread_id: FAVORITE_CHARACTER_THREAD_ID,
       new_comments_amount: 2,
       new_posts_amount: 0,
       posts: [
@@ -158,9 +161,8 @@ describe("threads activity queries", () => {
   test("gets correct amounts with new posts (self)", async () => {
     // Since we made the last posts since the visit we expect no new ones
     const thread = await getThreadByStringId({
-      threadStringId: "a5c903df-35e8-43b2-a41a-208c43154671",
-      // Jersey Devil
-      firebaseId: "fb2",
+      threadStringId: FAVORITE_MURDER_THREAD_ID,
+      firebaseId: JERSEY_DEVIL_USER_ID,
     });
 
     // get only activity-related values
@@ -187,16 +189,15 @@ describe("threads activity queries", () => {
           new_comments_amount: 0,
         },
       ],
-      thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+      thread_id: FAVORITE_MURDER_THREAD_ID,
     });
   });
 
   test("gets correct amounts with new posts (not self)", async () => {
     // We expect new posts after the last visit
     const thread = await getThreadByStringId({
-      threadStringId: "a5c903df-35e8-43b2-a41a-208c43154671",
-      // Oncest
-      firebaseId: "fb3",
+      threadStringId: FAVORITE_MURDER_THREAD_ID,
+      firebaseId: ONCEST_USER_ID,
     });
 
     // get only activity-related values
@@ -223,16 +224,15 @@ describe("threads activity queries", () => {
           new_comments_amount: 0,
         },
       ],
-      thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+      thread_id: FAVORITE_MURDER_THREAD_ID,
     });
   });
 
   test("gets correct amounts with no updates", async () => {
     // Since the last visit was after the last post we expect no updates
     const thread = await getThreadByStringId({
-      threadStringId: "a5c903df-35e8-43b2-a41a-208c43154671",
-      // Bobatan
-      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+      threadStringId: FAVORITE_MURDER_THREAD_ID,
+      firebaseId: BOBATAN_USER_ID,
     });
 
     // get only activity-related values
@@ -259,20 +259,19 @@ describe("threads activity queries", () => {
           new_comments_amount: 0,
         },
       ],
-      thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+      thread_id: FAVORITE_MURDER_THREAD_ID,
     });
   });
 
   test("gets correct amounts (logged out)", async () => {
     const thread = await getThreadByStringId({
-      // Favorite character
-      threadStringId: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      threadStringId: FAVORITE_CHARACTER_THREAD_ID,
       firebaseId: undefined,
     });
 
     // get only activity-related values
     expect(extractActivityFromThread(thread)).toEqual({
-      thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      thread_id: FAVORITE_CHARACTER_THREAD_ID,
       new_comments_amount: 0,
       new_posts_amount: 0,
       posts: [
@@ -310,15 +309,13 @@ describe("threads activity queries", () => {
   test("gets correct amounts with dismiss notifications (new)", async () => {
     // The only new comments are from the user itself
     const thread = await getThreadByStringId({
-      // Favorite character
-      threadStringId: "29d1b2da-3289-454a-9089-2ed47db4967b",
-      // SexyDaddy69
-      firebaseId: "fb4",
+      threadStringId: FAVORITE_CHARACTER_THREAD_ID,
+      firebaseId: SEXY_DADDY_USER_ID,
     });
 
     // get only activity-related values
     expect(extractActivityFromThread(thread)).toEqual({
-      thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      thread_id: FAVORITE_CHARACTER_THREAD_ID,
       new_comments_amount: 2,
       new_posts_amount: 2,
       posts: [
@@ -358,8 +355,7 @@ describe("threads activity queries", () => {
     const thread = await getThreadByStringId({
       // Anime board
       threadStringId: "b27710a8-0a9f-4c09-b3a5-54668bab7051",
-      // SexyDaddy69
-      firebaseId: "fb4",
+      firebaseId: SEXY_DADDY_USER_ID,
     });
 
     // get only activity-related values
@@ -393,8 +389,7 @@ describe("threads activity queries", () => {
       const thread = await getThreadByStringId({
         // Visited earlier than dismiss
         threadStringId: "32a0174b-091e-4fe6-82f3-bffd6c6026ae",
-        // Zodiac Killer
-        firebaseId: "fb5",
+        firebaseId: ZODIAC_KILLER_USER_ID,
       });
 
       // get only activity-related values
@@ -418,8 +413,7 @@ describe("threads activity queries", () => {
       const thread = await getThreadByStringId({
         // Visited after dismiss
         threadStringId: "c55314b4-0b61-41c9-aa2f-b7fa28adf651",
-        // Zodiac Killer
-        firebaseId: "fb5",
+        firebaseId: ZODIAC_KILLER_USER_ID,
       });
       expect(extractActivityFromThread(thread)).toEqual({
         thread_id: "c55314b4-0b61-41c9-aa2f-b7fa28adf651",
@@ -441,8 +435,7 @@ describe("threads activity queries", () => {
       const thread = await getThreadByStringId({
         // Never visited, before dismiss
         threadStringId: "dacfb175-0d47-4c5e-8ecc-7fbf176ad915",
-        // Zodiac Killer
-        firebaseId: "fb5",
+        firebaseId: ZODIAC_KILLER_USER_ID,
       });
       expect(extractActivityFromThread(thread)).toEqual({
         thread_id: "dacfb175-0d47-4c5e-8ecc-7fbf176ad915",
@@ -464,8 +457,7 @@ describe("threads activity queries", () => {
       const thread = await getThreadByStringId({
         // Never visited, after dismiss
         threadStringId: "7d88a537-f23f-46de-970e-29ae392cd5f9",
-        // Zodiac Killer
-        firebaseId: "fb5",
+        firebaseId: ZODIAC_KILLER_USER_ID,
       });
       expect(extractActivityFromThread(thread)).toEqual({
         thread_id: "7d88a537-f23f-46de-970e-29ae392cd5f9",
