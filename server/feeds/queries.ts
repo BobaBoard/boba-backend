@@ -10,26 +10,26 @@ const log = debug("bobaserver:feeds:queries-log");
 const error = debug("bobaserver:feeds:queries-error");
 
 const DEFAULT_PAGE_SIZE = 10;
-export const getBoardActivityByExternalId = async ({
-  boardExternalId,
+export const getBoardActivityByUuid = async ({
+  boardId,
   firebaseId,
   categoryFilter,
   cursor,
   pageSize,
 }: {
-  boardExternalId: string;
-  firebaseId: string | null;
+  boardId: string;
+  firebaseId: string;
   categoryFilter?: string | null;
   cursor: string | null;
   pageSize?: number;
-}): Promise<DbFeedType | null | false> => {
+}): Promise<DbFeedType | false> => {
   try {
-    const decodedCursor = cursor ? decodeCursor(cursor) : null;
+    const decodedCursor = cursor && decodeCursor(cursor);
 
     const finalPageSize =
       decodedCursor?.page_size || pageSize || DEFAULT_PAGE_SIZE;
-    const rows = await pool.manyOrNone(sql.getBoardActivityByExternalId, {
-      board_id: boardExternalId,
+    const rows = await pool.manyOrNone(sql.getBoardActivityByUuid, {
+      board_id: boardId,
       firebase_id: firebaseId,
       filtered_category: categoryFilter || null,
       last_activity_cursor: decodedCursor?.last_activity_cursor || null,
@@ -37,19 +37,19 @@ export const getBoardActivityByExternalId = async ({
     });
 
     if (!rows) {
-      log(`Board not found: ${boardExternalId}`);
+      log(`Board not found: ${boardId}`);
       return null;
     }
 
     if (rows.length == 1 && rows[0].thread_id == null) {
       // Only one row with just the null thread)
-      log(`Board empty: ${boardExternalId}`);
-      return { cursor: null, activity: [] };
+      log(`Board empty: ${boardId}`);
+      return { cursor: undefined, activity: [] };
     }
 
     let result = rows;
     let nextCursor = null;
-    info(`Got getBoardActivityByExternalId query result`, result);
+    info(`Got getBoardActivityByUuid query result`, result);
     if (result.length > finalPageSize) {
       nextCursor = encodeCursor({
         last_activity_cursor:
@@ -60,12 +60,10 @@ export const getBoardActivityByExternalId = async ({
       result.pop();
     }
 
-    log(
-      `Fetched board ${boardExternalId} activity data for user ${firebaseId}`
-    );
+    log(`Fetched board ${boardId} activity data for user ${firebaseId}`);
     return { cursor: nextCursor, activity: rows };
   } catch (e) {
-    error(`Error while fetching board by slug (${boardExternalId}).`);
+    error(`Error while fetching board by slug (${boardId}).`);
     error(e);
     return false;
   }
@@ -75,19 +73,19 @@ export const getUserActivity = async ({
   firebaseId,
   cursor,
   pageSize,
-  realmExternalId,
+  realmStringId,
   updatedOnly,
   ownOnly,
 }: {
   firebaseId: string;
   updatedOnly: boolean;
   ownOnly: boolean;
-  realmExternalId: string;
+  realmStringId: string;
   cursor: string | null;
   pageSize?: number;
 }): Promise<DbFeedType | false> => {
   try {
-    const decodedCursor = cursor ? decodeCursor(cursor) : null;
+    const decodedCursor = cursor && decodeCursor(cursor);
 
     const finalPageSize =
       decodedCursor?.page_size || pageSize || DEFAULT_PAGE_SIZE;
@@ -97,13 +95,13 @@ export const getUserActivity = async ({
       page_size: finalPageSize,
       updated_only: updatedOnly,
       own_only: ownOnly,
-      realm_id: realmExternalId,
+      realm_id: realmStringId,
     });
 
     if (rows.length == 1 && rows[0].thread_id == null) {
       // Only one row with just the null thread)
       log(`Feed empty.`);
-      return { cursor: null, activity: [] };
+      return { cursor: undefined, activity: [] };
     }
 
     let result = rows;
@@ -136,7 +134,7 @@ export const getUserStarFeed = async ({
   cursor: string | null;
   pageSize?: number;
 }): Promise<DbFeedType> => {
-  const decodedCursor = cursor ? decodeCursor(cursor) : null;
+  const decodedCursor = cursor && decodeCursor(cursor);
 
   const finalPageSize =
     decodedCursor?.page_size || pageSize || DEFAULT_PAGE_SIZE;
@@ -148,12 +146,12 @@ export const getUserStarFeed = async ({
 
   if (rows.length == 1 && rows[0].thread_id == null) {
     log(`Star Feed empty.`);
-    return { cursor: null, activity: [] };
+    return { cursor: undefined, activity: [] };
   }
 
   let result = rows;
   let nextCursor = null;
-  log(`Got getBoardActivityByExternalId query result`, result);
+  log(`Got getBoardActivityByUuid query result`, result);
   if (result.length > finalPageSize) {
     nextCursor = encodeCursor({
       last_activity_cursor:

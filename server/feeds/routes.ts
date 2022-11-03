@@ -4,7 +4,7 @@ import {
   makeServerThreadSummary,
 } from "utils/response-utils";
 import {
-  getBoardActivityByExternalId,
+  getBoardActivityByUuid,
   getUserActivity,
   getUserStarFeed,
 } from "./queries";
@@ -25,7 +25,7 @@ const router = express.Router();
  * /feeds/boards/{board_id}:
  *   get:
  *     summary: Get the feed for the given boards' activity.
- *     operationId: getBoardsFeedByExternalId
+ *     operationId: getBoardsFeedByUuid
  *     tags:
  *       - /feeds/
  *     parameters:
@@ -71,29 +71,27 @@ const router = express.Router();
  *                 $ref: '#/components/examples/FeedBoardCursor'
  */
 router.get("/boards/:board_id", ensureBoardAccess, async (req, res) => {
-  const { board_id: boardExternalId } = req.params;
+  const { board_id: boardId } = req.params;
   const { cursor, categoryFilter } = req.query;
   log(
-    `Fetching activity data for board with slug ${boardExternalId} with cursor ${cursor} and filtered category "${categoryFilter}"`
+    `Fetching activity data for board with slug ${boardId} with cursor ${cursor} and filtered category "${categoryFilter}"`
   );
 
   log(cursor);
-  const result = await getBoardActivityByExternalId({
-    boardExternalId,
-    firebaseId: req.currentUser?.uid || null,
+  const result = await getBoardActivityByUuid({
+    boardId,
+    firebaseId: req.currentUser?.uid,
     categoryFilter: (categoryFilter as string) || null,
     cursor: (cursor as string) || null,
   });
-  info(`Found activity for board ${boardExternalId}:`, result);
+  info(`Found activity for board ${boardId}:`, result);
 
   if (result === false) {
     res.sendStatus(500);
     return;
   }
   if (!result) {
-    throw new NotFound404Error(
-      `Board with id ${boardExternalId} was not found`
-    );
+    throw new NotFound404Error(`Board with id ${boardId} was not found`);
   }
   if (!result.activity.length) {
     res.sendStatus(204);
@@ -110,7 +108,7 @@ router.get("/boards/:board_id", ensureBoardAccess, async (req, res) => {
 
   response.activity.map((post) => ensureNoIdentityLeakage(post));
   log(
-    `Returning board activity data for board ${boardExternalId} for user ${req.currentUser?.uid}.`
+    `Returning board activity data for board ${boardId} for user ${req.currentUser?.uid}.`
   );
   res.status(200).json(response);
 });
@@ -142,17 +140,17 @@ router.get("/boards/:board_id", ensureBoardAccess, async (req, res) => {
  *               $ref: "#/components/schemas/FeedActivity"
  */
 router.get("/users/@me", ensureLoggedIn, async (req, res) => {
-  const { cursor, showRead, ownOnly, realmId: realmExternalId } = req.query;
-  const currentUserId: string = req.currentUser!.uid;
+  const { cursor, showRead, ownOnly, realmStringId } = req.query;
+  const currentUserId: string = req.currentUser?.uid;
 
-  if (!realmExternalId) {
+  if (!realmStringId) {
     throw new BadRequest400Error(`Expected realm id in personal feed query.`);
   }
 
   const userActivity = await getUserActivity({
     firebaseId: currentUserId,
     cursor: (cursor as string) || null,
-    realmExternalId: realmExternalId as string,
+    realmStringId: realmStringId as string,
     updatedOnly: showRead !== "true",
     ownOnly: ownOnly === "true",
   });
@@ -206,7 +204,7 @@ router.get("/users/@me", ensureLoggedIn, async (req, res) => {
 
 router.get("/users/@me/stars", ensureLoggedIn, async (req, res) => {
   const { cursor, starred } = req.query;
-  const currentUserId: string = req.currentUser!.uid;
+  const currentUserId: string = req.currentUser?.uid;
 
   const userStarFeed = await getUserStarFeed({
     firebaseId: currentUserId,

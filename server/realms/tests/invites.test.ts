@@ -6,10 +6,10 @@ import {
   ZODIAC_KILLER_USER_ID,
 } from "test/data/auth";
 import {
-  TWISTED_MINDS_REALM_EXTERNAL_ID,
   TWISTED_MINDS_REALM_SLUG,
-  UWU_REALM_EXTERNAL_ID,
+  TWISTED_MINDS_REALM_STRING_ID,
   UWU_REALM_SLUG,
+  UWU_REALM_STRING_ID,
 } from "test/data/realms";
 import {
   setLoggedInUser,
@@ -110,7 +110,7 @@ const insertInvites = async (
     created?: string;
   }[],
   inviter: string,
-  realmExternalId: string
+  realmStringId: string
 ) => {
   await pool.task(async (t) => {
     for (const invite of invites) {
@@ -122,7 +122,7 @@ const insertInvites = async (
   (SELECT id FROM users WHERE firebase_id = $/inviter_id/),
   $/nonce/, $/email/, $/label/, $/created/, INTERVAL '1 WEEK', $/used/)`,
         {
-          realm_id: realmExternalId,
+          realm_id: realmStringId,
           inviter_id: inviter,
           nonce: invite.nonce,
           email: invite.email,
@@ -143,7 +143,7 @@ describe("Tests get invites endpoint", () => {
   test("correctly sends empty invites array if no invites exist", async () => {
     setLoggedInUser(BOBATAN_USER_ID);
     const res = await request(server.app).get(
-      `/${TWISTED_MINDS_REALM_EXTERNAL_ID}/invites`
+      `/${TWISTED_MINDS_REALM_STRING_ID}/invites`
     );
 
     expect(res.status).toBe(200);
@@ -156,11 +156,11 @@ describe("Tests get invites endpoint", () => {
       insertInvites(
         USED_AND_EXPIRED_INVITES,
         BOBATAN_USER_ID,
-        TWISTED_MINDS_REALM_EXTERNAL_ID
+        TWISTED_MINDS_REALM_STRING_ID
       );
-      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_EXTERNAL_ID);
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app).get(
-        `/${TWISTED_MINDS_REALM_EXTERNAL_ID}/invites`
+        `/${TWISTED_MINDS_REALM_STRING_ID}/invites`
       );
 
       expect(res.status).toBe(200);
@@ -174,19 +174,19 @@ describe("Tests get invites endpoint", () => {
       insertInvites(
         TWISTED_MINDS_INVITES,
         BOBATAN_USER_ID,
-        TWISTED_MINDS_REALM_EXTERNAL_ID
+        TWISTED_MINDS_REALM_STRING_ID
       );
-      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_EXTERNAL_ID);
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
 
       const resTwistedMinds = await request(server.app).get(
-        `/${TWISTED_MINDS_REALM_EXTERNAL_ID}/invites`
+        `/${TWISTED_MINDS_REALM_STRING_ID}/invites`
       );
       expect(resTwistedMinds.status).toBe(200);
       expect(resTwistedMinds.body.invites).toHaveLength(
         TWISTED_MINDS_INVITES.length - 2
       );
       for (const invite of resTwistedMinds.body.invites) {
-        expect(invite.realm_id).toEqual(TWISTED_MINDS_REALM_EXTERNAL_ID);
+        expect(invite.realm_id).toEqual(TWISTED_MINDS_REALM_STRING_ID);
         expect(invite.own).toBeTrue();
         log(invite.issued_at);
         // I think checking the issued_at is failing because of timezones. Not sure it's worth chasing, looks fine in log
@@ -215,12 +215,12 @@ describe("Tests get invites endpoint", () => {
       }
 
       const resUwu = await request(server.app).get(
-        `/${UWU_REALM_EXTERNAL_ID}/invites`
+        `/${UWU_REALM_STRING_ID}/invites`
       );
       expect(resUwu.status).toBe(200);
       expect(resUwu.body.invites).toHaveLength(UWU_INVITES.length);
       for (const invite of resUwu.body.invites) {
-        expect(invite.realm_id).toEqual(UWU_REALM_EXTERNAL_ID);
+        expect(invite.realm_id).toEqual(UWU_REALM_STRING_ID);
         expect(invite.own).toBeFalse();
         // expect(Date.parse(invite.issued_at)).toBeLessThan(Date.now());
         expect(Date.parse(invite.expires_at)).toBeGreaterThan(Date.now());
@@ -249,7 +249,7 @@ describe("Tests get invites endpoint", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(BOBATAN_USER_ID);
       const resCreate = await request(server.app)
-        .post(`/${TWISTED_MINDS_REALM_EXTERNAL_ID}/invites`)
+        .post(`/${TWISTED_MINDS_REALM_STRING_ID}/invites`)
         .send({ email: "anemail@email.com" });
 
       expect(resCreate.status).toBe(200);
@@ -257,20 +257,20 @@ describe("Tests get invites endpoint", () => {
       expect(resCreate.body.invite_url).toEqual(
         expect.stringContaining(expected)
       );
-      expect(resCreate.body.realm_id).toEqual(TWISTED_MINDS_REALM_EXTERNAL_ID);
+      expect(resCreate.body.realm_id).toEqual(TWISTED_MINDS_REALM_STRING_ID);
 
       const allInvites = await pool.manyOrNone(`SELECT * FROM account_invites`);
       log("from database", allInvites);
 
       const resTwistedMinds = await request(server.app).get(
-        `/${TWISTED_MINDS_REALM_EXTERNAL_ID}/invites`
+        `/${TWISTED_MINDS_REALM_STRING_ID}/invites`
       );
       log("from endpoint", resTwistedMinds.body.invites);
       expect(resTwistedMinds.status).toBe(200);
       expect(resTwistedMinds.body.invites).toHaveLength(1);
 
       expect(resTwistedMinds.body.invites[0].realm_id).toEqual(
-        TWISTED_MINDS_REALM_EXTERNAL_ID
+        TWISTED_MINDS_REALM_STRING_ID
       );
       log(resTwistedMinds.body.invites[0].issued_at);
       // expect(
@@ -294,7 +294,7 @@ describe("Tests get invites endpoint", () => {
     setLoggedInUser(JERSEY_DEVIL_USER_ID);
 
     const res = await request(server.app).get(
-      `/${TWISTED_MINDS_REALM_EXTERNAL_ID}/invites`
+      `/${TWISTED_MINDS_REALM_STRING_ID}/invites`
     );
 
     expect(res.status).toBe(403);
@@ -316,7 +316,7 @@ describe("Tests get invites endpoint", () => {
 
   test("doesn't get invites when logged out", async () => {
     const res = await request(server.app).get(
-      `/${TWISTED_MINDS_REALM_EXTERNAL_ID}/invites`
+      `/${TWISTED_MINDS_REALM_STRING_ID}/invites`
     );
 
     expect(res.status).toBe(401);
@@ -331,7 +331,7 @@ describe("Tests get invite by nonce endpoint", () => {
   test("correctly sends 404 if no invites exist", async () => {
     setLoggedInUser(BOBATAN_USER_ID);
     const res = await request(server.app).get(
-      `/${TWISTED_MINDS_REALM_EXTERNAL_ID}/invites/${TWISTED_MINDS_INVITES[0].nonce}`
+      `/${TWISTED_MINDS_REALM_STRING_ID}/invites/${TWISTED_MINDS_INVITES[0].nonce}`
     );
 
     expect(res.status).toBe(404);
@@ -343,11 +343,11 @@ describe("Tests get invite by nonce endpoint", () => {
       insertInvites(
         USED_AND_EXPIRED_INVITES,
         BOBATAN_USER_ID,
-        TWISTED_MINDS_REALM_EXTERNAL_ID
+        TWISTED_MINDS_REALM_STRING_ID
       );
-      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_EXTERNAL_ID);
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app).get(
-        `/${TWISTED_MINDS_REALM_EXTERNAL_ID}/invites/${TWISTED_MINDS_INVITES[0].nonce}`
+        `/${TWISTED_MINDS_REALM_STRING_ID}/invites/${TWISTED_MINDS_INVITES[0].nonce}`
       );
 
       expect(res.status).toBe(404);
@@ -360,14 +360,14 @@ describe("Tests get invite by nonce endpoint", () => {
       insertInvites(
         TWISTED_MINDS_INVITES,
         BOBATAN_USER_ID,
-        TWISTED_MINDS_REALM_EXTERNAL_ID
+        TWISTED_MINDS_REALM_STRING_ID
       );
       const res = await request(server.app).get(
-        `/${TWISTED_MINDS_REALM_EXTERNAL_ID}/invites/${TWISTED_MINDS_INVITES[0].nonce}`
+        `/${TWISTED_MINDS_REALM_STRING_ID}/invites/${TWISTED_MINDS_INVITES[0].nonce}`
       );
 
       expect(res.status).toBe(200);
-      expect(res.body.realm_id).toBe(TWISTED_MINDS_REALM_EXTERNAL_ID);
+      expect(res.body.realm_id).toBe(TWISTED_MINDS_REALM_STRING_ID);
       expect(res.body.realm_slug).toBe(TWISTED_MINDS_REALM_SLUG);
       expect(res.body.invite_status).toBe("pending");
     });
@@ -378,14 +378,14 @@ describe("Tests get invite by nonce endpoint", () => {
       insertInvites(
         TWISTED_MINDS_INVITES,
         BOBATAN_USER_ID,
-        TWISTED_MINDS_REALM_EXTERNAL_ID
+        TWISTED_MINDS_REALM_STRING_ID
       );
       const res = await request(server.app).get(
-        `/${UWU_REALM_EXTERNAL_ID}/invites/${TWISTED_MINDS_INVITES[0].nonce}`
+        `/${UWU_REALM_STRING_ID}/invites/${TWISTED_MINDS_INVITES[0].nonce}`
       );
 
       expect(res.status).toBe(200);
-      expect(res.body.realm_id).toBe(TWISTED_MINDS_REALM_EXTERNAL_ID);
+      expect(res.body.realm_id).toBe(TWISTED_MINDS_REALM_STRING_ID);
       expect(res.body.realm_slug).toBe(TWISTED_MINDS_REALM_SLUG);
       expect(res.body.invite_status).toBe("pending");
     });
@@ -396,14 +396,14 @@ describe("Tests get invite by nonce endpoint", () => {
       insertInvites(
         TWISTED_MINDS_INVITES,
         BOBATAN_USER_ID,
-        TWISTED_MINDS_REALM_EXTERNAL_ID
+        TWISTED_MINDS_REALM_STRING_ID
       );
       const res = await request(server.app).get(
-        `/${TWISTED_MINDS_REALM_EXTERNAL_ID}/invites/${TWISTED_MINDS_INVITES[4].nonce}`
+        `/${TWISTED_MINDS_REALM_STRING_ID}/invites/${TWISTED_MINDS_INVITES[4].nonce}`
       );
 
       expect(res.status).toBe(200);
-      expect(res.body.realm_id).toBe(TWISTED_MINDS_REALM_EXTERNAL_ID);
+      expect(res.body.realm_id).toBe(TWISTED_MINDS_REALM_STRING_ID);
       expect(res.body.realm_slug).toBe(TWISTED_MINDS_REALM_SLUG);
       expect(res.body.invite_status).toBe("expired");
     });
@@ -414,14 +414,14 @@ describe("Tests get invite by nonce endpoint", () => {
       insertInvites(
         TWISTED_MINDS_INVITES,
         BOBATAN_USER_ID,
-        TWISTED_MINDS_REALM_EXTERNAL_ID
+        TWISTED_MINDS_REALM_STRING_ID
       );
       const res = await request(server.app).get(
-        `/${TWISTED_MINDS_REALM_EXTERNAL_ID}/invites/${TWISTED_MINDS_INVITES[3].nonce}`
+        `/${TWISTED_MINDS_REALM_STRING_ID}/invites/${TWISTED_MINDS_INVITES[3].nonce}`
       );
 
       expect(res.status).toBe(200);
-      expect(res.body.realm_id).toBe(TWISTED_MINDS_REALM_EXTERNAL_ID);
+      expect(res.body.realm_id).toBe(TWISTED_MINDS_REALM_STRING_ID);
       expect(res.body.realm_slug).toBe(TWISTED_MINDS_REALM_SLUG);
       expect(res.body.invite_status).toBe("used");
     });
@@ -435,13 +435,13 @@ describe("Tests create invites endpoint", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(SEXY_DADDY_USER_ID);
       const res = await request(server.app)
-        .post(`/${TWISTED_MINDS_REALM_EXTERNAL_ID}/invites`)
+        .post(`/${TWISTED_MINDS_REALM_STRING_ID}/invites`)
         .send({ email: "anemail@email.com" });
 
       expect(res.status).toBe(200);
       const expected = `https://${TWISTED_MINDS_REALM_SLUG}.boba.social/invites/`;
       expect(res.body.invite_url).toEqual(expect.stringContaining(expected));
-      expect(res.body.realm_id).toEqual(TWISTED_MINDS_REALM_EXTERNAL_ID);
+      expect(res.body.realm_id).toEqual(TWISTED_MINDS_REALM_STRING_ID);
     });
   });
 
@@ -449,7 +449,7 @@ describe("Tests create invites endpoint", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(SEXY_DADDY_USER_ID);
       const res = await request(server.app)
-        .post(`/${TWISTED_MINDS_REALM_EXTERNAL_ID}/invites`)
+        .post(`/${TWISTED_MINDS_REALM_STRING_ID}/invites`)
         .send({
           email: "anemail@email.com",
           label: "a note about this invite",
@@ -458,7 +458,7 @@ describe("Tests create invites endpoint", () => {
       expect(res.status).toBe(200);
       const expected = `https://${TWISTED_MINDS_REALM_SLUG}.boba.social/invites/`;
       expect(res.body.invite_url).toEqual(expect.stringContaining(expected));
-      expect(res.body.realm_id).toEqual(TWISTED_MINDS_REALM_EXTERNAL_ID);
+      expect(res.body.realm_id).toEqual(TWISTED_MINDS_REALM_STRING_ID);
     });
   });
 
@@ -466,13 +466,13 @@ describe("Tests create invites endpoint", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(BOBATAN_USER_ID);
       const res = await request(server.app)
-        .post(`/${TWISTED_MINDS_REALM_EXTERNAL_ID}/invites`)
+        .post(`/${TWISTED_MINDS_REALM_STRING_ID}/invites`)
         .send({ email: "anemail@email.com" });
 
       expect(res.status).toBe(200);
       const expected = `https://${TWISTED_MINDS_REALM_SLUG}.boba.social/invites/`;
       expect(res.body.invite_url).toEqual(expect.stringContaining(expected));
-      expect(res.body.realm_id).toEqual(TWISTED_MINDS_REALM_EXTERNAL_ID);
+      expect(res.body.realm_id).toEqual(TWISTED_MINDS_REALM_STRING_ID);
     });
   });
 
@@ -480,7 +480,7 @@ describe("Tests create invites endpoint", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(ONCEST_USER_ID);
       const res = await request(server.app)
-        .post(`/${TWISTED_MINDS_REALM_EXTERNAL_ID}/invites`)
+        .post(`/${TWISTED_MINDS_REALM_STRING_ID}/invites`)
         .field("email", "anemail@email.com");
 
       expect(res.status).toBe(403);
@@ -495,7 +495,7 @@ describe("Tests create invites endpoint", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(ZODIAC_KILLER_USER_ID);
       const res = await request(server.app)
-        .post(`/${TWISTED_MINDS_REALM_EXTERNAL_ID}/invites`)
+        .post(`/${TWISTED_MINDS_REALM_STRING_ID}/invites`)
         .field("email", "anemail@email.com");
 
       expect(res.status).toBe(403);
@@ -511,7 +511,7 @@ describe("Tests create invites endpoint", () => {
       setLoggedInUser(JERSEY_DEVIL_USER_ID);
 
       const res = await request(server.app)
-        .post(`/${TWISTED_MINDS_REALM_EXTERNAL_ID}/invites`)
+        .post(`/${TWISTED_MINDS_REALM_STRING_ID}/invites`)
         .field("email", "anemail@email.com");
 
       expect(res.status).toBe(403);
@@ -541,13 +541,13 @@ describe("Tests create invites endpoint", () => {
       setLoggedInUser(SEXY_DADDY_USER_ID);
 
       const res = await request(server.app).post(
-        `/${TWISTED_MINDS_REALM_EXTERNAL_ID}/invites`
+        `/${TWISTED_MINDS_REALM_STRING_ID}/invites`
       );
 
       expect(res.status).toBe(200);
       const expected = `https://${TWISTED_MINDS_REALM_SLUG}.boba.social/invites/`;
       expect(res.body.invite_url).toEqual(expect.stringContaining(expected));
-      expect(res.body.realm_id).toEqual(TWISTED_MINDS_REALM_EXTERNAL_ID);
+      expect(res.body.realm_id).toEqual(TWISTED_MINDS_REALM_STRING_ID);
     });
   });
 
@@ -556,20 +556,20 @@ describe("Tests create invites endpoint", () => {
       setLoggedInUser(SEXY_DADDY_USER_ID);
 
       const res = await request(server.app)
-        .post(`/${TWISTED_MINDS_REALM_EXTERNAL_ID}/invites`)
+        .post(`/${TWISTED_MINDS_REALM_STRING_ID}/invites`)
         .field("email", "");
 
       expect(res.status).toBe(200);
       const expected = `https://${TWISTED_MINDS_REALM_SLUG}.boba.social/invites/`;
       expect(res.body.invite_url).toEqual(expect.stringContaining(expected));
-      expect(res.body.realm_id).toEqual(TWISTED_MINDS_REALM_EXTERNAL_ID);
+      expect(res.body.realm_id).toEqual(TWISTED_MINDS_REALM_STRING_ID);
     });
   });
 
   test("doesn't create invite when logged out", async () => {
     await wrapWithTransaction(async () => {
       const res = await request(server.app)
-        .post(`/${TWISTED_MINDS_REALM_EXTERNAL_ID}/invites`)
+        .post(`/${TWISTED_MINDS_REALM_STRING_ID}/invites`)
         .field("email", "anemail@email.com");
 
       expect(res.status).toBe(401);
@@ -586,22 +586,22 @@ describe("Tests accept invites endpoint", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUserWithEmail({
         uid: JERSEY_DEVIL_USER_ID,
-        email: UWU_INVITES[1].email!,
+        email: UWU_INVITES[1].email,
       });
 
-      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_EXTERNAL_ID);
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app).post(
-        `/${UWU_REALM_EXTERNAL_ID}/invites/${UWU_INVITES[1].nonce}`
+        `/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[1].nonce}`
       );
 
       expect(res.status).toBe(200);
       expect(res.body).toEqual({
-        realm_id: UWU_REALM_EXTERNAL_ID,
+        realm_id: UWU_REALM_STRING_ID,
         realm_slug: UWU_REALM_SLUG,
       });
       const addedToRealm = await checkUserOnRealm({
         firebaseId: JERSEY_DEVIL_USER_ID,
-        realmExternalId: UWU_REALM_EXTERNAL_ID,
+        realmStringId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(true);
     });
@@ -611,22 +611,22 @@ describe("Tests accept invites endpoint", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUserWithEmail({
         uid: JERSEY_DEVIL_USER_ID,
-        email: UWU_INVITES[1].email!,
+        email: UWU_INVITES[1].email,
       });
 
-      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_EXTERNAL_ID);
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app).post(
-        `/${UWU_REALM_EXTERNAL_ID}/invites/${UWU_INVITES[2].nonce}`
+        `/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[2].nonce}`
       );
 
       expect(res.status).toBe(200);
       expect(res.body).toEqual({
-        realm_id: UWU_REALM_EXTERNAL_ID,
+        realm_id: UWU_REALM_STRING_ID,
         realm_slug: UWU_REALM_SLUG,
       });
       const addedToRealm = await checkUserOnRealm({
         firebaseId: JERSEY_DEVIL_USER_ID,
-        realmExternalId: UWU_REALM_EXTERNAL_ID,
+        realmStringId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(true);
     });
@@ -638,7 +638,7 @@ describe("Tests accept invites endpoint", () => {
 
       setLoggedInUser(ZODIAC_KILLER_USER_ID);
       const resCreateInvite = await request(server.app)
-        .post(`/${UWU_REALM_EXTERNAL_ID}/invites/`)
+        .post(`/${UWU_REALM_STRING_ID}/invites/`)
         .send({ email: onclerEmail });
 
       const sliceIndex = resCreateInvite.body.invite_url.lastIndexOf("/") + 1;
@@ -646,17 +646,17 @@ describe("Tests accept invites endpoint", () => {
 
       setLoggedInUserWithEmail({ uid: ONCEST_USER_ID, email: onclerEmail });
       const resAccept = await request(server.app).post(
-        `/${UWU_REALM_EXTERNAL_ID}/invites/${nonce}`
+        `/${UWU_REALM_STRING_ID}/invites/${nonce}`
       );
 
       expect(resAccept.status).toBe(200);
       expect(resAccept.body).toEqual({
-        realm_id: UWU_REALM_EXTERNAL_ID,
+        realm_id: UWU_REALM_STRING_ID,
         realm_slug: UWU_REALM_SLUG,
       });
       const addedToRealm = await checkUserOnRealm({
         firebaseId: ONCEST_USER_ID,
-        realmExternalId: UWU_REALM_EXTERNAL_ID,
+        realmStringId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(true);
     });
@@ -666,12 +666,12 @@ describe("Tests accept invites endpoint", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUserWithEmail({
         uid: BOBATAN_USER_ID,
-        email: UWU_INVITES[0].email!,
+        email: UWU_INVITES[0].email,
       });
 
-      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_EXTERNAL_ID);
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app).post(
-        `/${UWU_REALM_EXTERNAL_ID}/invites/${UWU_INVITES[0].nonce}`
+        `/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[0].nonce}`
       );
 
       expect(res.status).toBe(409);
@@ -688,15 +688,15 @@ describe("Tests accept invites endpoint", () => {
         email: "differentEmail@email.com",
       });
 
-      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_EXTERNAL_ID);
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app).post(
-        `/${UWU_REALM_EXTERNAL_ID}/invites/${UWU_INVITES[1].nonce}`
+        `/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[1].nonce}`
       );
       expect(res.body.message).toBe(`Invite email does not match`);
       expect(res.status).toBe(403);
       const addedToRealm = await checkUserOnRealm({
         firebaseId: JERSEY_DEVIL_USER_ID,
-        realmExternalId: UWU_REALM_EXTERNAL_ID,
+        realmStringId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(false);
     });
@@ -712,17 +712,17 @@ describe("Tests accept invites endpoint", () => {
       insertInvites(
         USED_AND_EXPIRED_INVITES,
         ZODIAC_KILLER_USER_ID,
-        UWU_REALM_EXTERNAL_ID
+        UWU_REALM_STRING_ID
       );
       const res = await request(server.app).post(
-        `/${UWU_REALM_EXTERNAL_ID}/invites/${USED_AND_EXPIRED_INVITES[0].nonce}`
+        `/${UWU_REALM_STRING_ID}/invites/${USED_AND_EXPIRED_INVITES[0].nonce}`
       );
 
       expect(res.status).toBe(403);
       expect(res.body.message).toBe(`Invite expired or already used`);
       const addedToRealm = await checkUserOnRealm({
         firebaseId: JERSEY_DEVIL_USER_ID,
-        realmExternalId: UWU_REALM_EXTERNAL_ID,
+        realmStringId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(false);
     });
@@ -738,17 +738,17 @@ describe("Tests accept invites endpoint", () => {
       insertInvites(
         USED_AND_EXPIRED_INVITES,
         ZODIAC_KILLER_USER_ID,
-        UWU_REALM_EXTERNAL_ID
+        UWU_REALM_STRING_ID
       );
       const res = await request(server.app).post(
-        `/${UWU_REALM_EXTERNAL_ID}/invites/${USED_AND_EXPIRED_INVITES[1].nonce}`
+        `/${UWU_REALM_STRING_ID}/invites/${USED_AND_EXPIRED_INVITES[1].nonce}`
       );
 
       expect(res.status).toBe(403);
       expect(res.body.message).toBe(`Invite expired or already used`);
       const addedToRealm = await checkUserOnRealm({
         firebaseId: JERSEY_DEVIL_USER_ID,
-        realmExternalId: UWU_REALM_EXTERNAL_ID,
+        realmStringId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(false);
     });
@@ -758,27 +758,27 @@ describe("Tests accept invites endpoint", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUserWithEmail({
         uid: JERSEY_DEVIL_USER_ID,
-        email: UWU_INVITES[1].email!,
+        email: UWU_INVITES[1].email,
       });
 
-      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_EXTERNAL_ID);
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app).post(
-        `/${TWISTED_MINDS_REALM_EXTERNAL_ID}/invites/${UWU_INVITES[1].nonce}`
+        `/${TWISTED_MINDS_REALM_STRING_ID}/invites/${UWU_INVITES[1].nonce}`
       );
 
       expect(res.status).toBe(200);
       expect(res.body).toEqual({
-        realm_id: UWU_REALM_EXTERNAL_ID,
+        realm_id: UWU_REALM_STRING_ID,
         realm_slug: UWU_REALM_SLUG,
       });
       const addedToRealm = await checkUserOnRealm({
         firebaseId: JERSEY_DEVIL_USER_ID,
-        realmExternalId: UWU_REALM_EXTERNAL_ID,
+        realmStringId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(true);
       const addedToWrongRealm = await checkUserOnRealm({
         firebaseId: JERSEY_DEVIL_USER_ID,
-        realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
+        realmStringId: TWISTED_MINDS_REALM_STRING_ID,
       });
       expect(addedToWrongRealm).toEqual(false);
     });
@@ -788,10 +788,10 @@ describe("Tests accept invites endpoint", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUserWithEmail({
         uid: JERSEY_DEVIL_USER_ID,
-        email: UWU_INVITES[1].email!,
+        email: UWU_INVITES[1].email,
       });
 
-      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_EXTERNAL_ID);
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app).post(
         `/notarealrealm/invites/${UWU_INVITES[1].nonce}`
       );
@@ -800,7 +800,7 @@ describe("Tests accept invites endpoint", () => {
       expect(res.body.message).toBe("The realm was not found.");
       const addedToRealm = await checkUserOnRealm({
         firebaseId: JERSEY_DEVIL_USER_ID,
-        realmExternalId: UWU_REALM_EXTERNAL_ID,
+        realmStringId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(false);
     });
@@ -810,19 +810,19 @@ describe("Tests accept invites endpoint", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUserWithEmail({
         uid: JERSEY_DEVIL_USER_ID,
-        email: UWU_INVITES[1].email!,
+        email: UWU_INVITES[1].email,
       });
 
-      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_EXTERNAL_ID);
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app).post(
-        `/${UWU_REALM_EXTERNAL_ID}/invites/notarealinvite123`
+        `/${UWU_REALM_STRING_ID}/invites/notarealinvite123`
       );
 
       expect(res.status).toBe(404);
       expect(res.body.message).toBe("Invite not found");
       const addedToRealm = await checkUserOnRealm({
         firebaseId: JERSEY_DEVIL_USER_ID,
-        realmExternalId: UWU_REALM_EXTERNAL_ID,
+        realmStringId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(false);
     });
@@ -836,9 +836,9 @@ describe("Tests accept invites endpoint", () => {
         metadata: { creationTime: "2022-05-12 19:10:25" },
       });
 
-      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_EXTERNAL_ID);
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app)
-        .post(`/${UWU_REALM_EXTERNAL_ID}/invites/${UWU_INVITES[1].nonce}`)
+        .post(`/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[1].nonce}`)
         .send({
           email: UWU_INVITES[1].email,
           password: "secure_password",
@@ -846,7 +846,7 @@ describe("Tests accept invites endpoint", () => {
 
       expect(res.status).toBe(200);
       expect(res.body).toEqual({
-        realm_id: UWU_REALM_EXTERNAL_ID,
+        realm_id: UWU_REALM_STRING_ID,
         realm_slug: UWU_REALM_SLUG,
       });
 
@@ -863,18 +863,14 @@ describe("Tests accept invites endpoint", () => {
         firebase_id: NEW_USER_FIREBASE_ID,
       });
 
-      const preExistingUsersInRealm = [
-        BOBATAN_USER_ID,
-        ZODIAC_KILLER_USER_ID,
-        SEXY_DADDY_USER_ID,
-      ];
+      const preExistingUsersInRealm = [BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID];
       const usersInRealm = await pool.many(
         `SELECT users.firebase_id
       FROM realm_users
       JOIN users ON realm_users.user_id = users.id
-      WHERE realm_id = (SELECT id FROM realms WHERE string_id = $/REALM_EXTERNAL_id/);`,
+      WHERE realm_id = (SELECT id FROM realms WHERE string_id = $/realm_string_id/);`,
         {
-          REALM_EXTERNAL_id: UWU_REALM_EXTERNAL_ID,
+          realm_string_id: UWU_REALM_STRING_ID,
         }
       );
       expect(usersInRealm).toHaveLength(preExistingUsersInRealm.length + 1);
@@ -892,9 +888,9 @@ describe("Tests accept invites endpoint", () => {
         metadata: { creationTime: "2022-05-12 19:10:25" },
       });
 
-      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_EXTERNAL_ID);
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app)
-        .post(`/${UWU_REALM_EXTERNAL_ID}/invites/${UWU_INVITES[2].nonce}`)
+        .post(`/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[2].nonce}`)
         .send({
           email: "this_can_be_any_email@email.com",
           password: "secure_password",
@@ -902,7 +898,7 @@ describe("Tests accept invites endpoint", () => {
 
       expect(res.status).toBe(200);
       expect(res.body).toEqual({
-        realm_id: UWU_REALM_EXTERNAL_ID,
+        realm_id: UWU_REALM_STRING_ID,
         realm_slug: UWU_REALM_SLUG,
       });
 
@@ -919,18 +915,14 @@ describe("Tests accept invites endpoint", () => {
         firebase_id: NEW_USER_FIREBASE_ID,
       });
 
-      const preExistingUsersInRealm = [
-        BOBATAN_USER_ID,
-        ZODIAC_KILLER_USER_ID,
-        SEXY_DADDY_USER_ID,
-      ];
+      const preExistingUsersInRealm = [BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID];
       const usersInRealm = await pool.many(
         `SELECT users.firebase_id
         FROM realm_users
         JOIN users ON realm_users.user_id = users.id
-        WHERE realm_id = (SELECT id FROM realms WHERE string_id = $/REALM_EXTERNAL_id/);`,
+        WHERE realm_id = (SELECT id FROM realms WHERE string_id = $/realm_string_id/);`,
         {
-          REALM_EXTERNAL_id: UWU_REALM_EXTERNAL_ID,
+          realm_string_id: UWU_REALM_STRING_ID,
         }
       );
       expect(usersInRealm).toHaveLength(preExistingUsersInRealm.length + 1);
@@ -948,9 +940,9 @@ describe("Tests accept invites endpoint", () => {
         metadata: { creationTime: "2022-05-12 19:10:25" },
       });
 
-      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_EXTERNAL_ID);
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app)
-        .post(`/${UWU_REALM_EXTERNAL_ID}/invites/${UWU_INVITES[1].nonce}`)
+        .post(`/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[1].nonce}`)
         .send({
           email: "different_email@email.com",
           password: "secure_password",
@@ -966,7 +958,7 @@ describe("Tests accept invites endpoint", () => {
       expect(newUser).toBeNull();
       const addedToRealm = await checkUserOnRealm({
         firebaseId: NEW_USER_FIREBASE_ID,
-        realmExternalId: UWU_REALM_EXTERNAL_ID,
+        realmStringId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(false);
     });
@@ -980,9 +972,9 @@ describe("Tests accept invites endpoint", () => {
         metadata: { creationTime: "2022-05-12 19:10:25" },
       });
 
-      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_EXTERNAL_ID);
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app)
-        .post(`/${UWU_REALM_EXTERNAL_ID}/invites/${UWU_INVITES[2].nonce}`)
+        .post(`/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[2].nonce}`)
         .send({
           email: "",
           password: "secure_password",
@@ -1001,7 +993,7 @@ describe("Tests accept invites endpoint", () => {
       expect(newUser).toBeNull();
       const addedToRealm = await checkUserOnRealm({
         firebaseId: NEW_USER_FIREBASE_ID,
-        realmExternalId: UWU_REALM_EXTERNAL_ID,
+        realmStringId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(false);
     });
@@ -1015,9 +1007,9 @@ describe("Tests accept invites endpoint", () => {
         metadata: { creationTime: "2022-05-12 19:10:25" },
       });
 
-      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_EXTERNAL_ID);
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app)
-        .post(`/${UWU_REALM_EXTERNAL_ID}/invites/${UWU_INVITES[2].nonce}`)
+        .post(`/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[2].nonce}`)
         .send({
           email: "this_can_be_any_email@email.com",
           password: "",
@@ -1036,7 +1028,7 @@ describe("Tests accept invites endpoint", () => {
       expect(newUser).toBeNull();
       const addedToRealm = await checkUserOnRealm({
         firebaseId: NEW_USER_FIREBASE_ID,
-        realmExternalId: UWU_REALM_EXTERNAL_ID,
+        realmStringId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(false);
     });
@@ -1050,9 +1042,9 @@ describe("Tests accept invites endpoint", () => {
         metadata: { creationTime: "2022-05-12 19:10:25" },
       });
 
-      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_EXTERNAL_ID);
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app)
-        .post(`/${UWU_REALM_EXTERNAL_ID}/invites/${UWU_INVITES[1].nonce}`)
+        .post(`/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[1].nonce}`)
         .send({
           email: "",
           password: "secure_password",
@@ -1071,7 +1063,7 @@ describe("Tests accept invites endpoint", () => {
       expect(newUser).toBeNull();
       const addedToRealm = await checkUserOnRealm({
         firebaseId: NEW_USER_FIREBASE_ID,
-        realmExternalId: UWU_REALM_EXTERNAL_ID,
+        realmStringId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(false);
     });
@@ -1085,9 +1077,9 @@ describe("Tests accept invites endpoint", () => {
         metadata: { creationTime: "2022-05-12 19:10:25" },
       });
 
-      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_EXTERNAL_ID);
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_STRING_ID);
       const res = await request(server.app)
-        .post(`/${UWU_REALM_EXTERNAL_ID}/invites/${UWU_INVITES[1].nonce}`)
+        .post(`/${UWU_REALM_STRING_ID}/invites/${UWU_INVITES[1].nonce}`)
         .send({
           email: UWU_INVITES[1].email,
           password: "",
@@ -1106,7 +1098,7 @@ describe("Tests accept invites endpoint", () => {
       expect(newUser).toBeNull();
       const addedToRealm = await checkUserOnRealm({
         firebaseId: NEW_USER_FIREBASE_ID,
-        realmExternalId: UWU_REALM_EXTERNAL_ID,
+        realmStringId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(false);
     });
