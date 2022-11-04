@@ -10,7 +10,7 @@ const log = debug("bobaserver:feeds:queries-log");
 const error = debug("bobaserver:feeds:queries-error");
 
 const DEFAULT_PAGE_SIZE = 10;
-export const getBoardActivityByUuid = async ({
+export const getBoardActivityByExternalId = async ({
   boardId,
   firebaseId,
   categoryFilter,
@@ -28,7 +28,7 @@ export const getBoardActivityByUuid = async ({
 
     const finalPageSize =
       decodedCursor?.page_size || pageSize || DEFAULT_PAGE_SIZE;
-    const rows = await pool.manyOrNone(sql.getBoardActivityByUuid, {
+    const rows = await pool.manyOrNone(sql.getBoardActivityByExternalId, {
       board_id: boardId,
       firebase_id: firebaseId,
       filtered_category: categoryFilter || null,
@@ -49,7 +49,7 @@ export const getBoardActivityByUuid = async ({
 
     let result = rows;
     let nextCursor = null;
-    info(`Got getBoardActivityByUuid query result`, result);
+    info(`Got getBoardActivityByExternalId query result`, result);
     if (result.length > finalPageSize) {
       nextCursor = encodeCursor({
         last_activity_cursor:
@@ -151,7 +151,7 @@ export const getUserStarFeed = async ({
 
   let result = rows;
   let nextCursor = null;
-  log(`Got getBoardActivityByUuid query result`, result);
+  log(`Got getBoardActivityByExternalId query result`, result);
   if (result.length > finalPageSize) {
     nextCursor = encodeCursor({
       last_activity_cursor:

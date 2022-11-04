@@ -24,7 +24,7 @@ import {
 } from "server/threads/queries";
 
 import { Internal500Error } from "types/errors/api";
-import { getBoardByUuid } from "server/boards/queries";
+import { getBoardByExternalId } from "server/boards/queries";
 import { getPostByExternalId } from "server/posts/queries";
 
 declare global {
@@ -153,7 +153,7 @@ export const withBoardMetadata = async (
   }
 
   const boardId = req.params.board_id;
-  const board = await getBoardByUuid({
+  const board = await getBoardByExternalId({
     firebaseId: req.currentUser?.uid,
     boardId,
   });
@@ -265,7 +265,7 @@ export const withPostPermissions = async (
     next();
     return;
   }
-  const board = await getBoardByUuid({
+  const board = await getBoardByExternalId({
     firebaseId: req.currentUser.uid,
     boardId: post.parent_board_id,
   });

@@ -60,7 +60,7 @@ export const getBoardBySlug = async ({
   }
 };
 
-export const getBoardByUuid = async ({
+export const getBoardByExternalId = async ({
   firebaseId,
   boardId,
 }: {
@@ -68,9 +68,9 @@ export const getBoardByUuid = async ({
   boardId: string;
 }): Promise<DbBoardMetadata> => {
   try {
-    const rows = await pool.oneOrNone(sql.getBoardByUuid, {
+    const rows = await pool.oneOrNone(sql.getBoardByExternalId, {
       firebase_id: firebaseId,
-      board_uuid: boardId,
+      board_id: boardId,
     });
 
     if (!rows) {
@@ -78,11 +78,11 @@ export const getBoardByUuid = async ({
       return null;
     }
 
-    info(`Got getBoardByUuid query result:`, rows);
+    info(`Got getBoardByExternalId query result:`, rows);
     log(`Fetched board ${boardId} for user ${firebaseId}`);
     return rows;
   } catch (e) {
-    error(`Error while fetching board by uuid (${boardId}).`);
+    error(`Error while fetching board by id (${boardId}).`);
     error(e);
     return null;
   }
@@ -103,12 +103,12 @@ const updateCategoriesDescriptions = async (
     categoryFilters.deleted.map(async (filter) => {
       await tx.none(sql.deleteSectionCategories, {
         section_id: filter.id,
-        board_uuid: boardId,
+        board_id: boardId,
         category_names: null,
       });
       await tx.none(sql.deleteSection, {
         section_id: filter.id,
-        board_uuid: boardId,
+        board_id: boardId,
       });
     })
   );
@@ -123,7 +123,7 @@ const updateCategoriesDescriptions = async (
           title: category.title,
           description: category.description,
           index: category.index,
-          board_uuid: boardId,
+          board_id: boardId,
           section_id: category.id,
         });
       } else {
@@ -132,7 +132,7 @@ const updateCategoriesDescriptions = async (
           title: category.title,
           description: category.description,
           index: category.index,
-          board_uuid: boardId,
+          board_id: boardId,
           type: "category_filter",
         });
       }
@@ -140,7 +140,7 @@ const updateCategoriesDescriptions = async (
       if (category.categories.deleted.length > 0) {
         await tx.none(sql.deleteSectionCategories, {
           section_id: category.id,
-          board_uuid: boardId,
+          board_id: boardId,
           category_names: category.categories.deleted,
         });
         log("Removed obsolete categories from filter.");
@@ -177,7 +177,7 @@ const updateTextDescriptions = async (
     texts.deleted.map(async (text) => {
       await tx.none(sql.deleteSection, {
         section_id: text.id,
-        board_uuid: boardId,
+        board_id: boardId,
       });
     })
   );
@@ -192,7 +192,7 @@ const updateTextDescriptions = async (
           title: text.title,
           description: text.description,
           index: text.index,
-          board_uuid: boardId,
+          board_id: boardId,
           section_id: text.id,
         });
       } else {
@@ -201,7 +201,7 @@ const updateTextDescriptions = async (
           title: text.title,
           description: text.description,
           index: text.index,
-          board_uuid: boardId,
+          board_id: boardId,
           type: "text",
         });
       }
@@ -234,7 +234,7 @@ export const updateBoardMetadata = async ({
       .tx("update-descriptions", async (transaction) => {
         if (delta.tagline || delta.accentColor) {
           await transaction.none(sql.updateBoardSettings, {
-            board_uuid: boardId,
+            board_id: boardId,
             tagline: delta.tagline || oldMetadata.tagline,
             settings: {
               accentColor:
@@ -265,8 +265,8 @@ export const updateBoardMetadata = async ({
     }
 
     // Now return the new result
-    return await pool.oneOrNone(sql.getBoardByUuid, {
-      board_uuid: boardId,
+    return await pool.oneOrNone(sql.getBoardByExternalId, {
+      board_id: boardId,
       firebase_id: firebaseId,
     });
   } catch (e) {
@@ -286,7 +286,7 @@ export const markBoardVisit = async ({
   try {
     await pool.none(sql.markBoardVisit, {
       firebase_id: firebaseId,
-      board_uuid: boardId,
+      board_id: boardId,
     });
     return true;
   } catch (e) {
@@ -304,9 +304,9 @@ export const muteBoard = async ({
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.muteBoardByUuid, {
+    await pool.none(sql.muteBoardByExternalId, {
       firebase_id: firebaseId,
-      board_uuid: boardId,
+      board_id: boardId,
     });
     return true;
   } catch (e) {
@@ -324,9 +324,9 @@ export const unmuteBoard = async ({
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.unmuteBoardByUuid, {
+    await pool.none(sql.unmuteBoardByExternalId, {
       firebase_id: firebaseId,
-      board_uuid: boardId,
+      board_id: boardId,
     });
     return true;
   } catch (e) {
@@ -344,9 +344,9 @@ export const pinBoard = async ({
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.pinBoardByUuid, {
+    await pool.none(sql.pinBoardByExternalId, {
       firebase_id: firebaseId,
-      board_uuid: boardId,
+      board_id: boardId,
     });
     return true;
   } catch (e) {
@@ -364,9 +364,9 @@ export const unpinBoard = async ({
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.unpinBoardByUuid, {
+    await pool.none(sql.unpinBoardByExternalId, {
       firebase_id: firebaseId,
-      board_uuid: boardId,
+      board_id: boardId,
     });
     return true;
   } catch (e) {
@@ -384,9 +384,9 @@ export const dismissBoardNotifications = async ({
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.dismissNotificationsByUuid, {
+    await pool.none(sql.dismissNotificationsByExternalId, {
       firebase_id: firebaseId,
-      board_uuid: boardId,
+      board_id: boardId,
     });
     return true;
   } catch (e) {
@@ -401,7 +401,7 @@ export const createThread = async ({
   content,
   isLarge,
   anonymityType,
-  boardExternalId,
+  boardId,
   whisperTags,
   indexTags,
   categoryTags,
@@ -415,7 +415,7 @@ export const createThread = async ({
   isLarge: boolean;
   defaultView: string;
   anonymityType: string;
-  boardExternalId: string;
+  boardId: string;
   whisperTags: string[];
   indexTags: string[];
   categoryTags: string[];
@@ -427,7 +427,7 @@ export const createThread = async ({
     const newThreadExternalId = uuidv4();
     await t.one(threadsSql.createThread, {
       thread_string_id: newThreadExternalId,
-      board_string_id: boardExternalId,
+      board_string_id: boardId,
       thread_options: {
         default_view: defaultView,
       },

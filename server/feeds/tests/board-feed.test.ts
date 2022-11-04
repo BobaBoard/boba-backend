@@ -2,12 +2,12 @@ import { FAVORITE_CHARACTER_THREAD_ID, FAVORITE_MURDER_THREAD_ID } from "test/da
 import { GORE_BOARD_ID, MAIN_STREET_BOARD_ID } from "test/data/boards";
 import { extractActivity, extractAuthorData, extractsMetadata } from "utils/test-utils";
 
-import { getBoardActivityByUuid } from "../queries";
+import { getBoardActivityByExternalId } from "../queries";
 
 describe("Tests boards activity queries", () => {
   describe("tests activity metadata", () => {
     test("fetches board activity when slug present (logged in)", async () => {
-      const board = await getBoardActivityByUuid({
+      const board = await getBoardActivityByExternalId({
         boardId: GORE_BOARD_ID,
         // Oncest
         firebaseId: "fb3",
@@ -62,7 +62,7 @@ describe("Tests boards activity queries", () => {
     });
 
     test("fetches board activity when slug present (logged out)", async () => {
-      const board = await getBoardActivityByUuid({
+      const board = await getBoardActivityByExternalId({
         boardId: GORE_BOARD_ID,
         firebaseId: undefined,
         cursor: null,
@@ -116,7 +116,7 @@ describe("Tests boards activity queries", () => {
     });
 
     test("fetches empty board activity", async () => {
-      const board = await getBoardActivityByUuid({
+      const board = await getBoardActivityByExternalId({
         boardId: MAIN_STREET_BOARD_ID,
         // Bobatan
         firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
@@ -133,7 +133,7 @@ describe("Tests boards activity queries", () => {
 
   describe("fetches metadata", () => {
     test("fetches board activity when slug present (logged in)", async () => {
-      const board = await getBoardActivityByUuid({
+      const board = await getBoardActivityByExternalId({
         boardId: GORE_BOARD_ID,
         // Oncest
         firebaseId: "fb3",
@@ -198,7 +198,7 @@ describe("Tests boards activity queries", () => {
     });
 
     test("fetches board activity when slug present (logged out)", async () => {
-      const board = await getBoardActivityByUuid({
+      const board = await getBoardActivityByExternalId({
         boardId: GORE_BOARD_ID,
         firebaseId: undefined,
         cursor: null,
@@ -264,7 +264,7 @@ describe("Tests boards activity queries", () => {
 
   describe("fetches author data", () => {
     test("fetches board activity when slug present (logged in)", async () => {
-      const board = await getBoardActivityByUuid({
+      const board = await getBoardActivityByExternalId({
         boardId: GORE_BOARD_ID,
         // Oncest
         firebaseId: "fb3",
@@ -310,7 +310,7 @@ describe("Tests boards activity queries", () => {
     });
 
     test("fetches board activity when slug present (logged out)", async () => {
-      const board = await getBoardActivityByUuid({
+      const board = await getBoardActivityByExternalId({
         boardId: GORE_BOARD_ID,
         firebaseId: undefined,
         cursor: null,
