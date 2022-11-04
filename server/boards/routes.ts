@@ -49,7 +49,7 @@ const router = express.Router();
  *     parameters:
  *       - name: board_id
  *         in: path
- *         description: The uuid of the board to retrieve metadata for.
+ *         description: The external id of the board to retrieve metadata for.
  *         required: true
  *         schema:
  *           type: string
@@ -101,7 +101,7 @@ const router = express.Router();
  */
 router.get("/:board_id", ensureBoardAccess, async (req, res) => {
   const { board_id: boardId } = req.params;
-  log(`Fetching data for board with uuid ${boardId}.`);
+  log(`Fetching data for board with external id ${boardId}.`);
 
   const boardMetadata = await getBoardMetadataByExternalId({
     firebaseId: req.currentUser?.uid,
@@ -250,7 +250,7 @@ router.post(
  *     parameters:
  *       - name: board_id
  *         in: path
- *         description: The uuid of the board to update metadata for.
+ *         description: The external id of the board to update metadata for.
  *         required: true
  *         schema:
  *           type: string
@@ -335,7 +335,7 @@ router.patch(
  *     parameters:
  *       - name: board_id
  *         in: path
- *         description: The uuid of the board to mark as visited.
+ *         description: The external id of the board to mark as visited.
  *         required: true
  *         schema:
  *           type: string
@@ -396,7 +396,7 @@ router.post(
  *     parameters:
  *       - name: board_id
  *         in: path
- *         description: The uuid of the board to mute.
+ *         description: The external id of the board to mute.
  *         required: true
  *         schema:
  *           type: string
@@ -631,7 +631,7 @@ router.delete(
  *     parameters:
  *       - name: board_id
  *         in: path
- *         description: The uuid of the board to dismiss notifications for.
+ *         description: The external id of the board to dismiss notifications for.
  *         required: true
  *         schema:
  *           type: string
