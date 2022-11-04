@@ -68,13 +68,15 @@ VALUES
     ('fb4', 'SexyDaddy69', 'mamoru.png', (SELECT id FROM users WHERE username='oncest5evah')),
     ('fb5', 'The Zodiac Killer', 'villains.png', (SELECT id FROM users WHERE username='oncest5evah'));
 
+-- If you update the realms the users are members of, please update the comments in tests/data/auth.ts
 INSERT INTO realm_users(realm_id, user_id)
 VALUES
     ((SELECT id FROM realms WHERE slug = 'twisted-minds'), (SELECT id FROM users WHERE username = 'bobatan')),
     ((SELECT id FROM realms WHERE slug = 'uwu'), (SELECT id FROM users WHERE username = 'bobatan')),
     ((SELECT id FROM realms WHERE slug = 'twisted-minds'), (SELECT id FROM users WHERE username = 'SexyDaddy69')),
     ((SELECT id FROM realms WHERE slug = 'twisted-minds'), (SELECT id FROM users WHERE username = 'oncest5evah')),
-    ((SELECT id FROM realms WHERE slug = 'uwu'), (SELECT id FROM users WHERE username = 'The Zodiac Killer'));
+    ((SELECT id FROM realms WHERE slug = 'uwu'), (SELECT id FROM users WHERE username = 'The Zodiac Killer')),
+    ((SELECT id FROM realms WHERE slug = 'uwu'), (SELECT id FROM users WHERE username = 'SexyDaddy69'));
 
 -- Set the incremental values of the tables we have overrode the system values of
 -- See: https://stackoverflow.com/questions/9108833/postgres-autoincrement-not-updated-on-explicit-id-inserts

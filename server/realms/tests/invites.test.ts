@@ -863,7 +863,11 @@ describe("Tests accept invites endpoint", () => {
         firebase_id: NEW_USER_FIREBASE_ID,
       });
 
-      const preExistingUsersInRealm = [BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID];
+      const preExistingUsersInRealm = [
+        BOBATAN_USER_ID,
+        ZODIAC_KILLER_USER_ID,
+        SEXY_DADDY_USER_ID,
+      ];
       const usersInRealm = await pool.many(
         `SELECT users.firebase_id
       FROM realm_users
@@ -915,7 +919,11 @@ describe("Tests accept invites endpoint", () => {
         firebase_id: NEW_USER_FIREBASE_ID,
       });
 
-      const preExistingUsersInRealm = [BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID];
+      const preExistingUsersInRealm = [
+        BOBATAN_USER_ID,
+        ZODIAC_KILLER_USER_ID,
+        SEXY_DADDY_USER_ID,
+      ];
       const usersInRealm = await pool.many(
         `SELECT users.firebase_id
         FROM realm_users
