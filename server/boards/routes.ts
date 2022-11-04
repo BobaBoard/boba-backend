@@ -27,7 +27,7 @@ import { NotFound404Error } from "types/errors/api";
 import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
-import { getBoardMetadataByUuid } from "./utils";
+import { getBoardMetadataByExternalId } from "./utils";
 import { getThreadByExternalId } from "server/threads/queries";
 
 const info = debug("bobaserver:board:routes-info");
@@ -40,7 +40,7 @@ const router = express.Router();
  * /boards/{board_id}:
  *   get:
  *     summary: Fetches board metadata.
- *     operationId: getBoardsByUuid
+ *     operationId: getBoardsByExternalId
  *     tags:
  *       - /boards/
  *     security:
@@ -103,7 +103,7 @@ router.get("/:board_id", ensureBoardAccess, async (req, res) => {
   const { board_id: boardId } = req.params;
   log(`Fetching data for board with uuid ${boardId}.`);
 
-  const boardMetadata = await getBoardMetadataByUuid({
+  const boardMetadata = await getBoardMetadataByExternalId({
     firebaseId: req.currentUser?.uid,
     boardId,
     hasBoardAccess: req.currentUser ? true : false,
@@ -173,7 +173,7 @@ router.post(
     const { board_id: boardId } = req.params;
 
     log(`Fetching metadata for board with id ${boardId}`);
-    const boardMetadata = await getBoardMetadataByUuid({
+    const boardMetadata = await getBoardMetadataByExternalId({
       firebaseId: req.currentUser?.uid,
       boardId,
       hasBoardAccess: true,
@@ -199,7 +199,7 @@ router.post(
       defaultView,
       anonymityType: "everyone",
       isLarge: !!large,
-      boardExternalId: boardId,
+      boardId: boardId,
       whisperTags,
       indexTags,
       categoryTags,
@@ -242,7 +242,7 @@ router.post(
  * /boards/{board_id}:
  *   patch:
  *     summary: Update board metadata
- *     operationId: patchBoardsByUuid
+ *     operationId: patchBoardsByExternalId
  *     tags:
  *       - /boards/
  *     security:
@@ -312,7 +312,7 @@ router.patch(
 
     await cache().hdel(CacheKeys.BOARD, boardId);
     await cache().hdel(CacheKeys.BOARD_METADATA, boardId);
-    const boardMetadata = await getBoardMetadataByUuid({
+    const boardMetadata = await getBoardMetadataByExternalId({
       firebaseId: req.currentUser?.uid,
       boardId,
       hasBoardAccess: req.currentRealmPermissions.includes(
@@ -327,7 +327,7 @@ router.patch(
  * /boards/{board_id}/visits:
  *   get:
  *     summary: Sets last visited time for board
- *     operationId: visitsBoardsByUuid
+ *     operationId: visitsBoardsByExternalId
  *     tags:
  *       - /boards/
  *     security:
@@ -387,7 +387,7 @@ router.post(
  * /boards/{board_id}/mute:
  *   post:
  *     summary: Mutes a board.
- *     operationId: mutesBoardsByUuid
+ *     operationId: mutesBoardsByExternalId
  *     description: Mutes the specified board for the current user.
  *     tags:
  *       - /boards/
@@ -448,7 +448,7 @@ router.post(
  * /boards/{board_id}/mute:
  *   delete:
  *     summary: Unmutes a board.
- *     operationId: unmutesBoardsByUuid
+ *     operationId: unmutesBoardsByExternalId
  *     description: Unmutes the specified board for the current user.
  *     tags:
  *       - /boards/
@@ -505,7 +505,7 @@ router.delete(
  * /boards/{board_id}/pin:
  *   post:
  *     summary: Pins a board.
- *     operationId: pinsBoardsByUuid
+ *     operationId: pinsBoardsByExternalId
  *     description: Pins the specified board for the current user.
  *     tags:
  *       - /boards/
@@ -563,7 +563,7 @@ router.post(
  * /boards/{board_id}/pin:
  *   delete:
  *     summary: Unpins a board.
- *     operationId: unpinsBoardsByUuid
+ *     operationId: unpinsBoardsByExternalId
  *     description: Unpins the specified board for the current user.
  *     tags:
  *       - /boards/
@@ -623,7 +623,7 @@ router.delete(
  * /boards/{board_id}/notifications:
  *   delete:
  *     summary: Dismiss all notifications for board
- *     operationId: dismissBoardsByUuid
+ *     operationId: dismissBoardsByExternalId
  *     tags:
  *       - /boards/
  *     security:

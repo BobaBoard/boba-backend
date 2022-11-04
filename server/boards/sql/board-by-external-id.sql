@@ -82,5 +82,5 @@ FROM boards
         ON 1=1
     LEFT JOIN realms
         ON boards.parent_realm_id = realms.id
-WHERE boards.string_id=${board_uuid}
+WHERE boards.string_id=${board_id}
 GROUP BY boards.id, realms.string_id, umb.user_id, opb.index, br.logged_out_restrictions, br.logged_in_base_restrictions, logged_in_user.id

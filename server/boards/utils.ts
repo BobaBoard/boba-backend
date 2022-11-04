@@ -10,7 +10,7 @@ import {
 } from "utils/response-utils";
 
 import debug from "debug";
-import { getBoardByUuid } from "./queries";
+import { getBoardByExternalId } from "./queries";
 import stringify from "fast-json-stable-stringify";
 
 const info = debug("bobaserver:board:utils-info");
@@ -138,7 +138,7 @@ export const getMetadataDelta = ({
   };
 };
 
-export const getBoardMetadataByUuid = async ({
+export const getBoardMetadataByExternalId = async ({
   boardId,
   firebaseId,
   hasBoardAccess,
@@ -155,7 +155,7 @@ export const getBoardMetadataByUuid = async ({
     }
   }
 
-  const board = await getBoardByUuid({
+  const board = await getBoardByExternalId({
     firebaseId,
     boardId,
   });
