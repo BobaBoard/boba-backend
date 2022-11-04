@@ -3,7 +3,7 @@ import { getLatestSubscriptionData } from "../queries";
 describe("Tests posts queries", () => {
   test("adds index tags to post (and database)", async () => {
     const data = await getLatestSubscriptionData({
-      subscriptionId: "a87800a6-21e5-46dd-a979-a901cdcea563",
+      subscriptionExternalId: "a87800a6-21e5-46dd-a979-a901cdcea563",
     });
 
     expect(data).toIncludeSameMembers([

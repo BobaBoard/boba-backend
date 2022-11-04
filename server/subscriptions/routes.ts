@@ -41,25 +41,25 @@ const router = express.Router();
  *               $ref: "#/components/schemas/SubscriptionActivity"
  */
 router.get("/:subscription_id", async (req, res) => {
-  const { subscription_id: subscriptionId } = req.params;
-  log(`Fetching data for subscription with id ${subscriptionId}`);
+  const { subscription_id: subscriptionExternalId } = req.params;
+  log(`Fetching data for subscription with id ${subscriptionExternalId}`);
 
   const cachedSubscription = await cache().hget(
     CacheKeys.SUBSCRIPTION,
-    subscriptionId
+    subscriptionExternalId
   );
   if (cachedSubscription) {
-    log(`Returning cached data for subscription ${subscriptionId}`);
+    log(`Returning cached data for subscription ${subscriptionExternalId}`);
     return res.status(200).json(JSON.parse(cachedSubscription));
   }
 
   const subscriptionData = await getLatestSubscriptionData({
-    subscriptionId,
+    subscriptionExternalId,
   });
 
   if (!subscriptionData || !subscriptionData.length) {
     throw new NotFound404Error(
-      `Webhook for subscription ${subscriptionId} was not found.`
+      `Webhook for subscription ${subscriptionExternalId} was not found.`
     );
     return;
   }
@@ -102,7 +102,7 @@ router.get("/:subscription_id", async (req, res) => {
   };
 
   res.status(200).json(response);
-  cache().hset(CacheKeys.SUBSCRIPTION, subscriptionId, stringify(response));
+  cache().hset(CacheKeys.SUBSCRIPTION, subscriptionExternalId, stringify(response));
 });
 
 export default router;
