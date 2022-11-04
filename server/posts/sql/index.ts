@@ -222,7 +222,7 @@ const isPostOwner = `
 `;
 
 export default {
-  postByExternalId: new QueryFile(path.join(__dirname, "post-by-string-id.sql")),
+  postByExternalId: new QueryFile(path.join(__dirname, "post-by-external-id.sql")),
   getPostDetails: new QueryFile(path.join(__dirname, "get-post-details.sql")),
   getThreadDetails: new QueryFile(
     path.join(__dirname, "get-thread-details.sql")

@@ -11,13 +11,13 @@ const error = debug("bobaserver:feeds:queries-error");
 
 const DEFAULT_PAGE_SIZE = 10;
 export const getBoardActivityByExternalId = async ({
-  boardId,
+  boardExternalId,
   firebaseId,
   categoryFilter,
   cursor,
   pageSize,
 }: {
-  boardId: string;
+  boardExternalId: string;
   firebaseId: string;
   categoryFilter?: string | null;
   cursor: string | null;
@@ -29,7 +29,7 @@ export const getBoardActivityByExternalId = async ({
     const finalPageSize =
       decodedCursor?.page_size || pageSize || DEFAULT_PAGE_SIZE;
     const rows = await pool.manyOrNone(sql.getBoardActivityByExternalId, {
-      board_id: boardId,
+      board_id: boardExternalId,
       firebase_id: firebaseId,
       filtered_category: categoryFilter || null,
       last_activity_cursor: decodedCursor?.last_activity_cursor || null,
@@ -37,13 +37,13 @@ export const getBoardActivityByExternalId = async ({
     });
 
     if (!rows) {
-      log(`Board not found: ${boardId}`);
+      log(`Board not found: ${boardExternalId}`);
       return null;
     }
 
     if (rows.length == 1 && rows[0].thread_id == null) {
       // Only one row with just the null thread)
-      log(`Board empty: ${boardId}`);
+      log(`Board empty: ${boardExternalId}`);
       return { cursor: undefined, activity: [] };
     }
 
@@ -60,10 +60,10 @@ export const getBoardActivityByExternalId = async ({
       result.pop();
     }
 
-    log(`Fetched board ${boardId} activity data for user ${firebaseId}`);
+    log(`Fetched board ${boardExternalId} activity data for user ${firebaseId}`);
     return { cursor: nextCursor, activity: rows };
   } catch (e) {
-    error(`Error while fetching board by slug (${boardId}).`);
+    error(`Error while fetching board by slug (${boardExternalId}).`);
     error(e);
     return false;
   }

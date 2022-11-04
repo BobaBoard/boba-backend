@@ -152,16 +152,16 @@ export const withBoardMetadata = async (
     );
   }
 
-  const boardId = req.params.board_id;
+  const boardExternalId = req.params.board_id;
   const board = await getBoardByExternalId({
     firebaseId: req.currentUser?.uid,
-    boardId,
+    boardExternalId,
   });
 
   if (!board) {
     res
       .status(404)
-      .send({ message: `The board with id "${boardId}" was not found.` });
+      .send({ message: `The board with id "${boardExternalId}" was not found.` });
     return;
   }
 
@@ -267,7 +267,7 @@ export const withPostPermissions = async (
   }
   const board = await getBoardByExternalId({
     firebaseId: req.currentUser.uid,
-    boardId: post.parent_board_id,
+    boardExternalId: post.parent_board_id,
   });
   req.currentPostPermissions = extractPostPermissions(board.permissions);
   next();

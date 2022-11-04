@@ -474,7 +474,7 @@ router.patch(
       // TODO: add a test for this case once there's boards that are not accessible to everyone.
       if (
         !(await canAccessBoardByExternalId({
-          boardId: parentBoardId,
+          boardExternalId: parentBoardId,
           firebaseId: req.currentUser.uid,
         }))
       ) {
