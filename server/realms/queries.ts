@@ -189,7 +189,7 @@ export const getUserPermissionsForRealm = async ({
         realm_string_id: realmExternalId,
       }
     );
-    const realmMember = await checkUserOnRealm({ firebaseId, realmStringId });
+    const realmMember = await checkUserOnRealm({ firebaseId, realmExternalId });
     log("realmMember", realmMember);
     if (!userPermissionsGroupedByRole.length) {
       if (realmMember) {
@@ -212,10 +212,6 @@ export const getUserPermissionsForRealm = async ({
     const userRoleRealmPermissions = extractRealmPermissions(
       allUserRolePermissions
     );
-<<<<<<< HEAD
-    const realmMember = checkUserOnRealm({ firebaseId, realmExternalId });
-=======
->>>>>>> 661b6eff4d0e00f73f3c8c4617a3925edf731dd4
     if (realmMember) {
       return [...userRoleRealmPermissions, ...REALM_MEMBER_PERMISSIONS];
     }
