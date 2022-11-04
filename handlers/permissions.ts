@@ -116,7 +116,7 @@ export const ensureThreadAccess = async (
     (
       await getPostByExternalId(null, {
         firebaseId: req.currentUser?.uid,
-        postId: req.params.post_id,
+        postExternalId: req.params.post_id,
       })
     ).parent_thread_id;
 
@@ -252,7 +252,7 @@ export const withPostPermissions = async (
 
   const post = await getPostByExternalId(null, {
     firebaseId: req.currentUser.uid,
-    postId: req.params.post_id,
+    postExternalId: req.params.post_id,
   });
   if (!post) {
     res.status(404).send({
