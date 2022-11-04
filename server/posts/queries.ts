@@ -687,15 +687,15 @@ export const getPostByExternalId = async (
   transaction: ITask<any> | null,
   {
     firebaseId,
-    postId,
+    postExternalId,
   }: {
     firebaseId: string | undefined;
-    postId: string;
+    postExternalId: string;
   }
 ): Promise<DbPostType> => {
   return await (transaction ?? pool).one(sql.postByExternalId, {
     firebase_id: firebaseId,
-    post_string_id: postId,
+    post_string_id: postExternalId,
   });
 };
 
@@ -703,11 +703,11 @@ export const updatePostTags = async (
   transaction: ITask<any> | null,
   {
     firebaseId,
-    postId,
+    postExternalId,
     tagsDelta,
   }: {
     firebaseId: string;
-    postId: string;
+    postExternalId: string;
     tagsDelta: {
       added: QueryTagsType;
       removed: QueryTagsType;
@@ -715,10 +715,10 @@ export const updatePostTags = async (
   }
 ): Promise<DbPostType | false> => {
   const updateTagsMethod = async (transaction: ITask<any>) => {
-    const post = await getPostByExternalId(transaction, { firebaseId, postId });
+    const post = await getPostByExternalId(transaction, { firebaseId, postExternalId });
     const numericId = (
       await transaction.one<{ id: number }>(sql.getPostIdFromExternalId, {
-        post_string_id: postId,
+        post_string_id: postExternalId,
       })
     ).id;
     await maybeAddIndexTags(transaction, {
@@ -753,7 +753,7 @@ export const updatePostTags = async (
       whisperTags: newWhisperTags,
     });
 
-    return await getPostByExternalId(transaction, { firebaseId, postId });
+    return await getPostByExternalId(transaction, { firebaseId, postExternalId });
   };
 
   try {

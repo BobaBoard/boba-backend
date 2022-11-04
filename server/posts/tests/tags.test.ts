@@ -15,12 +15,11 @@ const log = debug("bobaserver:posts:queries-test-log");
 
 const HIMBO_POST_ID = 6;
 const REVOLVER_OCELOT_POST_ID = 2;
-const HIMBO_POST_STRING_ID = "1f1ad4fa-f02a-48c0-a78a-51221a7db170";
+const HIMBO_POST_EXTERNAL_ID = "1f1ad4fa-f02a-48c0-a78a-51221a7db170";
 describe("Tests posts queries", () => {
   test("adds index tags to post (and database)", async () => {
     await runWithinTransaction(async (transaction) => {
       const postId = HIMBO_POST_ID;
-      const postExternalId = HIMBO_POST_STRING_ID;
 
       const addedTags = await maybeAddIndexTags(transaction, {
         postId,
@@ -30,7 +29,7 @@ describe("Tests posts queries", () => {
 
       const result = await getPostByExternalId(transaction, {
         firebaseId: undefined,
-        postId: postExternalId,
+        postExternalId: HIMBO_POST_EXTERNAL_ID,
       });
 
       expect(result.index_tags).toIncludeSameMembers([
@@ -43,7 +42,6 @@ describe("Tests posts queries", () => {
   test("adds content warnings tags to post (and database)", async () => {
     await runWithinTransaction(async (transaction) => {
       const postId = HIMBO_POST_ID;
-      const postExternalId = HIMBO_POST_STRING_ID;
 
       const addedTags = await maybeAddContentWarningTags(transaction, {
         postId,
@@ -53,7 +51,7 @@ describe("Tests posts queries", () => {
 
       const result = await getPostByExternalId(transaction, {
         firebaseId: undefined,
-        postId: postExternalId,
+        postExternalId: HIMBO_POST_EXTERNAL_ID,
       });
 
       expect(result.content_warnings).toIncludeSameMembers(["zombies", "vore"]);
@@ -67,7 +65,6 @@ describe("Tests posts queries", () => {
     test("adds category tags to post (and database)", async () => {
       await runWithinTransaction(async (transaction) => {
         const postId = HIMBO_POST_ID;
-        const postExternalId = HIMBO_POST_STRING_ID;
         const addedTags = await maybeAddCategoryTags(transaction, {
           postId,
           categoryTags: ["thirst"],
@@ -76,7 +73,7 @@ describe("Tests posts queries", () => {
 
         const result = await getPostByExternalId(transaction, {
           firebaseId: undefined,
-          postId: postExternalId,
+          postExternalId: HIMBO_POST_EXTERNAL_ID,
         });
 
         expect(result.category_tags).toIncludeSameMembers(["thirst"]);
@@ -95,7 +92,7 @@ test("removes tags from post", async () => {
 
     const result = await getPostByExternalId(transaction, {
       firebaseId: undefined,
-      postId: postExternalId,
+      postExternalId: postExternalId,
     });
 
     expect(result.index_tags).toIncludeSameMembers([
@@ -110,7 +107,6 @@ test("removes tags from post", async () => {
 test("updates whisper tags", async () => {
   await runWithinTransaction(async (transaction) => {
     const postId = HIMBO_POST_ID;
-    const postExternalId = HIMBO_POST_STRING_ID;
     await updateWhisperTags(transaction, {
       postId,
       whisperTags: ["whisper whisper", "babble babble"],
@@ -118,7 +114,7 @@ test("updates whisper tags", async () => {
 
     const result = await getPostByExternalId(transaction, {
       firebaseId: undefined,
-      postId: postExternalId,
+      postExternalId: HIMBO_POST_EXTERNAL_ID,
     });
 
     expect(result.whisper_tags).toIncludeSameMembers([
