@@ -37,7 +37,7 @@ export const getWebhooksForSubscription = `
 
 export default {
   getSubscriptionActivityByExternalId: new QueryFile(
-    path.join(__dirname, "subscription-activity-by-string-id.sql")
+    path.join(__dirname, "subscription-activity-by-external-id.sql")
   ),
   getTriggeredThreadSubscriptions,
   getTriggeredBoardSubscriptions,

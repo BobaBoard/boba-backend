@@ -69,10 +69,10 @@ export const getTriggeredThreadsSubscriptions = async ({
 };
 
 export const getTriggeredBoardSubscriptions = async ({
-  boardId,
+  boardExternalId,
   categories,
 }: {
-  boardId: string;
+  boardExternalId: string;
   categories: string[];
 }): Promise<
   {
@@ -83,7 +83,7 @@ export const getTriggeredBoardSubscriptions = async ({
   try {
     return (
       await pool.manyOrNone(sql.getTriggeredBoardSubscriptions, {
-        board_string_id: boardId,
+        board_string_id: boardExternalId,
         category_names: categories,
       })
     )?.map((s) => ({

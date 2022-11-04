@@ -5,7 +5,7 @@ import { getBoardActivityByExternalId } from "../queries";
 describe("Tests boards queries", () => {
   test("fetches first page, gets cursor back", async () => {
     const boardActivity = await getBoardActivityByExternalId({
-      boardId: LONG_BOARD_ID,
+      boardExternalId: LONG_BOARD_ID,
       // Bobatan
       firebaseId: BOBATAN_USER_ID,
       cursor: null,
@@ -29,7 +29,7 @@ describe("Tests boards queries", () => {
 
   test("fetches second page, gets cursor back", async () => {
     const boardActivity = await getBoardActivityByExternalId({
-      boardId: LONG_BOARD_ID,
+      boardExternalId: LONG_BOARD_ID,
       // Bobatan
       firebaseId: BOBATAN_USER_ID,
       cursor:
@@ -54,7 +54,7 @@ describe("Tests boards queries", () => {
 
   test("fetches last page, gets no cursor back", async () => {
     const boardActivity = await getBoardActivityByExternalId({
-      boardId: LONG_BOARD_ID,
+      boardExternalId: LONG_BOARD_ID,
       // Bobatan
       firebaseId: BOBATAN_USER_ID,
       cursor:
@@ -75,7 +75,7 @@ describe("Tests boards queries", () => {
 
   test("fetches correctly when only one result after current page", async () => {
     const boardActivity = await getBoardActivityByExternalId({
-      boardId: LONG_BOARD_ID,
+      boardExternalId: LONG_BOARD_ID,
       // Bobatan
       firebaseId: BOBATAN_USER_ID,
       cursor:
@@ -95,7 +95,7 @@ describe("Tests boards queries", () => {
     ).toEqual('[{"insert":"Post 2!"}]');
 
     const boardActivity2 = await getBoardActivityByExternalId({
-      boardId: LONG_BOARD_ID,
+      boardExternalId: LONG_BOARD_ID,
       // Bobatan
       firebaseId: BOBATAN_USER_ID,
       cursor: boardActivity.cursor,
@@ -113,7 +113,7 @@ describe("Tests boards queries", () => {
 
   it("fetches correctly when no result after current page (outdated cursor)", async () => {
     const boardActivity = await getBoardActivityByExternalId({
-      boardId: LONG_BOARD_ID,
+      boardExternalId: LONG_BOARD_ID,
       // Bobatan
       firebaseId: BOBATAN_USER_ID,
       cursor:
@@ -133,7 +133,7 @@ describe("Tests boards queries", () => {
     // posts to not be returned when the timestamp of their creation included
     // microseconds.
     const boardActivityCursor = await getBoardActivityByExternalId({
-      boardId: LONG_BOARD_ID,
+      boardExternalId: LONG_BOARD_ID,
       // Bobatan
       firebaseId: BOBATAN_USER_ID,
       cursor: undefined,
@@ -156,7 +156,7 @@ describe("Tests boards queries", () => {
     );
 
     const boardActivity = await getBoardActivityByExternalId({
-      boardId: LONG_BOARD_ID,
+      boardExternalId: LONG_BOARD_ID,
       // Bobatan
       firebaseId: BOBATAN_USER_ID,
       cursor: boardActivityCursor.cursor,

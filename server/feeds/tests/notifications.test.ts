@@ -14,7 +14,7 @@ describe("Tests notifications", () => {
   test("gets correct amounts with no visit", async () => {
     // Since there was no visit we expect every post/comment to be marked as new
     const boardActivity = await getBoardActivityByExternalId({
-      boardId: GORE_BOARD_ID,
+      boardExternalId: GORE_BOARD_ID,
       firebaseId: JERSEY_DEVIL_USER_ID,
       cursor: null,
     });
@@ -48,7 +48,7 @@ describe("Tests notifications", () => {
   test("gets correct amounts with new comments (self)", async () => {
     // The only new comments are from the user itself
     const boardActivity = await getBoardActivityByExternalId({
-      boardId: GORE_BOARD_ID,
+      boardExternalId: GORE_BOARD_ID,
       firebaseId: BOBATAN_USER_ID,
       cursor: null,
     });
@@ -83,7 +83,7 @@ describe("Tests notifications", () => {
   test("gets correct amounts with new comments (not self)", async () => {
     // The new comments are not from the user itself
     const boardActivity = await getBoardActivityByExternalId({
-      boardId: GORE_BOARD_ID,
+      boardExternalId: GORE_BOARD_ID,
       firebaseId: ONCEST_USER_ID,
       cursor: null,
     });
@@ -118,7 +118,7 @@ describe("Tests notifications", () => {
   test("gets correct amounts with new posts (self)", async () => {
     // Since we made the last posts since the visit we expect no new ones
     const boardActivity = await getBoardActivityByExternalId({
-      boardId: GORE_BOARD_ID,
+      boardExternalId: GORE_BOARD_ID,
       firebaseId: JERSEY_DEVIL_USER_ID,
       cursor: null,
     });
@@ -153,7 +153,7 @@ describe("Tests notifications", () => {
   test("gets correct amounts with new posts (not self)", async () => {
     // We expect new posts after the last visit
     const boardActivity = await getBoardActivityByExternalId({
-      boardId: GORE_BOARD_ID,
+      boardExternalId: GORE_BOARD_ID,
       firebaseId: ONCEST_USER_ID,
       cursor: null,
     });
@@ -188,7 +188,7 @@ describe("Tests notifications", () => {
   test("gets correct amounts with no updates", async () => {
     // Since there was no visit we expect every post/comment to be marked as new
     const boardActivity = await getBoardActivityByExternalId({
-      boardId: GORE_BOARD_ID,
+      boardExternalId: GORE_BOARD_ID,
       firebaseId: BOBATAN_USER_ID,
       cursor: null,
     });
@@ -221,7 +221,7 @@ describe("Tests notifications", () => {
   });
   test("gets correct amounts (logged out)", async () => {
     const boardActivity = await getBoardActivityByExternalId({
-      boardId: GORE_BOARD_ID,
+      boardExternalId: GORE_BOARD_ID,
       firebaseId: undefined,
       cursor: null,
     });
@@ -262,7 +262,7 @@ describe("Tests notifications", () => {
 
   test("gets correct amounts with dismissed notifs (new entries)", async () => {
     const boardActivity = await getBoardActivityByExternalId({
-      boardId: GORE_BOARD_ID,
+      boardExternalId: GORE_BOARD_ID,
       firebaseId: SEXY_DADDY_USER_ID,
       cursor: null,
     });
@@ -303,7 +303,7 @@ describe("Tests notifications", () => {
 
   test("gets correct amounts with dismissed notifs (no new entries)", async () => {
     const boardActivity = await getBoardActivityByExternalId({
-      boardId: ANIME_BOARD_ID,
+      boardExternalId: ANIME_BOARD_ID,
       firebaseId: SEXY_DADDY_USER_ID,
       cursor: null,
     });
@@ -332,7 +332,7 @@ describe("Tests notifications", () => {
 
   test("gets correct amounts with dismissed notifs (mixed visits and dismiss)", async () => {
     const boardActivity = await getBoardActivityByExternalId({
-      boardId: LONG_BOARD_ID,
+      boardExternalId: LONG_BOARD_ID,
       firebaseId: ZODIAC_KILLER_USER_ID,
       cursor: null,
       pageSize: 50,
@@ -570,7 +570,7 @@ describe("Tests notifications", () => {
 
   test("gets correct amounts with dismissed BOARD notifs (only dismiss)", async () => {
     const boardActivity = await getBoardActivityByExternalId({
-      boardId: LONG_BOARD_ID,
+      boardExternalId: LONG_BOARD_ID,
       firebaseId: ONCEST_USER_ID,
       cursor: null,
       pageSize: 50,
