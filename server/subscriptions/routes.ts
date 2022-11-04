@@ -25,7 +25,7 @@ const router = express.Router();
  *     parameters:
  *       - name: subscription_id
  *         in: path
- *         description: The uuid of the subscription.
+ *         description: The external id of the subscription.
  *         required: true
  *         schema:
  *           type: string
