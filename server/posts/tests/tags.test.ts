@@ -1,5 +1,5 @@
 import {
-  getPostFromExternalId,
+  getPostByExternalId,
   maybeAddCategoryTags,
   maybeAddContentWarningTags,
   maybeAddIndexTags,
@@ -28,7 +28,7 @@ describe("Tests posts queries", () => {
       });
       expect(addedTags).toIncludeSameMembers(["resident evil", "leon kennedy"]);
 
-      const result = await getPostFromExternalId(transaction, {
+      const result = await getPostByExternalId(transaction, {
         firebaseId: undefined,
         postId: postExternalId,
       });
@@ -51,7 +51,7 @@ describe("Tests posts queries", () => {
       });
       expect(addedTags).toIncludeSameMembers(["zombies", "vore"]);
 
-      const result = await getPostFromExternalId(transaction, {
+      const result = await getPostByExternalId(transaction, {
         firebaseId: undefined,
         postId: postExternalId,
       });
@@ -74,7 +74,7 @@ describe("Tests posts queries", () => {
         });
         expect(addedTags).toIncludeSameMembers(["thirst"]);
 
-        const result = await getPostFromExternalId(transaction, {
+        const result = await getPostByExternalId(transaction, {
           firebaseId: undefined,
           postId: postExternalId,
         });
@@ -93,7 +93,7 @@ test("removes tags from post", async () => {
       indexTags: ["EVIL", "   metal gear      "],
     });
 
-    const result = await getPostFromExternalId(transaction, {
+    const result = await getPostByExternalId(transaction, {
       firebaseId: undefined,
       postId: postExternalId,
     });
@@ -116,7 +116,7 @@ test("updates whisper tags", async () => {
       whisperTags: ["whisper whisper", "babble babble"],
     });
 
-    const result = await getPostFromExternalId(transaction, {
+    const result = await getPostByExternalId(transaction, {
       firebaseId: undefined,
       postId: postExternalId,
     });
