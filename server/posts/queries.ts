@@ -683,7 +683,7 @@ export const addNewIdentityToThreadByBoardId = async (
   };
 };
 
-export const getPostFromExternalId = async (
+export const getPostByExternalId = async (
   transaction: ITask<any> | null,
   {
     firebaseId,
@@ -715,7 +715,7 @@ export const updatePostTags = async (
   }
 ): Promise<DbPostType | false> => {
   const updateTagsMethod = async (transaction: ITask<any>) => {
-    const post = await getPostFromExternalId(transaction, { firebaseId, postId });
+    const post = await getPostByExternalId(transaction, { firebaseId, postId });
     const numericId = (
       await transaction.one<{ id: number }>(sql.getPostIdFromExternalId, {
         post_string_id: postId,
@@ -753,7 +753,7 @@ export const updatePostTags = async (
       whisperTags: newWhisperTags,
     });
 
-    return await getPostFromExternalId(transaction, { firebaseId, postId });
+    return await getPostByExternalId(transaction, { firebaseId, postId });
   };
 
   try {

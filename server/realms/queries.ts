@@ -157,7 +157,7 @@ export const dismissAllNotifications = async ({
   }
 };
 
-export const getRealmIdsByUuid = async ({
+export const getRealmByExternalId = async ({
   realmExternalId,
 }: {
   realmExternalId: string;
@@ -166,7 +166,7 @@ export const getRealmIdsByUuid = async ({
   string_id: string;
   slug: string;
 } | null> => {
-  return await pool.oneOrNone(sql.getRealmIdsByUuid, {
+  return await pool.oneOrNone(sql.getRealmByExternalId, {
     realm_id: realmExternalId,
   });
 };

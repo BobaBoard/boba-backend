@@ -15,7 +15,7 @@ import {
   getBoardRestrictions,
 } from "utils/permissions-utils";
 import {
-  getRealmIdsByUuid,
+  getRealmByExternalId,
   getUserPermissionsForRealm,
 } from "server/realms/queries";
 import {
@@ -25,7 +25,7 @@ import {
 
 import { Internal500Error } from "types/errors/api";
 import { getBoardByUuid } from "server/boards/queries";
-import { getPostFromExternalId } from "server/posts/queries";
+import { getPostByExternalId } from "server/posts/queries";
 
 declare global {
   namespace Express {
@@ -114,7 +114,7 @@ export const ensureThreadAccess = async (
   const threadExternalId =
     req.params.thread_id ??
     (
-      await getPostFromExternalId(null, {
+      await getPostByExternalId(null, {
         firebaseId: req.currentUser?.uid,
         postId: req.params.post_id,
       })
@@ -250,7 +250,7 @@ export const withPostPermissions = async (
     return;
   }
 
-  const post = await getPostFromExternalId(null, {
+  const post = await getPostByExternalId(null, {
     firebaseId: req.currentUser.uid,
     postId: req.params.post_id,
   });
@@ -284,7 +284,7 @@ export const ensureRealmExists = async (
     );
   }
 
-  const currentRealmIds = await getRealmIdsByUuid({
+  const currentRealmIds = await getRealmByExternalId({
     realmExternalId: req.params.realm_id,
   });
   if (!currentRealmIds) {

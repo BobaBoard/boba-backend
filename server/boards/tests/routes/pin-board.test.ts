@@ -12,7 +12,7 @@ import {
   wrapWithTransaction,
 } from "utils/test-utils";
 
-import { TWISTED_MINDS_REALM_STRING_ID } from "test/data/realms";
+import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
 import request from "supertest";
 import router from "../../routes";
 
