@@ -133,15 +133,15 @@ export const canAccessBoard = async ({
 };
 
 export const canAccessBoardByExternalId = async ({
-  boardId,
+  boardExternalId,
   firebaseId,
 }: {
-  boardId: string;
+  boardExternalId: string;
   firebaseId?: string;
 }) => {
   const board = await getBoardByExternalId({
     firebaseId,
-    boardId,
+    boardExternalId,
   });
   info(`Found board`, board);
 

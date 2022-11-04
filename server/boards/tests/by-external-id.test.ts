@@ -127,7 +127,7 @@ const GORE_BOARD_LOGGED_IN: DbBoardMetadata = {
 describe("Tests boards queries", () => {
   test("fetches board by external id when external id present", async () => {
     const board = await getBoardByExternalId({
-      boardId: GORE_BOARD_ID,
+      boardExternalId: GORE_BOARD_ID,
       firebaseId: undefined,
     });
 
@@ -136,7 +136,7 @@ describe("Tests boards queries", () => {
 
   test("fetches board by external id when external id present (logged in)", async () => {
     const board = await getBoardByExternalId({
-      boardId: GORE_BOARD_ID,
+      boardExternalId: GORE_BOARD_ID,
       firebaseId: BOBATAN_USER_ID,
     });
 
@@ -145,7 +145,7 @@ describe("Tests boards queries", () => {
 
   test("returns null board when external id not found", async () => {
     const board = await getBoardByExternalId({
-      boardId: "00000000-0000-0000-0000-000000000000",
+      boardExternalId: "00000000-0000-0000-0000-000000000000",
       firebaseId: undefined,
     });
 
