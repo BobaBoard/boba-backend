@@ -7,7 +7,7 @@ import {
 } from "test/data/auth";
 import { FAVORITE_CHARACTER_THREAD_ID, FAVORITE_MURDER_THREAD_ID } from "test/data/threads";
 
-import { getThreadByStringId } from "../queries";
+import { getThreadByExternalId } from "../queries";
 
 const extractActivityFromThread = (thread: any) => {
   return {
@@ -29,8 +29,8 @@ const extractActivityFromThread = (thread: any) => {
 describe("threads activity queries", () => {
   test("gets correct amounts with no visit", async () => {
     // Since there was no visit we expect every post/comment to be marked as new
-    const thread = await getThreadByStringId({
-      threadStringId: FAVORITE_CHARACTER_THREAD_ID,
+    const thread = await getThreadByExternalId({
+      threadExternalId: FAVORITE_CHARACTER_THREAD_ID,
       firebaseId: JERSEY_DEVIL_USER_ID,
     });
 
@@ -72,8 +72,8 @@ describe("threads activity queries", () => {
   });
   test("gets correct amounts with new comments (self)", async () => {
     // The only new comments are from the user itself
-    const thread = await getThreadByStringId({
-      threadStringId: FAVORITE_CHARACTER_THREAD_ID,
+    const thread = await getThreadByExternalId({
+      threadExternalId: FAVORITE_CHARACTER_THREAD_ID,
       firebaseId: BOBATAN_USER_ID,
     });
 
@@ -116,8 +116,8 @@ describe("threads activity queries", () => {
 
   test("gets correct amounts with new comments (not self)", async () => {
     // The new comments are not from the user itself
-    const thread = await getThreadByStringId({
-      threadStringId: FAVORITE_CHARACTER_THREAD_ID,
+    const thread = await getThreadByExternalId({
+      threadExternalId: FAVORITE_CHARACTER_THREAD_ID,
       firebaseId: ONCEST_USER_ID,
     });
 
@@ -160,8 +160,8 @@ describe("threads activity queries", () => {
 
   test("gets correct amounts with new posts (self)", async () => {
     // Since we made the last posts since the visit we expect no new ones
-    const thread = await getThreadByStringId({
-      threadStringId: FAVORITE_MURDER_THREAD_ID,
+    const thread = await getThreadByExternalId({
+      threadExternalId: FAVORITE_MURDER_THREAD_ID,
       firebaseId: JERSEY_DEVIL_USER_ID,
     });
 
@@ -195,8 +195,8 @@ describe("threads activity queries", () => {
 
   test("gets correct amounts with new posts (not self)", async () => {
     // We expect new posts after the last visit
-    const thread = await getThreadByStringId({
-      threadStringId: FAVORITE_MURDER_THREAD_ID,
+    const thread = await getThreadByExternalId({
+      threadExternalId: FAVORITE_MURDER_THREAD_ID,
       firebaseId: ONCEST_USER_ID,
     });
 
@@ -230,8 +230,8 @@ describe("threads activity queries", () => {
 
   test("gets correct amounts with no updates", async () => {
     // Since the last visit was after the last post we expect no updates
-    const thread = await getThreadByStringId({
-      threadStringId: FAVORITE_MURDER_THREAD_ID,
+    const thread = await getThreadByExternalId({
+      threadExternalId: FAVORITE_MURDER_THREAD_ID,
       firebaseId: BOBATAN_USER_ID,
     });
 
@@ -264,8 +264,8 @@ describe("threads activity queries", () => {
   });
 
   test("gets correct amounts (logged out)", async () => {
-    const thread = await getThreadByStringId({
-      threadStringId: FAVORITE_CHARACTER_THREAD_ID,
+    const thread = await getThreadByExternalId({
+      threadExternalId: FAVORITE_CHARACTER_THREAD_ID,
       firebaseId: undefined,
     });
 
@@ -308,8 +308,8 @@ describe("threads activity queries", () => {
 
   test("gets correct amounts with dismiss notifications (new)", async () => {
     // The only new comments are from the user itself
-    const thread = await getThreadByStringId({
-      threadStringId: FAVORITE_CHARACTER_THREAD_ID,
+    const thread = await getThreadByExternalId({
+      threadExternalId: FAVORITE_CHARACTER_THREAD_ID,
       firebaseId: SEXY_DADDY_USER_ID,
     });
 
@@ -352,9 +352,9 @@ describe("threads activity queries", () => {
 
   test("gets correct amounts with dismiss notifications (no new)", async () => {
     // The only new comments are from the user itself
-    const thread = await getThreadByStringId({
+    const thread = await getThreadByExternalId({
       // Anime board
-      threadStringId: "b27710a8-0a9f-4c09-b3a5-54668bab7051",
+      threadExternalId: "b27710a8-0a9f-4c09-b3a5-54668bab7051",
       firebaseId: SEXY_DADDY_USER_ID,
     });
 
@@ -386,9 +386,9 @@ describe("threads activity queries", () => {
   describe("Test correct amounts with both dismiss and visit", () => {
     test("Visited earlier than dismiss", async () => {
       // The only new comments are from the user itself
-      const thread = await getThreadByStringId({
+      const thread = await getThreadByExternalId({
         // Visited earlier than dismiss
-        threadStringId: "32a0174b-091e-4fe6-82f3-bffd6c6026ae",
+        threadExternalId: "32a0174b-091e-4fe6-82f3-bffd6c6026ae",
         firebaseId: ZODIAC_KILLER_USER_ID,
       });
 
@@ -410,9 +410,9 @@ describe("threads activity queries", () => {
 
     test("Visited after dismiss", async () => {
       // The only new comments are from the user itself
-      const thread = await getThreadByStringId({
+      const thread = await getThreadByExternalId({
         // Visited after dismiss
-        threadStringId: "c55314b4-0b61-41c9-aa2f-b7fa28adf651",
+        threadExternalId: "c55314b4-0b61-41c9-aa2f-b7fa28adf651",
         firebaseId: ZODIAC_KILLER_USER_ID,
       });
       expect(extractActivityFromThread(thread)).toEqual({
@@ -432,9 +432,9 @@ describe("threads activity queries", () => {
 
     test("Never visited, created before dismiss", async () => {
       // The only new comments are from the user itself
-      const thread = await getThreadByStringId({
+      const thread = await getThreadByExternalId({
         // Never visited, before dismiss
-        threadStringId: "dacfb175-0d47-4c5e-8ecc-7fbf176ad915",
+        threadExternalId: "dacfb175-0d47-4c5e-8ecc-7fbf176ad915",
         firebaseId: ZODIAC_KILLER_USER_ID,
       });
       expect(extractActivityFromThread(thread)).toEqual({
@@ -454,9 +454,9 @@ describe("threads activity queries", () => {
 
     test("Never visited, created after dismiss", async () => {
       // The only new comments are from the user itself
-      const thread = await getThreadByStringId({
+      const thread = await getThreadByExternalId({
         // Never visited, after dismiss
-        threadStringId: "7d88a537-f23f-46de-970e-29ae392cd5f9",
+        threadExternalId: "7d88a537-f23f-46de-970e-29ae392cd5f9",
         firebaseId: ZODIAC_KILLER_USER_ID,
       });
       expect(extractActivityFromThread(thread)).toEqual({

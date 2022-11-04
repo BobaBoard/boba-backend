@@ -3,12 +3,12 @@ import { FAVORITE_CHARACTER_THREAD_ID, FAVORITE_MURDER_THREAD_ID } from "test/da
 import { BOBATAN_USER_ID } from "test/data/auth";
 import { GORE_BOARD_ID } from "test/data/boards";
 import { TWISTED_MINDS_REALM_STRING_ID } from "test/data/realms";
-import { getThreadByStringId } from "../queries";
+import { getThreadByExternalId } from "../queries";
 
 describe("threads queries", () => {
   test("fetches threads by string id (with comments)", async () => {
-    const thread = await getThreadByStringId({
-      threadStringId: FAVORITE_CHARACTER_THREAD_ID,
+    const thread = await getThreadByExternalId({
+      threadExternalId: FAVORITE_CHARACTER_THREAD_ID,
       firebaseId: BOBATAN_USER_ID,
     });
 
@@ -173,8 +173,8 @@ describe("threads queries", () => {
   });
 
   test("fetches threads by string id (no comments)", async () => {
-    const thread = await getThreadByStringId({
-      threadStringId: FAVORITE_MURDER_THREAD_ID,
+    const thread = await getThreadByExternalId({
+      threadExternalId: FAVORITE_MURDER_THREAD_ID,
       // Oncest
       firebaseId: "fb3",
     });
@@ -289,8 +289,8 @@ describe("threads queries", () => {
   });
 
   test("fetches threads by string id (logged out)", async () => {
-    const thread = await getThreadByStringId({
-      threadStringId: FAVORITE_CHARACTER_THREAD_ID,
+    const thread = await getThreadByExternalId({
+      threadExternalId: FAVORITE_CHARACTER_THREAD_ID,
       firebaseId: null,
     });
 
@@ -455,8 +455,8 @@ describe("threads queries", () => {
   });
 
   test("returns null thread when id not found", async () => {
-    const thread = await getThreadByStringId({
-      threadStringId: "this_will_not_be_in_the_db",
+    const thread = await getThreadByExternalId({
+      threadExternalId: "this_will_not_be_in_the_db",
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
     });
 

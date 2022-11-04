@@ -138,15 +138,15 @@ export const getRealmDataBySlug = async ({
 
 export const dismissAllNotifications = async ({
   firebaseId,
-  realmStringId,
+  realmExternalId,
 }: {
   firebaseId: string;
-  realmStringId?: string;
+  realmExternalId?: string;
 }): Promise<any> => {
   try {
     await pool.none(sql.dismissNotifications, {
       firebase_id: firebaseId,
-      realm_id: realmStringId,
+      realm_id: realmExternalId,
     });
     info(`Dismissed all notifications for user with firebaseId: `, firebaseId);
     return true;
@@ -158,25 +158,25 @@ export const dismissAllNotifications = async ({
 };
 
 export const getRealmIdsByUuid = async ({
-  realmStringId,
+  realmExternalId,
 }: {
-  realmStringId: string;
+  realmExternalId: string;
 }): Promise<{
   id: string;
   string_id: string;
   slug: string;
 } | null> => {
   return await pool.oneOrNone(sql.getRealmIdsByUuid, {
-    realm_id: realmStringId,
+    realm_id: realmExternalId,
   });
 };
 
 export const getUserPermissionsForRealm = async ({
   firebaseId,
-  realmStringId,
+  realmExternalId,
 }: {
   firebaseId: string | undefined;
-  realmStringId: string;
+  realmExternalId: string;
 }) => {
   try {
     if (!firebaseId) {
@@ -186,7 +186,7 @@ export const getUserPermissionsForRealm = async ({
       sql.getUserPermissionsForRealm,
       {
         user_id: firebaseId,
-        realm_string_id: realmStringId,
+        realm_string_id: realmExternalId,
       }
     );
     const realmMember = await checkUserOnRealm({ firebaseId, realmStringId });
@@ -224,7 +224,7 @@ export const getUserPermissionsForRealm = async ({
 };
 
 export const createInvite = async (inviteData: {
-  realmStringId: string;
+  realmExternalId: string;
   email: string | null;
   inviteCode: string;
   inviterId: number;
@@ -232,13 +232,13 @@ export const createInvite = async (inviteData: {
 }) => {
   try {
     await pool.none(sql.createRealmInvite, {
-      realm_id: inviteData.realmStringId,
+      realm_id: inviteData.realmExternalId,
       invite_code: inviteData.inviteCode,
       inviter_id: inviteData.inviterId,
       email: inviteData.email,
       label: inviteData.label,
     });
-    log(`Generated invite for realm ${inviteData.realmStringId}.`);
+    log(`Generated invite for realm ${inviteData.realmExternalId}.`);
     return true;
   } catch (e) {
     error(`Error while generating invite.`);
@@ -252,7 +252,7 @@ export const getInviteDetails = async ({
 }: {
   nonce: string;
 }): Promise<{
-  realmStringId: string;
+  realmExternalId: string;
   email: string | null;
   used: boolean;
   expired: boolean;
@@ -265,7 +265,7 @@ export const getInviteDetails = async ({
     log(`Fetched details for invite ${nonce}:`);
     log(inviteDetails);
     return {
-      realmStringId: inviteDetails.realm_id,
+      realmExternalId: inviteDetails.realm_id,
       email: inviteDetails.invitee_email,
       expired: inviteDetails.expired,
       used: inviteDetails.used,
@@ -282,18 +282,18 @@ export const addUserToRealm = async (
   transaction: ITask<unknown>,
   {
     firebaseId,
-    realmStringId,
+    realmExternalId,
   }: {
     firebaseId: string;
-    realmStringId: string;
+    realmExternalId: string;
   }
 ): Promise<boolean> => {
   try {
     await transaction.none(sql.addUserToRealm, {
       firebase_id: firebaseId,
-      realm_string_id: realmStringId,
+      realm_string_id: realmExternalId,
     });
-    log(`Added user ${firebaseId} to realm ${realmStringId}`);
+    log(`Added user ${firebaseId} to realm ${realmExternalId}`);
     return true;
   } catch (e) {
     error(`Error adding user to realm.`);
@@ -330,11 +330,11 @@ export const markInviteUsed = async (
 export const acceptInvite = async ({
   nonce,
   firebaseId,
-  realmStringId,
+  realmExternalId,
 }: {
   nonce: string;
   firebaseId: string;
-  realmStringId: string;
+  realmExternalId: string;
 }): Promise<boolean> => {
   return pool
     .tx("accept-invite", async (transaction) => {
@@ -344,7 +344,7 @@ export const acceptInvite = async ({
       }
       const addedToRealm = await addUserToRealm(transaction, {
         firebaseId,
-        realmStringId,
+        realmExternalId,
       });
       if (!addedToRealm) {
         throw new Error(`Failed to add user to realm`);
@@ -359,9 +359,9 @@ export const acceptInvite = async ({
 };
 
 export const getRealmInvites = async ({
-  realmStringId,
+  realmExternalId,
 }: {
-  realmStringId: string;
+  realmExternalId: string;
 }): Promise<
   | {
       nonce: string;
@@ -375,9 +375,9 @@ export const getRealmInvites = async ({
 > => {
   try {
     const invites = await pool.manyOrNone(sql.getInvites, {
-      realmStringId,
+      realmExternalId,
     });
-    log(`Fetched invites for realm ${realmStringId}:`);
+    log(`Fetched invites for realm ${realmExternalId}:`);
     log(invites);
     return invites;
   } catch (e) {
@@ -389,15 +389,15 @@ export const getRealmInvites = async ({
 
 export const checkUserOnRealm = async ({
   firebaseId,
-  realmStringId,
+  realmExternalId,
 }: {
   firebaseId: string;
-  realmStringId: string;
+  realmExternalId: string;
 }): Promise<boolean | null> => {
   try {
     const inRealm = await pool.oneOrNone(sql.findUserOnRealm, {
       firebase_id: firebaseId,
-      realm_string_id: realmStringId,
+      realm_string_id: realmExternalId,
     });
     return !!inRealm;
   } catch (e) {

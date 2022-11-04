@@ -110,7 +110,7 @@ const insertInvites = async (
     created?: string;
   }[],
   inviter: string,
-  realmStringId: string
+  realmExternalId: string
 ) => {
   await pool.task(async (t) => {
     for (const invite of invites) {
@@ -122,7 +122,7 @@ const insertInvites = async (
   (SELECT id FROM users WHERE firebase_id = $/inviter_id/),
   $/nonce/, $/email/, $/label/, $/created/, INTERVAL '1 WEEK', $/used/)`,
         {
-          realm_id: realmStringId,
+          realm_id: realmExternalId,
           inviter_id: inviter,
           nonce: invite.nonce,
           email: invite.email,
@@ -601,7 +601,7 @@ describe("Tests accept invites endpoint", () => {
       });
       const addedToRealm = await checkUserOnRealm({
         firebaseId: JERSEY_DEVIL_USER_ID,
-        realmStringId: UWU_REALM_STRING_ID,
+        realmExternalId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(true);
     });
@@ -626,7 +626,7 @@ describe("Tests accept invites endpoint", () => {
       });
       const addedToRealm = await checkUserOnRealm({
         firebaseId: JERSEY_DEVIL_USER_ID,
-        realmStringId: UWU_REALM_STRING_ID,
+        realmExternalId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(true);
     });
@@ -656,7 +656,7 @@ describe("Tests accept invites endpoint", () => {
       });
       const addedToRealm = await checkUserOnRealm({
         firebaseId: ONCEST_USER_ID,
-        realmStringId: UWU_REALM_STRING_ID,
+        realmExternalId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(true);
     });
@@ -696,7 +696,7 @@ describe("Tests accept invites endpoint", () => {
       expect(res.status).toBe(403);
       const addedToRealm = await checkUserOnRealm({
         firebaseId: JERSEY_DEVIL_USER_ID,
-        realmStringId: UWU_REALM_STRING_ID,
+        realmExternalId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(false);
     });
@@ -722,7 +722,7 @@ describe("Tests accept invites endpoint", () => {
       expect(res.body.message).toBe(`Invite expired or already used`);
       const addedToRealm = await checkUserOnRealm({
         firebaseId: JERSEY_DEVIL_USER_ID,
-        realmStringId: UWU_REALM_STRING_ID,
+        realmExternalId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(false);
     });
@@ -748,7 +748,7 @@ describe("Tests accept invites endpoint", () => {
       expect(res.body.message).toBe(`Invite expired or already used`);
       const addedToRealm = await checkUserOnRealm({
         firebaseId: JERSEY_DEVIL_USER_ID,
-        realmStringId: UWU_REALM_STRING_ID,
+        realmExternalId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(false);
     });
@@ -773,12 +773,12 @@ describe("Tests accept invites endpoint", () => {
       });
       const addedToRealm = await checkUserOnRealm({
         firebaseId: JERSEY_DEVIL_USER_ID,
-        realmStringId: UWU_REALM_STRING_ID,
+        realmExternalId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(true);
       const addedToWrongRealm = await checkUserOnRealm({
         firebaseId: JERSEY_DEVIL_USER_ID,
-        realmStringId: TWISTED_MINDS_REALM_STRING_ID,
+        realmExternalId: TWISTED_MINDS_REALM_STRING_ID,
       });
       expect(addedToWrongRealm).toEqual(false);
     });
@@ -800,7 +800,7 @@ describe("Tests accept invites endpoint", () => {
       expect(res.body.message).toBe("The realm was not found.");
       const addedToRealm = await checkUserOnRealm({
         firebaseId: JERSEY_DEVIL_USER_ID,
-        realmStringId: UWU_REALM_STRING_ID,
+        realmExternalId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(false);
     });
@@ -822,7 +822,7 @@ describe("Tests accept invites endpoint", () => {
       expect(res.body.message).toBe("Invite not found");
       const addedToRealm = await checkUserOnRealm({
         firebaseId: JERSEY_DEVIL_USER_ID,
-        realmStringId: UWU_REALM_STRING_ID,
+        realmExternalId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(false);
     });
@@ -966,7 +966,7 @@ describe("Tests accept invites endpoint", () => {
       expect(newUser).toBeNull();
       const addedToRealm = await checkUserOnRealm({
         firebaseId: NEW_USER_FIREBASE_ID,
-        realmStringId: UWU_REALM_STRING_ID,
+        realmExternalId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(false);
     });
@@ -1001,7 +1001,7 @@ describe("Tests accept invites endpoint", () => {
       expect(newUser).toBeNull();
       const addedToRealm = await checkUserOnRealm({
         firebaseId: NEW_USER_FIREBASE_ID,
-        realmStringId: UWU_REALM_STRING_ID,
+        realmExternalId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(false);
     });
@@ -1036,7 +1036,7 @@ describe("Tests accept invites endpoint", () => {
       expect(newUser).toBeNull();
       const addedToRealm = await checkUserOnRealm({
         firebaseId: NEW_USER_FIREBASE_ID,
-        realmStringId: UWU_REALM_STRING_ID,
+        realmExternalId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(false);
     });
@@ -1071,7 +1071,7 @@ describe("Tests accept invites endpoint", () => {
       expect(newUser).toBeNull();
       const addedToRealm = await checkUserOnRealm({
         firebaseId: NEW_USER_FIREBASE_ID,
-        realmStringId: UWU_REALM_STRING_ID,
+        realmExternalId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(false);
     });
@@ -1106,7 +1106,7 @@ describe("Tests accept invites endpoint", () => {
       expect(newUser).toBeNull();
       const addedToRealm = await checkUserOnRealm({
         firebaseId: NEW_USER_FIREBASE_ID,
-        realmStringId: UWU_REALM_STRING_ID,
+        realmExternalId: UWU_REALM_STRING_ID,
       });
       expect(addedToRealm).toEqual(false);
     });

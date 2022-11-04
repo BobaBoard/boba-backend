@@ -12,7 +12,7 @@ import {
   withPostPermissions,
 } from "handlers/permissions";
 import {
-  getPostByExternalId,
+  getPostFromExternalId,
   postNewCommentChain,
   postNewContribution,
   updatePostTags,
@@ -106,7 +106,7 @@ router.post(
     log(`Making countribution to post with id ${post_id}`);
 
     const result = await postNewContribution({
-      firebaseId: req.currentUser!.uid,
+      firebaseId: req.currentUser.uid,
       identityId: identity_id,
       accessoryId: accessory_id,
       parentPostId: post_id,
@@ -220,7 +220,7 @@ router.post(
     }
 
     const comments = await postNewCommentChain({
-      firebaseId: req.currentUser!.uid,
+      firebaseId: req.currentUser.uid,
       parentPostId: post_id,
       parentCommentId: reply_to_comment_id,
       contentArray: contents,
@@ -295,13 +295,13 @@ router.patch(
     const { whisper_tags, index_tags, category_tags, content_warnings } =
       req.body;
 
-    const firebaseId = req.currentUser!.uid;
+    const firebaseId = req.currentUser.uid;
     log(`Getting post permissions for user ${firebaseId}`);
 
     log(`Getting details from post ${post_id}`);
-    const postDetails = await getPostByExternalId(null, {
+    const postDetails = await getPostFromExternalId(null, {
       firebaseId,
-      postExternalId: post_id,
+      postId: post_id,
     });
 
     const postTags = {
@@ -325,7 +325,7 @@ router.patch(
       req.currentPostPermissions
     );
 
-    if (!canDoTagsEdit(tagsDelta, req.currentPostPermissions!)) {
+    if (!canDoTagsEdit(tagsDelta, req.currentPostPermissions)) {
       throw new Forbidden403Error(
         "User is not authorized to edit tags on this post."
       );
@@ -334,7 +334,7 @@ router.patch(
 
     const updatedDetails = await updatePostTags(null, {
       firebaseId,
-      postExternalId: post_id,
+      postId: post_id,
       tagsDelta,
     });
     if (!updatedDetails) {

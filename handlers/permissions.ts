@@ -19,13 +19,13 @@ import {
   getUserPermissionsForRealm,
 } from "server/realms/queries";
 import {
-  getThreadByStringId,
+  getThreadByExternalId,
   getUserPermissionsForThread,
 } from "server/threads/queries";
 
 import { Internal500Error } from "types/errors/api";
 import { getBoardByUuid } from "server/boards/queries";
-import { getPostFromStringId } from "server/posts/queries";
+import { getPostFromExternalId } from "server/posts/queries";
 
 declare global {
   namespace Express {
@@ -66,7 +66,7 @@ export const withThreadPermissions = async (
 
   const currentThreadPermissions = await getUserPermissionsForThread({
     firebaseId: req.currentUser.uid,
-    threadStringId: req.params.thread_id,
+    threadExternalId: req.params.thread_id,
   });
 
   if (!currentThreadPermissions) {
@@ -111,28 +111,28 @@ export const ensureThreadAccess = async (
     );
   }
 
-  const threadStringId =
+  const threadExternalId =
     req.params.thread_id ??
     (
-      await getPostFromStringId(null, {
+      await getPostFromExternalId(null, {
         firebaseId: req.currentUser?.uid,
         postId: req.params.post_id,
       })
     ).parent_thread_id;
 
-  if (!threadStringId) {
+  if (!threadExternalId) {
     throw new Internal500Error("Error while determining thread ID.");
   }
 
-  const thread = await getThreadByStringId({
-    threadStringId,
+  const thread = await getThreadByExternalId({
+    threadExternalId,
     firebaseId: req.currentUser?.uid,
   });
 
   if (!thread) {
     res
       .status(404)
-      .send({ message: `The thread with id "${threadStringId}" was not found.` });
+      .send({ message: `The thread with id "${threadExternalId}" was not found.` });
     return;
   }
   req.params.board_id = thread.board_id;
@@ -250,7 +250,7 @@ export const withPostPermissions = async (
     return;
   }
 
-  const post = await getPostFromStringId(null, {
+  const post = await getPostFromExternalId(null, {
     firebaseId: req.currentUser.uid,
     postId: req.params.post_id,
   });
@@ -285,7 +285,7 @@ export const ensureRealmExists = async (
   }
 
   const currentRealmIds = await getRealmIdsByUuid({
-    realmStringId: req.params.realm_id,
+    realmExternalId: req.params.realm_id,
   });
   if (!currentRealmIds) {
     res.status(404).json({ message: "The realm was not found." });
@@ -313,7 +313,7 @@ export const withRealmPermissions = async (
 
     const currentRealmPermissions = await getUserPermissionsForRealm({
       firebaseId: req.currentUser?.uid,
-      realmStringId: req.currentRealmIds.string_id,
+      realmExternalId: req.currentRealmIds.string_id,
     });
 
     if (!currentRealmPermissions) {

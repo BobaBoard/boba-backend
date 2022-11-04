@@ -218,7 +218,7 @@ router.get(
     }
     const boards = await getBoards({
       firebaseId: req.currentUser?.uid,
-      realmStringId: req.currentRealmIds?.string_id,
+      realmExternalId: req.currentRealmIds?.string_id,
     });
 
     if (!boards) {

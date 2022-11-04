@@ -28,7 +28,7 @@ import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
 import { getBoardMetadataByUuid } from "./utils";
-import { getThreadByStringId } from "server/threads/queries";
+import { getThreadByExternalId } from "server/threads/queries";
 
 const info = debug("bobaserver:board:routes-info");
 const log = debug("bobaserver:board:routes");
@@ -193,13 +193,13 @@ router.post(
       accessoryId,
     } = req.body;
 
-    const newThreadStringId = await createThread({
+    const newThreadExternalId = await createThread({
       firebaseId: req.currentUser.uid,
       content,
       defaultView,
       anonymityType: "everyone",
       isLarge: !!large,
-      boardStringId: boardId,
+      boardExternalId: boardId,
       whisperTags,
       indexTags,
       categoryTags,
@@ -207,16 +207,16 @@ router.post(
       identityId,
       accessoryId,
     });
-    info(`Created new thread`, newThreadStringId);
+    info(`Created new thread`, newThreadExternalId);
 
-    const thread = await getThreadByStringId({
-      threadStringId: newThreadStringId as string,
+    const thread = await getThreadByExternalId({
+      threadExternalId: newThreadExternalId as string,
       firebaseId: req.currentUser?.uid,
     });
 
     if (!thread) {
       throw new NotFound404Error(
-        `Thread with id ${newThreadStringId} was not found after being created.`
+        `Thread with id ${newThreadExternalId} was not found after being created.`
       );
     }
 
