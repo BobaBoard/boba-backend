@@ -9,7 +9,7 @@ import {
   checkUserOnRealm,
   dismissAllNotifications,
   getInviteDetails,
-  getRealmIdsByUuid,
+  getRealmByExternalId,
   getRealmInvites,
   getUserPermissionsForRealm,
 } from "server/realms/queries";
@@ -473,7 +473,7 @@ router.get("/:realm_id/invites/:nonce", async (req, res) => {
   if (!invite) {
     throw new NotFound404Error("The invite was not found");
   }
-  const inviteRealm = await getRealmIdsByUuid({ realmExternalId: invite.realmExternalId });
+  const inviteRealm = await getRealmByExternalId({ realmExternalId: invite.realmExternalId });
   if (!inviteRealm) {
     throw new Internal500Error("failed to get realm ids");
   }
@@ -647,7 +647,7 @@ router.get("/:realm_id/invites/:nonce", async (req, res) => {
   if (!invite) {
     throw new NotFound404Error("The invite was not found");
   }
-  const inviteRealm = await getRealmIdsByUuid({ realmExternalId: invite.realmExternalId });
+  const inviteRealm = await getRealmByExternalId({ realmExternalId: invite.realmExternalId });
   if (!inviteRealm) {
     throw new Internal500Error("failed to get realm ids");
   }
@@ -792,7 +792,7 @@ router.post(
       }
     }
 
-    const inviteRealm = await getRealmIdsByUuid({
+    const inviteRealm = await getRealmByExternalId({
       realmExternalId: inviteDetails.realmExternalId,
     });
 

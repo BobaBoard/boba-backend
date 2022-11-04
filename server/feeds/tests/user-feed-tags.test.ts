@@ -2,7 +2,7 @@ import { DbFeedType, DbThreadSummaryType } from "Types";
 import { FAVORITE_CHARACTER_THREAD_ID, FAVORITE_MURDER_THREAD_ID } from "test/data/threads";
 
 import { BOBATAN_USER_ID } from "test/data/auth";
-import { TWISTED_MINDS_REALM_STRING_ID } from "test/data/realms";
+import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
 import { getUserActivity } from "../queries";
 
 export const extractTags = (thread: DbThreadSummaryType | null | undefined) => {
@@ -29,7 +29,7 @@ describe("feed activity tags", () => {
   test("correctly fetches tags", async () => {
     const feed = await getUserActivity({
       firebaseId: BOBATAN_USER_ID,
-      realmExternalId: TWISTED_MINDS_REALM_STRING_ID,
+      realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
       cursor: null,
       updatedOnly: false,
       ownOnly: false,
@@ -49,7 +49,7 @@ describe("feed activity tags", () => {
   test("correctly fetches categories", async () => {
     const feed = await getUserActivity({
       firebaseId: BOBATAN_USER_ID,
-      realmExternalId: TWISTED_MINDS_REALM_STRING_ID,
+      realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
       cursor: null,
       updatedOnly: false,
       ownOnly: false,
@@ -69,7 +69,7 @@ describe("feed activity tags", () => {
   test("correctly fetches whisper tags", async () => {
     const feed = await getUserActivity({
       firebaseId: BOBATAN_USER_ID,
-      realmExternalId: TWISTED_MINDS_REALM_STRING_ID,
+      realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
       cursor: null,
       updatedOnly: false,
       ownOnly: false,
@@ -89,7 +89,7 @@ describe("feed activity tags", () => {
   test("correctly fetches content warnings", async () => {
     const feed = await getUserActivity({
       firebaseId: BOBATAN_USER_ID,
-      realmExternalId: TWISTED_MINDS_REALM_STRING_ID,
+      realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
       cursor: null,
       updatedOnly: false,
       ownOnly: false,

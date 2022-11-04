@@ -2,7 +2,7 @@ import { FAVORITE_CHARACTER_THREAD_ID, FAVORITE_MURDER_THREAD_ID } from "test/da
 
 import { BOBATAN_USER_ID } from "test/data/auth";
 import { GORE_BOARD_ID } from "test/data/boards";
-import { TWISTED_MINDS_REALM_STRING_ID } from "test/data/realms";
+import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
 import { getThreadByExternalId } from "../queries";
 
 describe("threads queries", () => {
@@ -17,7 +17,7 @@ describe("threads queries", () => {
       board_slug: "gore",
       board_id: GORE_BOARD_ID,
       realm_slug: "twisted-minds",
-      realm_id: TWISTED_MINDS_REALM_STRING_ID,
+      realm_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
       thread_total_comments_amount: 2,
       thread_new_comments_amount: 0,
       thread_total_posts_amount: 3,
@@ -183,7 +183,7 @@ describe("threads queries", () => {
       board_slug: "gore",
       board_id: GORE_BOARD_ID,
       realm_slug: "twisted-minds",
-      realm_id: TWISTED_MINDS_REALM_STRING_ID,
+      realm_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
       thread_total_comments_amount: 0,
       thread_new_comments_amount: 0,
       thread_total_posts_amount: 3,
@@ -299,7 +299,7 @@ describe("threads queries", () => {
       board_slug: "gore",
       board_id: GORE_BOARD_ID,
       realm_slug: "twisted-minds",
-      realm_id: TWISTED_MINDS_REALM_STRING_ID,
+      realm_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
       thread_total_comments_amount: 2,
       thread_new_comments_amount: 0,
       thread_total_posts_amount: 3,
