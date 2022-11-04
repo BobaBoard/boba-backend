@@ -26,7 +26,7 @@ export const getLatestSubscriptionData = async ({
   | false
 > => {
   try {
-    return (await pool.manyOrNone(sql.getSubscriptionActivityByStringId, {
+    return (await pool.manyOrNone(sql.getSubscriptionActivityByExternalId, {
       subscription_string_id: subscriptionId,
       // we use page_size = 0 because the query returns always one more for the cursor
       page_size: 0,
@@ -40,10 +40,10 @@ export const getLatestSubscriptionData = async ({
 };
 
 export const getTriggeredThreadsSubscriptions = async ({
-  threadStringId,
+  threadExternalId,
   categoryNames,
 }: {
-  threadStringId: string;
+  threadExternalId: string;
   categoryNames: string[];
 }): Promise<
   {
@@ -54,7 +54,7 @@ export const getTriggeredThreadsSubscriptions = async ({
   try {
     return (
       await pool.manyOrNone(sql.getTriggeredThreadSubscriptions, {
-        thread_string_id: threadStringId,
+        thread_string_id: threadExternalId,
         category_names: categoryNames,
       })
     )?.map((s) => ({

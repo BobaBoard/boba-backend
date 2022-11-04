@@ -15,15 +15,15 @@ const error = debug("bobaserver:board:queries-error");
 
 export const getBoards = async ({
   firebaseId,
-  realmStringId,
+  realmExternalId,
 }: {
   firebaseId: string;
-  realmStringId?: string;
+  realmExternalId?: string;
 }): Promise<any> => {
   try {
     return await pool.many(sql.getAllBoards, {
       firebase_id: firebaseId,
-      realm_string_id: realmStringId,
+      realm_string_id: realmExternalId,
     });
   } catch (e) {
     error(`Error while fetching boards.`);
@@ -401,7 +401,7 @@ export const createThread = async ({
   content,
   isLarge,
   anonymityType,
-  boardStringId,
+  boardExternalId,
   whisperTags,
   indexTags,
   categoryTags,
@@ -415,7 +415,7 @@ export const createThread = async ({
   isLarge: boolean;
   defaultView: string;
   anonymityType: string;
-  boardStringId: string;
+  boardExternalId: string;
   whisperTags: string[];
   indexTags: string[];
   categoryTags: string[];
@@ -424,15 +424,15 @@ export const createThread = async ({
   accessoryId?: string;
 }) => {
   return pool.tx("create-thread", async (t) => {
-    const newThreadStringId = uuidv4();
+    const newThreadExternalId = uuidv4();
     await t.one(threadsSql.createThread, {
-      thread_string_id: newThreadStringId,
-      board_string_id: boardStringId,
+      thread_string_id: newThreadExternalId,
+      board_string_id: boardExternalId,
       thread_options: {
         default_view: defaultView,
       },
     });
-    log(`Created thread entry for thread ${newThreadStringId}`);
+    log(`Created thread entry for thread ${newThreadExternalId}`);
 
     await postNewContribution(
       {
@@ -446,10 +446,10 @@ export const createThread = async ({
         indexTags,
         contentWarnings,
         categoryTags,
-        threadStringId: newThreadStringId,
+        threadExternalId: newThreadExternalId,
       },
       t
     );
-    return newThreadStringId;
+    return newThreadExternalId;
   });
 };

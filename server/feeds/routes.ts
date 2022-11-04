@@ -140,17 +140,17 @@ router.get("/boards/:board_id", ensureBoardAccess, async (req, res) => {
  *               $ref: "#/components/schemas/FeedActivity"
  */
 router.get("/users/@me", ensureLoggedIn, async (req, res) => {
-  const { cursor, showRead, ownOnly, realmStringId } = req.query;
+  const { cursor, showRead, ownOnly, realmExternalId } = req.query;
   const currentUserId: string = req.currentUser?.uid;
 
-  if (!realmStringId) {
+  if (!realmExternalId) {
     throw new BadRequest400Error(`Expected realm id in personal feed query.`);
   }
 
   const userActivity = await getUserActivity({
     firebaseId: currentUserId,
     cursor: (cursor as string) || null,
-    realmStringId: realmStringId as string,
+    realmExternalId: realmExternalId as string,
     updatedOnly: showRead !== "true",
     ownOnly: ownOnly === "true",
   });
