@@ -4,7 +4,7 @@ import {
   makeServerThreadSummary,
 } from "utils/response-utils";
 import {
-  getBoardActivityByUuid,
+  getBoardActivityByExternalId,
   getUserActivity,
   getUserStarFeed,
 } from "./queries";
@@ -25,7 +25,7 @@ const router = express.Router();
  * /feeds/boards/{board_id}:
  *   get:
  *     summary: Get the feed for the given boards' activity.
- *     operationId: getBoardsFeedByUuid
+ *     operationId: getBoardsFeedByExternalId
  *     tags:
  *       - /feeds/
  *     parameters:
@@ -78,7 +78,7 @@ router.get("/boards/:board_id", ensureBoardAccess, async (req, res) => {
   );
 
   log(cursor);
-  const result = await getBoardActivityByUuid({
+  const result = await getBoardActivityByExternalId({
     boardId,
     firebaseId: req.currentUser?.uid,
     categoryFilter: (categoryFilter as string) || null,

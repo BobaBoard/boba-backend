@@ -139,7 +139,7 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
  * /realms/{realm_id}/activity:
  *   get:
  *     summary: Fetches latest activity summary for the realm.
- *     operationId: getRealmsActivityByUuid
+ *     operationId: getRealmsActivityByExternalId
  *     tags:
  *       - /realms/
  *     security:

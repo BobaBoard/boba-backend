@@ -2,7 +2,7 @@ import { BOBATAN_USER_ID } from "test/data/auth";
 import { DbBoardMetadata } from "Types";
 import { GORE_BOARD_ID } from "test/data/boards";
 import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
-import { getBoardByUuid } from "../queries";
+import { getBoardByExternalId } from "../queries";
 
 const GORE_BOARD_LOGGED_OUT: DbBoardMetadata = {
   settings: {
@@ -125,8 +125,8 @@ const GORE_BOARD_LOGGED_IN: DbBoardMetadata = {
 };
 
 describe("Tests boards queries", () => {
-  test("fetches board by uuid when uuid present", async () => {
-    const board = await getBoardByUuid({
+  test("fetches board by external id when external id present", async () => {
+    const board = await getBoardByExternalId({
       boardId: GORE_BOARD_ID,
       firebaseId: undefined,
     });
@@ -134,8 +134,8 @@ describe("Tests boards queries", () => {
     expect(board).toEqual(GORE_BOARD_LOGGED_OUT);
   });
 
-  test("fetches board by uuid when uuid present (logged in)", async () => {
-    const board = await getBoardByUuid({
+  test("fetches board by external id when external id present (logged in)", async () => {
+    const board = await getBoardByExternalId({
       boardId: GORE_BOARD_ID,
       firebaseId: BOBATAN_USER_ID,
     });
@@ -143,8 +143,8 @@ describe("Tests boards queries", () => {
     expect(board).toEqual(GORE_BOARD_LOGGED_IN);
   });
 
-  test("returns null board when uuid not found", async () => {
-    const board = await getBoardByUuid({
+  test("returns null board when external id not found", async () => {
+    const board = await getBoardByExternalId({
       boardId: "00000000-0000-0000-0000-000000000000",
       firebaseId: undefined,
     });

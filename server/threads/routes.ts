@@ -3,7 +3,7 @@ import {
   Forbidden403Error,
   NotFound404Error,
 } from "types/errors/api";
-import { canAccessBoard, canAccessBoardByUuid } from "utils/permissions-utils";
+import { canAccessBoard, canAccessBoardByExternalId } from "utils/permissions-utils";
 import {
   ensureNoIdentityLeakage,
   makeServerThread,
@@ -473,7 +473,7 @@ router.patch(
       }
       // TODO: add a test for this case once there's boards that are not accessible to everyone.
       if (
-        !(await canAccessBoardByUuid({
+        !(await canAccessBoardByExternalId({
           boardId: parentBoardId,
           firebaseId: req.currentUser.uid,
         }))

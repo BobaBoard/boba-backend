@@ -1,11 +1,14 @@
 import { CacheKeys, cache } from "server/cache";
-import { DbBoardCategoryDescription, DbBoardTextDescription } from "Types";
+import {
+  DbBoardCategoryDescription,
+  DbBoardMetadata,
+  DbBoardTextDescription,
+} from "Types";
 import {
   processBoardMetadata,
   processBoardsSummary,
 } from "utils/response-utils";
 
-import { BoardByExternalId } from "./sql/types";
 import debug from "debug";
 import { getBoardByExternalId } from "./queries";
 import stringify from "fast-json-stable-stringify";
@@ -20,8 +23,8 @@ export const getMetadataDelta = ({
   oldMetadata,
   newMetadata,
 }: {
-  oldMetadata: Partial<BoardByExternalId>;
-  newMetadata: Partial<BoardByExternalId>;
+  oldMetadata: Partial<DbBoardMetadata>;
+  newMetadata: Partial<DbBoardMetadata>;
 }): {
   tagline?: string;
   accentColor?: string;
@@ -36,11 +39,11 @@ export const getMetadataDelta = ({
       index: number;
       title: string;
       type: "text" | "category_filter";
-      description: string | null;
+      description?: string;
       categories: {
         deleted: string[];
         new: string[];
-      } | null;
+      };
       updated: boolean;
     }[];
   };
@@ -54,15 +57,12 @@ export const getMetadataDelta = ({
       (desc): desc is DbBoardCategoryDescription =>
         desc.type == "category_filter"
     ) || [];
-  const newTexts =
-    newMetadata.descriptions?.filter(
-      (desc): desc is DbBoardTextDescription => desc.type == "text"
-    ) || [];
-  const newCategoryFilters =
-    newMetadata.descriptions?.filter(
-      (desc): desc is DbBoardCategoryDescription =>
-        desc.type == "category_filter"
-    ) || [];
+  const newTexts = newMetadata.descriptions.filter(
+    (desc): desc is DbBoardTextDescription => desc.type == "text"
+  );
+  const newCategoryFilters = newMetadata.descriptions.filter(
+    (desc): desc is DbBoardCategoryDescription => desc.type == "category_filter"
+  );
 
   // Deleted texts will be in oldTexts but not newTexts
   const deletedTexts = oldTexts.filter(
@@ -120,8 +120,8 @@ export const getMetadataDelta = ({
 
   return {
     accentColor:
-      oldMetadata.settings!.accentColor != newMetadata.settings!.accentColor
-        ? newMetadata.settings!.accentColor
+      oldMetadata.settings.accentColor != newMetadata.settings.accentColor
+        ? newMetadata.settings.accentColor
         : undefined,
     tagline:
       oldMetadata.tagline != newMetadata.tagline
@@ -139,28 +139,25 @@ export const getMetadataDelta = ({
 };
 
 export const getBoardMetadataByExternalId = async ({
-  boardExternalId,
+  boardId,
   firebaseId,
   hasBoardAccess,
 }: {
-  boardExternalId: string;
+  boardId: string;
   firebaseId?: string;
   hasBoardAccess: boolean;
 }) => {
   if (!firebaseId) {
-    const cachedBoard = await cache().hGet(
-      CacheKeys.BOARD_METADATA,
-      boardExternalId
-    );
+    const cachedBoard = await cache().hget(CacheKeys.BOARD_METADATA, boardId);
     if (cachedBoard) {
-      log(`Found cached metadata for board ${boardExternalId}`);
+      log(`Found cached metadata for board ${boardId}`);
       return JSON.parse(cachedBoard);
     }
   }
 
   const board = await getBoardByExternalId({
     firebaseId,
-    boardExternalId,
+    boardId,
   });
   info(`Found board`, board);
 
@@ -183,12 +180,8 @@ export const getBoardMetadataByExternalId = async ({
     ...boardMetadata,
   };
   if (!firebaseId) {
-    cache().hSet(
-      CacheKeys.BOARD_METADATA,
-      boardExternalId,
-      stringify(finalMetadata)
-    );
+    cache().hset(CacheKeys.BOARD_METADATA, boardId, stringify(finalMetadata));
   }
-  log(`Processed board metadata (${boardExternalId}) for user ${firebaseId}`);
+  log(`Processed board metadata (${boardId}) for user ${firebaseId}`);
   return finalMetadata;
 };
