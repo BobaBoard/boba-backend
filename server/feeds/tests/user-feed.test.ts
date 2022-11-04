@@ -9,7 +9,7 @@ describe("feed activity queries", () => {
   test("updated: TRUE, own: TRUE", async () => {
     const feed = await getUserActivity({
       firebaseId: BOBATAN_USER_ID,
-      realmStringId: TWISTED_MINDS_REALM_STRING_ID,
+      realmExternalId: TWISTED_MINDS_REALM_STRING_ID,
       cursor: null,
       updatedOnly: true,
       ownOnly: true,
@@ -39,7 +39,7 @@ describe("feed activity queries", () => {
   test("updated: FALSE, own: TRUE", async () => {
     const feed = await getUserActivity({
       firebaseId: BOBATAN_USER_ID,
-      realmStringId: TWISTED_MINDS_REALM_STRING_ID,
+      realmExternalId: TWISTED_MINDS_REALM_STRING_ID,
       cursor: null,
       updatedOnly: false,
       ownOnly: true,
@@ -82,7 +82,7 @@ describe("feed activity queries", () => {
   test("updated: TRUE, own: FALSE", async () => {
     const feed = await getUserActivity({
       firebaseId: BOBATAN_USER_ID,
-      realmStringId: TWISTED_MINDS_REALM_STRING_ID,
+      realmExternalId: TWISTED_MINDS_REALM_STRING_ID,
       cursor: null,
       updatedOnly: true,
       ownOnly: false,
@@ -112,7 +112,7 @@ describe("feed activity queries", () => {
   test("updated: FALSE, own: FALSE", async () => {
     const feed = await getUserActivity({
       firebaseId: BOBATAN_USER_ID,
-      realmStringId: TWISTED_MINDS_REALM_STRING_ID,
+      realmExternalId: TWISTED_MINDS_REALM_STRING_ID,
       cursor: null,
       updatedOnly: false,
       ownOnly: false,
@@ -168,7 +168,7 @@ describe("feed activity queries", () => {
   test("updated: FALSE, own: FALSE WITH CURSOR", async () => {
     const feed = await getUserActivity({
       firebaseId: BOBATAN_USER_ID,
-      realmStringId: TWISTED_MINDS_REALM_STRING_ID,
+      realmExternalId: TWISTED_MINDS_REALM_STRING_ID,
       cursor: null,
       updatedOnly: false,
       ownOnly: false,
@@ -202,7 +202,7 @@ describe("feed activity queries", () => {
   test("updated: FALSE, own: FALSE WITH CURSOR (PAGE 2)", async () => {
     const feed = await getUserActivity({
       firebaseId: BOBATAN_USER_ID,
-      realmStringId: TWISTED_MINDS_REALM_STRING_ID,
+      realmExternalId: TWISTED_MINDS_REALM_STRING_ID,
       cursor:
         "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDUtMjNUMDU6NTI6MDAuMDAwMDAwIiwicGFnZV9zaXplIjoxfQ==",
       updatedOnly: false,
@@ -235,7 +235,7 @@ describe("feed activity queries", () => {
     test("updated: FALSE, own: FALSE", async () => {
       const feed = await getUserActivity({
         firebaseId: ONCEST_USER_ID,
-        realmStringId: TWISTED_MINDS_REALM_STRING_ID,
+        realmExternalId: TWISTED_MINDS_REALM_STRING_ID,
         cursor: null,
         updatedOnly: false,
         ownOnly: false,
@@ -270,7 +270,7 @@ describe("feed activity queries", () => {
     test("updated: true, own: FALSE", async () => {
       const feed = await getUserActivity({
         firebaseId: ONCEST_USER_ID,
-        realmStringId: TWISTED_MINDS_REALM_STRING_ID,
+        realmExternalId: TWISTED_MINDS_REALM_STRING_ID,
         cursor: null,
         updatedOnly: true,
         ownOnly: false,

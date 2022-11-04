@@ -1,5 +1,5 @@
 import {
-  getPostFromStringId,
+  getPostFromExternalId,
   maybeAddCategoryTags,
   maybeAddContentWarningTags,
   maybeAddIndexTags,
@@ -20,7 +20,7 @@ describe("Tests posts queries", () => {
   test("adds index tags to post (and database)", async () => {
     await runWithinTransaction(async (transaction) => {
       const postId = HIMBO_POST_ID;
-      const postStringId = HIMBO_POST_STRING_ID;
+      const postExternalId = HIMBO_POST_STRING_ID;
 
       const addedTags = await maybeAddIndexTags(transaction, {
         postId,
@@ -28,9 +28,9 @@ describe("Tests posts queries", () => {
       });
       expect(addedTags).toIncludeSameMembers(["resident evil", "leon kennedy"]);
 
-      const result = await getPostFromStringId(transaction, {
+      const result = await getPostFromExternalId(transaction, {
         firebaseId: undefined,
-        postId: postStringId,
+        postId: postExternalId,
       });
 
       expect(result.index_tags).toIncludeSameMembers([
@@ -43,7 +43,7 @@ describe("Tests posts queries", () => {
   test("adds content warnings tags to post (and database)", async () => {
     await runWithinTransaction(async (transaction) => {
       const postId = HIMBO_POST_ID;
-      const postStringId = HIMBO_POST_STRING_ID;
+      const postExternalId = HIMBO_POST_STRING_ID;
 
       const addedTags = await maybeAddContentWarningTags(transaction, {
         postId,
@@ -51,9 +51,9 @@ describe("Tests posts queries", () => {
       });
       expect(addedTags).toIncludeSameMembers(["zombies", "vore"]);
 
-      const result = await getPostFromStringId(transaction, {
+      const result = await getPostFromExternalId(transaction, {
         firebaseId: undefined,
-        postId: postStringId,
+        postId: postExternalId,
       });
 
       expect(result.content_warnings).toIncludeSameMembers(["zombies", "vore"]);
@@ -67,16 +67,16 @@ describe("Tests posts queries", () => {
     test("adds category tags to post (and database)", async () => {
       await runWithinTransaction(async (transaction) => {
         const postId = HIMBO_POST_ID;
-        const postStringId = HIMBO_POST_STRING_ID;
+        const postExternalId = HIMBO_POST_STRING_ID;
         const addedTags = await maybeAddCategoryTags(transaction, {
           postId,
           categoryTags: ["thirst"],
         });
         expect(addedTags).toIncludeSameMembers(["thirst"]);
 
-        const result = await getPostFromStringId(transaction, {
+        const result = await getPostFromExternalId(transaction, {
           firebaseId: undefined,
-          postId: postStringId,
+          postId: postExternalId,
         });
 
         expect(result.category_tags).toIncludeSameMembers(["thirst"]);
@@ -87,15 +87,15 @@ describe("Tests posts queries", () => {
 
 test("removes tags from post", async () => {
   await runWithinTransaction(async (transaction) => {
-    const postStringId = REVOLVER_OCELOT_POST.id;
+    const postExternalId = REVOLVER_OCELOT_POST.id;
     await removeIndexTags(transaction, {
       postId: REVOLVER_OCELOT_POST_ID,
       indexTags: ["EVIL", "   metal gear      "],
     });
 
-    const result = await getPostFromStringId(transaction, {
+    const result = await getPostFromExternalId(transaction, {
       firebaseId: undefined,
-      postId: postStringId,
+      postId: postExternalId,
     });
 
     expect(result.index_tags).toIncludeSameMembers([
@@ -110,15 +110,15 @@ test("removes tags from post", async () => {
 test("updates whisper tags", async () => {
   await runWithinTransaction(async (transaction) => {
     const postId = HIMBO_POST_ID;
-    const postStringId = HIMBO_POST_STRING_ID;
+    const postExternalId = HIMBO_POST_STRING_ID;
     await updateWhisperTags(transaction, {
       postId,
       whisperTags: ["whisper whisper", "babble babble"],
     });
 
-    const result = await getPostFromStringId(transaction, {
+    const result = await getPostFromExternalId(transaction, {
       firebaseId: undefined,
-      postId: postStringId,
+      postId: postExternalId,
     });
 
     expect(result.whisper_tags).toIncludeSameMembers([

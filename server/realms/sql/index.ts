@@ -55,7 +55,7 @@ const getInvites = `
     FROM account_invites
     JOIN realms ON account_invites.realm_id = realms.id 
     JOIN users ON account_invites.inviter = users.id
-    WHERE realms.string_id = $/realmStringId/ AND used = false AND created + duration > NOW()`;
+    WHERE realms.string_id = $/realmExternalId/ AND used = false AND created + duration > NOW()`;
 
 const addUserToRealm = `
 INSERT INTO realm_users(realm_id, user_id)

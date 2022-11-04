@@ -209,7 +209,7 @@ const createAddContentWarningsToPostQuery = (
   );
 };
 
-const getPostIdFromStringId = `
+const getPostIdFromExternalId = `
   SELECT id FROM posts WHERE string_id = $/post_string_id/;
 `;
 
@@ -222,7 +222,7 @@ const isPostOwner = `
 `;
 
 export default {
-  postByStringId: new QueryFile(path.join(__dirname, "post-by-string-id.sql")),
+  postByExternalId: new QueryFile(path.join(__dirname, "post-by-string-id.sql")),
   getPostDetails: new QueryFile(path.join(__dirname, "get-post-details.sql")),
   getThreadDetails: new QueryFile(
     path.join(__dirname, "get-thread-details.sql")
@@ -244,6 +244,6 @@ export default {
   deleteCategoriesFromPost,
   deleteContentWarningsFromPost,
   updatePostWhisperTags,
-  getPostIdFromStringId,
+  getPostIdFromExternalId,
   isPostOwner,
 };

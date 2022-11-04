@@ -12,7 +12,7 @@ import {
   withPostPermissions,
 } from "handlers/permissions";
 import {
-  getPostFromStringId,
+  getPostFromExternalId,
   postNewCommentChain,
   postNewContribution,
   updatePostTags,
@@ -299,7 +299,7 @@ router.patch(
     log(`Getting post permissions for user ${firebaseId}`);
 
     log(`Getting details from post ${post_id}`);
-    const postDetails = await getPostFromStringId(null, {
+    const postDetails = await getPostFromExternalId(null, {
       firebaseId,
       postId: post_id,
     });
