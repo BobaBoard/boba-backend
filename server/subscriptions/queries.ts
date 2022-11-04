@@ -6,9 +6,9 @@ import sql from "./sql";
 const error = debug("bobaserver:subscriptions:queries-error");
 
 export const getLatestSubscriptionData = async ({
-  subscriptionId,
+  subscriptionExternalId,
 }: {
-  subscriptionId: string;
+  subscriptionExternalId: string;
 }): Promise<
   | {
       subscription_id: number;
@@ -27,14 +27,14 @@ export const getLatestSubscriptionData = async ({
 > => {
   try {
     return (await pool.manyOrNone(sql.getSubscriptionActivityByExternalId, {
-      subscription_string_id: subscriptionId,
+      subscription_string_id: subscriptionExternalId,
       // we use page_size = 0 because the query returns always one more for the cursor
       page_size: 0,
       last_activity_cursor: null,
     })) as any;
   } catch (e) {
     throw new Internal500Error(
-      `Error while getting webhooks for subscription ${subscriptionId}`
+      `Error while getting webhooks for subscription ${subscriptionExternalId}`
     );
   }
 };
