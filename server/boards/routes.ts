@@ -27,8 +27,8 @@ import { NotFound404Error } from "types/errors/api";
 import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
-import { getBoardMetadataByUuid } from "./utils";
-import { getThreadByStringId } from "server/threads/queries";
+import { getBoardMetadataByExternalId } from "./utils";
+import { getThreadByExternalId } from "server/threads/queries";
 
 const info = debug("bobaserver:board:routes-info");
 const log = debug("bobaserver:board:routes");
@@ -40,7 +40,7 @@ const router = express.Router();
  * /boards/{board_id}:
  *   get:
  *     summary: Fetches board metadata.
- *     operationId: getBoardsByUuid
+ *     operationId: getBoardsByExternalId
  *     tags:
  *       - /boards/
  *     security:
@@ -49,7 +49,7 @@ const router = express.Router();
  *     parameters:
  *       - name: board_id
  *         in: path
- *         description: The uuid of the board to retrieve metadata for.
+ *         description: The external id of the board to retrieve metadata for.
  *         required: true
  *         schema:
  *           type: string
@@ -100,16 +100,16 @@ const router = express.Router();
  *                 $ref: '#/components/examples/BoardsRestrictedResponse'
  */
 router.get("/:board_id", ensureBoardAccess, async (req, res) => {
-  const { board_id: boardId } = req.params;
-  log(`Fetching data for board with uuid ${boardId}.`);
+  const { board_id: boardExternalId } = req.params;
+  log(`Fetching data for board with external id ${boardExternalId}.`);
 
-  const boardMetadata = await getBoardMetadataByUuid({
+  const boardMetadata = await getBoardMetadataByExternalId({
     firebaseId: req.currentUser?.uid,
-    boardId,
+    boardExternalId,
     hasBoardAccess: req.currentUser ? true : false,
   });
 
-  log(`Returning data for board ${boardId} for user ${req.currentUser?.uid}.`);
+  log(`Returning data for board ${boardExternalId} for user ${req.currentUser?.uid}.`);
   res.status(200).json(boardMetadata);
 });
 
@@ -133,7 +133,7 @@ router.get("/:board_id", ensureBoardAccess, async (req, res) => {
  *           type: string
  *           format: uuid
  *         examples:
- *           goreBoardId:
+ *           goreboardExternalId:
  *             summary: The id for the gore board.
  *             value: c6d3d10e-8e49-4d73-b28a-9d652b41beec
  *     requestBody:
@@ -170,16 +170,16 @@ router.post(
   ensureRealmPermission(RealmPermissions.createThreadOnRealm),
   //TODO: ensureBoardPermission(BoardPermissions.createThread),
   async (req, res, next) => {
-    const { board_id: boardId } = req.params;
+    const { board_id: boardExternalId } = req.params;
 
-    log(`Fetching metadata for board with id ${boardId}`);
-    const boardMetadata = await getBoardMetadataByUuid({
+    log(`Fetching metadata for board with id ${boardExternalId}`);
+    const boardMetadata = await getBoardMetadataByExternalId({
       firebaseId: req.currentUser?.uid,
-      boardId,
+      boardExternalId,
       hasBoardAccess: true,
     });
     const boardSlug = boardMetadata.slug;
-    log(`Creating thread in board with id ${boardId}`);
+    log(`Creating thread in board with id ${boardExternalId}`);
     const {
       content,
       forceAnonymous,
@@ -193,13 +193,13 @@ router.post(
       accessoryId,
     } = req.body;
 
-    const threadStringId = await createThread({
+    const newThreadExternalId = await createThread({
       firebaseId: req.currentUser.uid,
       content,
       defaultView,
       anonymityType: "everyone",
       isLarge: !!large,
-      boardStringId: boardId,
+      boardExternalId: boardExternalId,
       whisperTags,
       indexTags,
       categoryTags,
@@ -207,16 +207,16 @@ router.post(
       identityId,
       accessoryId,
     });
-    info(`Created new thread`, threadStringId);
+    info(`Created new thread`, newThreadExternalId);
 
-    const thread = await getThreadByStringId({
-      threadId: threadStringId as string,
+    const thread = await getThreadByExternalId({
+      threadExternalId: newThreadExternalId as string,
       firebaseId: req.currentUser?.uid,
     });
 
     if (!thread) {
       throw new NotFound404Error(
-        `Thread with id ${threadStringId} was not found after being created.`
+        `Thread with id ${newThreadExternalId} was not found after being created.`
       );
     }
 
@@ -242,7 +242,7 @@ router.post(
  * /boards/{board_id}:
  *   patch:
  *     summary: Update board metadata
- *     operationId: patchBoardsByUuid
+ *     operationId: patchBoardsByExternalId
  *     tags:
  *       - /boards/
  *     security:
@@ -250,7 +250,7 @@ router.post(
  *     parameters:
  *       - name: board_id
  *         in: path
- *         description: The uuid of the board to update metadata for.
+ *         description: The external id of the board to update metadata for.
  *         required: true
  *         schema:
  *           type: string
@@ -295,11 +295,11 @@ router.patch(
   ensureBoardPermission(BoardPermissions.editMetadata),
   withRealmPermissions,
   async (req, res) => {
-    const { board_id: boardId } = req.params;
+    const { board_id: boardExternalId } = req.params;
     const { descriptions, accentColor, tagline } = req.body;
 
     const newMetadata = await updateBoardMetadata({
-      boardId,
+      boardExternalId,
       firebaseId: req.currentUser.uid,
       oldMetadata: req.currentBoardMetadata,
       newMetadata: { descriptions, settings: { accentColor }, tagline },
@@ -310,11 +310,11 @@ router.patch(
       return;
     }
 
-    await cache().hdel(CacheKeys.BOARD, boardId);
-    await cache().hdel(CacheKeys.BOARD_METADATA, boardId);
-    const boardMetadata = await getBoardMetadataByUuid({
+    await cache().hdel(CacheKeys.BOARD, boardExternalId);
+    await cache().hdel(CacheKeys.BOARD_METADATA, boardExternalId);
+    const boardMetadata = await getBoardMetadataByExternalId({
       firebaseId: req.currentUser?.uid,
-      boardId,
+      boardExternalId,
       hasBoardAccess: req.currentRealmPermissions.includes(
         RealmPermissions.accessLockedBoardsOnRealm
       ),
@@ -327,7 +327,7 @@ router.patch(
  * /boards/{board_id}/visits:
  *   get:
  *     summary: Sets last visited time for board
- *     operationId: visitsBoardsByUuid
+ *     operationId: visitsBoardsByExternalId
  *     tags:
  *       - /boards/
  *     security:
@@ -335,7 +335,7 @@ router.patch(
  *     parameters:
  *       - name: board_id
  *         in: path
- *         description: The uuid of the board to mark as visited.
+ *         description: The external id of the board to mark as visited.
  *         required: true
  *         schema:
  *           type: string
@@ -364,20 +364,20 @@ router.post(
   ensureLoggedIn,
   ensureBoardAccess,
   async (req, res) => {
-    const { board_id: boardId } = req.params;
-    log(`Setting last visited time for board: ${boardId}`);
+    const { board_id: boardExternalId } = req.params;
+    log(`Setting last visited time for board: ${boardExternalId}`);
 
     if (
       !(await markBoardVisit({
         firebaseId: req.currentUser.uid,
-        boardId,
+        boardExternalId,
       }))
     ) {
       res.sendStatus(500);
       return;
     }
 
-    log(`Marked last visited time for board: ${boardId}.`);
+    log(`Marked last visited time for board: ${boardExternalId}.`);
     res.sendStatus(204);
   }
 );
@@ -387,7 +387,7 @@ router.post(
  * /boards/{board_id}/mute:
  *   post:
  *     summary: Mutes a board.
- *     operationId: mutesBoardsByUuid
+ *     operationId: mutesBoardsByExternalId
  *     description: Mutes the specified board for the current user.
  *     tags:
  *       - /boards/
@@ -396,7 +396,7 @@ router.post(
  *     parameters:
  *       - name: board_id
  *         in: path
- *         description: The uuid of the board to mute.
+ *         description: The external id of the board to mute.
  *         required: true
  *         schema:
  *           type: string
@@ -423,22 +423,22 @@ router.post(
   ensureLoggedIn,
   ensureBoardAccess,
   async (req, res) => {
-    const { board_id: boardId } = req.params;
+    const { board_id: boardExternalId } = req.params;
 
     if (
       !(await muteBoard({
         firebaseId: req.currentUser.uid,
-        boardId,
+        boardExternalId,
       }))
     ) {
       res.sendStatus(500);
       return;
     }
 
-    await cache().hdel(CacheKeys.BOARD, boardId);
+    await cache().hdel(CacheKeys.BOARD, boardExternalId);
     await cache().hdel(CacheKeys.USER_PINS, req.currentUser.uid);
 
-    info(`Muted board: ${boardId} for user ${req.currentUser.uid}.`);
+    info(`Muted board: ${boardExternalId} for user ${req.currentUser.uid}.`);
     res.sendStatus(204);
   }
 );
@@ -448,7 +448,7 @@ router.post(
  * /boards/{board_id}/mute:
  *   delete:
  *     summary: Unmutes a board.
- *     operationId: unmutesBoardsByUuid
+ *     operationId: unmutesBoardsByExternalId
  *     description: Unmutes the specified board for the current user.
  *     tags:
  *       - /boards/
@@ -480,22 +480,22 @@ router.delete(
   ensureLoggedIn,
   ensureBoardAccess,
   async (req, res) => {
-    const { board_id: boardId } = req.params;
+    const { board_id: boardExternalId } = req.params;
 
     if (
       !(await unmuteBoard({
         firebaseId: req.currentUser.uid,
-        boardId,
+        boardExternalId,
       }))
     ) {
       res.sendStatus(500);
       return;
     }
 
-    await cache().hdel(CacheKeys.BOARD, boardId);
+    await cache().hdel(CacheKeys.BOARD, boardExternalId);
     await cache().hdel(CacheKeys.USER_PINS, req.currentUser.uid);
 
-    info(`Unmuted board: ${boardId} for user ${req.currentUser.uid}.`);
+    info(`Unmuted board: ${boardExternalId} for user ${req.currentUser.uid}.`);
     res.sendStatus(204);
   }
 );
@@ -505,7 +505,7 @@ router.delete(
  * /boards/{board_id}/pin:
  *   post:
  *     summary: Pins a board.
- *     operationId: pinsBoardsByUuid
+ *     operationId: pinsBoardsByExternalId
  *     description: Pins the specified board for the current user.
  *     tags:
  *       - /boards/
@@ -538,22 +538,22 @@ router.post(
   ensureLoggedIn,
   ensureBoardAccess,
   async (req, res) => {
-    const { board_id: boardId } = req.params;
+    const { board_id: boardExternalId } = req.params;
 
     if (
       !(await pinBoard({
         firebaseId: req.currentUser.uid,
-        boardId,
+        boardExternalId,
       }))
     ) {
       res.sendStatus(500);
       return;
     }
 
-    await cache().hdel(CacheKeys.BOARD, boardId);
+    await cache().hdel(CacheKeys.BOARD, boardExternalId);
     await cache().hdel(CacheKeys.USER_PINS, req.currentUser.uid);
 
-    info(`Pinned board: ${boardId} for user ${req.currentUser.uid}.`);
+    info(`Pinned board: ${boardExternalId} for user ${req.currentUser.uid}.`);
     res.sendStatus(204);
   }
 );
@@ -563,7 +563,7 @@ router.post(
  * /boards/{board_id}/pin:
  *   delete:
  *     summary: Unpins a board.
- *     operationId: unpinsBoardsByUuid
+ *     operationId: unpinsBoardsByExternalId
  *     description: Unpins the specified board for the current user.
  *     tags:
  *       - /boards/
@@ -596,24 +596,24 @@ router.delete(
   ensureLoggedIn,
   ensureBoardAccess,
   async (req, res) => {
-    const { board_id: boardId } = req.params;
+    const { board_id: boardExternalId } = req.params;
 
-    log(`Setting board unpinned: ${boardId}`);
+    log(`Setting board unpinned: ${boardExternalId}`);
 
     if (
       !(await unpinBoard({
         firebaseId: req.currentUser.uid,
-        boardId,
+        boardExternalId,
       }))
     ) {
       res.sendStatus(500);
       return;
     }
 
-    await cache().hdel(CacheKeys.BOARD, boardId);
+    await cache().hdel(CacheKeys.BOARD, boardExternalId);
     await cache().hdel(CacheKeys.USER_PINS, req.currentUser.uid);
 
-    info(`Unpinned board: ${boardId} for user ${req.currentUser?.uid}.`);
+    info(`Unpinned board: ${boardExternalId} for user ${req.currentUser?.uid}.`);
     res.sendStatus(204);
   }
 );
@@ -623,7 +623,7 @@ router.delete(
  * /boards/{board_id}/notifications:
  *   delete:
  *     summary: Dismiss all notifications for board
- *     operationId: dismissBoardsByUuid
+ *     operationId: dismissBoardsByExternalId
  *     tags:
  *       - /boards/
  *     security:
@@ -631,7 +631,7 @@ router.delete(
  *     parameters:
  *       - name: board_id
  *         in: path
- *         description: The uuid of the board to dismiss notifications for.
+ *         description: The external id of the board to dismiss notifications for.
  *         required: true
  *         schema:
  *           type: string
@@ -659,14 +659,14 @@ router.delete(
   ensureLoggedIn,
   ensureBoardAccess,
   async (req, res) => {
-    const { board_id: boardId } = req.params;
+    const { board_id: boardExternalId } = req.params;
 
     let currentUserId: string = req.currentUser.uid;
     log(
-      `Dismissing ${boardId} notifications for firebase id: ${currentUserId}`
+      `Dismissing ${boardExternalId} notifications for firebase id: ${currentUserId}`
     );
     const dismissSuccessful = await dismissBoardNotifications({
-      boardId,
+      boardExternalId,
       firebaseId: currentUserId,
     });
 

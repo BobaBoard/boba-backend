@@ -11,7 +11,7 @@ const dismissNotifications = `
         WHERE dismiss_notifications_requests.user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
           AND dismiss_notifications_requests.realm_id = (SELECT id FROM realms WHERE realms.string_id = $/realm_id/)`;
 
-const getRealmIdsByUuid = `
+const getRealmByExternalId = `
     SELECT * FROM realms WHERE string_id = $/realm_id/`;
 
 const getUserPermissionsForRealm = `
@@ -55,7 +55,7 @@ const getInvites = `
     FROM account_invites
     JOIN realms ON account_invites.realm_id = realms.id 
     JOIN users ON account_invites.inviter = users.id
-    WHERE realms.string_id = $/realmStringId/ AND used = false AND created + duration > NOW()`;
+    WHERE realms.string_id = $/realmExternalId/ AND used = false AND created + duration > NOW()`;
 
 const addUserToRealm = `
 INSERT INTO realm_users(realm_id, user_id)
@@ -74,7 +74,7 @@ WHERE users.firebase_id = $/firebase_id/ AND realms.string_id = $/realm_string_i
 export default {
   getRealmBySlug: new QueryFile(path.join(__dirname, "realm-by-slug.sql")),
   dismissNotifications,
-  getRealmIdsByUuid,
+  getRealmByExternalId,
   getUserPermissionsForRealm,
   getInviteDetails,
   createRealmInvite,

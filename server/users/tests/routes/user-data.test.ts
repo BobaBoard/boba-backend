@@ -1,7 +1,7 @@
 import { BOBATAN_PINNED_BOARDS, BOBATAN_USER_DATA } from "test/data/user";
 import {
-  TWISTED_MINDS_REALM_STRING_ID,
-  UWU_REALM_STRING_ID,
+  TWISTED_MINDS_REALM_EXTERNAL_ID,
+  UWU_REALM_EXTERNAL_ID,
 } from "test/data/realms";
 import { setLoggedInUser, startTestServer } from "utils/test-utils";
 
@@ -34,7 +34,7 @@ describe("Tests boards REST API", () => {
   test("should return pinned boards for current realm", async () => {
     setLoggedInUser(BOBATAN_USER_ID);
     const res = await request(server.app).get(
-      `/@me/pins/realms/${TWISTED_MINDS_REALM_STRING_ID}`
+      `/@me/pins/realms/${TWISTED_MINDS_REALM_EXTERNAL_ID}`
     );
 
     expect(res.status).toBe(200);
@@ -44,7 +44,7 @@ describe("Tests boards REST API", () => {
   test("should only return pinned boards for current realm", async () => {
     setLoggedInUser(BOBATAN_USER_ID);
     const res = await request(server.app).get(
-      `/@me/pins/realms/${UWU_REALM_STRING_ID}`
+      `/@me/pins/realms/${UWU_REALM_EXTERNAL_ID}`
     );
 
     expect(res.status).toBe(200);

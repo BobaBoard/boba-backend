@@ -10,7 +10,7 @@ import {
 } from "utils/response-utils";
 
 import debug from "debug";
-import { getBoardByUuid } from "./queries";
+import { getBoardByExternalId } from "./queries";
 import stringify from "fast-json-stable-stringify";
 
 const info = debug("bobaserver:board:utils-info");
@@ -138,26 +138,26 @@ export const getMetadataDelta = ({
   };
 };
 
-export const getBoardMetadataByUuid = async ({
-  boardId,
+export const getBoardMetadataByExternalId = async ({
+  boardExternalId,
   firebaseId,
   hasBoardAccess,
 }: {
-  boardId: string;
+  boardExternalId: string;
   firebaseId?: string;
   hasBoardAccess: boolean;
 }) => {
   if (!firebaseId) {
-    const cachedBoard = await cache().hget(CacheKeys.BOARD_METADATA, boardId);
+    const cachedBoard = await cache().hget(CacheKeys.BOARD_METADATA, boardExternalId);
     if (cachedBoard) {
-      log(`Found cached metadata for board ${boardId}`);
+      log(`Found cached metadata for board ${boardExternalId}`);
       return JSON.parse(cachedBoard);
     }
   }
 
-  const board = await getBoardByUuid({
+  const board = await getBoardByExternalId({
     firebaseId,
-    boardId,
+    boardExternalId,
   });
   info(`Found board`, board);
 
@@ -180,8 +180,8 @@ export const getBoardMetadataByUuid = async ({
     ...boardMetadata,
   };
   if (!firebaseId) {
-    cache().hset(CacheKeys.BOARD_METADATA, boardId, stringify(finalMetadata));
+    cache().hset(CacheKeys.BOARD_METADATA, boardExternalId, stringify(finalMetadata));
   }
-  log(`Processed board metadata (${boardId}) for user ${firebaseId}`);
+  log(`Processed board metadata (${boardExternalId}) for user ${firebaseId}`);
   return finalMetadata;
 };

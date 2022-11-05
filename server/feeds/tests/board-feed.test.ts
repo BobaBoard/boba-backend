@@ -1,13 +1,14 @@
+import { FAVORITE_CHARACTER_THREAD_ID, FAVORITE_MURDER_THREAD_ID } from "test/data/threads";
 import { GORE_BOARD_ID, MAIN_STREET_BOARD_ID } from "test/data/boards";
 import { extractActivity, extractAuthorData, extractsMetadata } from "utils/test-utils";
 
-import { getBoardActivityByUuid } from "../queries";
+import { getBoardActivityByExternalId } from "../queries";
 
 describe("Tests boards activity queries", () => {
   describe("tests activity metadata", () => {
     test("fetches board activity when slug present (logged in)", async () => {
-      const board = await getBoardActivityByUuid({
-        boardId: GORE_BOARD_ID,
+      const board = await getBoardActivityByExternalId({
+        boardExternalId: GORE_BOARD_ID,
         // Oncest
         firebaseId: "fb3",
         cursor: null,
@@ -41,7 +42,7 @@ describe("Tests boards activity queries", () => {
           new_posts_amount: 0,
           post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
           posts_amount: 3,
-          thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+          thread_id: FAVORITE_CHARACTER_THREAD_ID,
           threads_amount: 2,
         },
         {
@@ -54,15 +55,15 @@ describe("Tests boards activity queries", () => {
           new_posts_amount: 1,
           post_id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
           posts_amount: 3,
-          thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+          thread_id: FAVORITE_MURDER_THREAD_ID,
           threads_amount: 2,
         },
       ]);
     });
 
     test("fetches board activity when slug present (logged out)", async () => {
-      const board = await getBoardActivityByUuid({
-        boardId: GORE_BOARD_ID,
+      const board = await getBoardActivityByExternalId({
+        boardExternalId: GORE_BOARD_ID,
         firebaseId: undefined,
         cursor: null,
       });
@@ -95,7 +96,7 @@ describe("Tests boards activity queries", () => {
           new_posts_amount: 0,
           post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
           posts_amount: 3,
-          thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+          thread_id: FAVORITE_CHARACTER_THREAD_ID,
           threads_amount: 2,
         },
         {
@@ -108,15 +109,15 @@ describe("Tests boards activity queries", () => {
           new_posts_amount: 0,
           post_id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
           posts_amount: 3,
-          thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+          thread_id: FAVORITE_MURDER_THREAD_ID,
           threads_amount: 2,
         },
       ]);
     });
 
     test("fetches empty board activity", async () => {
-      const board = await getBoardActivityByUuid({
-        boardId: MAIN_STREET_BOARD_ID,
+      const board = await getBoardActivityByExternalId({
+        boardExternalId: MAIN_STREET_BOARD_ID,
         // Bobatan
         firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
         cursor: null,
@@ -132,8 +133,8 @@ describe("Tests boards activity queries", () => {
 
   describe("fetches metadata", () => {
     test("fetches board activity when slug present (logged in)", async () => {
-      const board = await getBoardActivityByUuid({
-        boardId: GORE_BOARD_ID,
+      const board = await getBoardActivityByExternalId({
+        boardExternalId: GORE_BOARD_ID,
         // Oncest
         firebaseId: "fb3",
         cursor: null,
@@ -197,8 +198,8 @@ describe("Tests boards activity queries", () => {
     });
 
     test("fetches board activity when slug present (logged out)", async () => {
-      const board = await getBoardActivityByUuid({
-        boardId: GORE_BOARD_ID,
+      const board = await getBoardActivityByExternalId({
+        boardExternalId: GORE_BOARD_ID,
         firebaseId: undefined,
         cursor: null,
       });
@@ -263,8 +264,8 @@ describe("Tests boards activity queries", () => {
 
   describe("fetches author data", () => {
     test("fetches board activity when slug present (logged in)", async () => {
-      const board = await getBoardActivityByUuid({
-        boardId: GORE_BOARD_ID,
+      const board = await getBoardActivityByExternalId({
+        boardExternalId: GORE_BOARD_ID,
         // Oncest
         firebaseId: "fb3",
         cursor: null,
@@ -309,8 +310,8 @@ describe("Tests boards activity queries", () => {
     });
 
     test("fetches board activity when slug present (logged out)", async () => {
-      const board = await getBoardActivityByUuid({
-        boardId: GORE_BOARD_ID,
+      const board = await getBoardActivityByExternalId({
+        boardExternalId: GORE_BOARD_ID,
         firebaseId: undefined,
         cursor: null,
       });

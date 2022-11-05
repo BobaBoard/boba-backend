@@ -1,6 +1,7 @@
 import { BOBATAN_USER_ID, ONCEST_USER_ID } from "test/data/auth";
+import { FAVORITE_CHARACTER_THREAD_ID, FAVORITE_MURDER_THREAD_ID } from "test/data/threads";
 
-import { TWISTED_MINDS_REALM_STRING_ID } from "test/data/realms";
+import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
 import { extractActivity } from "utils/test-utils";
 import { getUserActivity } from "../queries";
 
@@ -8,7 +9,7 @@ describe("feed activity queries", () => {
   test("updated: TRUE, own: TRUE", async () => {
     const feed = await getUserActivity({
       firebaseId: BOBATAN_USER_ID,
-      realmId: TWISTED_MINDS_REALM_STRING_ID,
+      realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
       cursor: null,
       updatedOnly: true,
       ownOnly: true,
@@ -38,7 +39,7 @@ describe("feed activity queries", () => {
   test("updated: FALSE, own: TRUE", async () => {
     const feed = await getUserActivity({
       firebaseId: BOBATAN_USER_ID,
-      realmId: TWISTED_MINDS_REALM_STRING_ID,
+      realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
       cursor: null,
       updatedOnly: false,
       ownOnly: true,
@@ -70,7 +71,7 @@ describe("feed activity queries", () => {
         new_posts_amount: 0,
         post_id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
         posts_amount: 3,
-        thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+        thread_id: FAVORITE_MURDER_THREAD_ID,
         thread_last_activity: "2020-05-03T09:47:00.00Z",
         thread_last_activity_micro: "2020-05-03T09:47:00.000000",
         threads_amount: 2,
@@ -81,7 +82,7 @@ describe("feed activity queries", () => {
   test("updated: TRUE, own: FALSE", async () => {
     const feed = await getUserActivity({
       firebaseId: BOBATAN_USER_ID,
-      realmId: TWISTED_MINDS_REALM_STRING_ID,
+      realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
       cursor: null,
       updatedOnly: true,
       ownOnly: false,
@@ -111,7 +112,7 @@ describe("feed activity queries", () => {
   test("updated: FALSE, own: FALSE", async () => {
     const feed = await getUserActivity({
       firebaseId: BOBATAN_USER_ID,
-      realmId: TWISTED_MINDS_REALM_STRING_ID,
+      realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
       cursor: null,
       updatedOnly: false,
       ownOnly: false,
@@ -143,7 +144,7 @@ describe("feed activity queries", () => {
         new_posts_amount: 0,
         post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
         posts_amount: 3,
-        thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+        thread_id: FAVORITE_CHARACTER_THREAD_ID,
         thread_last_activity: "2020-05-23T05:52:00.00Z",
         thread_last_activity_micro: "2020-05-23T05:52:00.000000",
         threads_amount: 2,
@@ -156,7 +157,7 @@ describe("feed activity queries", () => {
         new_posts_amount: 0,
         post_id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
         posts_amount: 3,
-        thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+        thread_id: FAVORITE_MURDER_THREAD_ID,
         thread_last_activity: "2020-05-03T09:47:00.00Z",
         thread_last_activity_micro: "2020-05-03T09:47:00.000000",
         threads_amount: 2,
@@ -167,7 +168,7 @@ describe("feed activity queries", () => {
   test("updated: FALSE, own: FALSE WITH CURSOR", async () => {
     const feed = await getUserActivity({
       firebaseId: BOBATAN_USER_ID,
-      realmId: TWISTED_MINDS_REALM_STRING_ID,
+      realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
       cursor: null,
       updatedOnly: false,
       ownOnly: false,
@@ -201,7 +202,7 @@ describe("feed activity queries", () => {
   test("updated: FALSE, own: FALSE WITH CURSOR (PAGE 2)", async () => {
     const feed = await getUserActivity({
       firebaseId: BOBATAN_USER_ID,
-      realmId: TWISTED_MINDS_REALM_STRING_ID,
+      realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
       cursor:
         "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDUtMjNUMDU6NTI6MDAuMDAwMDAwIiwicGFnZV9zaXplIjoxfQ==",
       updatedOnly: false,
@@ -222,7 +223,7 @@ describe("feed activity queries", () => {
         new_posts_amount: 0,
         post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
         posts_amount: 3,
-        thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+        thread_id: FAVORITE_CHARACTER_THREAD_ID,
         thread_last_activity: "2020-05-23T05:52:00.00Z",
         thread_last_activity_micro: "2020-05-23T05:52:00.000000",
         threads_amount: 2,
@@ -234,7 +235,7 @@ describe("feed activity queries", () => {
     test("updated: FALSE, own: FALSE", async () => {
       const feed = await getUserActivity({
         firebaseId: ONCEST_USER_ID,
-        realmId: TWISTED_MINDS_REALM_STRING_ID,
+        realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
         cursor: null,
         updatedOnly: false,
         ownOnly: false,
@@ -269,7 +270,7 @@ describe("feed activity queries", () => {
     test("updated: true, own: FALSE", async () => {
       const feed = await getUserActivity({
         firebaseId: ONCEST_USER_ID,
-        realmId: TWISTED_MINDS_REALM_STRING_ID,
+        realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
         cursor: null,
         updatedOnly: true,
         ownOnly: false,

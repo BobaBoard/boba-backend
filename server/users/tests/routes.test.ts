@@ -2,7 +2,7 @@ import { CacheKeys, cache } from "../../cache";
 import { setLoggedInUser, startTestServer } from "utils/test-utils";
 
 import { JERSEY_DEVIL_USER_ID } from "test/data/auth";
-import { TWISTED_MINDS_REALM_STRING_ID } from "test/data/realms";
+import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
 import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
 import { getUserFromFirebaseId } from "../queries";

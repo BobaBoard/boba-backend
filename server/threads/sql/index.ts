@@ -18,8 +18,8 @@ const getRandomIdentityId = `
  * We add limit 1 cause the role might be associated to the user in more than one board/realm,
  * but we're only interested in whether it's associated to them at all.
  */
-// TODO: rename to getRoleByStringId
-const getRoleByStringIdAndBoardId = `
+// TODO: rename to getRoleByExternalId
+const getRoleByExternalIdAndBoardId = `
     SELECT
       roles.id,
       roles.name,
@@ -47,43 +47,43 @@ const insertNewIdentity = `
       $/secret_identity_id/,
       $/role_id/)`;
 
-const muteThreadByStringId = `
+const muteThreadByExternalId = `
     INSERT INTO user_muted_threads(user_id, thread_id) VALUES (
         (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
         (SELECT id from threads WHERE threads.string_id = $/thread_string_id/))
     ON CONFLICT(user_id, thread_id) DO NOTHING`;
 
-const unmuteThreadByStringId = `
+const unmuteThreadByExternalId = `
     DELETE FROM user_muted_threads WHERE
         user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
         AND
         thread_id = (SELECT id from threads WHERE threads.string_id = $/thread_string_id/)`;
 
-const starThreadByStringId = `
+const starThreadByExternalId = `
   INSERT INTO user_starred_threads(user_id, thread_id) VALUES (
       (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
       (SELECT id from threads WHERE threads.string_id = $/thread_string_id/))
   ON CONFLICT(user_id, thread_id) DO NOTHING`;
 
-const unstarThreadByStringId = `
+const unstarThreadByExternalId = `
   DELETE FROM user_starred_threads WHERE
       user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
       AND
       thread_id = (SELECT id from threads WHERE threads.string_id = $/thread_string_id/)`;
 
-const hideThreadByStringId = `
+const hideThreadByExternalId = `
     INSERT INTO user_hidden_threads(user_id, thread_id) VALUES (
         (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
         (SELECT id from threads WHERE threads.string_id = $/thread_string_id/))
     ON CONFLICT(user_id, thread_id) DO NOTHING`;
 
-const unhideThreadByStringId = `
+const unhideThreadByExternalId = `
     DELETE FROM user_hidden_threads WHERE
         user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
         AND
         thread_id = (SELECT id from threads WHERE threads.string_id = $/thread_string_id/)`;
 
-const updateThreadViewByStringId = `
+const updateThreadViewByExternalId = `
     UPDATE threads
       SET options = jsonb_set(options, '{default_view}', to_jsonb($/thread_default_view/::text))
       WHERE threads.string_id = $/thread_string_id/
@@ -108,23 +108,23 @@ const moveThread = `
 `;
 
 export default {
-  threadByStringId: new QueryFile(
+  threadByExternalId: new QueryFile(
     path.join(__dirname, "thread-by-string-id.sql")
   ),
-  visitThreadByStringId: new QueryFile(
+  visitThreadByExternalId: new QueryFile(
     path.join(__dirname, "visit-thread-by-string-id.sql")
   ),
   createThread,
   getRandomIdentityId,
   insertNewIdentity,
-  muteThreadByStringId,
-  unmuteThreadByStringId,
-  starThreadByStringId,
-  unstarThreadByStringId,
-  hideThreadByStringId,
-  unhideThreadByStringId,
-  updateThreadViewByStringId,
-  getRoleByStringIdAndBoardId,
+  muteThreadByExternalId,
+  unmuteThreadByExternalId,
+  starThreadByExternalId,
+  unstarThreadByExternalId,
+  hideThreadByExternalId,
+  unhideThreadByExternalId,
+  updateThreadViewByExternalId,
+  getRoleByExternalIdAndBoardId,
   getThreadDetails,
   moveThread,
 };

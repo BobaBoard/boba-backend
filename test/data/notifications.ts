@@ -10,7 +10,7 @@ import {
 } from "./boards";
 
 import { NotificationsResponse } from "../../types/rest/notifications";
-import { TWISTED_MINDS_REALM_STRING_ID } from "./realms";
+import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "./realms";
 
 export const BOBATAN_NOTIFICATIONS: NotificationsResponse = {
   has_notifications: true,
@@ -33,7 +33,7 @@ export const BOBATAN_NOTIFICATIONS: NotificationsResponse = {
       last_visited_at: "2020-05-25T16:42:00.000Z",
     },
   },
-  realm_id: TWISTED_MINDS_REALM_STRING_ID,
+  realm_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
   realm_boards: {
     [MEMES_BOARD_ID]: {
       has_updates: false,

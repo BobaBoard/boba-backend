@@ -1,21 +1,23 @@
+import { FAVORITE_CHARACTER_THREAD_ID, FAVORITE_MURDER_THREAD_ID } from "test/data/threads";
+
+import { BOBATAN_USER_ID } from "test/data/auth";
 import { GORE_BOARD_ID } from "test/data/boards";
-import { TWISTED_MINDS_REALM_STRING_ID } from "test/data/realms";
-import { getThreadByStringId } from "../queries";
+import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
+import { getThreadByExternalId } from "../queries";
 
 describe("threads queries", () => {
   test("fetches threads by string id (with comments)", async () => {
-    const thread = await getThreadByStringId({
-      threadId: "29d1b2da-3289-454a-9089-2ed47db4967b",
-      // Bobatan
-      firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
+    const thread = await getThreadByExternalId({
+      threadExternalId: FAVORITE_CHARACTER_THREAD_ID,
+      firebaseId: BOBATAN_USER_ID,
     });
 
     expect(thread).toEqual({
-      thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      thread_id: FAVORITE_CHARACTER_THREAD_ID,
       board_slug: "gore",
       board_id: GORE_BOARD_ID,
       realm_slug: "twisted-minds",
-      realm_id: TWISTED_MINDS_REALM_STRING_ID,
+      realm_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
       thread_total_comments_amount: 2,
       thread_new_comments_amount: 0,
       thread_total_posts_amount: 3,
@@ -48,7 +50,7 @@ describe("threads queries", () => {
           is_own: false,
           new_comments_amount: 0,
           parent_post_id: null,
-          parent_thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+          parent_thread_id: FAVORITE_CHARACTER_THREAD_ID,
           total_comments_amount: 0,
           type: "text",
           index_tags: ["evil", "bobapost"],
@@ -78,7 +80,7 @@ describe("threads queries", () => {
           is_own: true,
           new_comments_amount: 0,
           parent_post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
-          parent_thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+          parent_thread_id: FAVORITE_CHARACTER_THREAD_ID,
           total_comments_amount: 0,
           type: "text",
           index_tags: ["evil", "oddly specific", "metal gear", "bobapost"],
@@ -115,13 +117,13 @@ describe("threads queries", () => {
               friend: false,
               self: true,
               content: '[{"insert":"OMG ME TOO"}]',
-              parent_comment: null,
+              parent_comment_id: null,
               chain_parent_id: null,
               created_at: "2020-05-22T00:22:00.00Z",
               comment_id: "46a16199-33d1-48c2-bb79-4d4095014688",
               is_new: false,
               is_own: true,
-              parent_post: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
+              parent_post_id: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
             },
             {
               anonymity_type: "strangers",
@@ -137,13 +139,13 @@ describe("threads queries", () => {
               friend: false,
               self: true,
               content: '[{"insert":"friends!!!!!"}]',
-              parent_comment: null,
+              parent_comment_id: null,
               chain_parent_id: "46a16199-33d1-48c2-bb79-4d4095014688",
               created_at: "2020-05-23T05:52:00.00Z",
               comment_id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
               is_new: false,
               is_own: true,
-              parent_post: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
+              parent_post_id: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
             },
           ],
           content: '[{"insert":"Kermit the Frog"}]',
@@ -153,7 +155,7 @@ describe("threads queries", () => {
           is_own: false,
           new_comments_amount: 0,
           parent_post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
-          parent_thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+          parent_thread_id: FAVORITE_CHARACTER_THREAD_ID,
           total_comments_amount: 2,
           type: "text",
           index_tags: ["good", "oddly specific", "bobapost"],
@@ -171,17 +173,17 @@ describe("threads queries", () => {
   });
 
   test("fetches threads by string id (no comments)", async () => {
-    const thread = await getThreadByStringId({
-      threadId: "a5c903df-35e8-43b2-a41a-208c43154671",
+    const thread = await getThreadByExternalId({
+      threadExternalId: FAVORITE_MURDER_THREAD_ID,
       // Oncest
       firebaseId: "fb3",
     });
     expect(thread).toEqual({
-      thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+      thread_id: FAVORITE_MURDER_THREAD_ID,
       board_slug: "gore",
       board_id: GORE_BOARD_ID,
       realm_slug: "twisted-minds",
-      realm_id: TWISTED_MINDS_REALM_STRING_ID,
+      realm_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
       thread_total_comments_amount: 0,
       thread_new_comments_amount: 0,
       thread_total_posts_amount: 3,
@@ -213,7 +215,7 @@ describe("threads queries", () => {
           is_own: false,
           new_comments_amount: 0,
           parent_post_id: null,
-          parent_thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+          parent_thread_id: FAVORITE_MURDER_THREAD_ID,
           total_comments_amount: 0,
           type: "text",
           index_tags: [],
@@ -241,7 +243,7 @@ describe("threads queries", () => {
           is_own: true,
           new_comments_amount: 0,
           parent_post_id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
-          parent_thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+          parent_thread_id: FAVORITE_MURDER_THREAD_ID,
           total_comments_amount: 0,
           type: "text",
           index_tags: [],
@@ -271,7 +273,7 @@ describe("threads queries", () => {
           is_own: false,
           new_comments_amount: 0,
           parent_post_id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
-          parent_thread_id: "a5c903df-35e8-43b2-a41a-208c43154671",
+          parent_thread_id: FAVORITE_MURDER_THREAD_ID,
           total_comments_amount: 0,
           type: "text",
           index_tags: [],
@@ -287,17 +289,17 @@ describe("threads queries", () => {
   });
 
   test("fetches threads by string id (logged out)", async () => {
-    const thread = await getThreadByStringId({
-      threadId: "29d1b2da-3289-454a-9089-2ed47db4967b",
+    const thread = await getThreadByExternalId({
+      threadExternalId: FAVORITE_CHARACTER_THREAD_ID,
       firebaseId: null,
     });
 
     expect(thread).toEqual({
-      thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+      thread_id: FAVORITE_CHARACTER_THREAD_ID,
       board_slug: "gore",
       board_id: GORE_BOARD_ID,
       realm_slug: "twisted-minds",
-      realm_id: TWISTED_MINDS_REALM_STRING_ID,
+      realm_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
       thread_total_comments_amount: 2,
       thread_new_comments_amount: 0,
       thread_total_posts_amount: 3,
@@ -330,7 +332,7 @@ describe("threads queries", () => {
           is_own: false,
           new_comments_amount: 0,
           parent_post_id: null,
-          parent_thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+          parent_thread_id: FAVORITE_CHARACTER_THREAD_ID,
           total_comments_amount: 0,
           type: "text",
           index_tags: ["evil", "bobapost"],
@@ -360,7 +362,7 @@ describe("threads queries", () => {
           is_own: false,
           new_comments_amount: 0,
           parent_post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
-          parent_thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+          parent_thread_id: FAVORITE_CHARACTER_THREAD_ID,
           total_comments_amount: 0,
           type: "text",
           index_tags: ["evil", "oddly specific", "metal gear", "bobapost"],
@@ -397,13 +399,13 @@ describe("threads queries", () => {
               friend: false,
               self: false,
               content: '[{"insert":"OMG ME TOO"}]',
-              parent_comment: null,
+              parent_comment_id: null,
               chain_parent_id: null,
               created_at: "2020-05-22T00:22:00.00Z",
               comment_id: "46a16199-33d1-48c2-bb79-4d4095014688",
               is_new: false,
               is_own: false,
-              parent_post: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
+              parent_post_id: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
             },
             {
               anonymity_type: "strangers",
@@ -419,13 +421,13 @@ describe("threads queries", () => {
               friend: false,
               self: false,
               content: '[{"insert":"friends!!!!!"}]',
-              parent_comment: null,
+              parent_comment_id: null,
               chain_parent_id: "46a16199-33d1-48c2-bb79-4d4095014688",
               created_at: "2020-05-23T05:52:00.00Z",
               comment_id: "89fc3682-cb74-43f9-9a63-bd97d0f59bb9",
               is_new: false,
               is_own: false,
-              parent_post: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
+              parent_post_id: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
             },
           ],
           content: '[{"insert":"Kermit the Frog"}]',
@@ -435,7 +437,7 @@ describe("threads queries", () => {
           is_own: false,
           new_comments_amount: 0,
           parent_post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
-          parent_thread_id: "29d1b2da-3289-454a-9089-2ed47db4967b",
+          parent_thread_id: FAVORITE_CHARACTER_THREAD_ID,
           total_comments_amount: 2,
           type: "text",
           index_tags: ["good", "oddly specific", "bobapost"],
@@ -453,8 +455,8 @@ describe("threads queries", () => {
   });
 
   test("returns null thread when id not found", async () => {
-    const thread = await getThreadByStringId({
-      threadId: "this_will_not_be_in_the_db",
+    const thread = await getThreadByExternalId({
+      threadExternalId: "this_will_not_be_in_the_db",
       firebaseId: "c6HimTlg2RhVH3fC1psXZORdLcx2",
     });
 

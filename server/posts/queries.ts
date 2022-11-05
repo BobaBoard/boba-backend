@@ -174,7 +174,7 @@ const getThreadDetails = async (
   transaction: ITask<any>,
   {
     parentPostId,
-    threadId,
+    threadExternalId,
     firebaseId,
     parentCommentId,
     identityId,
@@ -182,7 +182,7 @@ const getThreadDetails = async (
   }: {
     firebaseId: string;
     parentPostId?: string;
-    threadId?: string;
+    threadExternalId?: string;
     parentCommentId?: string;
     identityId?: string;
     accessoryId?: string;
@@ -203,8 +203,8 @@ const getThreadDetails = async (
   board_string_id: string;
 }> => {
   invariant(
-    parentPostId || threadId,
-    "ParentPostId (${parentPostId}) or threadId (${threadId}) is required when getting details for a thread."
+    parentPostId || threadExternalId,
+    "ParentPostId (${parentPostId}) or threadExternalId (${threadExternalId}) is required when getting details for a thread."
   );
   let {
     user_id,
@@ -226,7 +226,7 @@ const getThreadDetails = async (
     parentPostId ? sql.getPostDetails : sql.getThreadDetails,
     {
       post_string_id: parentPostId,
-      thread_string_id: threadId,
+      thread_string_id: threadExternalId,
       firebase_id: firebaseId,
       parent_comment_string_id: parentCommentId,
     }
@@ -287,7 +287,7 @@ export const postNewContribution = async (
     identityId,
     accessoryId,
     parentPostId,
-    threadId,
+    threadExternalId,
     content,
     isLarge,
     anonymityType,
@@ -307,7 +307,7 @@ export const postNewContribution = async (
     categoryTags: string[];
     contentWarnings: string[];
     parentPostId?: string;
-    threadId?: string;
+    threadExternalId?: string;
   },
   tx?: ITask<unknown>
 ): Promise<{ contribution: DbPostType; boardSlug: string } | false> => {
@@ -315,8 +315,8 @@ export const postNewContribution = async (
     t: ITask<unknown>
   ): Promise<{ contribution: DbPostType; boardSlug: string }> => {
     invariant(
-      parentPostId || threadId,
-      `ParentPostId (${parentPostId}) or threadId (${threadId}) is required when creating a new contribution`
+      parentPostId || threadExternalId,
+      `ParentPostId (${parentPostId}) or threadExternalId (${threadExternalId}) is required when creating a new contribution`
     );
     let {
       board_slug,
@@ -335,7 +335,7 @@ export const postNewContribution = async (
       identityId,
       accessoryId,
       parentPostId,
-      threadId,
+      threadExternalId,
       firebaseId,
     });
     const result = await t.one(sql.makePost, {
@@ -460,10 +460,10 @@ const postNewCommentWithTransaction = async ({
 
   const result = await transaction.one(sql.makeComment, {
     comment_string_id: uuidv4(),
-    parent_post: post_id,
-    parent_comment: comment_id,
-    parent_thread: thread_id,
-    chain_parent_comment: chainParentId,
+    parent_post_id: post_id,
+    parent_comment_id: comment_id,
+    parent_thread_id: thread_id,
+    chain_parent_comment_id: chainParentId,
     user_id,
     content,
     anonymity_type: anonymityType,
@@ -473,9 +473,9 @@ const postNewCommentWithTransaction = async ({
     id: result.id,
     comment: {
       comment_id: result.string_id,
-      parent_post: parentPostId,
-      parent_comment: parentCommentId,
-      chain_parent_id: result.chain_parent_comment,
+      parent_post_id: parentPostId,
+      parent_comment_id: parentCommentId,
+      chain_parent_id: result.chain_parent_comment_id,
       author: user_id,
       content: result.content,
       created_at: result.created_at,
@@ -514,7 +514,7 @@ export const postNewCommentChain = async ({
   return pool
     .tx("create-comment-chaim", async (transaction) => {
       let prevId: number = null;
-      let prevStringId: string = null;
+      let prevExternalId: string = null;
       const comments = [];
       for (let content of contentArray) {
         const newComment = await postNewCommentWithTransaction({
@@ -528,9 +528,9 @@ export const postNewCommentChain = async ({
           identityId,
           accessoryId,
         });
-        newComment.comment.chain_parent_id = prevStringId;
+        newComment.comment.chain_parent_id = prevExternalId;
         prevId = newComment.id;
-        prevStringId = newComment.comment.comment_id;
+        prevExternalId = newComment.comment.comment_id;
         comments.push(newComment.comment);
       }
       return comments;
@@ -619,7 +619,7 @@ export const addNewIdentityToThreadByBoardId = async (
     // The only thing we need to check is whether the user is *actually able* to post
     // as that identity.
     const roleResult = await transaction.oneOrNone(
-      threadsSql.getRoleByStringIdAndBoardId,
+      threadsSql.getRoleByExternalIdAndBoardId,
       {
         role_id: identityId,
         firebase_id: firebaseId,
@@ -683,19 +683,19 @@ export const addNewIdentityToThreadByBoardId = async (
   };
 };
 
-export const getPostFromStringId = async (
+export const getPostByExternalId = async (
   transaction: ITask<any> | null,
   {
     firebaseId,
-    postId,
+    postExternalId,
   }: {
     firebaseId: string | undefined;
-    postId: string;
+    postExternalId: string;
   }
 ): Promise<DbPostType> => {
-  return await (transaction ?? pool).one(sql.postByStringId, {
+  return await (transaction ?? pool).one(sql.postByExternalId, {
     firebase_id: firebaseId,
-    post_string_id: postId,
+    post_string_id: postExternalId,
   });
 };
 
@@ -703,11 +703,11 @@ export const updatePostTags = async (
   transaction: ITask<any> | null,
   {
     firebaseId,
-    postId,
+    postExternalId,
     tagsDelta,
   }: {
     firebaseId: string;
-    postId: string;
+    postExternalId: string;
     tagsDelta: {
       added: QueryTagsType;
       removed: QueryTagsType;
@@ -715,10 +715,10 @@ export const updatePostTags = async (
   }
 ): Promise<DbPostType | false> => {
   const updateTagsMethod = async (transaction: ITask<any>) => {
-    const post = await getPostFromStringId(transaction, { firebaseId, postId });
+    const post = await getPostByExternalId(transaction, { firebaseId, postExternalId });
     const numericId = (
-      await transaction.one<{ id: number }>(sql.getPostIdFromStringId, {
-        post_string_id: postId,
+      await transaction.one<{ id: number }>(sql.getPostIdFromExternalId, {
+        post_string_id: postExternalId,
       })
     ).id;
     await maybeAddIndexTags(transaction, {
@@ -753,7 +753,7 @@ export const updatePostTags = async (
       whisperTags: newWhisperTags,
     });
 
-    return await getPostFromStringId(transaction, { firebaseId, postId });
+    return await getPostByExternalId(transaction, { firebaseId, postExternalId });
   };
 
   try {

@@ -1,7 +1,8 @@
 import { DbFeedType, DbThreadSummaryType } from "Types";
+import { FAVORITE_CHARACTER_THREAD_ID, FAVORITE_MURDER_THREAD_ID } from "test/data/threads";
 
 import { BOBATAN_USER_ID } from "test/data/auth";
-import { TWISTED_MINDS_REALM_STRING_ID } from "test/data/realms";
+import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
 import { getUserActivity } from "../queries";
 
 export const extractTags = (thread: DbThreadSummaryType | null | undefined) => {
@@ -18,17 +19,17 @@ export const extractTags = (thread: DbThreadSummaryType | null | undefined) => {
 };
 
 export const getThreadFromActivity = (
-  threadId: string,
+  threadExternalId: string,
   activity: DbFeedType
 ) => {
-  return activity.activity.find((thread) => thread.thread_id == threadId);
+  return activity.activity.find((thread) => thread.thread_id == threadExternalId);
 };
 
 describe("feed activity tags", () => {
   test("correctly fetches tags", async () => {
     const feed = await getUserActivity({
       firebaseId: BOBATAN_USER_ID,
-      realmId: TWISTED_MINDS_REALM_STRING_ID,
+      realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
       cursor: null,
       updatedOnly: false,
       ownOnly: false,
@@ -40,7 +41,7 @@ describe("feed activity tags", () => {
 
     expect(
       extractTags(
-        getThreadFromActivity("29d1b2da-3289-454a-9089-2ed47db4967b", feed)
+        getThreadFromActivity(FAVORITE_CHARACTER_THREAD_ID, feed)
       ).tags
     ).toEqual(["evil", "bobapost"]);
   });
@@ -48,7 +49,7 @@ describe("feed activity tags", () => {
   test("correctly fetches categories", async () => {
     const feed = await getUserActivity({
       firebaseId: BOBATAN_USER_ID,
-      realmId: TWISTED_MINDS_REALM_STRING_ID,
+      realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
       cursor: null,
       updatedOnly: false,
       ownOnly: false,
@@ -60,7 +61,7 @@ describe("feed activity tags", () => {
 
     expect(
       extractTags(
-        getThreadFromActivity("a5c903df-35e8-43b2-a41a-208c43154671", feed)
+        getThreadFromActivity(FAVORITE_MURDER_THREAD_ID, feed)
       ).categories
     ).toEqual(["blood", "bruises"]);
   });
@@ -68,7 +69,7 @@ describe("feed activity tags", () => {
   test("correctly fetches whisper tags", async () => {
     const feed = await getUserActivity({
       firebaseId: BOBATAN_USER_ID,
-      realmId: TWISTED_MINDS_REALM_STRING_ID,
+      realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
       cursor: null,
       updatedOnly: false,
       ownOnly: false,
@@ -88,7 +89,7 @@ describe("feed activity tags", () => {
   test("correctly fetches content warnings", async () => {
     const feed = await getUserActivity({
       firebaseId: BOBATAN_USER_ID,
-      realmId: TWISTED_MINDS_REALM_STRING_ID,
+      realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
       cursor: null,
       updatedOnly: false,
       ownOnly: false,

@@ -9,7 +9,9 @@ import { GORE_BOARD_ID, RESTRICTED_BOARD_ID } from "./boards";
 import { Thread, ThreadSummary } from "../../types/rest/threads";
 
 import { GenericResponse } from "../../types/rest/responses";
-import { TWISTED_MINDS_REALM_STRING_ID } from "./realms";
+import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "./realms";
+
+// TODO: add thread b27710a8-0a9f-4c09-b3a5-54668bab7051 and info
 
 export const EXCELLENT_THREAD_ID = "8b2646af-2778-487e-8e44-7ae530c2549c";
 export const FAVORITE_CHARACTER_THREAD_ID =
@@ -23,7 +25,7 @@ export const EXCELLENT_THREAD_SUMMARY: ThreadSummary = {
   parent_board_slug: "gore",
   parent_board_id: GORE_BOARD_ID,
   parent_realm_slug: "twisted-minds",
-  parent_realm_id: TWISTED_MINDS_REALM_STRING_ID,
+  parent_realm_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
   starter: {
     id: "ff9f2ae2-a254-4069-9791-3ac5e6dff5bb",
     parent_post_id: null,
@@ -69,7 +71,7 @@ export const FAVORITE_CHARACTER_THREAD_SUMMARY: ThreadSummary = {
   parent_board_slug: "gore",
   parent_board_id: GORE_BOARD_ID,
   parent_realm_slug: "twisted-minds",
-  parent_realm_id: TWISTED_MINDS_REALM_STRING_ID,
+  parent_realm_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
   starter: CHARACTER_TO_MAIM_POST,
   new_posts_amount: 0,
   new_comments_amount: 0,
@@ -89,7 +91,7 @@ export const FAVORITE_MURDER_THREAD_SUMMARY: ThreadSummary = {
   parent_board_slug: "gore",
   parent_board_id: GORE_BOARD_ID,
   parent_realm_slug: "twisted-minds",
-  parent_realm_id: TWISTED_MINDS_REALM_STRING_ID,
+  parent_realm_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
   starter: {
     id: "3db477e0-57ed-491d-ba11-b3a0110b59b0",
     parent_thread_id: FAVORITE_MURDER_THREAD_ID,
@@ -142,7 +144,7 @@ export const RESTRICTED_THREAD_SUMMARY: ThreadSummary = {
   parent_board_id: RESTRICTED_BOARD_ID,
   parent_board_slug: "restricted",
   parent_realm_slug: "twisted-minds",
-  parent_realm_id: TWISTED_MINDS_REALM_STRING_ID,
+  parent_realm_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
   starter: CANT_SEE_ME_POST,
   total_comments_amount: 1,
   total_posts_amount: 1,
@@ -192,7 +194,7 @@ export const CREATE_GORE_THREAD_RESPONSE: Thread = {
   parent_board_slug: "gore",
   parent_board_id: GORE_BOARD_ID,
   parent_realm_slug: "twisted-minds",
-  parent_realm_id: TWISTED_MINDS_REALM_STRING_ID,
+  parent_realm_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
   starter: {
     id: expect.any(String),
     parent_thread_id: expect.any(String),

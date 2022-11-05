@@ -10,14 +10,14 @@ const log = debug("bobaserver:feeds:queries-log");
 const error = debug("bobaserver:feeds:queries-error");
 
 const DEFAULT_PAGE_SIZE = 10;
-export const getBoardActivityByUuid = async ({
-  boardId,
+export const getBoardActivityByExternalId = async ({
+  boardExternalId,
   firebaseId,
   categoryFilter,
   cursor,
   pageSize,
 }: {
-  boardId: string;
+  boardExternalId: string;
   firebaseId: string;
   categoryFilter?: string | null;
   cursor: string | null;
@@ -28,8 +28,8 @@ export const getBoardActivityByUuid = async ({
 
     const finalPageSize =
       decodedCursor?.page_size || pageSize || DEFAULT_PAGE_SIZE;
-    const rows = await pool.manyOrNone(sql.getBoardActivityByUuid, {
-      board_id: boardId,
+    const rows = await pool.manyOrNone(sql.getBoardActivityByExternalId, {
+      board_id: boardExternalId,
       firebase_id: firebaseId,
       filtered_category: categoryFilter || null,
       last_activity_cursor: decodedCursor?.last_activity_cursor || null,
@@ -37,19 +37,19 @@ export const getBoardActivityByUuid = async ({
     });
 
     if (!rows) {
-      log(`Board not found: ${boardId}`);
+      log(`Board not found: ${boardExternalId}`);
       return null;
     }
 
     if (rows.length == 1 && rows[0].thread_id == null) {
       // Only one row with just the null thread)
-      log(`Board empty: ${boardId}`);
+      log(`Board empty: ${boardExternalId}`);
       return { cursor: undefined, activity: [] };
     }
 
     let result = rows;
     let nextCursor = null;
-    info(`Got getBoardActivityByUuid query result`, result);
+    info(`Got getBoardActivityByExternalId query result`, result);
     if (result.length > finalPageSize) {
       nextCursor = encodeCursor({
         last_activity_cursor:
@@ -60,10 +60,10 @@ export const getBoardActivityByUuid = async ({
       result.pop();
     }
 
-    log(`Fetched board ${boardId} activity data for user ${firebaseId}`);
+    log(`Fetched board ${boardExternalId} activity data for user ${firebaseId}`);
     return { cursor: nextCursor, activity: rows };
   } catch (e) {
-    error(`Error while fetching board by slug (${boardId}).`);
+    error(`Error while fetching board by slug (${boardExternalId}).`);
     error(e);
     return false;
   }
@@ -73,14 +73,14 @@ export const getUserActivity = async ({
   firebaseId,
   cursor,
   pageSize,
-  realmId,
+  realmExternalId,
   updatedOnly,
   ownOnly,
 }: {
   firebaseId: string;
   updatedOnly: boolean;
   ownOnly: boolean;
-  realmId: string;
+  realmExternalId: string;
   cursor: string | null;
   pageSize?: number;
 }): Promise<DbFeedType | false> => {
@@ -95,7 +95,7 @@ export const getUserActivity = async ({
       page_size: finalPageSize,
       updated_only: updatedOnly,
       own_only: ownOnly,
-      realm_id: realmId,
+      realm_id: realmExternalId,
     });
 
     if (rows.length == 1 && rows[0].thread_id == null) {
@@ -151,7 +151,7 @@ export const getUserStarFeed = async ({
 
   let result = rows;
   let nextCursor = null;
-  log(`Got getBoardActivityByUuid query result`, result);
+  log(`Got getBoardActivityByExternalId query result`, result);
   if (result.length > finalPageSize) {
     nextCursor = encodeCursor({
       last_activity_cursor:

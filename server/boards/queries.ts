@@ -15,15 +15,15 @@ const error = debug("bobaserver:board:queries-error");
 
 export const getBoards = async ({
   firebaseId,
-  realmId,
+  realmExternalId,
 }: {
   firebaseId: string;
-  realmId?: string;
+  realmExternalId?: string;
 }): Promise<any> => {
   try {
     return await pool.many(sql.getAllBoards, {
       firebase_id: firebaseId,
-      realm_string_id: realmId,
+      realm_string_id: realmExternalId,
     });
   } catch (e) {
     error(`Error while fetching boards.`);
@@ -60,29 +60,29 @@ export const getBoardBySlug = async ({
   }
 };
 
-export const getBoardByUuid = async ({
+export const getBoardByExternalId = async ({
   firebaseId,
-  boardId,
+  boardExternalId,
 }: {
   firebaseId: string | undefined;
-  boardId: string;
+  boardExternalId: string;
 }): Promise<DbBoardMetadata> => {
   try {
-    const rows = await pool.oneOrNone(sql.getBoardByUuid, {
+    const rows = await pool.oneOrNone(sql.getBoardByExternalId, {
       firebase_id: firebaseId,
-      board_uuid: boardId,
+      board_id: boardExternalId,
     });
 
     if (!rows) {
-      log(`Board not found: ${boardId}`);
+      log(`Board not found: ${boardExternalId}`);
       return null;
     }
 
-    info(`Got getBoardByUuid query result:`, rows);
-    log(`Fetched board ${boardId} for user ${firebaseId}`);
+    info(`Got getBoardByExternalId query result:`, rows);
+    log(`Fetched board ${boardExternalId} for user ${firebaseId}`);
     return rows;
   } catch (e) {
-    error(`Error while fetching board by uuid (${boardId}).`);
+    error(`Error while fetching board by id (${boardExternalId}).`);
     error(e);
     return null;
   }
@@ -91,10 +91,10 @@ export const getBoardByUuid = async ({
 const updateCategoriesDescriptions = async (
   tx: ITask<unknown>,
   {
-    boardId,
+    boardExternalId,
     categoryFilters,
   }: {
-    boardId: string;
+    boardExternalId: string;
     categoryFilters: ReturnType<typeof getMetadataDelta>["categoryFilters"];
   }
 ) => {
@@ -103,12 +103,12 @@ const updateCategoriesDescriptions = async (
     categoryFilters.deleted.map(async (filter) => {
       await tx.none(sql.deleteSectionCategories, {
         section_id: filter.id,
-        board_uuid: boardId,
+        board_id: boardExternalId,
         category_names: null,
       });
       await tx.none(sql.deleteSection, {
         section_id: filter.id,
-        board_uuid: boardId,
+        board_id: boardExternalId,
       });
     })
   );
@@ -123,7 +123,7 @@ const updateCategoriesDescriptions = async (
           title: category.title,
           description: category.description,
           index: category.index,
-          board_uuid: boardId,
+          board_id: boardExternalId,
           section_id: category.id,
         });
       } else {
@@ -132,7 +132,7 @@ const updateCategoriesDescriptions = async (
           title: category.title,
           description: category.description,
           index: category.index,
-          board_uuid: boardId,
+          board_id: boardExternalId,
           type: "category_filter",
         });
       }
@@ -140,7 +140,7 @@ const updateCategoriesDescriptions = async (
       if (category.categories.deleted.length > 0) {
         await tx.none(sql.deleteSectionCategories, {
           section_id: category.id,
-          board_uuid: boardId,
+          board_id: boardExternalId,
           category_names: category.categories.deleted,
         });
         log("Removed obsolete categories from filter.");
@@ -165,10 +165,10 @@ const updateCategoriesDescriptions = async (
 const updateTextDescriptions = async (
   tx: ITask<unknown>,
   {
-    boardId,
+    boardExternalId,
     texts,
   }: {
-    boardId: string;
+    boardExternalId: string;
     texts: ReturnType<typeof getMetadataDelta>["texts"];
   }
 ) => {
@@ -177,7 +177,7 @@ const updateTextDescriptions = async (
     texts.deleted.map(async (text) => {
       await tx.none(sql.deleteSection, {
         section_id: text.id,
-        board_uuid: boardId,
+        board_id: boardExternalId,
       });
     })
   );
@@ -192,7 +192,7 @@ const updateTextDescriptions = async (
           title: text.title,
           description: text.description,
           index: text.index,
-          board_uuid: boardId,
+          board_id: boardExternalId,
           section_id: text.id,
         });
       } else {
@@ -201,7 +201,7 @@ const updateTextDescriptions = async (
           title: text.title,
           description: text.description,
           index: text.index,
-          board_uuid: boardId,
+          board_id: boardExternalId,
           type: "text",
         });
       }
@@ -211,12 +211,12 @@ const updateTextDescriptions = async (
 };
 
 export const updateBoardMetadata = async ({
-  boardId,
+  boardExternalId,
   firebaseId,
   oldMetadata,
   newMetadata,
 }: {
-  boardId: string;
+  boardExternalId: string;
   firebaseId: string;
   oldMetadata: DbBoardMetadata;
   newMetadata: Partial<DbBoardMetadata>;
@@ -227,14 +227,14 @@ export const updateBoardMetadata = async ({
       newMetadata,
     });
 
-    log(`Received metadata delta for update to board ${boardId}`);
+    log(`Received metadata delta for update to board ${boardExternalId}`);
     info(delta);
 
     const success = await pool
       .tx("update-descriptions", async (transaction) => {
         if (delta.tagline || delta.accentColor) {
           await transaction.none(sql.updateBoardSettings, {
-            board_uuid: boardId,
+            board_id: boardExternalId,
             tagline: delta.tagline || oldMetadata.tagline,
             settings: {
               accentColor:
@@ -244,11 +244,11 @@ export const updateBoardMetadata = async ({
         }
 
         await updateCategoriesDescriptions(transaction, {
-          boardId,
+          boardExternalId,
           categoryFilters: delta.categoryFilters,
         });
         await updateTextDescriptions(transaction, {
-          boardId,
+          boardExternalId,
           texts: delta.texts,
         });
 
@@ -265,28 +265,28 @@ export const updateBoardMetadata = async ({
     }
 
     // Now return the new result
-    return await pool.oneOrNone(sql.getBoardByUuid, {
-      board_uuid: boardId,
+    return await pool.oneOrNone(sql.getBoardByExternalId, {
+      board_id: boardExternalId,
       firebase_id: firebaseId,
     });
   } catch (e) {
-    error(`Error while updating board (${boardId}) metadata.`);
+    error(`Error while updating board (${boardExternalId}) metadata.`);
     error(e);
     return false;
   }
 };
 
 export const markBoardVisit = async ({
-  boardId,
+  boardExternalId,
   firebaseId,
 }: {
-  boardId: string;
+  boardExternalId: string;
   firebaseId: string;
 }) => {
   try {
     await pool.none(sql.markBoardVisit, {
       firebase_id: firebaseId,
-      board_uuid: boardId,
+      board_id: boardExternalId,
     });
     return true;
   } catch (e) {
@@ -297,16 +297,16 @@ export const markBoardVisit = async ({
 };
 
 export const muteBoard = async ({
-  boardId,
+  boardExternalId,
   firebaseId,
 }: {
-  boardId: string;
+  boardExternalId: string;
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.muteBoardByUuid, {
+    await pool.none(sql.muteBoardByExternalId, {
       firebase_id: firebaseId,
-      board_uuid: boardId,
+      board_id: boardExternalId,
     });
     return true;
   } catch (e) {
@@ -317,16 +317,16 @@ export const muteBoard = async ({
 };
 
 export const unmuteBoard = async ({
-  boardId,
+  boardExternalId,
   firebaseId,
 }: {
-  boardId: string;
+  boardExternalId: string;
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.unmuteBoardByUuid, {
+    await pool.none(sql.unmuteBoardByExternalId, {
       firebase_id: firebaseId,
-      board_uuid: boardId,
+      board_id: boardExternalId,
     });
     return true;
   } catch (e) {
@@ -337,16 +337,16 @@ export const unmuteBoard = async ({
 };
 
 export const pinBoard = async ({
-  boardId,
+  boardExternalId,
   firebaseId,
 }: {
-  boardId: string;
+  boardExternalId: string;
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.pinBoardByUuid, {
+    await pool.none(sql.pinBoardByExternalId, {
       firebase_id: firebaseId,
-      board_uuid: boardId,
+      board_id: boardExternalId,
     });
     return true;
   } catch (e) {
@@ -357,16 +357,16 @@ export const pinBoard = async ({
 };
 
 export const unpinBoard = async ({
-  boardId,
+  boardExternalId,
   firebaseId,
 }: {
-  boardId: string;
+  boardExternalId: string;
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.unpinBoardByUuid, {
+    await pool.none(sql.unpinBoardByExternalId, {
       firebase_id: firebaseId,
-      board_uuid: boardId,
+      board_id: boardExternalId,
     });
     return true;
   } catch (e) {
@@ -377,16 +377,16 @@ export const unpinBoard = async ({
 };
 
 export const dismissBoardNotifications = async ({
-  boardId,
+  boardExternalId,
   firebaseId,
 }: {
-  boardId: string;
+  boardExternalId: string;
   firebaseId: string;
 }) => {
   try {
-    await pool.none(sql.dismissNotificationsByUuid, {
+    await pool.none(sql.dismissNotificationsByExternalId, {
       firebase_id: firebaseId,
-      board_uuid: boardId,
+      board_id: boardExternalId,
     });
     return true;
   } catch (e) {
@@ -401,7 +401,7 @@ export const createThread = async ({
   content,
   isLarge,
   anonymityType,
-  boardStringId,
+  boardExternalId,
   whisperTags,
   indexTags,
   categoryTags,
@@ -415,7 +415,7 @@ export const createThread = async ({
   isLarge: boolean;
   defaultView: string;
   anonymityType: string;
-  boardStringId: string;
+  boardExternalId: string;
   whisperTags: string[];
   indexTags: string[];
   categoryTags: string[];
@@ -424,15 +424,15 @@ export const createThread = async ({
   accessoryId?: string;
 }) => {
   return pool.tx("create-thread", async (t) => {
-    const threadStringId = uuidv4();
+    const newThreadExternalId = uuidv4();
     await t.one(threadsSql.createThread, {
-      thread_string_id: threadStringId,
-      board_string_id: boardStringId,
+      thread_string_id: newThreadExternalId,
+      board_string_id: boardExternalId,
       thread_options: {
         default_view: defaultView,
       },
     });
-    log(`Created thread entry for thread ${threadStringId}`);
+    log(`Created thread entry for thread ${newThreadExternalId}`);
 
     await postNewContribution(
       {
@@ -446,10 +446,10 @@ export const createThread = async ({
         indexTags,
         contentWarnings,
         categoryTags,
-        threadId: threadStringId,
+        threadExternalId: newThreadExternalId,
       },
       t
     );
-    return threadStringId;
+    return newThreadExternalId;
   });
 };

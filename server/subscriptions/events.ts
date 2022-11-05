@@ -59,7 +59,7 @@ const maybeUpdateSubscriptionsOnThreadCreated = async (
   eventPayload: threadEvents.ThreadCreatedPayload
 ) => {
   const triggeredSubscriptions = await getTriggeredBoardSubscriptions({
-    boardId: eventPayload.thread.parent_board_id,
+    boardExternalId: eventPayload.thread.parent_board_id,
     categories: eventPayload.thread.posts[0].tags?.category_tags,
   });
 
@@ -76,7 +76,7 @@ const maybeUpdateSubscriptionsOnThreadChange = async (
   eventPayload: threadEvents.ThreadUpdatedPayload
 ) => {
   const triggeredSubscriptions = await getTriggeredThreadsSubscriptions({
-    threadId: eventPayload.post.parent_thread_id,
+    threadExternalId: eventPayload.post.parent_thread_id,
     categoryNames: eventPayload.post.tags?.category_tags,
   });
 

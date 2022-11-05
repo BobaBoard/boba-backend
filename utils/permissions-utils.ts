@@ -10,7 +10,7 @@ import {
   extractPermissions,
 } from "types/permissions";
 import { DbBoardMetadata, QueryTagsType } from "Types";
-import { getBoardBySlug, getBoardByUuid } from "server/boards/queries";
+import { getBoardByExternalId, getBoardBySlug } from "server/boards/queries";
 
 import debug from "debug";
 
@@ -132,16 +132,16 @@ export const canAccessBoard = async ({
   return hasBoardAccessPermission({ boardMetadata: board, firebaseId });
 };
 
-export const canAccessBoardByUuid = async ({
-  boardId,
+export const canAccessBoardByExternalId = async ({
+  boardExternalId,
   firebaseId,
 }: {
-  boardId: string;
+  boardExternalId: string;
   firebaseId?: string;
 }) => {
-  const board = await getBoardByUuid({
+  const board = await getBoardByExternalId({
     firebaseId,
-    boardId,
+    boardExternalId,
   });
   info(`Found board`, board);
 

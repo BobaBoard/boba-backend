@@ -9,7 +9,7 @@ import {
   checkUserOnRealm,
   dismissAllNotifications,
   getInviteDetails,
-  getRealmIdsByUuid,
+  getRealmByExternalId,
   getRealmInvites,
   getUserPermissionsForRealm,
 } from "server/realms/queries";
@@ -94,12 +94,12 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
 
     const realmPermissions = await getUserPermissionsForRealm({
       firebaseId: req.currentUser?.uid,
-      realmStringId: realmData.id,
+      realmExternalId: realmData.id,
     });
 
     const boards = await getBoards({
       firebaseId: req.currentUser?.uid,
-      realmId: realmData.id,
+      realmExternalId: realmData.id,
     });
 
     if (!boards) {
@@ -139,7 +139,7 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
  * /realms/{realm_id}/activity:
  *   get:
  *     summary: Fetches latest activity summary for the realm.
- *     operationId: getRealmsActivityByUuid
+ *     operationId: getRealmsActivityByExternalId
  *     tags:
  *       - /realms/
  *     security:
@@ -170,7 +170,7 @@ router.get("/:realm_id/activity", ensureRealmExists, async (req, res) => {
     // TODO[realms]: use a per-realm query here
     const boards = await getBoards({
       firebaseId: req.currentUser?.uid,
-      realmId: realm_id,
+      realmExternalId: realm_id,
     });
 
     if (!boards) {
@@ -229,7 +229,7 @@ router.get("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
 
   const boards = await getBoards({
     firebaseId: req.currentUser?.uid,
-    realmId: realm_id,
+    realmExternalId: realm_id,
   });
 
   if (!boards) {
@@ -313,7 +313,7 @@ router.delete("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
 
   const dismissSuccessful = await dismissAllNotifications({
     firebaseId: currentUserId,
-    realmId: realm_id,
+    realmExternalId: realm_id,
   });
 
   if (!dismissSuccessful) {
@@ -392,7 +392,7 @@ router.get(
     const realm = req.currentRealmIds;
     const userId = req.currentUser.uid;
     const unformattedInvites = await getRealmInvites({
-      realmStringId: realm.string_id,
+      realmExternalId: realm.string_id,
     });
     if (!unformattedInvites.length) {
       res.status(200).json({ invites: [] });
@@ -473,7 +473,7 @@ router.get("/:realm_id/invites/:nonce", async (req, res) => {
   if (!invite) {
     throw new NotFound404Error("The invite was not found");
   }
-  const inviteRealm = await getRealmIdsByUuid({ realmId: invite.realmId });
+  const inviteRealm = await getRealmByExternalId({ realmExternalId: invite.realmExternalId });
   if (!inviteRealm) {
     throw new Internal500Error("failed to get realm ids");
   }
@@ -556,7 +556,7 @@ router.post(
   ensureRealmPermission(RealmPermissions.createRealmInvite),
   async (req, res) => {
     const user = req.currentUser?.uid;
-    const realmId = req.params.realm_id;
+    const realmExternalId = req.params.realm_id;
     const { email, label } = req.body;
 
     // Generate 64 characters random id string
@@ -565,7 +565,7 @@ router.post(
     log(adminId);
 
     const inviteAdded = await createInvite({
-      realmId,
+      realmExternalId,
       email,
       inviteCode,
       inviterId: adminId.id,
@@ -579,7 +579,7 @@ router.post(
     log(realm);
 
     res.status(200).json({
-      realm_id: realmId,
+      realm_id: realmExternalId,
       // TODO: we should probably just return the details here and let the client construct
       // the URL. If we don't do this, then we leak info that the client is in charge of
       // to the server.
@@ -647,7 +647,7 @@ router.get("/:realm_id/invites/:nonce", async (req, res) => {
   if (!invite) {
     throw new NotFound404Error("The invite was not found");
   }
-  const inviteRealm = await getRealmIdsByUuid({ realmId: invite.realmId });
+  const inviteRealm = await getRealmByExternalId({ realmExternalId: invite.realmExternalId });
   if (!inviteRealm) {
     throw new Internal500Error("failed to get realm ids");
   }
@@ -792,14 +792,14 @@ router.post(
       }
     }
 
-    const inviteRealm = await getRealmIdsByUuid({
-      realmId: inviteDetails.realmId,
+    const inviteRealm = await getRealmByExternalId({
+      realmExternalId: inviteDetails.realmExternalId,
     });
 
     if (userId) {
       const alreadyOnRealm = await checkUserOnRealm({
         firebaseId: userId,
-        realmStringId: inviteRealm.string_id,
+        realmExternalId: inviteRealm.string_id,
       });
       if (alreadyOnRealm) {
         res
@@ -830,7 +830,7 @@ router.post(
     const accepted = await acceptInvite({
       nonce,
       firebaseId,
-      realmStringId: inviteRealm.string_id,
+      realmExternalId: inviteRealm.string_id,
     });
     if (!accepted) {
       throw new Internal500Error(`Failed to accept invite`);

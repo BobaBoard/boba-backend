@@ -6,9 +6,9 @@ import sql from "./sql";
 const error = debug("bobaserver:subscriptions:queries-error");
 
 export const getLatestSubscriptionData = async ({
-  subscriptionId,
+  subscriptionExternalId,
 }: {
-  subscriptionId: string;
+  subscriptionExternalId: string;
 }): Promise<
   | {
       subscription_id: number;
@@ -26,24 +26,24 @@ export const getLatestSubscriptionData = async ({
   | false
 > => {
   try {
-    return (await pool.manyOrNone(sql.getSubscriptionActivityByStringId, {
-      subscription_string_id: subscriptionId,
+    return (await pool.manyOrNone(sql.getSubscriptionActivityByExternalId, {
+      subscription_string_id: subscriptionExternalId,
       // we use page_size = 0 because the query returns always one more for the cursor
       page_size: 0,
       last_activity_cursor: null,
     })) as any;
   } catch (e) {
     throw new Internal500Error(
-      `Error while getting webhooks for subscription ${subscriptionId}`
+      `Error while getting webhooks for subscription ${subscriptionExternalId}`
     );
   }
 };
 
 export const getTriggeredThreadsSubscriptions = async ({
-  threadId,
+  threadExternalId,
   categoryNames,
 }: {
-  threadId: string;
+  threadExternalId: string;
   categoryNames: string[];
 }): Promise<
   {
@@ -54,7 +54,7 @@ export const getTriggeredThreadsSubscriptions = async ({
   try {
     return (
       await pool.manyOrNone(sql.getTriggeredThreadSubscriptions, {
-        thread_string_id: threadId,
+        thread_string_id: threadExternalId,
         category_names: categoryNames,
       })
     )?.map((s) => ({
@@ -69,10 +69,10 @@ export const getTriggeredThreadsSubscriptions = async ({
 };
 
 export const getTriggeredBoardSubscriptions = async ({
-  boardId,
+  boardExternalId,
   categories,
 }: {
-  boardId: string;
+  boardExternalId: string;
   categories: string[];
 }): Promise<
   {
@@ -83,7 +83,7 @@ export const getTriggeredBoardSubscriptions = async ({
   try {
     return (
       await pool.manyOrNone(sql.getTriggeredBoardSubscriptions, {
-        board_string_id: boardId,
+        board_string_id: boardExternalId,
         category_names: categories,
       })
     )?.map((s) => ({
