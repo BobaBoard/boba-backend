@@ -78,13 +78,13 @@ const makeComment = `
     INSERT INTO comments(string_id, parent_post, parent_thread, author, content, anonymity_type, chain_parent_comment, parent_comment)
     VALUES(
         $/comment_string_id/,
-        $/parent_post/,
-        $/parent_thread/,
+        $/parent_post_id/,
+        $/parent_thread_id/,
         $/user_id/,
         $/content/,
         $/anonymity_type/,
-        $/chain_parent_comment/,
-        $/parent_comment/
+        $/chain_parent_comment_id/,
+        $/parent_comment_id/
     ) RETURNING *, TO_CHAR(comments.created, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as created_at`;
 
 const pgInstance = pg();
@@ -222,7 +222,9 @@ const isPostOwner = `
 `;
 
 export default {
-  postByExternalId: new QueryFile(path.join(__dirname, "post-by-external-id.sql")),
+  postByExternalId: new QueryFile(
+    path.join(__dirname, "post-by-external-id.sql")
+  ),
   getPostDetails: new QueryFile(path.join(__dirname, "get-post-details.sql")),
   getThreadDetails: new QueryFile(
     path.join(__dirname, "get-thread-details.sql")
