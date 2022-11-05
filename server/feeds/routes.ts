@@ -91,7 +91,9 @@ router.get("/boards/:board_id", ensureBoardAccess, async (req, res) => {
     return;
   }
   if (!result) {
-    throw new NotFound404Error(`Board with id ${boardExternalId} was not found`);
+    throw new NotFound404Error(
+      `Board with id ${boardExternalId} was not found`
+    );
   }
   if (!result.activity.length) {
     res.sendStatus(204);
@@ -140,7 +142,7 @@ router.get("/boards/:board_id", ensureBoardAccess, async (req, res) => {
  *               $ref: "#/components/schemas/FeedActivity"
  */
 router.get("/users/@me", ensureLoggedIn, async (req, res) => {
-  const { cursor, showRead, ownOnly, realmExternalId } = req.query;
+  const { cursor, showRead, ownOnly, realmId: realmExternalId } = req.query;
   const currentUserId: string = req.currentUser?.uid;
 
   if (!realmExternalId) {
