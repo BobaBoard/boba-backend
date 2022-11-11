@@ -6,7 +6,7 @@ WITH
 SELECT 
     boards.slug,
     boards.string_id,
-    realms.string_id as realm_string_id,
+    realms.string_id as realm_external_id,
     boards.tagline,
     boards.avatar_reference_id,
     boards.settings,
@@ -101,5 +101,5 @@ LEFT JOIN LATERAL (
             AND user_hidden_threads.thread_id IS NULL 
             AND comments.parent_thread = threads.id) as comments
     ON 1=1
-WHERE $/realm_string_id/ IS NULL OR realms.string_id = $/realm_string_id/
+WHERE $/realm_external_id/ IS NULL OR realms.string_id = $/realm_external_id/
 GROUP BY boards.id, user_muted_boards.board_id, ordered_pinned_boards.INDEX, logged_out_restrictions, logged_in_base_restrictions, logged_in_user.id, realms.string_id 

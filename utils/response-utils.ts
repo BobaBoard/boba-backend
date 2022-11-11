@@ -246,7 +246,7 @@ export const processBoardMetadata = ({
   hasBoardAccess: boolean;
 }) => {
   let finalMetadata = {
-    id: metadata.string_id,
+    id: metadata.external_id,
     slug: metadata.slug,
     avatar_url: metadata.avatar_url,
     descriptions: metadata.descriptions.map((description) => ({
@@ -340,7 +340,7 @@ export const processBoardsSummary = ({
   // TODO[cleanup]: get correct format from db
   return result.map((result) => ({
     id: result.string_id,
-    realm_id: result.realm_string_id || "76ef4cc3-1603-4278-95d7-99c59f481d2e",
+    realm_id: result.realm_external_id || "76ef4cc3-1603-4278-95d7-99c59f481d2e",
     slug: result.slug,
     tagline: result.tagline,
     avatar_url: result.avatarUrl,
