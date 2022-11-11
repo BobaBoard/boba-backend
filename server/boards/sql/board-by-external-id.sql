@@ -4,12 +4,12 @@ WITH
   ordered_pinned_boards AS
     (SELECT row_number() OVER(ORDER BY id) AS index, board_id, user_id FROM user_pinned_boards)
 SELECT 
-    boards.string_id,
+    boards.string_id as external_id,
     boards.slug,
     boards.tagline,
     boards.avatar_reference_id as avatar_url,
     boards.settings,
-    realms.string_id as realm_string_id,
+    realms.string_id as realm_external_id,
     COALESCE(json_agg(DISTINCT jsonb_build_object(
         'id', bds.string_id,
         'index', bds.index, 

@@ -177,7 +177,7 @@ export const withBoardMetadata = async (
     return;
   }
 
-  req.params.realm_id = board.realm_string_id;
+  req.params.realm_id = board.realm_external_id;
   next();
 };
 
