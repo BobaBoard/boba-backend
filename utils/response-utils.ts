@@ -1,15 +1,12 @@
-import { BoardMetadata, LoggedInBoardMetadata } from "types/rest/boards";
 import { Comment, Post, Thread, ThreadSummary } from "types/rest/threads";
 import {
-  DbBoardCategoryDescription,
-  DbBoardTextDescription,
+  DbBoardMetadata,
   DbCommentType,
   DbPostType,
   DbThreadSummaryType,
   DbThreadType,
 } from "Types";
 
-import { BoardByExternalId } from "server/boards/sql/types";
 import { BoardRestrictions } from "types/permissions";
 import debug from "debug";
 import { getUserPermissionsForBoard } from "./permissions-utils";
@@ -52,7 +49,7 @@ export const mergeObjectIdentity = <T>(
     user_avatar: string;
     secret_identity_name: string;
     secret_identity_avatar: string;
-    secret_identity_color: string | null;
+    secret_identity_color?: string;
     accessory_avatar?: string;
     friend: boolean;
     self: boolean;
@@ -230,7 +227,7 @@ export const ensureNoIdentityLeakage = (post: any) => {
 const extractLockedBoardMetadata = (metadata: any) => {
   return {
     string_id: metadata.string_id,
-    realm_external_id: metadata.realm_external_id,
+    realm_string_id: metadata.realm_string_id,
     slug: metadata.slug,
     avatar_reference_id: metadata.avatar_reference_id,
     tagline: metadata.tagline,
@@ -244,33 +241,23 @@ export const processBoardMetadata = ({
   isLoggedIn,
   hasBoardAccess,
 }: {
-  metadata: BoardByExternalId;
+  metadata: DbBoardMetadata;
   isLoggedIn: boolean;
   hasBoardAccess: boolean;
 }) => {
-  let finalMetadata: Partial<BoardMetadata> | LoggedInBoardMetadata = {
+  let finalMetadata = {
     id: metadata.external_id,
     slug: metadata.slug,
     avatar_url: metadata.avatar_url,
-    descriptions: metadata.descriptions.map(
-      // TODO: double-check this is still necessary
-      (description): DbBoardTextDescription | DbBoardCategoryDescription => {
-        switch (description.type) {
-          case "text":
-            return {
-              ...description,
-              // @ts-ignore A leftover from the strict check cleanup
-              categories: undefined,
-            };
-          case "category_filter":
-            return {
-              ...description,
-              // @ts-ignore A leftover from the strict check cleanup
-              description: undefined,
-            };
-        }
-      }
-    ),
+    descriptions: metadata.descriptions.map((description) => ({
+      ...description,
+      description:
+        description.type == "text" ? description.description : undefined,
+      categories:
+        description.type == "category_filter"
+          ? description.categories
+          : undefined,
+    })),
     permissions: getUserPermissionsForBoard(metadata.permissions),
     posting_identities: metadata.posting_identities.map((identity: any) =>
       transformImageUrls(identity)
@@ -279,15 +266,12 @@ export const processBoardMetadata = ({
   };
 
   if (!isLoggedIn) {
-    // @ts-expect-error Fix this when fixing the type of metadata to truly match the db
     delete finalMetadata.permissions;
-    // @ts-expect-error Fix this when fixing the type of metadata to truly match the db
     delete finalMetadata.posting_identities;
-    // @ts-expect-error Fix this when fixing the type of metadata to truly match the db
     delete finalMetadata.accessories;
   }
 
-  // @ts-expect-error Fix this when fixing the type of metadata to truly match the db
+  // @ts-expect-error
   if (!hasBoardAccess && metadata.loggedInOnly) {
     finalMetadata.descriptions = [];
   }
@@ -356,8 +340,7 @@ export const processBoardsSummary = ({
   // TODO[cleanup]: get correct format from db
   return result.map((result) => ({
     id: result.string_id,
-    realm_id:
-      result.realm_external_id || "76ef4cc3-1603-4278-95d7-99c59f481d2e",
+    realm_id: result.realm_external_id || "76ef4cc3-1603-4278-95d7-99c59f481d2e",
     slug: result.slug,
     tagline: result.tagline,
     avatar_url: result.avatarUrl,

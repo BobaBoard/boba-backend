@@ -23,7 +23,7 @@ export const getBoards = async ({
   try {
     return await pool.many(sql.getAllBoards, {
       firebase_id: firebaseId,
-      realm_string_id: realmExternalId,
+      realm_external_id: realmExternalId,
     });
   } catch (e) {
     error(`Error while fetching boards.`);
