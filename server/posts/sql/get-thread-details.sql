@@ -9,12 +9,12 @@ SELECT
     roles.color as secret_identity_color,
     accessories.image_reference_id as accessory_avatar,
     threads.id as thread_id,
-    threads.string_id as thread_string_id,
+    threads.string_id as thread_external_id,
     boards.slug AS board_slug,
     boards.string_id AS board_string_id
 FROM users
 LEFT JOIN threads
-    ON threads.string_id = ${thread_string_id}
+    ON threads.string_id = ${thread_external_id}
 LEFT JOIN user_thread_identities as uti
     ON uti.thread_id = threads.id AND uti.user_id = users.id
 LEFT JOIN secret_identities 

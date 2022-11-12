@@ -2,7 +2,7 @@
 -- If updating, please also update DbActivityThreadType in Types.
 SELECT
     -- Thread details (DbThreadType)
-    thread_string_id as thread_id,
+    thread_external_id as thread_id,
     board_slug,
     board_string_id as board_id,
     realm_slug,
@@ -20,7 +20,7 @@ SELECT
     COALESCE(starred, FALSE) as starred,
     -- Post details (DbPostType)
     first_post_string_id as post_id,
-    thread_string_id as parent_thread_id,
+    thread_external_id as parent_thread_id,
     NULL as parent_post_id,
     board_slug as parent_board_slug,
     board_string_id as parent_board_id,

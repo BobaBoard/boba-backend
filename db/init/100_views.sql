@@ -41,7 +41,7 @@ CREATE VIEW thread_notification_dismissals AS (
 SELECT
     users.id as user_id,
     threads.id as thread_id,
-    threads.string_id as thread_string_id,
+    threads.string_id as thread_external_id,
     GREATEST(last_visit_time, dnr.dismiss_request_time, dbnr.dismiss_request_time) as board_cutoff_time,
     GREATEST(last_visit_time, dnr.dismiss_request_time) as thread_cutoff_time
 FROM threads
@@ -59,7 +59,7 @@ LEFT JOIN dismiss_board_notifications_requests dbnr
 CREATE VIEW thread_details AS (
 SELECT
     threads.id as thread_id,
-    threads.string_id as thread_string_id,
+    threads.string_id as thread_external_id,
     boards.id as board_id,
     boards.string_id as board_string_id,
     boards.slug as board_slug,
