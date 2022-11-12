@@ -20,7 +20,7 @@ export const getLatestSubscriptionData = async ({
       secret_identity_color: string | null;
       secret_identity_accessory: string | null;
       post_content: string;
-      thread_string_id: string;
+      thread_external_id: string;
       latest_post_string_id: string | null;
     }[]
   | false
@@ -54,7 +54,7 @@ export const getTriggeredThreadsSubscriptions = async ({
   try {
     return (
       await pool.manyOrNone(sql.getTriggeredThreadSubscriptions, {
-        thread_string_id: threadExternalId,
+        thread_external_id: threadExternalId,
         category_names: categoryNames,
       })
     )?.map((s) => ({

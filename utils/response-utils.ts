@@ -227,7 +227,7 @@ export const ensureNoIdentityLeakage = (post: any) => {
 const extractLockedBoardMetadata = (metadata: any) => {
   return {
     string_id: metadata.string_id,
-    realm_string_id: metadata.realm_string_id,
+    realm_external_id: metadata.realm_external_id,
     slug: metadata.slug,
     avatar_reference_id: metadata.avatar_reference_id,
     tagline: metadata.tagline,

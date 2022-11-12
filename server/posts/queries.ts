@@ -196,7 +196,7 @@ const getThreadDetails = async (
   secret_identity_color: string;
   accessory_avatar?: string;
   thread_id: number;
-  thread_string_id: string;
+  thread_external_id: string;
   post_id: number;
   comment_id: number;
   board_slug: string;
@@ -217,7 +217,7 @@ const getThreadDetails = async (
     secret_identity_color,
     accessory_avatar,
     thread_id,
-    thread_string_id,
+    thread_external_id,
     post_id = null,
     comment_id = null,
     board_slug,
@@ -226,7 +226,7 @@ const getThreadDetails = async (
     parentPostId ? sql.getPostDetails : sql.getThreadDetails,
     {
       post_string_id: parentPostId,
-      thread_string_id: threadExternalId,
+      thread_external_id: threadExternalId,
       firebase_id: firebaseId,
       parent_comment_string_id: parentCommentId,
     }
@@ -242,7 +242,7 @@ const getThreadDetails = async (
     secret_identity_name,
     secret_identity_avatar,
     thread_id,
-    thread_string_id,
+    thread_external_id,
     post_id,
   });
 
@@ -273,7 +273,7 @@ const getThreadDetails = async (
     accessory_avatar,
     secret_identity_color,
     thread_id,
-    thread_string_id,
+    thread_external_id,
     post_id,
     comment_id,
     board_slug,
@@ -329,7 +329,7 @@ export const postNewContribution = async (
       secret_identity_color,
       accessory_avatar,
       thread_id,
-      thread_string_id,
+      thread_external_id,
       post_id = null,
     } = await getThreadDetails(t, {
       identityId,
@@ -370,7 +370,7 @@ export const postNewContribution = async (
     return {
       contribution: {
         post_id: result.string_id,
-        parent_thread_id: thread_string_id,
+        parent_thread_id: thread_external_id,
         parent_post_id: parentPostId,
         parent_board_slug: board_slug,
         parent_board_id: board_string_id,

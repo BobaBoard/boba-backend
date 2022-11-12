@@ -186,7 +186,7 @@ export const getUserPermissionsForRealm = async ({
       sql.getUserPermissionsForRealm,
       {
         user_id: firebaseId,
-        realm_string_id: realmExternalId,
+        realm_external_id: realmExternalId,
       }
     );
     const realmMember = await checkUserOnRealm({ firebaseId, realmExternalId });
@@ -291,7 +291,7 @@ export const addUserToRealm = async (
   try {
     await transaction.none(sql.addUserToRealm, {
       firebase_id: firebaseId,
-      realm_string_id: realmExternalId,
+      realm_external_id: realmExternalId,
     });
     log(`Added user ${firebaseId} to realm ${realmExternalId}`);
     return true;
@@ -397,7 +397,7 @@ export const checkUserOnRealm = async ({
   try {
     const inRealm = await pool.oneOrNone(sql.findUserOnRealm, {
       firebase_id: firebaseId,
-      realm_string_id: realmExternalId,
+      realm_external_id: realmExternalId,
     });
     return !!inRealm;
   } catch (e) {
