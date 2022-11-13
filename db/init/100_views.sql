@@ -61,7 +61,7 @@ SELECT
     threads.id as thread_id,
     threads.string_id as thread_external_id,
     boards.id as board_id,
-    boards.string_id as board_string_id,
+    boards.string_id as board_external_id,
     boards.slug as board_slug,
     realms.id as realm_id,
     realms.slug as realm_slug,

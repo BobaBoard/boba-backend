@@ -11,7 +11,7 @@ SELECT
     threads.id as thread_id,
     threads.string_id as thread_external_id,
     boards.slug AS board_slug,
-    boards.string_id AS board_string_id
+    boards.string_id AS board_external_id
 FROM users
 LEFT JOIN threads
     ON threads.string_id = ${thread_external_id}
