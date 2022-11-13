@@ -238,7 +238,7 @@ export const moveThread = async ({
 }) => {
   try {
     const result = await pool.none(sql.moveThread, {
-      board_string_id: destinationId,
+      board_external_id: destinationId,
       thread_external_id: threadExternalId,
     });
     return true;

@@ -76,7 +76,7 @@ router.get("/:subscription_id", async (req, res) => {
     activity: [
       {
         id: subscriptionData[0].latest_post_string_id,
-        parent_thread_id: subscriptionData[0].thread_string_id,
+        parent_thread_id: subscriptionData[0].thread_external_id,
         parent_post_id: null,
         content: subscriptionData[0].post_content,
         created_at: subscriptionData[0].last_updated_at,

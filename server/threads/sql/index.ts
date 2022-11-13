@@ -5,7 +5,7 @@ const createThread = `
     INSERT INTO threads(string_id, parent_board, options)
     VALUES (
       $/thread_external_id/,
-      (SELECT id FROM boards WHERE boards.string_id = $/board_string_id/),
+      (SELECT id FROM boards WHERE boards.string_id = $/board_external_id/),
       $/thread_options/)
     RETURNING id`;
 
@@ -35,7 +35,7 @@ const getRoleByExternalIdAndBoardId = `
       ON users.id = bur.user_id  OR users.id = rur.user_id
     WHERE
       roles.string_id = $/role_id/
-      AND (rur.role_id IS NOT NULL OR bur.board_id  = (SELECT id FROM boards WHERE boards.string_id = $/board_string_id/))
+      AND (rur.role_id IS NOT NULL OR bur.board_id  = (SELECT id FROM boards WHERE boards.string_id = $/board_external_id/))
       AND users.firebase_id = $/firebase_id/
     LIMIT 1`;
 
@@ -103,7 +103,7 @@ const getThreadDetails = `
 
 const moveThread = `
     UPDATE threads
-    SET parent_board = (SELECT id FROM boards WHERE boards.string_id = $/board_string_id/)
+    SET parent_board = (SELECT id FROM boards WHERE boards.string_id = $/board_external_id/)
     WHERE string_id = $/thread_external_id/;
 `;
 
