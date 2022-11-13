@@ -10,7 +10,7 @@ describe("Tests posts queries", () => {
       {
         subscription_id: "3",
         subscription_name: "aiba!",
-        subscription_string_id: "a87800a6-21e5-46dd-a979-a901cdcea563",
+        subscription_external_id: "a87800a6-21e5-46dd-a979-a901cdcea563",
         last_updated_at: "2020-08-22T03:36:18.00Z",
         secret_identity_name: null,
         secret_identity_avatar: null,

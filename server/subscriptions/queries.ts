@@ -13,7 +13,7 @@ export const getLatestSubscriptionData = async ({
   | {
       subscription_id: number;
       subscription_name: string;
-      subscription_string_id: string;
+      subscription_external_id: string;
       last_updated_at: string;
       secret_identity_name: string | null;
       secret_identity_avatar: string | null;
@@ -27,7 +27,7 @@ export const getLatestSubscriptionData = async ({
 > => {
   try {
     return (await pool.manyOrNone(sql.getSubscriptionActivityByExternalId, {
-      subscription_string_id: subscriptionExternalId,
+      subscription_external_id: subscriptionExternalId,
       // we use page_size = 0 because the query returns always one more for the cursor
       page_size: 0,
       last_activity_cursor: null,

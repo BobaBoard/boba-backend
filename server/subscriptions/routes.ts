@@ -69,7 +69,7 @@ router.get("/:subscription_id", async (req, res) => {
       next: null,
     },
     subscription: {
-      id: subscriptionData[0].subscription_string_id,
+      id: subscriptionData[0].subscription_external_id,
       name: subscriptionData[0].subscription_name,
       last_activity_at: subscriptionData[0].last_updated_at,
     },
