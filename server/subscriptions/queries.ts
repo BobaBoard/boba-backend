@@ -83,7 +83,7 @@ export const getTriggeredBoardSubscriptions = async ({
   try {
     return (
       await pool.manyOrNone(sql.getTriggeredBoardSubscriptions, {
-        board_string_id: boardExternalId,
+        board_external_id: boardExternalId,
         category_names: categories,
       })
     )?.map((s) => ({

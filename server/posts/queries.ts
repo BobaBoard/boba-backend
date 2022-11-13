@@ -200,7 +200,7 @@ const getThreadDetails = async (
   post_id: number;
   comment_id: number;
   board_slug: string;
-  board_string_id: string;
+  board_external_id: string;
 }> => {
   invariant(
     parentPostId || threadExternalId,
@@ -221,7 +221,7 @@ const getThreadDetails = async (
     post_id = null,
     comment_id = null,
     board_slug,
-    board_string_id,
+    board_external_id,
   } = await transaction.one(
     parentPostId ? sql.getPostDetails : sql.getThreadDetails,
     {
@@ -260,7 +260,7 @@ const getThreadDetails = async (
       accessory_id: accessoryId,
       thread_id,
       firebaseId,
-      board_string_id,
+      board_external_id,
     }));
   }
 
@@ -277,7 +277,7 @@ const getThreadDetails = async (
     post_id,
     comment_id,
     board_slug,
-    board_string_id,
+    board_external_id,
   };
 };
 
@@ -320,7 +320,7 @@ export const postNewContribution = async (
     );
     let {
       board_slug,
-      board_string_id,
+      board_external_id,
       user_id,
       username,
       user_avatar,
@@ -373,7 +373,7 @@ export const postNewContribution = async (
         parent_thread_id: thread_external_id,
         parent_post_id: parentPostId,
         parent_board_slug: board_slug,
-        parent_board_id: board_string_id,
+        parent_board_id: board_external_id,
         author: user_id,
         username,
         user_avatar,
@@ -598,13 +598,13 @@ export const addNewIdentityToThreadByBoardId = async (
     identityId,
     thread_id,
     firebaseId,
-    board_string_id,
+    board_external_id,
   }: {
     identityId: string;
     firebaseId: string;
     user_id: any;
     accessory_id?: string;
-    board_string_id: any;
+    board_external_id: any;
     thread_id: any;
   }
 ) => {
@@ -623,12 +623,12 @@ export const addNewIdentityToThreadByBoardId = async (
       {
         role_id: identityId,
         firebase_id: firebaseId,
-        board_string_id,
+        board_external_id,
       }
     );
     if (!roleResult || !canPostAs(roleResult.permissions)) {
       throw new Forbidden403Error(
-        `Attempted to post on thread with unauthorized identity for board ${board_string_id}.`
+        `Attempted to post on thread with unauthorized identity for board ${board_external_id}.`
       );
     }
     role_identity_id = roleResult.id;

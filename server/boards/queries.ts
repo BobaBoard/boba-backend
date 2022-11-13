@@ -427,7 +427,7 @@ export const createThread = async ({
     const newThreadExternalId = uuidv4();
     await t.one(threadsSql.createThread, {
       thread_external_id: newThreadExternalId,
-      board_string_id: boardExternalId,
+      board_external_id: boardExternalId,
       thread_options: {
         default_view: defaultView,
       },
