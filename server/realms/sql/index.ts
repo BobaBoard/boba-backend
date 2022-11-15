@@ -20,7 +20,7 @@ const getUserPermissionsForRealm = `
       JOIN realm_user_roles ON users.id = realm_user_roles.user_id
       JOIN roles ON realm_user_roles.role_id = roles.id
       JOIN realms ON realm_user_roles.realm_id = realms.id 
-    WHERE users.firebase_id = $/user_id/ AND realms.string_id = $/realm_string_id/`;
+    WHERE users.firebase_id = $/user_id/ AND realms.string_id = $/realm_external_id/`;
 
 const createRealmInvite = `
     INSERT INTO account_invites(nonce, realm_id, inviter, invitee_email, label, duration)
@@ -60,7 +60,7 @@ const getInvites = `
 const addUserToRealm = `
 INSERT INTO realm_users(realm_id, user_id)
 VALUES (
-(SELECT id FROM realms WHERE string_id = $/realm_string_id/),
+(SELECT id FROM realms WHERE string_id = $/realm_external_id/),
 (SELECT id FROM users WHERE firebase_id = $/firebase_id/)
 )`;
 
@@ -68,7 +68,7 @@ const findUserOnRealm = `
 SELECT * FROM realm_users
 JOIN realms ON realm_users.realm_id = realms.id
 JOIN users ON realm_users.user_id = users.id
-WHERE users.firebase_id = $/firebase_id/ AND realms.string_id = $/realm_string_id/
+WHERE users.firebase_id = $/firebase_id/ AND realms.string_id = $/realm_external_id/
 `;
 
 export default {

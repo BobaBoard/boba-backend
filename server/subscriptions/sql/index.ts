@@ -11,7 +11,7 @@ export const getTriggeredThreadSubscriptions = `
         INNER JOIN posts ON posts.parent_thread = tcs.thread_id
         INNER JOIN post_categories ON posts.id = post_categories.post_id AND tcs.category_id = post_categories.category_id 
         INNER JOIN categories ON post_categories.category_id = categories.id
-    WHERE threads.string_id = $/thread_string_id/ AND categories.category = ANY($/category_names/)`;
+    WHERE threads.string_id = $/thread_external_id/ AND categories.category = ANY($/category_names/)`;
 
 export const getTriggeredBoardSubscriptions = `
     SELECT DISTINCT 
@@ -21,7 +21,7 @@ export const getTriggeredBoardSubscriptions = `
         INNER JOIN board_category_subscriptions bcs ON bcs.subscription_id = subscriptions.id
         INNER JOIN boards ON bcs.board_id = boards.id
         INNER JOIN categories ON bcs.category_id = categories.id
-    WHERE boards.string_id = $/board_string_id/ AND categories.category = ANY($/category_names/);`;
+    WHERE boards.string_id = $/board_external_id/ AND categories.category = ANY($/category_names/);`;
 
 export const getWebhooksForSubscription = `
     SELECT 

@@ -160,7 +160,7 @@ export interface DbBoardCategoryDescription extends BoardCategoryDescription {
 
 export interface DbBoardMetadata {
   slug: string;
-  string_id: string;
+  external_id: string;
   avatar_url: string;
   tagline: string;
   settings: {
@@ -184,7 +184,7 @@ export interface DbBoardMetadata {
   permissions: string[];
   logged_out_restrictions: string[];
   logged_in_base_restrictions: string[];
-  realm_string_id?: string;
+  realm_external_id?: string;
 }
 
 export interface QueryTagsType {

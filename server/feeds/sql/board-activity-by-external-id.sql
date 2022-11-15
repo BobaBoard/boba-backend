@@ -2,9 +2,9 @@
 -- If updating, please also update DbActivityThreadType in Types.
 SELECT
     -- Thread details (DbThreadType)
-    thread_string_id as thread_id,
+    thread_external_id as thread_id,
     board_slug,
-    board_string_id as board_id,
+    board_external_id as board_id,
     realm_slug,
     realm_string_id as realm_id,
     TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z') as thread_last_activity,
@@ -20,10 +20,10 @@ SELECT
     COALESCE(starred, FALSE) as starred,
     -- Post details (DbPostType)
     first_post_string_id as post_id,
-    thread_string_id as parent_thread_id,
+    thread_external_id as parent_thread_id,
     NULL as parent_post_id,
     board_slug as parent_board_slug,
-    board_string_id as parent_board_id,
+    board_external_id as parent_board_id,
     -- Author details
     author,
     username,
@@ -53,14 +53,14 @@ SELECT
     TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.US') as thread_last_activity_at_micro
 FROM threads
 INNER JOIN thread_details
-  ON threads.id = thread_details.thread_id AND thread_details.board_string_id = ${board_id}
+  ON threads.id = thread_details.thread_id AND thread_details.board_external_id = ${board_id}
 LEFT JOIN thread_identities
     ON thread_identities.user_id = thread_details.author AND thread_identities.thread_id = thread_details.thread_id
 LEFT JOIN thread_user_details
    ON ${firebase_id} IS NOT NULL AND thread_user_details.user_id = (SELECT id FROM users WHERE users.firebase_id = ${firebase_id} LIMIT 1)
          AND thread_details.thread_id = thread_user_details.thread_id
 WHERE
-   thread_details.board_string_id = ${board_id}
+   thread_details.board_external_id = ${board_id}
    -- activity cursor condition
    AND last_update_timestamp <= COALESCE(${last_activity_cursor}, NOW())
    -- categories condition

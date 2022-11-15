@@ -9,11 +9,11 @@ SELECT
     roles.color as secret_identity_color,
     accessories.image_reference_id as accessory_avatar,
     threads.id as thread_id,
-    threads.string_id as thread_string_id,
+    threads.string_id as thread_external_id,
     posts.id as post_id,
     comments.id as comment_id,
     boards.slug AS board_slug,
-    boards.string_id AS board_string_id
+    boards.string_id AS board_external_id
 FROM users
 CROSS JOIN threads
 LEFT JOIN posts

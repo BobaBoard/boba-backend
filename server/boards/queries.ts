@@ -23,7 +23,7 @@ export const getBoards = async ({
   try {
     return await pool.many(sql.getAllBoards, {
       firebase_id: firebaseId,
-      realm_string_id: realmExternalId,
+      realm_external_id: realmExternalId,
     });
   } catch (e) {
     error(`Error while fetching boards.`);
@@ -426,8 +426,8 @@ export const createThread = async ({
   return pool.tx("create-thread", async (t) => {
     const newThreadExternalId = uuidv4();
     await t.one(threadsSql.createThread, {
-      thread_string_id: newThreadExternalId,
-      board_string_id: boardExternalId,
+      thread_external_id: newThreadExternalId,
+      board_external_id: boardExternalId,
       thread_options: {
         default_view: defaultView,
       },

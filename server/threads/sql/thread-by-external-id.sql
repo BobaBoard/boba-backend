@@ -50,7 +50,7 @@ WITH
                 ON thread_identities.user_id = comments.author AND threads.id = thread_identities.thread_id
             LEFT JOIN thread_notification_dismissals tnd
                ON tnd.thread_id = threads.id AND ${firebase_id} IS NOT NULL AND tnd.user_id = (SELECT id FROM users WHERE firebase_id = ${firebase_id})
-            WHERE threads.string_id = ${thread_string_id}) as thread_comments
+            WHERE threads.string_id = ${thread_external_id}) as thread_comments
          GROUP BY thread_comments.parent_post),
     thread_posts AS
         (SELECT
@@ -113,7 +113,7 @@ WITH
             ON posts.id = thread_comments.parent_post
          LEFT JOIN thread_notification_dismissals tnd
             ON tnd.thread_id = threads.id AND ${firebase_id} IS NOT NULL AND tnd.user_id = (SELECT id FROM users WHERE firebase_id = ${firebase_id})
-         WHERE threads.string_id = ${thread_string_id})
+         WHERE threads.string_id = ${thread_external_id})
 SELECT
     threads.string_id as thread_id,
     boards.slug as board_slug,
@@ -137,7 +137,7 @@ FROM threads
 LEFT JOIN thread_posts
     ON threads.string_id = thread_posts.parent_thread_id
 LEFT JOIN thread_details
-    ON threads.string_id = thread_details.thread_string_id
+    ON threads.string_id = thread_details.thread_external_id
 LEFT JOIN boards
     ON threads.parent_board = boards.id
 LEFT JOIN realms
@@ -148,5 +148,5 @@ LEFT JOIN user_hidden_threads uht
     ON  ${firebase_id} IS NOT NULL AND uht.user_id = (SELECT id FROM users WHERE firebase_id = ${firebase_id}) AND uht.thread_id = threads.id
 LEFT JOIN user_starred_threads ust
     ON  ${firebase_id} IS NOT NULL AND ust.user_id = (SELECT id FROM users WHERE firebase_id = ${firebase_id}) AND ust.thread_id = threads.id
-WHERE threads.string_id = ${thread_string_id}
+WHERE threads.string_id = ${thread_external_id}
 GROUP BY threads.id, boards.slug, boards.string_id, realms.slug, realms.string_id, uht.user_id, umt.user_id, ust.user_id, thread_details.last_update_timestamp;

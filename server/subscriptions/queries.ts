@@ -13,21 +13,21 @@ export const getLatestSubscriptionData = async ({
   | {
       subscription_id: number;
       subscription_name: string;
-      subscription_string_id: string;
+      subscription_external_id: string;
       last_updated_at: string;
       secret_identity_name: string | null;
       secret_identity_avatar: string | null;
       secret_identity_color: string | null;
       secret_identity_accessory: string | null;
       post_content: string;
-      thread_string_id: string;
+      thread_external_id: string;
       latest_post_string_id: string | null;
     }[]
   | false
 > => {
   try {
     return (await pool.manyOrNone(sql.getSubscriptionActivityByExternalId, {
-      subscription_string_id: subscriptionExternalId,
+      subscription_external_id: subscriptionExternalId,
       // we use page_size = 0 because the query returns always one more for the cursor
       page_size: 0,
       last_activity_cursor: null,
@@ -54,7 +54,7 @@ export const getTriggeredThreadsSubscriptions = async ({
   try {
     return (
       await pool.manyOrNone(sql.getTriggeredThreadSubscriptions, {
-        thread_string_id: threadExternalId,
+        thread_external_id: threadExternalId,
         category_names: categoryNames,
       })
     )?.map((s) => ({
@@ -83,7 +83,7 @@ export const getTriggeredBoardSubscriptions = async ({
   try {
     return (
       await pool.manyOrNone(sql.getTriggeredBoardSubscriptions, {
-        board_string_id: boardExternalId,
+        board_external_id: boardExternalId,
         category_names: categories,
       })
     )?.map((s) => ({

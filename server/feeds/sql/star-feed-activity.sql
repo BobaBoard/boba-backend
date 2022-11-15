@@ -2,7 +2,7 @@
 -- If updating, please also update DbActivityThreadType in Types.
 SELECT
     -- Thread details (DbThreadType)
-    thread_string_id as thread_id,
+    thread_external_id as thread_id,
     board_slug,
     TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as thread_last_activity,
     thread_details.default_view,
@@ -17,7 +17,7 @@ SELECT
     COALESCE(starred, FALSE) as starred,
     -- Post details (DbPostType)
     first_post_string_id as post_id,
-    thread_string_id as parent_thread_id,
+    thread_external_id as parent_thread_id,
     NULL as parent_post_id,
     board_slug as parent_board_slug,
     realm_slug,
