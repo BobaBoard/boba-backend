@@ -45,8 +45,8 @@ SELECT
     to_jsonb(COALESCE(logged_out_restrictions, ARRAY[]::board_restrictions_type[])) as logged_out_restrictions,
     to_jsonb(COALESCE(CASE WHEN logged_in_user.id IS NOT NULL THEN logged_in_base_restrictions ELSE NULL END, ARRAY[]::board_restrictions_type[])) as logged_in_base_restrictions
 FROM boards 
-    LEFT JOIN threads 
-        ON boards.id = threads.parent_board
+    INNER JOIN realms
+        ON boards.parent_realm_id = realms.id
     LEFT JOIN user_muted_boards umb 
         ON boards.id = umb.board_id AND umb.user_id = (SELECT id FROM logged_in_user LIMIT 1)
     LEFT JOIN ordered_pinned_boards opb 
@@ -69,7 +69,7 @@ FROM boards
                 UNNEST(roles.permissions) AS permissions 
             FROM roles 
             LEFT JOIN role_accessories ra
-            ON roles.id = ra.role_id
+                ON roles.id = ra.role_id
             LEFT JOIN accessories
                 ON ra.accessory_id = accessories.id
             WHERE bur.role_id = roles.id OR rur.role_id = roles.id) AS p 
@@ -80,7 +80,5 @@ FROM boards
         ON boards.id = br.board_id
     LEFT JOIN logged_in_user
         ON 1=1
-    LEFT JOIN realms
-        ON boards.parent_realm_id = realms.id
 WHERE boards.string_id=${board_id}
 GROUP BY boards.id, realms.string_id, umb.user_id, opb.index, br.logged_out_restrictions, br.logged_in_base_restrictions, logged_in_user.id
