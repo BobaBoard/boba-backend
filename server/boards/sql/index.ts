@@ -118,8 +118,9 @@ const updateBoardSettings = `
 
 export default {
   getAllBoards: new QueryFile(path.join(__dirname, "all-boards.sql")),
-  getBoardBySlug: new QueryFile(path.join(__dirname, "board-by-slug.sql")),
-  getBoardByExternalId: new QueryFile(path.join(__dirname, "board-by-external-id.sql")),
+  getBoardByExternalId: new QueryFile(
+    path.join(__dirname, "board-by-external-id.sql")
+  ),
   markBoardVisit,
   deleteSectionCategories,
   deleteSection,

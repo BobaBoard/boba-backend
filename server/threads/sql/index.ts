@@ -92,6 +92,7 @@ const updateThreadViewByExternalId = `
 
 const getThreadDetails = `
     SELECT
+      boards.string_id as parent_board_id,
       boards.slug as parent_board_slug,
       users.firebase_id = $/firebase_id/ as is_thread_owner
     FROM threads
