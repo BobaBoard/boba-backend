@@ -32,34 +32,6 @@ export const getBoards = async ({
   }
 };
 
-export const getBoardBySlug = async ({
-  firebaseId,
-  slug,
-}: {
-  firebaseId: string | undefined;
-  slug: string;
-}): Promise<DbBoardMetadata> => {
-  try {
-    const rows = await pool.oneOrNone(sql.getBoardBySlug, {
-      firebase_id: firebaseId,
-      board_slug: slug,
-    });
-
-    if (!rows) {
-      log(`Board not found: ${slug}`);
-      return null;
-    }
-
-    info(`Got getBoardBySlug query result:`, rows);
-    log(`Fetched board ${slug} for user ${firebaseId}`);
-    return rows;
-  } catch (e) {
-    error(`Error while fetching board by slug (${slug}).`);
-    error(e);
-    return null;
-  }
-};
-
 export const getBoardByExternalId = async ({
   firebaseId,
   boardExternalId,

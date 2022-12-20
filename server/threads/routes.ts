@@ -3,7 +3,6 @@ import {
   Forbidden403Error,
   NotFound404Error,
 } from "types/errors/api";
-import { canAccessBoard, canAccessBoardByExternalId } from "utils/permissions-utils";
 import {
   ensureNoIdentityLeakage,
   makeServerThread,
@@ -25,6 +24,7 @@ import {
 } from "./queries";
 
 import { ThreadPermissions } from "types/permissions";
+import { canAccessBoardByExternalId } from "utils/permissions-utils";
 import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
