@@ -23,7 +23,7 @@ describe("Tests restricted board realm queries", () => {
     const res = await request(server.app).get("/slug/twisted-minds");
 
     expect(res.status).toBe(200);
-    expect(res.body.boards.length).toBe(7);
+    expect(res.body.boards.length).toBe(8);
     expect(res.body.boards.find((board: any) => board.slug == "gore")).toEqual(
       extractBoardSummary(GORE_BOARD_METADATA.BOBATAN)
     );
@@ -33,7 +33,7 @@ describe("Tests restricted board realm queries", () => {
     const res = await request(server.app).get("/slug/twisted-minds");
 
     expect(res.status).toBe(200);
-    expect(res.body.boards.length).toBe(7);
+    expect(res.body.boards.length).toBe(8);
     expect(res.body.boards.find((board: any) => board.slug == "gore")).toEqual(
       extractBoardSummary(GORE_BOARD_METADATA.LOGGED_OUT)
     );

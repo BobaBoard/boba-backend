@@ -29,4 +29,6 @@ INSERT INTO user_muted_threads(thread_id,user_id) VALUES
 
 INSERT INTO user_muted_boards(board_id, user_id) VALUES 
     ((SELECT id FROM boards WHERE slug = 'muted'),
-     (SELECT id FROM Users WHERE username = 'jersey_devil_69'));
+     (SELECT id FROM Users WHERE username = 'jersey_devil_69')),
+    ((SELECT id FROM boards WHERE slug = 'ssshh'),
+     (SELECT id FROM Users WHERE username = 'bobatan'));

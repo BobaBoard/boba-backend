@@ -7,6 +7,7 @@ import {
   MEMES_BOARD_ID,
   MUTED_BOARD_ID,
   RESTRICTED_BOARD_ID,
+  SSSHH_BOARD_ID,
 } from "./boards";
 
 import { NotificationsResponse } from "../../types/rest/notifications";
@@ -49,6 +50,14 @@ export const BOBATAN_NOTIFICATIONS: NotificationsResponse = {
       is_outdated: false,
       last_activity_at: null,
       // TODO: this feels wrong, check if it's true.
+      last_activity_from_others_at: null,
+      last_visited_at: null,
+    },
+    [SSSHH_BOARD_ID]: {
+      has_updates: false,
+      id: SSSHH_BOARD_ID,
+      is_outdated: false,
+      last_activity_at: "2022-10-24T15:40:00.000Z",
       last_activity_from_others_at: null,
       last_visited_at: null,
     },
