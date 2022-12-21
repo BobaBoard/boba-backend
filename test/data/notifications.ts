@@ -17,13 +17,13 @@ export const BOBATAN_NOTIFICATIONS: NotificationsResponse = {
   has_notifications: true,
   is_outdated_notifications: false,
   pinned_boards: {
-    ["4b30fb7c-2aca-4333-aa56-ae8623a92b65"]: {
+    [ANIME_BOARD_ID]: {
       has_updates: true,
       id: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
-      is_outdated: false,
+      is_outdated: true,
       last_activity_at: "2020-04-24T12:44:00.000Z",
       last_activity_from_others_at: "2020-04-24T12:44:00.000Z",
-      last_visited_at: null,
+      last_visited_at: "2022-05-10T16:42:00.000Z",
     },
     [GORE_BOARD_ID]: {
       has_updates: true,
@@ -72,10 +72,10 @@ export const BOBATAN_NOTIFICATIONS: NotificationsResponse = {
     [ANIME_BOARD_ID]: {
       has_updates: true,
       id: ANIME_BOARD_ID,
-      is_outdated: false,
+      is_outdated: true,
       last_activity_at: "2020-04-24T12:44:00.000Z",
       last_activity_from_others_at: "2020-04-24T12:44:00.000Z",
-      last_visited_at: null,
+      last_visited_at: "2022-05-10T16:42:00.000Z",
     },
     [RESTRICTED_BOARD_ID]: {
       has_updates: true,
