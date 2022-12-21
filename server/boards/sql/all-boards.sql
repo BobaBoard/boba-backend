@@ -13,7 +13,7 @@ SELECT
     boards.settings,
     last_post_at as last_post,
     last_comment_at as last_comment,
-    last_visit_at as last_visit,
+    GREATEST(user_board_last_visits.last_visit_time, last_visit_at) as last_visit,
     GREATEST(last_post_at, last_comment_at) AS last_activity,
     -- NOTE: last_activity_from_others also considers notification dismissals etc. This makes no sense given the name.
     -- TODO: maybe rename this as "last_notifiable_activity"
@@ -70,4 +70,4 @@ LEFT JOIN LATERAL (
 WHERE $/realm_external_id/ IS NULL OR realms.string_id = $/realm_external_id/
 GROUP BY boards.id, user_muted_boards.board_id, ordered_pinned_boards.INDEX, logged_out_restrictions, logged_in_base_restrictions, logged_in_user.id, realms.string_id, 
     threads_data.last_post_at, threads_data.last_post_from_others_at, threads_data.last_comment_at, threads_data.last_comment_from_others_at, threads_data.last_visit_at,
-    threads_data.has_new_post, threads_data.has_new_comment
+    threads_data.has_new_post, threads_data.has_new_comment, user_board_last_visits.last_visit_time

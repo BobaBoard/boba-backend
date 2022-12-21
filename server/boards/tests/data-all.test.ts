@@ -185,7 +185,7 @@ describe("Tests boards queries", () => {
           last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
           last_activity: new Date(Date.UTC(2020, 3, 24, 12, 44)),
           last_activity_from_others: new Date(Date.UTC(2020, 3, 24, 12, 44)),
-          last_visit: null,
+          last_visit: new Date(Date.UTC(2022, 4, 10, 16, 42)),
         },
         {
           slug: "long",
