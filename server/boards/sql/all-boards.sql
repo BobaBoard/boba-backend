@@ -3,7 +3,107 @@ WITH
   logged_in_user AS
     (SELECT id FROM users WHERE users.firebase_id = ${firebase_id}),
   ordered_pinned_boards AS
-    (SELECT row_number() OVER(ORDER BY id) AS index, board_id, user_id FROM user_pinned_boards)
+    (SELECT row_number() OVER(ORDER BY id) AS index, board_id, user_id FROM user_pinned_boards),
+  last_board_visits AS (
+    SELECT 
+        boards.id as board_id,
+        MAX(last_visit_time) AS last_board_visit_at
+    FROM realms
+    INNER JOIN boards
+        ON boards.parent_realm_id = realms.id
+    INNER JOIN logged_in_user ON 1=1
+    INNER JOIN user_board_last_visits ublv
+        ON boards.id = ublv.board_id AND ublv.user_id = logged_in_user.id
+    WHERE $/realm_external_id/ IS NULL OR realms.string_id = $/realm_external_id/
+    GROUP BY boards.id),
+  last_thread_visits AS (
+    SELECT 
+        boards.id as board_id,
+        MAX(last_visit_time) AS last_thread_visit_at
+    FROM realms
+    INNER JOIN boards
+        ON boards.parent_realm_id = realms.id
+    INNER JOIN threads
+        ON threads.parent_board = boards.id
+    INNER JOIN logged_in_user ON 1=1
+    INNER JOIN user_thread_last_visits utlv
+        ON threads.id = utlv.thread_id AND utlv.user_id = logged_in_user.id
+    WHERE $/realm_external_id/ IS NULL OR realms.string_id = $/realm_external_id/
+    GROUP BY boards.id),
+  post_notifications AS (
+    SELECT
+        boards.id as board_id,
+        MAX(posts.created) as last_post_at,
+        MAX(posts.created) FILTER (WHERE posts.author != logged_in_user.id AND (thread_cutoff_time IS NULL OR posts.created > thread_cutoff_time)) as last_post_from_others_at,
+        BOOL_OR(posts.author != logged_in_user.id AND (thread_cutoff_time IS NULL OR posts.created > thread_cutoff_time)) as has_new_post
+    FROM realms
+    INNER JOIN boards
+        ON realms.id = boards.parent_realm_id
+    INNER JOIN threads
+        ON threads.parent_board = boards.id
+    INNER JOIN posts
+        ON posts.parent_thread = threads.id
+    INNER JOIN logged_in_user
+        ON 1=1
+    LEFT JOIN thread_notification_dismissals tnd
+        ON threads.id = tnd.thread_id AND tnd.user_id = logged_in_user.id
+    LEFT JOIN user_muted_threads
+        ON user_muted_threads.user_id = logged_in_user.id
+            AND user_muted_threads.thread_id = threads.id
+    LEFT JOIN user_muted_boards
+        ON user_muted_boards.user_id = logged_in_user.id
+            AND user_muted_boards.board_id = threads.parent_board
+    LEFT JOIN user_hidden_threads
+        ON user_hidden_threads.user_id = logged_in_user.id
+            AND user_hidden_threads.thread_id = threads.id
+    WHERE 
+        ($/realm_external_id/ IS NULL OR realms.string_id = $/realm_external_id/) 
+            AND user_muted_threads.id IS NULL AND user_hidden_threads.id IS NULL AND user_muted_boards.id IS NULL
+    GROUP BY boards.id),
+  comment_notifications AS (
+    SELECT
+        boards.id as board_id,
+        MAX(comments.created) as last_comment_at,
+        MAX(comments.created) FILTER (WHERE comments.author != logged_in_user.id IS NULL AND (thread_cutoff_time IS NULL OR comments.created > thread_cutoff_time)) as last_comment_from_others_at,
+        BOOL_OR(comments.author != logged_in_user.id IS NULL AND (thread_cutoff_time IS NULL OR comments.created > thread_cutoff_time)) as has_new_comment
+    FROM realms
+    INNER JOIN boards
+        ON realms.id = boards.parent_realm_id
+    INNER JOIN threads
+        ON threads.parent_board = boards.id
+    INNER JOIN comments
+        ON comments.parent_thread = threads.id
+    INNER JOIN logged_in_user
+        ON 1=1
+    LEFT JOIN thread_notification_dismissals tnd
+        ON threads.id = tnd.thread_id AND tnd.user_id = logged_in_user.id
+    LEFT JOIN user_muted_threads
+        ON user_muted_threads.user_id = logged_in_user.id
+            AND user_muted_threads.thread_id = threads.id
+    LEFT JOIN user_muted_boards
+        ON user_muted_boards.user_id = logged_in_user.id
+            AND user_muted_boards.board_id = threads.parent_board
+    LEFT JOIN user_hidden_threads
+        ON user_hidden_threads.user_id = logged_in_user.id
+            AND user_hidden_threads.thread_id = threads.id
+    WHERE 
+        ($/realm_external_id/ IS NULL OR realms.string_id = $/realm_external_id/) 
+            AND user_muted_threads.id IS NULL AND user_hidden_threads.id IS NULL AND user_muted_boards.id IS NULL
+    GROUP BY boards.id),
+  last_visits AS (
+    SELECT 
+        boards.id as board_id,
+        MAX(last_visit_time) AS last_visit_at
+    FROM boards
+    LEFT JOIN logged_in_user ON 1 = 1
+    INNER JOIN realms
+        ON boards.parent_realm_id = realms.id
+    INNER JOIN threads
+        ON boards.id = threads.parent_board
+    INNER JOIN user_thread_last_visits 
+        ON user_thread_last_visits.thread_id = threads.id AND  user_thread_last_visits.user_id = logged_in_user.id
+    WHERE $/realm_external_id/ IS NULL OR realms.string_id = $/realm_external_id/
+    GROUP BY boards.id)
 SELECT 
     boards.slug,
     boards.string_id,
@@ -34,40 +134,19 @@ LEFT JOIN user_muted_boards
 LEFT JOIN ordered_pinned_boards 
     ON boards.id = ordered_pinned_boards.board_id
         AND ordered_pinned_boards.user_id = logged_in_user.id
+LEFT JOIN last_board_visits 
+    ON boards.id = last_board_visits.board_id
+LEFT JOIN last_thread_visits 
+    ON boards.id = last_thread_visits.board_id
+LEFT JOIN post_notifications 
+    ON boards.id = post_notifications.board_id
+LEFT JOIN comment_notifications 
+    ON boards.id = comment_notifications.board_id
+LEFT JOIN last_visits 
+    ON boards.id = last_visits.board_id
 LEFT JOIN board_restrictions
     ON boards.id = board_restrictions.board_id
-LEFT JOIN user_board_last_visits
-    ON user_board_last_visits.board_id = boards.id 
-        AND user_board_last_visits.user_id = logged_in_user.id
-LEFT JOIN LATERAL (
-    SELECT
-        MAX(posts.created) as last_post_at,
-        MAX(comments.created) as last_comment_at,
-        MAX(posts.created) FILTER (WHERE posts.author != logged_in_user.id AND user_muted_boards.id IS NULL AND (thread_cutoff_time IS NULL OR posts.created > thread_cutoff_time)) as last_post_from_others_at,
-        MAX(comments.created) FILTER (WHERE comments.author != logged_in_user.id AND user_muted_boards.id IS NULL AND (thread_cutoff_time IS NULL OR comments.created > thread_cutoff_time)) as last_comment_from_others_at,
-        BOOL_OR(posts.author != logged_in_user.id AND user_muted_boards.id IS NULL AND (thread_cutoff_time IS NULL OR posts.created > thread_cutoff_time)) as has_new_post,
-        BOOL_OR(comments.author != logged_in_user.id AND user_muted_boards.id IS NULL AND (thread_cutoff_time IS NULL OR comments.created > thread_cutoff_time)) as has_new_comment,
-        MAX(user_thread_last_visits.last_visit_time) as last_visit_at
-    FROM threads
-    LEFT JOIN thread_notification_dismissals tnd
-        ON threads.id = tnd.thread_id AND tnd.user_id = logged_in_user.id
-    INNER JOIN posts
-        ON posts.parent_thread = threads.id
-    LEFT JOIN comments
-        ON comments.parent_thread = threads.id
-    LEFT JOIN user_muted_threads
-        ON user_muted_threads.user_id = logged_in_user.id
-            AND user_muted_threads.thread_id = threads.id
-    LEFT JOIN user_muted_boards
-        ON user_muted_boards.user_id = logged_in_user.id
-            AND user_muted_boards.board_id = threads.parent_board
-    LEFT JOIN user_hidden_threads
-        ON user_hidden_threads.user_id = logged_in_user.id
-            AND user_hidden_threads.thread_id = threads.id
-    LEFT JOIN user_thread_last_visits
-        ON threads.id = user_thread_last_visits.thread_id AND user_thread_last_visits.user_id = logged_in_user.id
-    WHERE threads.parent_board = boards.id AND user_muted_threads.id IS NULL AND user_hidden_threads.id IS NULL) threads_data ON TRUE
 WHERE $/realm_external_id/ IS NULL OR realms.string_id = $/realm_external_id/
-GROUP BY boards.id, user_muted_boards.board_id, ordered_pinned_boards.INDEX, logged_out_restrictions, logged_in_base_restrictions, logged_in_user.id, realms.string_id, 
-    threads_data.last_post_at, threads_data.last_post_from_others_at, threads_data.last_comment_at, threads_data.last_comment_from_others_at, threads_data.last_visit_at,
-    threads_data.has_new_post, threads_data.has_new_comment, user_board_last_visits.last_visit_time
+GROUP BY boards.id, user_muted_boards.board_id, ordered_pinned_boards.INDEX, logged_out_restrictions, logged_in_base_restrictions, logged_in_user.id, realms.string_id,
+    last_post_at, last_comment_at, last_board_visit_at, last_thread_visit_at,
+    last_post_from_others_at, last_comment_from_others_at, has_new_post, has_new_comment
