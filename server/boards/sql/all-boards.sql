@@ -1,3 +1,4 @@
+-- Fetches data for all boards in a realm or galaxy
 WITH 
   logged_in_user AS
     (SELECT id FROM users WHERE users.firebase_id = ${firebase_id}),
@@ -42,10 +43,10 @@ LEFT JOIN LATERAL (
     SELECT
         MAX(posts.created) as last_post_at,
         MAX(comments.created) as last_comment_at,
-        MAX(posts.created) FILTER (WHERE posts.author != logged_in_user.id AND (thread_cutoff_time IS NULL OR posts.created > thread_cutoff_time)) as last_post_from_others_at,
-        MAX(comments.created) FILTER (WHERE comments.author != logged_in_user.id AND (thread_cutoff_time IS NULL OR comments.created > thread_cutoff_time)) as last_comment_from_others_at,
-        BOOL_OR(posts.author != logged_in_user.id AND (thread_cutoff_time IS NULL OR posts.created > thread_cutoff_time)) as has_new_post,
-        BOOL_OR(comments.author != logged_in_user.id AND (thread_cutoff_time IS NULL OR comments.created > thread_cutoff_time)) as has_new_comment,
+        MAX(posts.created) FILTER (WHERE posts.author != logged_in_user.id AND user_muted_boards.id IS NULL AND (thread_cutoff_time IS NULL OR posts.created > thread_cutoff_time)) as last_post_from_others_at,
+        MAX(comments.created) FILTER (WHERE comments.author != logged_in_user.id AND user_muted_boards.id IS NULL AND (thread_cutoff_time IS NULL OR comments.created > thread_cutoff_time)) as last_comment_from_others_at,
+        BOOL_OR(posts.author != logged_in_user.id AND user_muted_boards.id IS NULL AND (thread_cutoff_time IS NULL OR posts.created > thread_cutoff_time)) as has_new_post,
+        BOOL_OR(comments.author != logged_in_user.id AND user_muted_boards.id IS NULL AND (thread_cutoff_time IS NULL OR comments.created > thread_cutoff_time)) as has_new_comment,
         MAX(user_thread_last_visits.last_visit_time) as last_visit_at
     FROM threads
     LEFT JOIN thread_notification_dismissals tnd
@@ -57,6 +58,9 @@ LEFT JOIN LATERAL (
     LEFT JOIN user_muted_threads
         ON user_muted_threads.user_id = logged_in_user.id
             AND user_muted_threads.thread_id = threads.id
+    LEFT JOIN user_muted_boards
+        ON user_muted_boards.user_id = logged_in_user.id
+            AND user_muted_boards.board_id = threads.parent_board
     LEFT JOIN user_hidden_threads
         ON user_hidden_threads.user_id = logged_in_user.id
             AND user_hidden_threads.thread_id = threads.id
