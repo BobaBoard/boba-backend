@@ -55,7 +55,11 @@ DELETE FROM user_hidden_threads WHERE thread_id IN (SELECT id FROM threads WHERE
 DELETE FROM threads WHERE string_id = '8b389a92-8f9d-4239-8121-423787c0d379';
 
 -- DELETE POSTS COMMENT --
-DELETE FROM comments WHERE id IN (SELECT id FROM comments WHERE comments.parent_post = (SELECT id FROM posts WHERE string_id = '38d4cac9-9ad6-4200-bef9-dd4b06dc7c79'));
+DELETE FROM comments WHERE id IN (SELECT id FROM comments WHERE comments.parent_post = (SELECT id FROM posts WHERE string_id = 'f0719153-6eb6-46d0-95fe-db2a9ff69ead'));
+-- DELETE POST --
+DELETE FROM post_categories WHERE post_id = (SELECT id FROM posts WHERE string_id = 'f0719153-6eb6-46d0-95fe-db2a9ff69ead');
+DELETE FROM post_warnings WHERE post_id = (SELECT id FROM posts WHERE string_id = 'f0719153-6eb6-46d0-95fe-db2a9ff69ead');
+DELETE FROM posts WHERE string_id =  'f0719153-6eb6-46d0-95fe-db2a9ff69ead';
 
 --- ADD NEW ROLE ---
 INSERT INTO roles(string_id, name, avatar_reference_id, color, description, permissions)
