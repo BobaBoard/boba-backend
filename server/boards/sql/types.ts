@@ -18,7 +18,6 @@ export const BoardPermissionsEnumSchema = z.enum([
   "access_locked_boards_on_realm",
 ]);
 export const BoardRestrictionsEnumSchema = z.enum(["lock_access", "delist"]);
-export type BoardRestrictionsEnum = z.infer<typeof BoardRestrictionsEnumSchema>;
 
 export const BoardIdentitySchema = z.object({
   id: z.string(),
@@ -51,10 +50,7 @@ export const BoardCategoryDescriptionSchema = z.object({
   title: z.string(),
   type: z.literal("category_filter"),
   categories: z.array(z.string()),
-  // TODO: this should just be null, unless we decide to make the categories also
-  // have description. Right now, some categories sections are saved with an empty
-  // description, which is the worst of both worlds.
-  description: z.string().nullable(),
+  description: z.null(),
 });
 
 export const BoardSettingsSchema = z.object({
