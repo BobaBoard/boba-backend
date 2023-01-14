@@ -44,15 +44,16 @@ SELECT
 FROM secret_identities;
 
 --- DELETE THREAD ---
-DELETE FROM post_categories WHERE post_id IN (SELECT id FROM posts WHERE posts.parent_thread IN (SELECT id FROM threads WHERE string_id = '8b389a92-8f9d-4239-8121-423787c0d379'));
-DELETE FROM post_warnings WHERE post_id IN (SELECT id FROM posts WHERE posts.parent_thread IN (SELECT id FROM threads WHERE string_id = '8b389a92-8f9d-4239-8121-423787c0d379'));
-DELETE FROM comments WHERE id IN (SELECT id FROM comments WHERE comments.parent_thread IN (SELECT id FROM threads WHERE string_id = '8b389a92-8f9d-4239-8121-423787c0d379'));
-DELETE FROM posts WHERE id IN (SELECT id FROM posts WHERE posts.parent_thread IN (SELECT id FROM threads WHERE string_id = '8b389a92-8f9d-4239-8121-423787c0d379'));
-DELETE FROM user_thread_identities WHERE thread_id IN (SELECT id FROM threads WHERE string_id = '8b389a92-8f9d-4239-8121-423787c0d379');
-DELETE FROM user_thread_last_visits WHERE thread_id IN (SELECT id FROM threads WHERE string_id = '8b389a92-8f9d-4239-8121-423787c0d379');
-DELETE FROM user_muted_threads WHERE thread_id IN (SELECT id FROM threads WHERE string_id = '8b389a92-8f9d-4239-8121-423787c0d379');
-DELETE FROM user_hidden_threads WHERE thread_id IN (SELECT id FROM threads WHERE string_id = '8b389a92-8f9d-4239-8121-423787c0d379');
-DELETE FROM threads WHERE string_id = '8b389a92-8f9d-4239-8121-423787c0d379';
+DELETE FROM post_categories WHERE post_id IN (SELECT id FROM posts WHERE posts.parent_thread IN (SELECT id FROM threads WHERE string_id = '87f9f92a-067b-4b67-abd1-88ebba77ec6f'));
+DELETE FROM post_warnings WHERE post_id IN (SELECT id FROM posts WHERE posts.parent_thread IN (SELECT id FROM threads WHERE string_id = '87f9f92a-067b-4b67-abd1-88ebba77ec6f'));
+DELETE FROM comments WHERE id IN (SELECT id FROM comments WHERE comments.parent_thread IN (SELECT id FROM threads WHERE string_id = '87f9f92a-067b-4b67-abd1-88ebba77ec6f'));
+DELETE FROM posts WHERE id IN (SELECT id FROM posts WHERE posts.parent_thread IN (SELECT id FROM threads WHERE string_id = '87f9f92a-067b-4b67-abd1-88ebba77ec6f'));
+DELETE FROM user_thread_identities WHERE thread_id IN (SELECT id FROM threads WHERE string_id = '87f9f92a-067b-4b67-abd1-88ebba77ec6f');
+DELETE FROM user_thread_last_visits WHERE thread_id IN (SELECT id FROM threads WHERE string_id = '87f9f92a-067b-4b67-abd1-88ebba77ec6f');
+DELETE FROM user_muted_threads WHERE thread_id IN (SELECT id FROM threads WHERE string_id = '87f9f92a-067b-4b67-abd1-88ebba77ec6f');
+DELETE FROM user_hidden_threads WHERE thread_id IN (SELECT id FROM threads WHERE string_id = '87f9f92a-067b-4b67-abd1-88ebba77ec6f');
+DELETE FROM identity_thread_accessories WHERE thread_id IN (SELECT id FROM threads WHERE string_id = '87f9f92a-067b-4b67-abd1-88ebba77ec6f');
+DELETE FROM threads WHERE string_id = '87f9f92a-067b-4b67-abd1-88ebba77ec6f';
 
 -- DELETE POSTS COMMENT --
 DELETE FROM comments WHERE id IN (SELECT id FROM comments WHERE comments.parent_post = (SELECT id FROM posts WHERE string_id = 'f0719153-6eb6-46d0-95fe-db2a9ff69ead'));
