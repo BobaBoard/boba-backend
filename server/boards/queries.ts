@@ -1,3 +1,4 @@
+import { BoardByExternalIdSchema } from "./sql/types";
 import { DbBoardMetadata } from "Types";
 import { ITask } from "pg-promise";
 import debug from "debug";
@@ -52,7 +53,7 @@ export const getBoardByExternalId = async ({
 
     info(`Got getBoardByExternalId query result:`, rows);
     log(`Fetched board ${boardExternalId} for user ${firebaseId}`);
-    return rows;
+    return BoardByExternalIdSchema.parse(rows) as any;
   } catch (e) {
     error(`Error while fetching board by id (${boardExternalId}).`);
     error(e);
