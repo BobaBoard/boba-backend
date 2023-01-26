@@ -136,7 +136,7 @@ describe("Tests boards queries", () => {
       boardExternalId: LONG_BOARD_ID,
       // Bobatan
       firebaseId: BOBATAN_USER_ID,
-      cursor: undefined,
+      cursor: null,
       pageSize: 5,
     });
 
