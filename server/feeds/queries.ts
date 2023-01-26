@@ -18,7 +18,7 @@ export const getBoardActivityByExternalId = async ({
   pageSize,
 }: {
   boardExternalId: string;
-  firebaseId: string;
+  firebaseId: string | null;
   categoryFilter?: string | null;
   cursor: string | null;
   pageSize?: number;
@@ -60,7 +60,9 @@ export const getBoardActivityByExternalId = async ({
       result.pop();
     }
 
-    log(`Fetched board ${boardExternalId} activity data for user ${firebaseId}`);
+    log(
+      `Fetched board ${boardExternalId} activity data for user ${firebaseId}`
+    );
     return { cursor: nextCursor, activity: rows };
   } catch (e) {
     error(`Error while fetching board by slug (${boardExternalId}).`);

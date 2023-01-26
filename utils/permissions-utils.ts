@@ -19,7 +19,7 @@ const log = debug("bobaserver::permissions-utils-log");
 
 export const hasPermission = (
   permission: DbRolePermissions,
-  permissions?: string[]
+  permissions: string[] = []
 ) => {
   return permissions.some((p) => p == permission || p == DbRolePermissions.all);
 };
@@ -32,26 +32,25 @@ export const canPostAs = (permissions?: string[]) => {
 };
 
 export const extractPostPermissions = (permissions?: string[]) => {
-  return extractPermissions(PostPermissions, permissions);
+  return extractPermissions(PostPermissions, permissions || []);
 };
 
 export const extractThreadPermissions = (permissions?: string[]) => {
-  return extractPermissions(ThreadPermissions, permissions);
+  return extractPermissions(ThreadPermissions, permissions || []);
 };
 
 export const extractBoardPermissions = (permissions?: string[]) => {
-  return extractPermissions(BoardPermissions, permissions);
+  return extractPermissions(BoardPermissions, permissions || []);
 };
 
 export const extractRealmPermissions = (permissions?: string[]) => {
-  return extractPermissions(RealmPermissions, permissions);
+  return extractPermissions(RealmPermissions, permissions || []);
 };
 
 export const getUserPermissionsForBoard = (
   permissions?: string[]
 ): UserBoardPermissions => {
   info(`Transforming the following user permissions: ${permissions}`);
-
   return {
     board_permissions: extractBoardPermissions(permissions),
     post_permissions: extractPostPermissions(permissions),
@@ -135,7 +134,7 @@ export const hasBoardAccessPermission = ({
   firebaseId,
 }: {
   boardMetadata: DbBoardMetadata;
-  firebaseId: string;
+  firebaseId: string | undefined;
 }) => {
   if (
     boardMetadata.logged_out_restrictions.includes(
