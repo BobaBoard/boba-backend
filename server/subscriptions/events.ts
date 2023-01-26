@@ -90,30 +90,29 @@ const maybeUpdateSubscriptionsOnThreadChange = async (
   });
 };
 
-// TODO: figure out this type
-type EventsWithHandlers<
-  T extends threadEvents.EVENT_TYPES = threadEvents.EVENT_TYPES
-> = [T, (eventPayload: threadEvents.EventToPayload[T]) => void];
+type EventsWithHandlers = {
+  [eventType in threadEvents.EVENT_TYPES]: (
+    e: threadEvents.EventToPayload[eventType]
+  ) => void;
+};
 
-const EVENTS_WITH_HANDLERS: EventsWithHandlers[] = [
-  [
-    threadEvents.EVENT_TYPES.THREAD_CREATED,
+const EVENTS_WITH_HANDLERS: EventsWithHandlers = {
+  [threadEvents.EVENT_TYPES.THREAD_CREATED]:
     maybeUpdateSubscriptionsOnThreadCreated,
-  ],
-  [
-    threadEvents.EVENT_TYPES.THREAD_UPDATED,
+  [threadEvents.EVENT_TYPES.THREAD_UPDATED]:
     maybeUpdateSubscriptionsOnThreadChange,
-  ],
-];
+};
 
 export const registerAll = () => {
-  EVENTS_WITH_HANDLERS.forEach(([eventType, handler]) => {
+  Object.entries(EVENTS_WITH_HANDLERS).forEach(([eventType, handler]) => {
+    // @ts-ignore Type safety is given by the EVENTS_WITH_HANDLERS definition
     threadEvents.register(eventType, handler);
   });
 };
 
 export const unregisterAll = () => {
-  EVENTS_WITH_HANDLERS.forEach(([eventType, handler]) => {
+  Object.entries(EVENTS_WITH_HANDLERS).forEach(([eventType, handler]) => {
+    // @ts-ignore Type safety is given by the EVENTS_WITH_HANDLERS definition
     threadEvents.register(eventType, handler);
   });
 };
