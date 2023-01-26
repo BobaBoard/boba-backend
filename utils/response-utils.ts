@@ -259,12 +259,12 @@ export const processBoardMetadata = ({
           case "text":
             return {
               ...description,
-              categories: null,
+              categories: undefined,
             };
           case "category_filter":
             return {
               ...description,
-              description: null,
+              description: undefined,
             };
         }
       }
