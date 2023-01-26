@@ -184,7 +184,7 @@ export interface DbBoardMetadata {
   permissions: string[];
   logged_out_restrictions: string[];
   logged_in_base_restrictions: string[];
-  realm_external_id?: string;
+  realm_external_id: string;
 }
 
 export interface QueryTagsType {
