@@ -37,7 +37,7 @@ export interface DbPostType {
   user_avatar: string;
   secret_identity_name: string;
   secret_identity_avatar: string;
-  secret_identity_color?: string;
+  secret_identity_color: string | null;
   accessory_avatar?: string;
   self: boolean;
   friend: boolean;
