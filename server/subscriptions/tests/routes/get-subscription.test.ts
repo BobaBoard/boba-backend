@@ -67,7 +67,7 @@ describe("Tests threads REST API", () => {
   test("Should cache subscription", async () => {
     const res = await request(server.app).get(`/${AIBA_SUBSCRIPTION_ID}`);
 
-    expect(cache().hset).toBeCalledWith(
+    expect(cache().hSet).toBeCalledWith(
       CacheKeys.SUBSCRIPTION,
       AIBA_SUBSCRIPTION_ID,
       stringify(AIBA_SUBSCRIPTION_RESULT)
@@ -109,12 +109,12 @@ describe("Tests threads REST API", () => {
         },
       ],
     };
-    mocked(cache().hget).mockResolvedValueOnce(stringify(cachedSubscription));
+    mocked(cache().hGet).mockResolvedValueOnce(stringify(cachedSubscription));
 
     const res = await request(server.app).get(`/${AIBA_SUBSCRIPTION_ID}`);
 
-    expect(cache().hget).toBeCalledTimes(1);
-    expect(cache().hget).toBeCalledWith(
+    expect(cache().hGet).toBeCalledTimes(1);
+    expect(cache().hGet).toBeCalledWith(
       CacheKeys.SUBSCRIPTION,
       AIBA_SUBSCRIPTION_ID
     );

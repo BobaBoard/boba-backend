@@ -109,7 +109,9 @@ router.get("/:board_id", ensureBoardAccess, async (req, res) => {
     hasBoardAccess: req.currentUser ? true : false,
   });
 
-  log(`Returning data for board ${boardExternalId} for user ${req.currentUser?.uid}.`);
+  log(
+    `Returning data for board ${boardExternalId} for user ${req.currentUser?.uid}.`
+  );
   res.status(200).json(boardMetadata);
 });
 
@@ -310,8 +312,8 @@ router.patch(
       return;
     }
 
-    await cache().hdel(CacheKeys.BOARD, boardExternalId);
-    await cache().hdel(CacheKeys.BOARD_METADATA, boardExternalId);
+    await cache().hDel(CacheKeys.BOARD, boardExternalId);
+    await cache().hDel(CacheKeys.BOARD_METADATA, boardExternalId);
     const boardMetadata = await getBoardMetadataByExternalId({
       firebaseId: req.currentUser?.uid,
       boardExternalId,
@@ -435,8 +437,8 @@ router.post(
       return;
     }
 
-    await cache().hdel(CacheKeys.BOARD, boardExternalId);
-    await cache().hdel(CacheKeys.USER_PINS, req.currentUser.uid);
+    await cache().hDel(CacheKeys.BOARD, boardExternalId);
+    await cache().hDel(CacheKeys.USER_PINS, req.currentUser.uid);
 
     info(`Muted board: ${boardExternalId} for user ${req.currentUser.uid}.`);
     res.sendStatus(204);
@@ -492,8 +494,8 @@ router.delete(
       return;
     }
 
-    await cache().hdel(CacheKeys.BOARD, boardExternalId);
-    await cache().hdel(CacheKeys.USER_PINS, req.currentUser.uid);
+    await cache().hDel(CacheKeys.BOARD, boardExternalId);
+    await cache().hDel(CacheKeys.USER_PINS, req.currentUser.uid);
 
     info(`Unmuted board: ${boardExternalId} for user ${req.currentUser.uid}.`);
     res.sendStatus(204);
@@ -550,8 +552,8 @@ router.post(
       return;
     }
 
-    await cache().hdel(CacheKeys.BOARD, boardExternalId);
-    await cache().hdel(CacheKeys.USER_PINS, req.currentUser.uid);
+    await cache().hDel(CacheKeys.BOARD, boardExternalId);
+    await cache().hDel(CacheKeys.USER_PINS, req.currentUser.uid);
 
     info(`Pinned board: ${boardExternalId} for user ${req.currentUser.uid}.`);
     res.sendStatus(204);
@@ -610,10 +612,12 @@ router.delete(
       return;
     }
 
-    await cache().hdel(CacheKeys.BOARD, boardExternalId);
-    await cache().hdel(CacheKeys.USER_PINS, req.currentUser.uid);
+    await cache().hDel(CacheKeys.BOARD, boardExternalId);
+    await cache().hDel(CacheKeys.USER_PINS, req.currentUser.uid);
 
-    info(`Unpinned board: ${boardExternalId} for user ${req.currentUser?.uid}.`);
+    info(
+      `Unpinned board: ${boardExternalId} for user ${req.currentUser?.uid}.`
+    );
     res.sendStatus(204);
   }
 );

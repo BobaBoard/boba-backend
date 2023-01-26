@@ -44,7 +44,7 @@ router.get("/:subscription_id", async (req, res) => {
   const { subscription_id: subscriptionExternalId } = req.params;
   log(`Fetching data for subscription with id ${subscriptionExternalId}`);
 
-  const cachedSubscription = await cache().hget(
+  const cachedSubscription = await cache().hGet(
     CacheKeys.SUBSCRIPTION,
     subscriptionExternalId
   );
@@ -102,7 +102,11 @@ router.get("/:subscription_id", async (req, res) => {
   };
 
   res.status(200).json(response);
-  cache().hset(CacheKeys.SUBSCRIPTION, subscriptionExternalId, stringify(response));
+  cache().hSet(
+    CacheKeys.SUBSCRIPTION,
+    subscriptionExternalId,
+    stringify(response)
+  );
 });
 
 export default router;

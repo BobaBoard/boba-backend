@@ -83,12 +83,12 @@ describe("Test subscription updates", () => {
       createdThread,
     ]);
 
-    expect(cache().hdel).toBeCalledTimes(2);
-    expect(cache().hdel).toBeCalledWith(
+    expect(cache().hDel).toBeCalledTimes(2);
+    expect(cache().hDel).toBeCalledWith(
       CacheKeys.SUBSCRIPTION,
       BLOOD_AND_BRUISES_SUBSCRIPTION_ID
     );
-    expect(cache().hdel).toBeCalledWith(
+    expect(cache().hDel).toBeCalledWith(
       CacheKeys.SUBSCRIPTION,
       BLOOD_SUBSCRIPTION_ID
     );
@@ -122,9 +122,9 @@ describe("Test subscription updates", () => {
       username: expect.any(String),
     });
 
-    expect(cache().hdel).toBeCalledTimes(1);
+    expect(cache().hDel).toBeCalledTimes(1);
     // aiba subscription
-    expect(cache().hdel).toBeCalledWith(
+    expect(cache().hDel).toBeCalledWith(
       CacheKeys.SUBSCRIPTION,
       AIBA_SUBSCRIPTION_ID
     );
