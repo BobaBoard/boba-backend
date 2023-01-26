@@ -32,7 +32,7 @@ export const withLoggedIn = (
   next: NextFunction
 ) => {
   const idToken = req.headers?.authorization;
-  req.currentUser = undefined;
+  req.currentUser = null;
 
   if (!idToken) {
     log("No id token found in request. User is not logged in.");
@@ -114,11 +114,11 @@ export const withUserSettings = (
 ) => {
   // First ensure that the isLoggedIn middleware is correctly called.
   withLoggedIn(req, res, async () => {
-    if (!req.currentUser) {
+    const currentUserId = req.currentUser?.uid;
+    if (!currentUserId) {
       next();
       return;
     }
-    const currentUserId = req.currentUser.uid;
     const cachedData = await cache().hGet(
       CacheKeys.USER_SETTINGS,
       currentUserId

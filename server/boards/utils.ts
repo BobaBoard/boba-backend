@@ -148,7 +148,10 @@ export const getBoardMetadataByExternalId = async ({
   hasBoardAccess: boolean;
 }) => {
   if (!firebaseId) {
-    const cachedBoard = await cache().hget(CacheKeys.BOARD_METADATA, boardExternalId);
+    const cachedBoard = await cache().hGet(
+      CacheKeys.BOARD_METADATA,
+      boardExternalId
+    );
     if (cachedBoard) {
       log(`Found cached metadata for board ${boardExternalId}`);
       return JSON.parse(cachedBoard);
@@ -180,7 +183,11 @@ export const getBoardMetadataByExternalId = async ({
     ...boardMetadata,
   };
   if (!firebaseId) {
-    cache().hset(CacheKeys.BOARD_METADATA, boardExternalId, stringify(finalMetadata));
+    cache().hSet(
+      CacheKeys.BOARD_METADATA,
+      boardExternalId,
+      stringify(finalMetadata)
+    );
   }
   log(`Processed board metadata (${boardExternalId}) for user ${firebaseId}`);
   return finalMetadata;

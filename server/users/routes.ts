@@ -54,7 +54,7 @@ const router = express.Router();
  */
 router.get("/@me", ensureLoggedIn, async (req, res) => {
   let currentUserId: string = req.currentUser?.uid;
-  const cachedData = await cache().hget(CacheKeys.USER, currentUserId);
+  const cachedData = await cache().hGet(CacheKeys.USER, currentUserId);
 
   if (cachedData) {
     log(`Returning cached data for user ${currentUserId}`);
@@ -74,7 +74,7 @@ router.get("/@me", ensureLoggedIn, async (req, res) => {
     avatar_url: userData.avatarUrl,
   };
   res.status(200).json(userDataResponse);
-  cache().hset(CacheKeys.USER, currentUserId, stringify(userDataResponse));
+  cache().hSet(CacheKeys.USER, currentUserId, stringify(userDataResponse));
 });
 
 /**
@@ -147,7 +147,7 @@ router.patch("/@me", ensureLoggedIn, async (req, res) => {
     return;
   }
 
-  await cache().hdel(CacheKeys.USER, currentUserId);
+  await cache().hDel(CacheKeys.USER, currentUserId);
   res.status(200).json({
     username: userData.username,
     avatar_url: userData.avatarUrl,
@@ -210,7 +210,7 @@ router.get(
   withRealmPermissions,
   async (req, res) => {
     let currentUserId: string = req.currentUser?.uid;
-    const cachedData = await cache().hget(CacheKeys.USER_PINS, currentUserId);
+    const cachedData = await cache().hGet(CacheKeys.USER_PINS, currentUserId);
 
     if (cachedData) {
       log(`Returning cached pinned boards data for user ${currentUserId}`);
@@ -245,7 +245,7 @@ router.get(
 
     const pinsDataResponse = { pinned_boards: pins };
     res.status(200).json(pinsDataResponse);
-    cache().hset(
+    cache().hSet(
       CacheKeys.USER_PINS,
       currentUserId,
       stringify(pinsDataResponse)
@@ -372,7 +372,7 @@ router.patch("/@me/settings", ensureLoggedIn, async (req, res) => {
     });
 
     const settings = await getUserSettings({ firebaseId });
-    await cache().hset(
+    await cache().hSet(
       CacheKeys.USER_SETTINGS,
       firebaseId,
       stringify(settings)

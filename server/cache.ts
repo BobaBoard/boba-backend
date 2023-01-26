@@ -7,11 +7,11 @@ const log = debug("bobaserver:cache-log");
 const info = debug("bobaserver:cache-info");
 
 let client: {
-  set: (key: CacheKeys, value: string) => Promise<string | null>;
-  get: (key: CacheKeys) => Promise<string | null>;
+  set: (key: CacheKeys, value: string) => Promise<string>;
+  get: (key: CacheKeys) => Promise<string>;
   del: (key: CacheKeys) => Promise<number>;
   hSet: (key: CacheKeys, objectKey: string, value: string) => Promise<number>;
-  hGet: (key: CacheKeys, objectKey: string) => Promise<string | undefined>;
+  hGet: (key: CacheKeys, objectKey: string) => Promise<string>;
   hDel: (key: CacheKeys, objectKey: string) => Promise<number>;
 };
 
@@ -26,12 +26,12 @@ export const initCache = (createClientMethod?: any) => {
     return;
   }
   console.log(
-    `redis://${process.env.REDIS_HOST}:${parseInt(process.env.REDIS_PORT!)}`
+    `redis://${process.env.REDIS_HOST}:${parseInt(process.env.REDIS_PORT)}`
   );
   let innerClient: RedisClientType = createClient({
     socket: {
       host: process.env.REDIS_HOST,
-      port: parseInt(process.env.REDIS_PORT!),
+      port: parseInt(process.env.REDIS_PORT),
     },
   });
   innerClient.connect();
