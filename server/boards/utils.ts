@@ -39,11 +39,11 @@ export const getMetadataDelta = ({
       index: number;
       title: string;
       type: "text" | "category_filter";
-      description?: string;
+      description: string | null;
       categories: {
         deleted: string[];
         new: string[];
-      };
+      } | null;
       updated: boolean;
     }[];
   };
@@ -57,12 +57,15 @@ export const getMetadataDelta = ({
       (desc): desc is DbBoardCategoryDescription =>
         desc.type == "category_filter"
     ) || [];
-  const newTexts = newMetadata.descriptions.filter(
-    (desc): desc is DbBoardTextDescription => desc.type == "text"
-  );
-  const newCategoryFilters = newMetadata.descriptions.filter(
-    (desc): desc is DbBoardCategoryDescription => desc.type == "category_filter"
-  );
+  const newTexts =
+    newMetadata.descriptions?.filter(
+      (desc): desc is DbBoardTextDescription => desc.type == "text"
+    ) || [];
+  const newCategoryFilters =
+    newMetadata.descriptions?.filter(
+      (desc): desc is DbBoardCategoryDescription =>
+        desc.type == "category_filter"
+    ) || [];
 
   // Deleted texts will be in oldTexts but not newTexts
   const deletedTexts = oldTexts.filter(
@@ -120,8 +123,8 @@ export const getMetadataDelta = ({
 
   return {
     accentColor:
-      oldMetadata.settings.accentColor != newMetadata.settings.accentColor
-        ? newMetadata.settings.accentColor
+      oldMetadata.settings!.accentColor != newMetadata.settings!.accentColor
+        ? newMetadata.settings!.accentColor
         : undefined,
     tagline:
       oldMetadata.tagline != newMetadata.tagline
