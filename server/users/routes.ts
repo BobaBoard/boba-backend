@@ -53,7 +53,7 @@ const router = express.Router();
  *                   format: uri
  */
 router.get("/@me", ensureLoggedIn, async (req, res) => {
-  let currentUserId: string = req.currentUser?.uid;
+  let currentUserId: string = req.currentUser!.uid;
   const cachedData = await cache().hGet(CacheKeys.USER, currentUserId);
 
   if (cachedData) {
@@ -127,7 +127,7 @@ router.get("/@me", ensureLoggedIn, async (req, res) => {
  *                 - avatar_url
  */
 router.patch("/@me", ensureLoggedIn, async (req, res) => {
-  let currentUserId: string = req.currentUser.uid;
+  let currentUserId: string = req.currentUser!.uid;
   const { username, avatarUrl } = req.body;
 
   if (!username || !avatarUrl) {
@@ -209,7 +209,7 @@ router.get(
   ensureLoggedIn,
   withRealmPermissions,
   async (req, res) => {
-    let currentUserId: string = req.currentUser?.uid;
+    let currentUserId: string = req.currentUser!.uid;
     const cachedData = await cache().hGet(CacheKeys.USER_PINS, currentUserId);
 
     if (cachedData) {
@@ -217,7 +217,7 @@ router.get(
       return res.status(200).json(JSON.parse(cachedData));
     }
     const boards = await getBoards({
-      firebaseId: req.currentUser?.uid,
+      firebaseId: req.currentUser!.uid,
       realmExternalId: req.currentRealmIds?.string_id,
     });
 
@@ -228,7 +228,7 @@ router.get(
     const summaries = processBoardsSummary({
       boards,
       isLoggedIn: !!req.currentUser?.uid,
-      hasRealmMemberAccess: req.currentRealmPermissions.includes(
+      hasRealmMemberAccess: req.currentRealmPermissions!.includes(
         RealmPermissions.accessLockedBoardsOnRealm
       ),
     });
@@ -277,7 +277,7 @@ router.get(
  *                 $ref: '#/components/examples/BobaDexResponse'
  */
 router.get("/@me/bobadex", ensureLoggedIn, async (req, res) => {
-  let currentUserId: string = req.currentUser.uid;
+  let currentUserId: string = req.currentUser!.uid;
   const identities = await getBobadexIdentities({ firebaseId: currentUserId });
   res.status(200).json(identities);
 });
@@ -310,11 +310,7 @@ router.get(
   ensureLoggedIn,
   withUserSettings,
   async (req, res) => {
-    try {
-      res.status(200).json(aggregateByType(req.currentUser.settings));
-    } catch (e) {
-      throw new Internal500Error(`Failed to get user settings`);
-    }
+    res.status(200).json(aggregateByType(req.currentUser?.settings || []));
   }
 );
 
@@ -363,7 +359,7 @@ router.get(
 router.patch("/@me/settings", ensureLoggedIn, async (req, res) => {
   const { name, value } = req.body;
 
-  const firebaseId = req.currentUser.uid;
+  const firebaseId = req.currentUser!.uid;
   try {
     await updateUserSettings({
       firebaseId,
@@ -377,9 +373,10 @@ router.patch("/@me/settings", ensureLoggedIn, async (req, res) => {
       firebaseId,
       stringify(settings)
     );
+
     res.status(200).json(aggregateByType(settings));
   } catch (e) {
-    throw new Internal500Error(`Failed to update user settings`);
+    throw new Internal500Error(`Failed to update user settings. Reason: ${e}`);
   }
 });
 

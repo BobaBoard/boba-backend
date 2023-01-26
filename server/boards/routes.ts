@@ -196,7 +196,7 @@ router.post(
     } = req.body;
 
     const newThreadExternalId = await createThread({
-      firebaseId: req.currentUser.uid,
+      firebaseId: req.currentUser!.uid,
       content,
       defaultView,
       anonymityType: "everyone",
@@ -300,10 +300,11 @@ router.patch(
     const { board_id: boardExternalId } = req.params;
     const { descriptions, accentColor, tagline } = req.body;
 
+    // TODO: get currentBoardMetadata from the DB
     const newMetadata = await updateBoardMetadata({
       boardExternalId,
-      firebaseId: req.currentUser.uid,
-      oldMetadata: req.currentBoardMetadata,
+      firebaseId: req.currentUser!.uid,
+      oldMetadata: req.currentBoardMetadata!,
       newMetadata: { descriptions, settings: { accentColor }, tagline },
     });
 
@@ -317,7 +318,7 @@ router.patch(
     const boardMetadata = await getBoardMetadataByExternalId({
       firebaseId: req.currentUser?.uid,
       boardExternalId,
-      hasBoardAccess: req.currentRealmPermissions.includes(
+      hasBoardAccess: req.currentRealmPermissions!.includes(
         RealmPermissions.accessLockedBoardsOnRealm
       ),
     });
@@ -371,7 +372,7 @@ router.post(
 
     if (
       !(await markBoardVisit({
-        firebaseId: req.currentUser.uid,
+        firebaseId: req.currentUser!.uid,
         boardExternalId,
       }))
     ) {
@@ -429,7 +430,7 @@ router.post(
 
     if (
       !(await muteBoard({
-        firebaseId: req.currentUser.uid,
+        firebaseId: req.currentUser!.uid,
         boardExternalId,
       }))
     ) {
@@ -438,9 +439,9 @@ router.post(
     }
 
     await cache().hDel(CacheKeys.BOARD, boardExternalId);
-    await cache().hDel(CacheKeys.USER_PINS, req.currentUser.uid);
+    await cache().hDel(CacheKeys.USER_PINS, req.currentUser!.uid);
 
-    info(`Muted board: ${boardExternalId} for user ${req.currentUser.uid}.`);
+    info(`Muted board: ${boardExternalId} for user ${req.currentUser!.uid}.`);
     res.sendStatus(204);
   }
 );
@@ -486,7 +487,7 @@ router.delete(
 
     if (
       !(await unmuteBoard({
-        firebaseId: req.currentUser.uid,
+        firebaseId: req.currentUser!.uid,
         boardExternalId,
       }))
     ) {
@@ -495,9 +496,9 @@ router.delete(
     }
 
     await cache().hDel(CacheKeys.BOARD, boardExternalId);
-    await cache().hDel(CacheKeys.USER_PINS, req.currentUser.uid);
+    await cache().hDel(CacheKeys.USER_PINS, req.currentUser!.uid);
 
-    info(`Unmuted board: ${boardExternalId} for user ${req.currentUser.uid}.`);
+    info(`Unmuted board: ${boardExternalId} for user ${req.currentUser!.uid}.`);
     res.sendStatus(204);
   }
 );
@@ -544,7 +545,7 @@ router.post(
 
     if (
       !(await pinBoard({
-        firebaseId: req.currentUser.uid,
+        firebaseId: req.currentUser!.uid,
         boardExternalId,
       }))
     ) {
@@ -553,9 +554,9 @@ router.post(
     }
 
     await cache().hDel(CacheKeys.BOARD, boardExternalId);
-    await cache().hDel(CacheKeys.USER_PINS, req.currentUser.uid);
+    await cache().hDel(CacheKeys.USER_PINS, req.currentUser!.uid);
 
-    info(`Pinned board: ${boardExternalId} for user ${req.currentUser.uid}.`);
+    info(`Pinned board: ${boardExternalId} for user ${req.currentUser!.uid}.`);
     res.sendStatus(204);
   }
 );
@@ -604,7 +605,7 @@ router.delete(
 
     if (
       !(await unpinBoard({
-        firebaseId: req.currentUser.uid,
+        firebaseId: req.currentUser!.uid,
         boardExternalId,
       }))
     ) {
@@ -613,7 +614,7 @@ router.delete(
     }
 
     await cache().hDel(CacheKeys.BOARD, boardExternalId);
-    await cache().hDel(CacheKeys.USER_PINS, req.currentUser.uid);
+    await cache().hDel(CacheKeys.USER_PINS, req.currentUser!.uid);
 
     info(
       `Unpinned board: ${boardExternalId} for user ${req.currentUser?.uid}.`
@@ -665,7 +666,7 @@ router.delete(
   async (req, res) => {
     const { board_id: boardExternalId } = req.params;
 
-    let currentUserId: string = req.currentUser.uid;
+    let currentUserId: string = req.currentUser!.uid;
     log(
       `Dismissing ${boardExternalId} notifications for firebase id: ${currentUserId}`
     );

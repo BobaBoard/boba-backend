@@ -269,7 +269,7 @@ export const withPostPermissions = async (
     firebaseId: req.currentUser.uid,
     boardExternalId: post.parent_board_id,
   });
-  req.currentPostPermissions = extractPostPermissions(board.permissions);
+  req.currentPostPermissions = extractPostPermissions(board?.permissions);
   next();
 };
 
