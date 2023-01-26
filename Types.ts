@@ -173,7 +173,7 @@ export interface DbBoardMetadata {
     id: string;
     avatar_url: string;
     color: string | undefined;
-    accessory: string | undefined;
+    accessory: string | undefined | null;
     name: string;
   }[];
   accessories: {

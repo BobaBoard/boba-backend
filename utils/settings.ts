@@ -28,6 +28,6 @@ export const aggregateByType = (settings: SettingEntry[]) => {
       aggregate.decorations.push(setting);
       return aggregate;
     },
-    { decorations: [] }
+    { decorations: [] as SettingEntry[] }
   );
 };

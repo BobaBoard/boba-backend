@@ -2,7 +2,7 @@ export interface Role {
   id: string;
   name: string;
   color?: string;
-  accessory?: string;
+  accessory?: string | null;
   avatar_url: string;
 }
 

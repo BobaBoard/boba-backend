@@ -43,10 +43,18 @@ const publishSubscriptionsUpdates = async ({
           webhook,
           getWebhookPayload({
             webhookHandlerType,
-            subscriptionNames: subscriptionIds.map(
-              (subscriptionId) =>
-                subscriptions.find((s) => s.id === subscriptionId)?.name
-            ),
+            subscriptionNames: subscriptionIds
+              .map(
+                (subscriptionId) =>
+                  subscriptions.find((s) => s.id === subscriptionId)?.name
+              )
+              .filter(
+                // Typescript function to assert subscriptionName will be not null.
+                // Should extract to its own utility function.
+                <TValue>(
+                  subscriptionName: undefined | null | TValue
+                ): subscriptionName is TValue => !!subscriptionName
+              ),
             eventPayload,
           })
         );
