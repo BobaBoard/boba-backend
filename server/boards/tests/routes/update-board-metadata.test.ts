@@ -97,9 +97,9 @@ describe("Tests boards REST API", () => {
       // NOTE: We only save the metadata when the user is not logged in,
       // so we don't do it in this method.
       // Ensure that the board metadata was removed from the cache.
-      expect(cache().hdel).toBeCalledTimes(2);
-      expect(cache().hdel).toBeCalledWith(CacheKeys.BOARD, GORE_BOARD_ID);
-      expect(cache().hdel).toBeCalledWith(
+      expect(cache().hDel).toBeCalledTimes(2);
+      expect(cache().hDel).toBeCalledWith(CacheKeys.BOARD, GORE_BOARD_ID);
+      expect(cache().hDel).toBeCalledWith(
         CacheKeys.BOARD_METADATA,
         GORE_BOARD_ID
       );

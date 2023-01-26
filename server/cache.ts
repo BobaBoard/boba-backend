@@ -1,19 +1,18 @@
-import { RedisClient, createClient } from "redis";
+import { RedisClientType, createClient } from "redis";
 
 import debug from "debug";
-import { promisify } from "util";
 
 const error = debug("bobaserver:cache-error");
 const log = debug("bobaserver:cache-log");
 const info = debug("bobaserver:cache-info");
 
 let client: {
-  set: (key: CacheKeys, value: string) => Promise<void>;
+  set: (key: CacheKeys, value: string) => Promise<string>;
   get: (key: CacheKeys) => Promise<string>;
-  del: (key: CacheKeys) => Promise<void>;
-  hset: (key: CacheKeys, objectKey: string, value: string) => Promise<void>;
-  hget: (key: CacheKeys, objectKey: string) => Promise<string>;
-  hdel: (key: CacheKeys, objectKey: string) => Promise<void>;
+  del: (key: CacheKeys) => Promise<number>;
+  hSet: (key: CacheKeys, objectKey: string, value: string) => Promise<number>;
+  hGet: (key: CacheKeys, objectKey: string) => Promise<string>;
+  hDel: (key: CacheKeys, objectKey: string) => Promise<number>;
 };
 
 export const initCache = (createClientMethod?: any) => {
@@ -26,10 +25,16 @@ export const initCache = (createClientMethod?: any) => {
     client = createClientMethod();
     return;
   }
-  let innerClient: RedisClient = createClient(
-    parseInt(process.env.REDIS_PORT),
-    process.env.REDIS_HOST
+  console.log(
+    `redis://${process.env.REDIS_HOST}:${parseInt(process.env.REDIS_PORT)}`
   );
+  let innerClient: RedisClientType = createClient({
+    socket: {
+      host: process.env.REDIS_HOST,
+      port: parseInt(process.env.REDIS_PORT),
+    },
+  });
+  innerClient.connect();
   log(`Attempting cache connection...`);
   log(
     `Attempting connection to redis client on host ${process.env.REDIS_HOST} and port ${process.env.REDIS_PORT}`
@@ -42,14 +47,7 @@ export const initCache = (createClientMethod?: any) => {
     error("Redis connection failed");
   });
 
-  client = {
-    set: promisify(innerClient.set).bind(innerClient),
-    get: promisify(innerClient.get).bind(innerClient),
-    del: promisify(innerClient.del).bind(innerClient),
-    hset: promisify(innerClient.hset).bind(innerClient),
-    hget: promisify(innerClient.hget).bind(innerClient),
-    hdel: promisify(innerClient.hdel).bind(innerClient),
-  };
+  client = innerClient;
 };
 
 export const cache = () => client;

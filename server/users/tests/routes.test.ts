@@ -38,15 +38,15 @@ describe("Test users routes", () => {
       avatar_url: "/this_was_cached.png",
       username: "super_cached",
     };
-    mocked(cache().hget).mockResolvedValueOnce(stringify(cachedData));
+    mocked(cache().hGet).mockResolvedValueOnce(stringify(cachedData));
     setLoggedInUser(JERSEY_DEVIL_USER_ID);
 
     const res = await request(server.app).get(`/@me`);
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual(cachedData);
-    expect(cache().hget).toBeCalledTimes(1);
-    expect(cache().hget).toBeCalledWith(CacheKeys.USER, JERSEY_DEVIL_USER_ID);
+    expect(cache().hGet).toBeCalledTimes(1);
+    expect(cache().hGet).toBeCalledWith(CacheKeys.USER, JERSEY_DEVIL_USER_ID);
   });
 
   test("Prevents unauthorized access", async () => {
@@ -69,8 +69,8 @@ describe("Test users routes", () => {
 
     const res = await request(server.app).get(`/@me`);
     expect(res.status).toBe(200);
-    expect(cache().hset).toBeCalledTimes(1);
-    expect(cache().hset).toBeCalledWith(
+    expect(cache().hSet).toBeCalledTimes(1);
+    expect(cache().hSet).toBeCalledWith(
       CacheKeys.USER,
       JERSEY_DEVIL_USER_ID,
       // TODO: this will fail if we change what we cache. We should not

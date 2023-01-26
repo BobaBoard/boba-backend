@@ -58,9 +58,9 @@ describe("Tests pin boards REST API", () => {
       // Ensure that the user cache was cleared since that contains the pinned boards.
       // TODO: this is an implementation details and it should be tested by checking the
       // users/@me/pins/realm/:realm_id endpoint.
-      expect(cache().hdel).toBeCalledTimes(2);
-      expect(cache().hdel).toBeCalledWith(CacheKeys.USER_PINS, BOBATAN_USER_ID);
-      expect(cache().hdel).toBeCalledWith(
+      expect(cache().hDel).toBeCalledTimes(2);
+      expect(cache().hDel).toBeCalledWith(CacheKeys.USER_PINS, BOBATAN_USER_ID);
+      expect(cache().hDel).toBeCalledWith(
         CacheKeys.BOARD,
         MAIN_STREET_BOARD_ID
       );
@@ -116,9 +116,9 @@ describe("Tests unpin boards REST API", () => {
       // Ensure that the user cache was cleared since that contains the pinned boards.
       // TODO: this is an implementation details and it should be tested by checking the
       // users/@me/pins/realm/:realm_id endpoint.
-      expect(cache().hdel).toBeCalledTimes(2);
-      expect(cache().hdel).toBeCalledWith(CacheKeys.USER_PINS, BOBATAN_USER_ID);
-      expect(cache().hdel).toBeCalledWith(CacheKeys.BOARD, GORE_BOARD_ID);
+      expect(cache().hDel).toBeCalledTimes(2);
+      expect(cache().hDel).toBeCalledWith(CacheKeys.USER_PINS, BOBATAN_USER_ID);
+      expect(cache().hDel).toBeCalledWith(CacheKeys.BOARD, GORE_BOARD_ID);
       expect(res.status).toBe(204);
 
       const boardMetadata = await request(server.app).get(`/${GORE_BOARD_ID}`);

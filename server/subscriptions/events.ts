@@ -36,7 +36,7 @@ const publishSubscriptionsUpdates = async ({
       async ({ webhook, webhookHandlerType, subscriptionIds }) => {
         await Promise.all(
           subscriptionIds.map((subscriptionId) =>
-            cache().hdel(CacheKeys.SUBSCRIPTION, subscriptionId)
+            cache().hDel(CacheKeys.SUBSCRIPTION, subscriptionId)
           )
         );
         axios.post(
