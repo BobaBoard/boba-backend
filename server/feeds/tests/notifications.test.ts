@@ -6,7 +6,10 @@ import {
   SEXY_DADDY_USER_ID,
   ZODIAC_KILLER_USER_ID,
 } from "test/data/auth";
-import { FAVORITE_CHARACTER_THREAD_ID, FAVORITE_MURDER_THREAD_ID } from "test/data/threads";
+import {
+  FAVORITE_CHARACTER_THREAD_ID,
+  FAVORITE_MURDER_THREAD_ID,
+} from "test/data/threads";
 
 import { getBoardActivityByExternalId } from "../queries";
 
@@ -33,8 +36,7 @@ describe("Tests notifications", () => {
           is_new: activity.is_new,
         }))
         .filter(
-          (activity: any) =>
-            activity.thread_id == FAVORITE_CHARACTER_THREAD_ID
+          (activity: any) => activity.thread_id == FAVORITE_CHARACTER_THREAD_ID
         )
     ).toEqual([
       {
@@ -67,8 +69,7 @@ describe("Tests notifications", () => {
           is_new: activity.is_new,
         }))
         .filter(
-          (activity: any) =>
-            activity.thread_id == FAVORITE_CHARACTER_THREAD_ID
+          (activity: any) => activity.thread_id == FAVORITE_CHARACTER_THREAD_ID
         )
     ).toEqual([
       {
@@ -102,8 +103,7 @@ describe("Tests notifications", () => {
           is_new: activity.is_new,
         }))
         .filter(
-          (activity: any) =>
-            activity.thread_id == FAVORITE_CHARACTER_THREAD_ID
+          (activity: any) => activity.thread_id == FAVORITE_CHARACTER_THREAD_ID
         )
     ).toEqual([
       {
@@ -137,8 +137,7 @@ describe("Tests notifications", () => {
           is_new: activity.is_new,
         }))
         .filter(
-          (activity: any) =>
-            activity.thread_id == FAVORITE_MURDER_THREAD_ID
+          (activity: any) => activity.thread_id == FAVORITE_MURDER_THREAD_ID
         )
     ).toEqual([
       {
@@ -172,8 +171,7 @@ describe("Tests notifications", () => {
           is_new: activity.is_new,
         }))
         .filter(
-          (activity: any) =>
-            activity.thread_id == FAVORITE_MURDER_THREAD_ID
+          (activity: any) => activity.thread_id == FAVORITE_MURDER_THREAD_ID
         )
     ).toEqual([
       {
@@ -207,8 +205,7 @@ describe("Tests notifications", () => {
           is_new: activity.is_new,
         }))
         .filter(
-          (activity: any) =>
-            activity.thread_id == FAVORITE_MURDER_THREAD_ID
+          (activity: any) => activity.thread_id == FAVORITE_MURDER_THREAD_ID
         )
     ).toEqual([
       {
@@ -222,7 +219,7 @@ describe("Tests notifications", () => {
   test("gets correct amounts (logged out)", async () => {
     const boardActivity = await getBoardActivityByExternalId({
       boardExternalId: GORE_BOARD_ID,
-      firebaseId: undefined,
+      firebaseId: null,
       cursor: null,
     });
 

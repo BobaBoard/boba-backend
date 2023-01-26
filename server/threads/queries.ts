@@ -15,7 +15,7 @@ export const getThreadByExternalId = async ({
   firebaseId,
 }: {
   threadExternalId: string;
-  firebaseId?: string;
+  firebaseId?: string | null;
 }): Promise<DbThreadType | null> => {
   const thread = await pool.oneOrNone<DbThreadType>(sql.threadByExternalId, {
     thread_external_id: threadExternalId,
@@ -212,7 +212,7 @@ export const getUserPermissionsForThread = async ({
       firebaseId,
       boardExternalId: threadDetails.parent_board_id,
     });
-    const threadPermissions = extractThreadPermissions(board.permissions);
+    const threadPermissions = extractThreadPermissions(board?.permissions);
     permissions.push(...threadPermissions);
     return permissions;
   } catch (e) {

@@ -10,7 +10,7 @@ export interface Tags {
 export interface Post {
   id: string;
   parent_thread_id: string;
-  parent_post_id: string;
+  parent_post_id: string | null;
   content: string;
   created_at: string;
   secret_identity: SecretIdentity;

@@ -17,7 +17,7 @@ export const getBoards = async ({
   firebaseId,
   realmExternalId,
 }: {
-  firebaseId: string;
+  firebaseId: string | null;
   realmExternalId?: string;
 }): Promise<any> => {
   try {
@@ -38,7 +38,7 @@ export const getBoardByExternalId = async ({
 }: {
   firebaseId: string | undefined;
   boardExternalId: string;
-}): Promise<DbBoardMetadata> => {
+}): Promise<DbBoardMetadata | null> => {
   try {
     const rows = await pool.oneOrNone(sql.getBoardByExternalId, {
       firebase_id: firebaseId,

@@ -257,8 +257,8 @@ describe("Tests boards queries", () => {
     });
     test("fetches all boards updates (no user)", async () => {
       const boards = await getBoards({
-        firebaseId: undefined,
         realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
+        firebaseId: null,
       });
 
       expect(boards.map(extractBoardUpdates)).toEqual([
@@ -552,7 +552,7 @@ describe("Tests boards queries", () => {
     });
     test("fetches all boards user settings (no user)", async () => {
       const boards = await getBoards({
-        firebaseId: undefined,
+        firebaseId: null,
         realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
       });
 
