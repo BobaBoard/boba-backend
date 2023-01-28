@@ -259,11 +259,13 @@ export const processBoardMetadata = ({
           case "text":
             return {
               ...description,
+              // @ts-ignore A leftover from the strict check cleanup
               categories: undefined,
             };
           case "category_filter":
             return {
               ...description,
+              // @ts-ignore A leftover from the strict check cleanup
               description: undefined,
             };
         }

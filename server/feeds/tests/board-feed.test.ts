@@ -1,6 +1,13 @@
-import { FAVORITE_CHARACTER_THREAD_ID, FAVORITE_MURDER_THREAD_ID } from "test/data/threads";
+import {
+  FAVORITE_CHARACTER_THREAD_ID,
+  FAVORITE_MURDER_THREAD_ID,
+} from "test/data/threads";
 import { GORE_BOARD_ID, MAIN_STREET_BOARD_ID } from "test/data/boards";
-import { extractActivity, extractAuthorData, extractsMetadata } from "utils/test-utils";
+import {
+  extractActivity,
+  extractAuthorData,
+  extractsMetadata,
+} from "utils/test-utils";
 
 import { getBoardActivityByExternalId } from "../queries";
 
@@ -64,7 +71,7 @@ describe("Tests boards activity queries", () => {
     test("fetches board activity when slug present (logged out)", async () => {
       const board = await getBoardActivityByExternalId({
         boardExternalId: GORE_BOARD_ID,
-        firebaseId: undefined,
+        firebaseId: null,
         cursor: null,
       });
 
@@ -200,7 +207,7 @@ describe("Tests boards activity queries", () => {
     test("fetches board activity when slug present (logged out)", async () => {
       const board = await getBoardActivityByExternalId({
         boardExternalId: GORE_BOARD_ID,
-        firebaseId: undefined,
+        firebaseId: null,
         cursor: null,
       });
 
@@ -312,7 +319,7 @@ describe("Tests boards activity queries", () => {
     test("fetches board activity when slug present (logged out)", async () => {
       const board = await getBoardActivityByExternalId({
         boardExternalId: GORE_BOARD_ID,
-        firebaseId: undefined,
+        firebaseId: null,
         cursor: null,
       });
 
