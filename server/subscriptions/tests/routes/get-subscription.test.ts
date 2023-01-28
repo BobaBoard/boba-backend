@@ -34,7 +34,9 @@ const AIBA_SUBSCRIPTION_RESULT: SubscriptionFeed = {
       own: false,
       parent_post_id: null,
       secret_identity: {
+        // @ts-ignore This post has no identity in the DB currently.
         name: null,
+        // @ts-ignore This post has no identity in the DB currently.
         avatar: null,
       },
       tags: {
@@ -95,7 +97,9 @@ describe("Tests threads REST API", () => {
           own: false,
           parent_post_id: null,
           secret_identity: {
+            // @ts-ignore This post has no identity in the DB currently.
             name: null,
+            // @ts-ignore This post has no identity in the DB currently.
             avatar: null,
           },
           tags: {
