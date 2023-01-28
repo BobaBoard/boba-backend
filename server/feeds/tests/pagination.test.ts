@@ -15,15 +15,15 @@ describe("Tests boards queries", () => {
       throw Error("Board activity fetching encountered an Error.");
     }
 
-    expect(boardActivity.cursor).toBe(
+    expect(boardActivity!.cursor).toBe(
       "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDQtMTVUMDU6NDI6MDAuMDAwMDAwIiwicGFnZV9zaXplIjoxMH0="
     );
-    expect(boardActivity.activity.length).toEqual(10);
-    expect(boardActivity.activity[0].content).toEqual(
+    expect(boardActivity!.activity.length).toEqual(10);
+    expect(boardActivity!.activity[0].content).toEqual(
       '[{"insert":"Post 26!"}]'
     );
     expect(
-      boardActivity.activity[boardActivity.activity.length - 1].content
+      boardActivity!.activity[boardActivity!.activity.length - 1].content
     ).toEqual('[{"insert":"Post 17!"}]');
   });
 
@@ -40,15 +40,15 @@ describe("Tests boards queries", () => {
       throw Error("Board activity fetching encountered an Error.");
     }
 
-    expect(boardActivity.cursor).toBe(
+    expect(boardActivity!.cursor).toBe(
       "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDQtMDVUMDU6NDI6MDAuMDAwMDAwIiwicGFnZV9zaXplIjoxMH0="
     );
-    expect(boardActivity.activity.length).toEqual(10);
-    expect(boardActivity.activity[0].content).toEqual(
+    expect(boardActivity!.activity.length).toEqual(10);
+    expect(boardActivity!.activity[0].content).toEqual(
       '[{"insert":"Post 16!"}]'
     );
     expect(
-      boardActivity.activity[boardActivity.activity.length - 1].content
+      boardActivity!.activity[boardActivity!.activity.length - 1].content
     ).toEqual('[{"insert":"Post 7!"}]');
   });
 
@@ -65,11 +65,13 @@ describe("Tests boards queries", () => {
       throw Error("Board activity fetching encountered an Error.");
     }
 
-    expect(boardActivity.cursor).toBeNull();
-    expect(boardActivity.activity.length).toEqual(6);
-    expect(boardActivity.activity[0].content).toEqual('[{"insert":"Post 6!"}]');
+    expect(boardActivity!.cursor).toBeNull();
+    expect(boardActivity!.activity.length).toEqual(6);
+    expect(boardActivity!.activity[0].content).toEqual(
+      '[{"insert":"Post 6!"}]'
+    );
     expect(
-      boardActivity.activity[boardActivity.activity.length - 1].content
+      boardActivity!.activity[boardActivity!.activity.length - 1].content
     ).toEqual('[{"insert":"Post 1!"}]');
   });
 
@@ -86,27 +88,27 @@ describe("Tests boards queries", () => {
       throw Error("Board activity fetching encountered an Error.");
     }
 
-    expect(boardActivity.activity.length).toEqual(10);
-    expect(boardActivity.activity[0].content).toEqual(
+    expect(boardActivity!.activity.length).toEqual(10);
+    expect(boardActivity!.activity[0].content).toEqual(
       '[{"insert":"Post 11!"}]'
     );
     expect(
-      boardActivity.activity[boardActivity.activity.length - 1].content
+      boardActivity!.activity[boardActivity!.activity.length - 1].content
     ).toEqual('[{"insert":"Post 2!"}]');
 
     const boardActivity2 = await getBoardActivityByExternalId({
       boardExternalId: LONG_BOARD_ID,
       // Bobatan
       firebaseId: BOBATAN_USER_ID,
-      cursor: boardActivity.cursor,
+      cursor: boardActivity!.cursor,
     });
 
     if (boardActivity2 === false) {
       throw Error("Board activity fetching encountered an Error.");
     }
 
-    expect(boardActivity2.activity.length).toEqual(1);
-    expect(boardActivity2.activity[0].content).toEqual(
+    expect(boardActivity2!.activity.length).toEqual(1);
+    expect(boardActivity2!.activity[0].content).toEqual(
       '[{"insert":"Post 1!"}]'
     );
   });
@@ -124,8 +126,8 @@ describe("Tests boards queries", () => {
       throw Error("Board activity fetching encountered an Error.");
     }
 
-    expect(boardActivity.cursor).toBeNull();
-    expect(boardActivity.activity.length).toEqual(0);
+    expect(boardActivity!.cursor).toBeNull();
+    expect(boardActivity!.activity.length).toEqual(0);
   });
 
   test("fetches correctly when post includes microseconds", async () => {
@@ -151,7 +153,7 @@ describe("Tests boards queries", () => {
     // skipped. To understand why note that timestamp + microseconds always occurs after timestamp,
     // unless microseconds is 0. Since the last activity cursor didn't include microseconds, posts
     // at the border would be considered older than themselves and not fetched with their cursor.
-    expect(boardActivityCursor.activity[4].content).toEqual(
+    expect(boardActivityCursor!.activity[4].content).toEqual(
       '[{"insert":"Post 22!"}]'
     );
 
@@ -159,7 +161,7 @@ describe("Tests boards queries", () => {
       boardExternalId: LONG_BOARD_ID,
       // Bobatan
       firebaseId: BOBATAN_USER_ID,
-      cursor: boardActivityCursor.cursor,
+      cursor: boardActivityCursor!.cursor,
     });
 
     if (boardActivity === false) {
@@ -167,7 +169,7 @@ describe("Tests boards queries", () => {
     }
 
     // Expect the next returned post to be the correct one and have microseconds.
-    expect(boardActivity.activity[0].content).toEqual(
+    expect(boardActivity!.activity[0].content).toEqual(
       '[{"insert":"Post 21 (with microseconds)!"}]'
     );
   });

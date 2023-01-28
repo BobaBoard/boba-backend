@@ -80,7 +80,7 @@ router.get("/boards/:board_id", ensureBoardAccess, async (req, res) => {
   log(cursor);
   const result = await getBoardActivityByExternalId({
     boardExternalId,
-    firebaseId: req.currentUser?.uid,
+    firebaseId: req.currentUser?.uid || null,
     categoryFilter: (categoryFilter as string) || null,
     cursor: (cursor as string) || null,
   });
@@ -143,7 +143,7 @@ router.get("/boards/:board_id", ensureBoardAccess, async (req, res) => {
  */
 router.get("/users/@me", ensureLoggedIn, async (req, res) => {
   const { cursor, showRead, ownOnly, realmId: realmExternalId } = req.query;
-  const currentUserId: string = req.currentUser?.uid;
+  const currentUserId: string = req.currentUser!.uid;
 
   if (!realmExternalId) {
     throw new BadRequest400Error(`Expected realm id in personal feed query.`);
@@ -206,7 +206,7 @@ router.get("/users/@me", ensureLoggedIn, async (req, res) => {
 
 router.get("/users/@me/stars", ensureLoggedIn, async (req, res) => {
   const { cursor, starred } = req.query;
-  const currentUserId: string = req.currentUser?.uid;
+  const currentUserId: string = req.currentUser!.uid;
 
   const userStarFeed = await getUserStarFeed({
     firebaseId: currentUserId,

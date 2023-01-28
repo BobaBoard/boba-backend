@@ -81,7 +81,7 @@ router.get("/:thread_id", ensureThreadAccess, async (req, res) => {
   const { thread_id: threadExternalId } = req.params;
   log(`Fetching data for thread with id ${threadExternalId}`);
 
-  const serverThread = makeServerThread(req.currentThreadData);
+  const serverThread = makeServerThread(req.currentThreadData!);
   ensureNoIdentityLeakage(serverThread);
 
   info(`sending back data for thread ${serverThread.id}.`);
@@ -131,7 +131,7 @@ router.post(
 
     if (
       !(await muteThread({
-        firebaseId: req.currentUser.uid,
+        firebaseId: req.currentUser!.uid,
         threadExternalId,
       }))
     ) {
@@ -187,7 +187,7 @@ router.delete(
 
     if (
       !(await unmuteThread({
-        firebaseId: req.currentUser.uid,
+        firebaseId: req.currentUser!.uid,
         threadExternalId,
       }))
     ) {
@@ -243,7 +243,7 @@ router.post(
 
     if (
       !(await hideThread({
-        firebaseId: req.currentUser.uid,
+        firebaseId: req.currentUser!.uid,
         threadExternalId,
       }))
     ) {
@@ -299,7 +299,7 @@ router.delete(
 
     if (
       !(await unhideThread({
-        firebaseId: req.currentUser.uid,
+        firebaseId: req.currentUser!.uid,
         threadExternalId,
       }))
     ) {
@@ -355,7 +355,7 @@ router.post(
 
     if (
       !(await markThreadVisit({
-        firebaseId: req.currentUser.uid,
+        firebaseId: req.currentUser!.uid,
         threadExternalId,
       }))
     ) {
@@ -444,7 +444,7 @@ router.patch(
 
     if (defaultView) {
       if (
-        !req.currentThreadPermissions.includes(
+        !req.currentThreadPermissions!.includes(
           ThreadPermissions.editDefaultView
         )
       ) {
@@ -465,7 +465,7 @@ router.patch(
 
     if (parentBoardId) {
       if (
-        !req.currentThreadPermissions.includes(ThreadPermissions.moveThread)
+        !req.currentThreadPermissions!.includes(ThreadPermissions.moveThread)
       ) {
         throw new Forbidden403Error(
           `User does not have permission to move thread thread with id ${thread_id}.`
@@ -475,7 +475,7 @@ router.patch(
       if (
         !(await canAccessBoardByExternalId({
           boardExternalId: parentBoardId,
-          firebaseId: req.currentUser.uid,
+          firebaseId: req.currentUser!.uid,
         }))
       ) {
         throw new NotFound404Error(
@@ -541,7 +541,7 @@ router.post(
 
     if (
       !(await starThread({
-        firebaseId: req.currentUser.uid,
+        firebaseId: req.currentUser!.uid,
         threadExternalId,
       }))
     ) {
@@ -595,7 +595,7 @@ router.delete(
 
     if (
       !(await unstarThread({
-        firebaseId: req.currentUser.uid,
+        firebaseId: req.currentUser!.uid,
         threadExternalId,
       }))
     ) {

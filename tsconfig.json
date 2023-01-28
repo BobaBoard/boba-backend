@@ -17,15 +17,7 @@
     },
     "skipLibCheck": true,
     "types": ["node", "jest", "jest-extended"],
-    // strict mode checks (for incremental adoption)
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "alwaysStrict": true,
-    // "strictBindCallApply": true
-    // "strictNullChecks": true
-    "strictFunctionTypes": true,
-    // "strictPropertyInitialization": true
-    "useUnknownInCatchVariables": true
+    "strict": true
   },
   "include": ["server/**/*", "extra-types.d.ts", "utils", "handlers"],
   "exclude": ["node_modules"]
