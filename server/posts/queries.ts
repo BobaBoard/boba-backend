@@ -46,9 +46,9 @@ export const removeIndexTags = async (
     indexTags: string[];
     postId: number;
   }
-): Promise<void> => {
+): Promise<null> => {
   if (!indexTags?.length) {
-    return;
+    return null;
   }
   const tags = indexTags
     .filter((tag) => !!tag.trim().length)
@@ -93,9 +93,9 @@ export const removeCategoryTags = async (
     categoryTags: string[];
     postId: number;
   }
-): Promise<void> => {
+): Promise<null> => {
   if (!categoryTags?.length) {
-    return;
+    return null;
   }
   const tags = categoryTags
     .filter((tag) => !!tag.trim().length)
@@ -139,9 +139,9 @@ export const removeContentWarningTags = async (
     contentWarnings: string[];
     postId: number;
   }
-): Promise<void> => {
+): Promise<null> => {
   if (!contentWarnings?.length) {
-    return;
+    return null;
   }
   const tags = contentWarnings
     .filter((tag) => !!tag.trim().length)
@@ -162,7 +162,7 @@ export const updateWhisperTags = async (
     postId: number;
     whisperTags: string[];
   }
-): Promise<void> => {
+): Promise<null> => {
   return await transaction.none(sql.updatePostWhisperTags, {
     whisper_tags: whisperTags,
     post_id: postId,
@@ -256,7 +256,7 @@ const getThreadDetails = async (
       accessory_avatar,
     } = await addNewIdentityToThreadByBoardId(transaction, {
       user_id,
-      identityId,
+      identityId: identityId || "",
       accessory_id: accessoryId,
       thread_id,
       firebaseId,
@@ -371,7 +371,7 @@ export const postNewContribution = async (
       contribution: {
         post_id: result.string_id,
         parent_thread_id: thread_external_id,
-        parent_post_id: parentPostId,
+        parent_post_id: parentPostId || null,
         parent_board_slug: board_slug,
         parent_board_id: board_external_id,
         author: user_id,
@@ -438,7 +438,7 @@ const postNewCommentWithTransaction = async ({
     thread_id,
     post_id,
     comment_id,
-  } = await getThreadDetails(transaction, {
+  } = await getThreadDetails(transaction!, {
     parentPostId,
     firebaseId,
     parentCommentId,
@@ -458,7 +458,7 @@ const postNewCommentWithTransaction = async ({
     comment_id,
   });
 
-  const result = await transaction.one(sql.makeComment, {
+  const result = await transaction!.one(sql.makeComment, {
     comment_string_id: uuidv4(),
     parent_post_id: post_id,
     parent_comment_id: comment_id,
@@ -513,21 +513,22 @@ export const postNewCommentChain = async ({
 }): Promise<DbCommentType[] | false> => {
   return pool
     .tx("create-comment-chaim", async (transaction) => {
-      let prevId: number = null;
-      let prevExternalId: string = null;
+      let prevId: number | null = null;
+      let prevExternalId: string | null = null;
       const comments = [];
       for (let content of contentArray) {
-        const newComment = await postNewCommentWithTransaction({
-          firebaseId,
-          parentPostId,
-          parentCommentId,
-          chainParentId: prevId,
-          content,
-          anonymityType,
-          transaction,
-          identityId,
-          accessoryId,
-        });
+        const newComment: { id: number; comment: DbCommentType } =
+          await postNewCommentWithTransaction({
+            firebaseId,
+            parentPostId,
+            parentCommentId,
+            chainParentId: prevId,
+            content,
+            anonymityType,
+            transaction,
+            identityId,
+            accessoryId,
+          });
         newComment.comment.chain_parent_id = prevExternalId;
         prevId = newComment.id;
         prevExternalId = newComment.comment.comment_id;
@@ -715,7 +716,10 @@ export const updatePostTags = async (
   }
 ): Promise<DbPostType | false> => {
   const updateTagsMethod = async (transaction: ITask<any>) => {
-    const post = await getPostByExternalId(transaction, { firebaseId, postExternalId });
+    const post = await getPostByExternalId(transaction, {
+      firebaseId,
+      postExternalId,
+    });
     const numericId = (
       await transaction.one<{ id: number }>(sql.getPostIdFromExternalId, {
         post_string_id: postExternalId,
@@ -753,7 +757,10 @@ export const updatePostTags = async (
       whisperTags: newWhisperTags,
     });
 
-    return await getPostByExternalId(transaction, { firebaseId, postExternalId });
+    return await getPostByExternalId(transaction, {
+      firebaseId,
+      postExternalId,
+    });
   };
 
   try {

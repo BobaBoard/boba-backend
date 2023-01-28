@@ -25,7 +25,7 @@ describe("Tests boards activity queries", () => {
         throw Error("Board activity fetching encountered an Error.");
       }
 
-      expect(board.activity.map(extractActivity)).toEqual([
+      expect(board!.activity.map(extractActivity)).toEqual([
         {
           comments_amount: 2,
           created: "2020-09-25T05:42:00.00Z",
@@ -79,7 +79,7 @@ describe("Tests boards activity queries", () => {
         throw Error("Board activity fetching encountered an Error.");
       }
 
-      expect(board.activity.map(extractActivity)).toEqual([
+      expect(board!.activity.map(extractActivity)).toEqual([
         {
           comments_amount: 2,
           created: "2020-09-25T05:42:00.00Z",
@@ -134,7 +134,7 @@ describe("Tests boards activity queries", () => {
         throw Error("Board activity fetching encountered an Error.");
       }
 
-      expect(board.activity).toEqual([]);
+      expect(board!.activity).toEqual([]);
     });
   });
 
@@ -151,7 +151,7 @@ describe("Tests boards activity queries", () => {
         throw Error("Board activity fetching encountered an Error.");
       }
 
-      expect(board.activity.map(extractsMetadata)).toEqual([
+      expect(board!.activity.map(extractsMetadata)).toEqual([
         {
           parent_post_id: null,
           post_id: "ff9f2ae2-a254-4069-9791-3ac5e6dff5bb",
@@ -215,7 +215,7 @@ describe("Tests boards activity queries", () => {
         throw Error("Board activity fetching encountered an Error.");
       }
 
-      expect(board.activity.map(extractsMetadata)).toEqual([
+      expect(board!.activity.map(extractsMetadata)).toEqual([
         {
           parent_post_id: null,
           post_id: "ff9f2ae2-a254-4069-9791-3ac5e6dff5bb",
@@ -282,7 +282,7 @@ describe("Tests boards activity queries", () => {
         throw Error("Board activity fetching encountered an Error.");
       }
 
-      expect(board.activity.map(extractAuthorData)).toEqual([
+      expect(board!.activity.map(extractAuthorData)).toEqual([
         {
           author: "1",
           friend: true,
@@ -327,7 +327,7 @@ describe("Tests boards activity queries", () => {
         throw Error("Board activity fetching encountered an Error.");
       }
 
-      expect(board.activity.map(extractAuthorData)).toEqual([
+      expect(board!.activity.map(extractAuthorData)).toEqual([
         {
           author: "1",
           friend: false,

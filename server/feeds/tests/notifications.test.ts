@@ -28,7 +28,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity.activity
+      boardActivity!.activity
         .map((activity: any) => ({
           thread_id: activity.thread_id,
           new_comments_amount: activity.thread_new_comments_amount,
@@ -61,7 +61,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity.activity
+      boardActivity!.activity
         .map((activity: any) => ({
           thread_id: activity.thread_id,
           new_comments_amount: activity.thread_new_comments_amount,
@@ -95,7 +95,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity.activity
+      boardActivity!.activity
         .map((activity: any) => ({
           thread_id: activity.thread_id,
           new_comments_amount: activity.thread_new_comments_amount,
@@ -129,7 +129,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity.activity
+      boardActivity!.activity
         .map((activity: any) => ({
           thread_id: activity.thread_id,
           new_comments_amount: activity.thread_new_comments_amount,
@@ -163,7 +163,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity.activity
+      boardActivity!.activity
         .map((activity: any) => ({
           thread_id: activity.thread_id,
           new_comments_amount: activity.thread_new_comments_amount,
@@ -197,7 +197,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity.activity
+      boardActivity!.activity
         .map((activity: any) => ({
           thread_id: activity.thread_id,
           new_comments_amount: activity.thread_new_comments_amount,
@@ -229,7 +229,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity.activity.map((activity: any) => ({
+      boardActivity!.activity.map((activity: any) => ({
         thread_id: activity.thread_id,
         new_comments_amount: activity.thread_new_comments_amount,
         new_posts_amount: activity.thread_new_posts_amount,
@@ -270,7 +270,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity.activity.map((activity: any) => ({
+      boardActivity!.activity.map((activity: any) => ({
         thread_id: activity.thread_id,
         new_comments_amount: activity.thread_new_comments_amount,
         new_posts_amount: activity.thread_new_posts_amount,
@@ -311,7 +311,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity.activity.map((activity: any) => ({
+      boardActivity!.activity.map((activity: any) => ({
         thread_id: activity.thread_id,
         new_comments_amount: activity.thread_new_comments_amount,
         new_posts_amount: activity.thread_new_posts_amount,
@@ -340,12 +340,12 @@ describe("Tests notifications", () => {
     }
 
     // get only activity-related values
-    expect(boardActivity.activity.length).toEqual(26);
+    expect(boardActivity!.activity.length).toEqual(26);
     expect(
-      boardActivity.activity.filter((thread: any) => !thread.is_new).length
+      boardActivity!.activity.filter((thread: any) => !thread.is_new).length
     ).toEqual(21);
     expect(
-      boardActivity.activity.map((activity: any) => ({
+      boardActivity!.activity.map((activity: any) => ({
         thread_id: activity.thread_id,
         last_activity: activity.thread_last_activity,
         last_activity_micro: activity.thread_last_activity_at_micro,
@@ -578,12 +578,12 @@ describe("Tests notifications", () => {
     }
 
     // get only activity-related values
-    expect(boardActivity.activity.length).toEqual(26);
+    expect(boardActivity!.activity.length).toEqual(26);
     // expect(
-    //   boardActivity.activity.filter((thread: any) => !thread.is_new).length
+    //   boardActivity!.activity.filter((thread: any) => !thread.is_new).length
     // ).to.eql(21);
     expect(
-      boardActivity.activity.map((activity: any) => ({
+      boardActivity!.activity.map((activity: any) => ({
         thread_id: activity.thread_id,
         last_activity: activity.thread_last_activity,
         last_activity_micro: activity.thread_last_activity_at_micro,
