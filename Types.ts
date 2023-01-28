@@ -29,7 +29,7 @@ export interface DbIdentityType {
 export interface DbPostType {
   post_id: string;
   parent_thread_id: string;
-  parent_post_id: string;
+  parent_post_id: string | null;
   parent_board_id: string;
   parent_board_slug: string;
   author: number;
