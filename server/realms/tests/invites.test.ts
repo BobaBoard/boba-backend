@@ -586,7 +586,7 @@ describe("Tests accept invites endpoint", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUserWithEmail({
         uid: JERSEY_DEVIL_USER_ID,
-        email: UWU_INVITES[1].email,
+        email: UWU_INVITES[1].email!,
       });
 
       insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_EXTERNAL_ID);
@@ -611,7 +611,7 @@ describe("Tests accept invites endpoint", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUserWithEmail({
         uid: JERSEY_DEVIL_USER_ID,
-        email: UWU_INVITES[1].email,
+        email: UWU_INVITES[1].email!,
       });
 
       insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_EXTERNAL_ID);
@@ -666,7 +666,7 @@ describe("Tests accept invites endpoint", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUserWithEmail({
         uid: BOBATAN_USER_ID,
-        email: UWU_INVITES[0].email,
+        email: UWU_INVITES[0].email!,
       });
 
       insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_EXTERNAL_ID);
@@ -758,7 +758,7 @@ describe("Tests accept invites endpoint", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUserWithEmail({
         uid: JERSEY_DEVIL_USER_ID,
-        email: UWU_INVITES[1].email,
+        email: UWU_INVITES[1].email!,
       });
 
       insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_EXTERNAL_ID);
@@ -788,7 +788,7 @@ describe("Tests accept invites endpoint", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUserWithEmail({
         uid: JERSEY_DEVIL_USER_ID,
-        email: UWU_INVITES[1].email,
+        email: UWU_INVITES[1].email!,
       });
 
       insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_EXTERNAL_ID);
@@ -810,7 +810,7 @@ describe("Tests accept invites endpoint", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUserWithEmail({
         uid: JERSEY_DEVIL_USER_ID,
-        email: UWU_INVITES[1].email,
+        email: UWU_INVITES[1].email!,
       });
 
       insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_EXTERNAL_ID);
