@@ -10,6 +10,7 @@ import {
   DbThreadType,
 } from "Types";
 
+import { BoardByExternalId } from "server/boards/sql/types";
 import { BoardRestrictions } from "types/permissions";
 import debug from "debug";
 import { getUserPermissionsForBoard } from "./permissions-utils";
@@ -244,7 +245,7 @@ export const processBoardMetadata = ({
   isLoggedIn,
   hasBoardAccess,
 }: {
-  metadata: DbBoardMetadata;
+  metadata: BoardByExternalId;
   isLoggedIn: boolean;
   hasBoardAccess: boolean;
 }) => {

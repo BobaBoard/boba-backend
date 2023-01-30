@@ -1,4 +1,5 @@
-import { BoardByExternalIdSchema } from "./sql/types";
+import { BoardByExternalId, BoardByExternalIdSchema } from "./sql/types";
+
 import { DbBoardMetadata } from "Types";
 import { ITask } from "pg-promise";
 import debug from "debug";
@@ -39,7 +40,7 @@ export const getBoardByExternalId = async ({
 }: {
   firebaseId: string | undefined;
   boardExternalId: string;
-}): Promise<DbBoardMetadata | null> => {
+}) => {
   try {
     const rows = await pool.oneOrNone(sql.getBoardByExternalId, {
       firebase_id: firebaseId,
@@ -53,7 +54,7 @@ export const getBoardByExternalId = async ({
 
     info(`Got getBoardByExternalId query result:`, rows);
     log(`Fetched board ${boardExternalId} for user ${firebaseId}`);
-    return BoardByExternalIdSchema.parse(rows) as any;
+    return BoardByExternalIdSchema.parse(rows);
   } catch (e) {
     error(`Error while fetching board by id (${boardExternalId}).`);
     error(e);
@@ -191,8 +192,8 @@ export const updateBoardMetadata = async ({
 }: {
   boardExternalId: string;
   firebaseId: string;
-  oldMetadata: DbBoardMetadata;
-  newMetadata: Partial<DbBoardMetadata>;
+  oldMetadata: BoardByExternalId;
+  newMetadata: Partial<BoardByExternalId>;
 }): Promise<any> => {
   try {
     const delta = getMetadataDelta({
