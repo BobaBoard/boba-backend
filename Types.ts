@@ -158,35 +158,6 @@ export interface DbBoardCategoryDescription extends BoardCategoryDescription {
   description: null;
 }
 
-export interface DbBoardMetadata {
-  slug: string;
-  external_id: string;
-  avatar_url: string;
-  tagline: string;
-  settings: {
-    accentColor: string;
-  };
-  descriptions: (DbBoardTextDescription | DbBoardCategoryDescription)[];
-  muted: boolean;
-  pinned_order: number | null;
-  posting_identities: {
-    id: string;
-    avatar_url: string;
-    color: string | undefined;
-    accessory: string | undefined | null;
-    name: string;
-  }[];
-  accessories: {
-    id: string;
-    name: string;
-    accessory: string;
-  }[];
-  permissions: string[];
-  logged_out_restrictions: string[];
-  logged_in_base_restrictions: string[];
-  realm_external_id: string;
-}
-
 export interface QueryTagsType {
   whisperTags: string[];
   indexTags: string[];

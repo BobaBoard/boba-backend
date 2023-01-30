@@ -2,7 +2,6 @@ import { BoardMetadata, LoggedInBoardMetadata } from "types/rest/boards";
 import { Comment, Post, Thread, ThreadSummary } from "types/rest/threads";
 import {
   DbBoardCategoryDescription,
-  DbBoardMetadata,
   DbBoardTextDescription,
   DbCommentType,
   DbPostType,
