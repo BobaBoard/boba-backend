@@ -7,7 +7,6 @@ import {
   RealmPermissions,
   ThreadPermissions,
 } from "types/permissions";
-import { DbBoardMetadata, DbThreadType } from "Types";
 import { NextFunction, Request, Response } from "express";
 import {
   extractBoardPermissions,
@@ -24,6 +23,7 @@ import {
 } from "server/threads/queries";
 
 import { BoardByExternalId } from "server/boards/sql/types";
+import { DbThreadType } from "Types";
 import { Internal500Error } from "types/errors/api";
 import { getBoardByExternalId } from "server/boards/queries";
 import { getPostByExternalId } from "server/posts/queries";

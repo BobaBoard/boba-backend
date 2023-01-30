@@ -1,6 +1,5 @@
 import { BoardByExternalId, BoardByExternalIdSchema } from "./sql/types";
 
-import { DbBoardMetadata } from "Types";
 import { ITask } from "pg-promise";
 import debug from "debug";
 import { getMetadataDelta } from "./utils";
