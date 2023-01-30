@@ -1,9 +1,5 @@
 import { CacheKeys, cache } from "server/cache";
-import {
-  DbBoardCategoryDescription,
-  DbBoardMetadata,
-  DbBoardTextDescription,
-} from "Types";
+import { DbBoardCategoryDescription, DbBoardTextDescription } from "Types";
 import {
   processBoardMetadata,
   processBoardsSummary,
