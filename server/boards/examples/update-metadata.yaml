@@ -58,7 +58,7 @@ components:
             description: '[{"insert": "pls b nice"}]'
         permissions:
           board_permissions:
-            - edit_metadata
+            - edit_board_details
           post_permissions:
             - edit_category_tags
             - edit_content_notices

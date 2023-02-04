@@ -29,6 +29,7 @@ import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
 import { getBoardMetadataByExternalId } from "./utils";
 import { getThreadByExternalId } from "server/threads/queries";
+import { schemas } from "types/open-api/generated/open-api";
 
 const info = debug("bobaserver:board:routes-info");
 const log = debug("bobaserver:board:routes");
@@ -103,8 +104,10 @@ router.get("/:board_id", ensureBoardAccess, async (req, res) => {
   const { board_id: boardExternalId } = req.params;
   log(`Fetching data for board with external id ${boardExternalId}.`);
 
+  const firebaseId = req.currentUser?.uid;
+
   const boardMetadata = await getBoardMetadataByExternalId({
-    firebaseId: req.currentUser?.uid,
+    firebaseId: firebaseId,
     boardExternalId,
     hasBoardAccess: req.currentUser ? true : false,
   });
@@ -112,7 +115,13 @@ router.get("/:board_id", ensureBoardAccess, async (req, res) => {
   log(
     `Returning data for board ${boardExternalId} for user ${req.currentUser?.uid}.`
   );
-  res.status(200).json(boardMetadata);
+  res
+    .status(200)
+    .json(
+      firebaseId
+        ? schemas.LoggedInBoardMetadata.parse(boardMetadata)
+        : schemas.BoardMetadata.parse(boardMetadata)
+    );
 });
 
 /**
@@ -180,7 +189,7 @@ router.post(
       boardExternalId,
       hasBoardAccess: true,
     });
-    const boardSlug = boardMetadata.slug;
+    const boardSlug = boardMetadata!.slug;
     log(`Creating thread in board with id ${boardExternalId}`);
     const {
       content,

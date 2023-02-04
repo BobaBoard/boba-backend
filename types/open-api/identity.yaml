@@ -38,9 +38,8 @@ components:
       type: object
       properties:
         id:
-          #type: string TODO update code to use a uuid instead of database id
-          #format: uuid 
-          type: number
+          type: string
+          format: uuid
         name:
           type: string
         accessory:
@@ -60,7 +59,7 @@ components:
           format: uuid
         name:
           type: string
-        avatar:
+        avatar_url:
           type: string
           format: uri-reference
         color:
