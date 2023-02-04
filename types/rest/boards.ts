@@ -1,6 +1,5 @@
-import { Accessory, Role } from "./identity";
-
-import { UserBoardPermissions } from "types/permissions";
+import { schemas } from "types/open-api/generated/open-api";
+import z from "zod";
 
 export interface BoardTextDescription {
   id: string;
@@ -44,14 +43,7 @@ export interface LoggedInBoardSummary {
   pinned: boolean;
 }
 
-export interface BoardMetadata extends BoardSummary {
-  descriptions: BoardDescription[];
-}
-
-export interface LoggedInBoardMetadata
-  extends BoardMetadata,
-    LoggedInBoardSummary {
-  permissions: UserBoardPermissions;
-  posting_identities: Role[];
-  accessories: Accessory[];
-}
+export type BoardMetadata = z.infer<typeof schemas.BoardMetadata>;
+export type LoggedInBoardMetadata = z.infer<
+  typeof schemas.LoggedInBoardMetadata
+>;
