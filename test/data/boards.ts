@@ -101,12 +101,9 @@ const GORE_WITH_ROLE_METADATA: LoggedInBoardMetadata = {
     },
   ],
   permissions: {
-    board_permissions: [BoardPermissions.editMetadata],
-    post_permissions: [
-      PostPermissions.editCategoryTags,
-      PostPermissions.editContentNotices,
-    ],
-    thread_permissions: [ThreadPermissions.moveThread],
+    board_permissions: ["edit_board_details"],
+    post_permissions: ["edit_category_tags", "edit_content_notices"],
+    thread_permissions: ["move_thread"],
   },
   posting_identities: [
     {

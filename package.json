@@ -20,6 +20,7 @@
     "open-api:generate": "node -r dotenv/config -r ts-node/register -r tsconfig-paths/register utils/generate-spec-file.ts dotenv_config_path=./.env.prod",
     "open-api:validate": "yarn run open-api:generate && validate-api open-api-spec.json && openapi-examples-validator open-api-spec.json --ignore-formats color quill-delta && openapi lint open-api-spec.json --skip-rule=no-ambiguous-paths",
     "open-api:docker": "docker compose -f docker-compose.open-api.test.yml run --rm test",
+    "open-api:typescript": "yarn run open-api:generate && openapi-zod-client ./open-api-spec.json -o ./types/open-api/generated/open-api.ts --export-schemas --template ./types/open-api/generated/model.hbs --with-alias",
     "deploy": "gcloud config set project bobaboard && gcloud app deploy --version live",
     "stage": "gcloud config set project bobaboard && gcloud app deploy --quiet --version staging --no-promote"
   },
@@ -77,6 +78,7 @@
     "jest-junit": "^13.0.0",
     "nodemon": "^2.0.3",
     "openapi-examples-validator": "^4.4.0",
+    "openapi-zod-client": "^1.5.3",
     "supertest": "^4.0.2",
     "ts-jest": "^27.0.5",
     "typescript": "^4.9.4"

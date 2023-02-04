@@ -271,6 +271,7 @@ export const processBoardMetadata = ({
         }
       }
     ),
+    // @ts-ignore TODO: remove permission enums and use schema permissions
     permissions: getUserPermissionsForBoard(metadata.permissions),
     posting_identities: metadata.posting_identities.map((identity: any) =>
       transformImageUrls(identity)
