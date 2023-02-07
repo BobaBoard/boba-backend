@@ -1,3 +1,4 @@
+-- Fetches data for all boards in a realm or galaxy
 WITH 
   logged_in_user AS
     (SELECT id FROM users WHERE users.firebase_id = ${firebase_id}),
@@ -13,6 +14,9 @@ SELECT
     MAX(posts.last_activity) as last_post,
     MAX(comments.last_activity) as last_comment,
     GREATEST(MAX(COMMENTS.last_activity), MAX(posts.last_activity)) AS last_activity,
+    -- NOTE: last_activity_from_others also considers notification dismissals etc. This makes no sense given the name.
+    -- TODO: maybe rename this as "last_notifiable_activity"
+    -- TODO: remove this from the board query and make its own notifications query instead.
     GREATEST(MAX(COMMENTS.last_activity_from_others), MAX(posts.last_activity_from_others)) AS last_activity_from_others,
     MAX(GREATEST(user_board_last_visits.last_visit_time, posts.last_thread_visit)) as last_visit,
     user_muted_boards.board_id IS NOT NULL as muted,
@@ -47,6 +51,7 @@ LEFT JOIN LATERAL (
         SELECT 
             MAX(created) as last_activity,
             MAX(CASE WHEN logged_in_user.id IS NOT NULL AND 
+                          user_muted_boards IS NULL AND
                           posts.author != logged_in_user.id AND 
                           (utlv.last_visit_time IS NULL OR utlv.last_visit_time < posts.created) AND
                           (dnr.dismiss_request_time IS NULL OR dnr.dismiss_request_time < posts.created) AND
@@ -77,6 +82,7 @@ LEFT JOIN LATERAL (
             MAX(created) as last_activity,
             MAX(CASE WHEN logged_in_user.id IS NOT NULL AND 
                           comments.author != logged_in_user.id AND
+                          user_muted_boards IS NULL AND
                           (utlv.last_visit_time IS NULL OR utlv.last_visit_time < comments.created) AND
                           (dnr.dismiss_request_time IS NULL OR dnr.dismiss_request_time < comments.created) AND
                           (dbnr.dismiss_request_time IS NULL OR dbnr.dismiss_request_time < comments.created)

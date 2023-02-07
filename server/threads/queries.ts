@@ -1,18 +1,11 @@
 import { THREAD_OWNER_PERMISSIONS, ThreadPermissions } from "types/permissions";
-import {
-  addNewIdentityToThreadByBoardId,
-  maybeAddCategoryTags,
-  maybeAddContentWarningTags,
-  maybeAddIndexTags,
-} from "../posts/queries";
 
 import { DbThreadType } from "Types";
 import debug from "debug";
 import { extractThreadPermissions } from "utils/permissions-utils";
-import { getBoardBySlug } from "../boards/queries";
+import { getBoardByExternalId } from "../boards/queries";
 import pool from "server/db-pool";
 import sql from "./sql";
-import { v4 as uuidv4 } from "uuid";
 
 const log = debug("bobaserver:threads:queries-log");
 const error = debug("bobaserver:threads:queries-error");
@@ -22,7 +15,7 @@ export const getThreadByExternalId = async ({
   firebaseId,
 }: {
   threadExternalId: string;
-  firebaseId?: string;
+  firebaseId?: string | null;
 }): Promise<DbThreadType | null> => {
   const thread = await pool.oneOrNone<DbThreadType>(sql.threadByExternalId, {
     thread_external_id: threadExternalId,
@@ -215,11 +208,11 @@ export const getUserPermissionsForThread = async ({
       permissions.push(...THREAD_OWNER_PERMISSIONS);
     }
 
-    const board = await getBoardBySlug({
+    const board = await getBoardByExternalId({
       firebaseId,
-      slug: threadDetails.parent_board_slug,
+      boardExternalId: threadDetails.parent_board_id,
     });
-    const threadPermissions = extractThreadPermissions(board.permissions);
+    const threadPermissions = extractThreadPermissions(board?.permissions);
     permissions.push(...threadPermissions);
     return permissions;
   } catch (e) {

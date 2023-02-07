@@ -130,9 +130,9 @@ export const ensureThreadAccess = async (
   });
 
   if (!thread) {
-    res
-      .status(404)
-      .send({ message: `The thread with id "${threadExternalId}" was not found.` });
+    res.status(404).send({
+      message: `The thread with id "${threadExternalId}" was not found.`,
+    });
     return;
   }
   req.params.board_id = thread.board_id;
@@ -159,9 +159,9 @@ export const withBoardMetadata = async (
   });
 
   if (!board) {
-    res
-      .status(404)
-      .send({ message: `The board with id "${boardExternalId}" was not found.` });
+    res.status(404).send({
+      message: `The board with id "${boardExternalId}" was not found.`,
+    });
     return;
   }
 
@@ -190,7 +190,7 @@ export const ensureBoardAccess = async (
     withRealmPermissions(req, res, async () => {
       if (
         !req.currentUser &&
-        req.currentBoardRestrictions.loggedOutRestrictions.includes(
+        req.currentBoardRestrictions?.loggedOutRestrictions.includes(
           BoardRestrictions.LOCK_ACCESS
         )
       ) {
@@ -200,10 +200,10 @@ export const ensureBoardAccess = async (
         return;
       }
       if (
-        !req.currentRealmPermissions.includes(
+        !req.currentRealmPermissions?.includes(
           RealmPermissions.accessLockedBoardsOnRealm
         ) &&
-        req.currentBoardRestrictions.loggedOutRestrictions.includes(
+        req.currentBoardRestrictions?.loggedOutRestrictions.includes(
           BoardRestrictions.LOCK_ACCESS
         )
       ) {
@@ -269,7 +269,7 @@ export const withPostPermissions = async (
     firebaseId: req.currentUser.uid,
     boardExternalId: post.parent_board_id,
   });
-  req.currentPostPermissions = extractPostPermissions(board.permissions);
+  req.currentPostPermissions = extractPostPermissions(board?.permissions);
   next();
 };
 

@@ -1,6 +1,6 @@
 INSERT INTO secret_identities(id, external_id, display_name, avatar_reference_id) OVERRIDING SYSTEM VALUE 
 VALUES
-    ( 1, '85e33a3c-f987-41fd-a555-4c0cfdedf737', 'Old Time-y Anon', 'https://www.clickz.com/wp-content/uploads/2016/03/anontumblr.png'), 
+    ( 1, '85e33a3c-f987-41fd-a555-4c0cfdedf737', 'Old Time-y Anon', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2F5c2c3867-2323-4209-8bd4-9dfcc88808f3%2Fd931f284-5c22-422d-9343-e509cfb44ffc.png?alt=media&token=94e52fff-4e6b-4110-94c3-90b8800f541c'), 
     ( 2, '07f4cbbb-6a62-469e-8789-1b673a6d622f', 'DragonFucker', 'https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg'), 
     ( 3, '31eeb959-9a23-454a-b726-9c203a512520', 'Outdated Meme', 'outdated-meme.png'),
     ( 4, 'ed8a6fcb-9b94-4f98-94ff-d9c0b9f0e5c9', 'The Prophet', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2Fbe6d2b51-8192-4b78-a140-fecd1ec54f71?alt=media&token=4a13133b-f8fb-478b-9be4-22fa0f4a97c8'),

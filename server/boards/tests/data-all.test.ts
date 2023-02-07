@@ -106,7 +106,18 @@ describe("Tests boards queries", () => {
           slug: "muted",
           external_id: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
           realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
-          tagline: "A board to test for muting.",
+          tagline: "A board to test for thread muting.",
+        },
+        {
+          avatar_reference_id:
+            "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F7a4c4b8c-dce4-49ad-b292-f799473fbcd6?alt=media&token=f0aa1b5a-80ba-4c32-8bc3-5aa5633cf4e4",
+          settings: {
+            accentColor: "#00A0B0",
+          },
+          slug: "ssshh",
+          external_id: "58a10fba-dd66-4862-83fd-c0a233c59599",
+          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          tagline: "A board to test for board muting.",
         },
         {
           avatar_reference_id:
@@ -174,7 +185,7 @@ describe("Tests boards queries", () => {
           last_post: new Date(Date.UTC(2020, 3, 24, 12, 42)),
           last_activity: new Date(Date.UTC(2020, 3, 24, 12, 44)),
           last_activity_from_others: new Date(Date.UTC(2020, 3, 24, 12, 44)),
-          last_visit: null,
+          last_visit: new Date(Date.UTC(2022, 4, 10, 16, 42)),
         },
         {
           slug: "long",
@@ -210,6 +221,17 @@ describe("Tests boards queries", () => {
           last_visit: null,
         },
         {
+          slug: "ssshh",
+          external_id: "58a10fba-dd66-4862-83fd-c0a233c59599",
+          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          has_updates: false,
+          last_comment: null,
+          last_post: new Date(Date.UTC(2022, 9, 24, 15, 40)),
+          last_activity: new Date(Date.UTC(2022, 9, 24, 15, 40)),
+          last_activity_from_others: null,
+          last_visit: null,
+        },
+        {
           slug: "restricted",
           external_id: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
           realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
@@ -235,8 +257,8 @@ describe("Tests boards queries", () => {
     });
     test("fetches all boards updates (no user)", async () => {
       const boards = await getBoards({
-        firebaseId: undefined,
         realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
+        firebaseId: null,
       });
 
       expect(boards.map(extractBoardUpdates)).toEqual([
@@ -303,6 +325,17 @@ describe("Tests boards queries", () => {
           last_comment: null,
           last_post: new Date(Date.UTC(2020, 0, 14, 8, 42)),
           last_activity: new Date(Date.UTC(2020, 0, 14, 8, 42)),
+          last_activity_from_others: null,
+          last_visit: null,
+        },
+        {
+          slug: "ssshh",
+          external_id: "58a10fba-dd66-4862-83fd-c0a233c59599",
+          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          has_updates: false,
+          last_comment: null,
+          last_post: new Date(Date.UTC(2022, 9, 24, 15, 40)),
+          last_activity: new Date(Date.UTC(2022, 9, 24, 15, 40)),
           last_activity_from_others: null,
           last_visit: null,
         },
@@ -408,6 +441,17 @@ describe("Tests boards queries", () => {
           last_visit: null,
         },
         {
+          slug: "ssshh",
+          external_id: "58a10fba-dd66-4862-83fd-c0a233c59599",
+          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          has_updates: true,
+          last_comment: null,
+          last_post: new Date(Date.UTC(2022, 9, 24, 15, 40)),
+          last_activity: new Date(Date.UTC(2022, 9, 24, 15, 40)),
+          last_activity_from_others: new Date(Date.UTC(2022, 9, 24, 15, 40)),
+          last_visit: null,
+        },
+        {
           slug: "restricted",
           external_id: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
           realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
@@ -484,6 +528,13 @@ describe("Tests boards queries", () => {
           pinned_order: null,
         },
         {
+          slug: "ssshh",
+          external_id: "58a10fba-dd66-4862-83fd-c0a233c59599",
+          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          muted: true,
+          pinned_order: null,
+        },
+        {
           slug: "restricted",
           external_id: "76ebaab0-6c3e-4d7b-900f-f450625a5ed3",
           realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
@@ -501,7 +552,7 @@ describe("Tests boards queries", () => {
     });
     test("fetches all boards user settings (no user)", async () => {
       const boards = await getBoards({
-        firebaseId: undefined,
+        firebaseId: null,
         realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
       });
 
@@ -544,6 +595,13 @@ describe("Tests boards queries", () => {
         {
           slug: "muted",
           external_id: "2bdce2fa-12e0-461b-b0fb-1a2e67227434",
+          realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+          muted: false,
+          pinned_order: null,
+        },
+        {
+          slug: "ssshh",
+          external_id: "58a10fba-dd66-4862-83fd-c0a233c59599",
           realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
           muted: false,
           pinned_order: null,

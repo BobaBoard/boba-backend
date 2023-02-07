@@ -6,7 +6,10 @@ import {
   SEXY_DADDY_USER_ID,
   ZODIAC_KILLER_USER_ID,
 } from "test/data/auth";
-import { FAVORITE_CHARACTER_THREAD_ID, FAVORITE_MURDER_THREAD_ID } from "test/data/threads";
+import {
+  FAVORITE_CHARACTER_THREAD_ID,
+  FAVORITE_MURDER_THREAD_ID,
+} from "test/data/threads";
 
 import { getBoardActivityByExternalId } from "../queries";
 
@@ -25,7 +28,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity.activity
+      boardActivity!.activity
         .map((activity: any) => ({
           thread_id: activity.thread_id,
           new_comments_amount: activity.thread_new_comments_amount,
@@ -33,8 +36,7 @@ describe("Tests notifications", () => {
           is_new: activity.is_new,
         }))
         .filter(
-          (activity: any) =>
-            activity.thread_id == FAVORITE_CHARACTER_THREAD_ID
+          (activity: any) => activity.thread_id == FAVORITE_CHARACTER_THREAD_ID
         )
     ).toEqual([
       {
@@ -59,7 +61,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity.activity
+      boardActivity!.activity
         .map((activity: any) => ({
           thread_id: activity.thread_id,
           new_comments_amount: activity.thread_new_comments_amount,
@@ -67,8 +69,7 @@ describe("Tests notifications", () => {
           is_new: activity.is_new,
         }))
         .filter(
-          (activity: any) =>
-            activity.thread_id == FAVORITE_CHARACTER_THREAD_ID
+          (activity: any) => activity.thread_id == FAVORITE_CHARACTER_THREAD_ID
         )
     ).toEqual([
       {
@@ -94,7 +95,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity.activity
+      boardActivity!.activity
         .map((activity: any) => ({
           thread_id: activity.thread_id,
           new_comments_amount: activity.thread_new_comments_amount,
@@ -102,8 +103,7 @@ describe("Tests notifications", () => {
           is_new: activity.is_new,
         }))
         .filter(
-          (activity: any) =>
-            activity.thread_id == FAVORITE_CHARACTER_THREAD_ID
+          (activity: any) => activity.thread_id == FAVORITE_CHARACTER_THREAD_ID
         )
     ).toEqual([
       {
@@ -129,7 +129,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity.activity
+      boardActivity!.activity
         .map((activity: any) => ({
           thread_id: activity.thread_id,
           new_comments_amount: activity.thread_new_comments_amount,
@@ -137,8 +137,7 @@ describe("Tests notifications", () => {
           is_new: activity.is_new,
         }))
         .filter(
-          (activity: any) =>
-            activity.thread_id == FAVORITE_MURDER_THREAD_ID
+          (activity: any) => activity.thread_id == FAVORITE_MURDER_THREAD_ID
         )
     ).toEqual([
       {
@@ -164,7 +163,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity.activity
+      boardActivity!.activity
         .map((activity: any) => ({
           thread_id: activity.thread_id,
           new_comments_amount: activity.thread_new_comments_amount,
@@ -172,8 +171,7 @@ describe("Tests notifications", () => {
           is_new: activity.is_new,
         }))
         .filter(
-          (activity: any) =>
-            activity.thread_id == FAVORITE_MURDER_THREAD_ID
+          (activity: any) => activity.thread_id == FAVORITE_MURDER_THREAD_ID
         )
     ).toEqual([
       {
@@ -199,7 +197,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity.activity
+      boardActivity!.activity
         .map((activity: any) => ({
           thread_id: activity.thread_id,
           new_comments_amount: activity.thread_new_comments_amount,
@@ -207,8 +205,7 @@ describe("Tests notifications", () => {
           is_new: activity.is_new,
         }))
         .filter(
-          (activity: any) =>
-            activity.thread_id == FAVORITE_MURDER_THREAD_ID
+          (activity: any) => activity.thread_id == FAVORITE_MURDER_THREAD_ID
         )
     ).toEqual([
       {
@@ -222,7 +219,7 @@ describe("Tests notifications", () => {
   test("gets correct amounts (logged out)", async () => {
     const boardActivity = await getBoardActivityByExternalId({
       boardExternalId: GORE_BOARD_ID,
-      firebaseId: undefined,
+      firebaseId: null,
       cursor: null,
     });
 
@@ -232,7 +229,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity.activity.map((activity: any) => ({
+      boardActivity!.activity.map((activity: any) => ({
         thread_id: activity.thread_id,
         new_comments_amount: activity.thread_new_comments_amount,
         new_posts_amount: activity.thread_new_posts_amount,
@@ -273,7 +270,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity.activity.map((activity: any) => ({
+      boardActivity!.activity.map((activity: any) => ({
         thread_id: activity.thread_id,
         new_comments_amount: activity.thread_new_comments_amount,
         new_posts_amount: activity.thread_new_posts_amount,
@@ -314,7 +311,7 @@ describe("Tests notifications", () => {
 
     // get only activity-related values
     expect(
-      boardActivity.activity.map((activity: any) => ({
+      boardActivity!.activity.map((activity: any) => ({
         thread_id: activity.thread_id,
         new_comments_amount: activity.thread_new_comments_amount,
         new_posts_amount: activity.thread_new_posts_amount,
@@ -343,12 +340,12 @@ describe("Tests notifications", () => {
     }
 
     // get only activity-related values
-    expect(boardActivity.activity.length).toEqual(26);
+    expect(boardActivity!.activity.length).toEqual(26);
     expect(
-      boardActivity.activity.filter((thread: any) => !thread.is_new).length
+      boardActivity!.activity.filter((thread: any) => !thread.is_new).length
     ).toEqual(21);
     expect(
-      boardActivity.activity.map((activity: any) => ({
+      boardActivity!.activity.map((activity: any) => ({
         thread_id: activity.thread_id,
         last_activity: activity.thread_last_activity,
         last_activity_micro: activity.thread_last_activity_at_micro,
@@ -581,12 +578,12 @@ describe("Tests notifications", () => {
     }
 
     // get only activity-related values
-    expect(boardActivity.activity.length).toEqual(26);
+    expect(boardActivity!.activity.length).toEqual(26);
     // expect(
-    //   boardActivity.activity.filter((thread: any) => !thread.is_new).length
+    //   boardActivity!.activity.filter((thread: any) => !thread.is_new).length
     // ).to.eql(21);
     expect(
-      boardActivity.activity.map((activity: any) => ({
+      boardActivity!.activity.map((activity: any) => ({
         thread_id: activity.thread_id,
         last_activity: activity.thread_last_activity,
         last_activity_micro: activity.thread_last_activity_at_micro,

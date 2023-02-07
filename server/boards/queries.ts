@@ -17,7 +17,7 @@ export const getBoards = async ({
   firebaseId,
   realmExternalId,
 }: {
-  firebaseId: string;
+  firebaseId: string | null;
   realmExternalId?: string;
 }): Promise<any> => {
   try {
@@ -32,41 +32,13 @@ export const getBoards = async ({
   }
 };
 
-export const getBoardBySlug = async ({
-  firebaseId,
-  slug,
-}: {
-  firebaseId: string | undefined;
-  slug: string;
-}): Promise<DbBoardMetadata> => {
-  try {
-    const rows = await pool.oneOrNone(sql.getBoardBySlug, {
-      firebase_id: firebaseId,
-      board_slug: slug,
-    });
-
-    if (!rows) {
-      log(`Board not found: ${slug}`);
-      return null;
-    }
-
-    info(`Got getBoardBySlug query result:`, rows);
-    log(`Fetched board ${slug} for user ${firebaseId}`);
-    return rows;
-  } catch (e) {
-    error(`Error while fetching board by slug (${slug}).`);
-    error(e);
-    return null;
-  }
-};
-
 export const getBoardByExternalId = async ({
   firebaseId,
   boardExternalId,
 }: {
   firebaseId: string | undefined;
   boardExternalId: string;
-}): Promise<DbBoardMetadata> => {
+}): Promise<DbBoardMetadata | null> => {
   try {
     const rows = await pool.oneOrNone(sql.getBoardByExternalId, {
       firebase_id: firebaseId,
@@ -137,22 +109,22 @@ const updateCategoriesDescriptions = async (
         });
       }
       log("Created new category section (or updated old one).");
-      if (category.categories.deleted.length > 0) {
+      if (category.categories!.deleted.length > 0) {
         await tx.none(sql.deleteSectionCategories, {
           section_id: category.id,
           board_id: boardExternalId,
-          category_names: category.categories.deleted,
+          category_names: category.categories!.deleted,
         });
         log("Removed obsolete categories from filter.");
       }
-      if (category.categories.new.length > 0) {
+      if (category.categories!.new.length > 0) {
         await tx.manyOrNone(
-          postsSQL.createAddCategoriesQuery(category.categories.new)
+          postsSQL.createAddCategoriesQuery(category.categories!.new)
         );
         await tx.manyOrNone(
           sql.createAddCategoriesToFilterSectionQuery(
             category.id,
-            category.categories.new
+            category.categories!.new
           )
         );
         log("Added new categories to filter.");

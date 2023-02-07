@@ -29,7 +29,7 @@ export interface DbIdentityType {
 export interface DbPostType {
   post_id: string;
   parent_thread_id: string;
-  parent_post_id: string;
+  parent_post_id: string | null;
   parent_board_id: string;
   parent_board_slug: string;
   author: number;
@@ -37,7 +37,7 @@ export interface DbPostType {
   user_avatar: string;
   secret_identity_name: string;
   secret_identity_avatar: string;
-  secret_identity_color?: string;
+  secret_identity_color: string | null;
   accessory_avatar?: string;
   self: boolean;
   friend: boolean;
@@ -173,7 +173,7 @@ export interface DbBoardMetadata {
     id: string;
     avatar_url: string;
     color: string | undefined;
-    accessory: string | undefined;
+    accessory: string | undefined | null;
     name: string;
   }[];
   accessories: {
@@ -184,7 +184,7 @@ export interface DbBoardMetadata {
   permissions: string[];
   logged_out_restrictions: string[];
   logged_in_base_restrictions: string[];
-  realm_external_id?: string;
+  realm_external_id: string;
 }
 
 export interface QueryTagsType {

@@ -193,4 +193,30 @@ INSERT INTO post_categories(post_id, category_id) VALUES
  ((SELECT id FROM posts WHERE string_id = '11b85dac-e122-40e0-b09a-8829c5e0250e'),2), -- 'Favorite character to maim?' is `bruises` 
  ((SELECT id FROM posts WHERE string_id = '3db477e0-57ed-491d-ba11-b3a0110b59b0'),1),
  ((SELECT id FROM posts WHERE string_id = '3db477e0-57ed-491d-ba11-b3a0110b59b0'),2); -- 'Favorite murder scene' is `blood` AND `bruises`
+
+ WITH
+  new_thread_id AS
+    (INSERT INTO threads(string_id, parent_board)
+      VALUES (
+        '1cf90c6b-7b81-4662-a6c6-1ab5f69e8daf',
+        (SELECT id FROM boards WHERE slug = 'ssshh'))
+     RETURNING id),
+  posts_insert AS 
+    (INSERT INTO posts(string_id, parent_post, parent_thread, author, content, type, whisper_tags, anonymity_type, created)
+      VALUES
+        ('6c42474d-00b4-472b-b246-1c6f69db570a',
+         NULL,
+         (SELECT id FROM new_thread_id),
+         (SELECT id FROM Users WHERE username = 'SexyDaddy69'),
+         '[{"insert":"Shhhh!!! Don''t tell boba-tan this post is here!"}]', 
+         'text', 
+         ARRAY['pls......'], 
+         'strangers',
+         to_timestamp('2022-10-24 08:40:00', 'YYYY-MM-DD HH:MI:SS'))
+     RETURNING id)
+INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
+    VALUES
+     ((SELECT id FROM new_thread_id),
+      (SELECT id FROM Users WHERE username = 'SexyDaddy69'),
+      (SELECT id FROM secret_identities WHERE display_name = 'The Prophet'));
  

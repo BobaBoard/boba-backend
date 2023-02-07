@@ -1,3 +1,8 @@
+INSERT INTO user_board_last_visits(user_id, board_id, last_visit_time) VALUES
+  ((SELECT id FROM users WHERE username = 'bobatan'),
+   (SELECT id FROM boards WHERE slug = 'anime'),
+    -- Give bobatan a board visit so she has unseen comments, but they're before her last visit.
+    to_timestamp('2022-05-10 9:42:00', 'YYYY-MM-DD HH:MI:SS'));
 
 INSERT INTO user_thread_last_visits(user_id, thread_id, last_visit_time) VALUES
   ((SELECT id FROM users WHERE username = 'bobatan'),

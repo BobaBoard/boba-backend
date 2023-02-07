@@ -65,18 +65,12 @@ export const getUserSettings = async ({
 }: {
   firebaseId: string;
 }): Promise<SettingEntry[]> => {
-  try {
-    const settings = await pool.manyOrNone(sql.getUserSettings, {
-      firebase_id: firebaseId,
-    });
-    log(`Fetched settings for user ${firebaseId}:`);
-    info(settings);
-    return parseSettings(settings);
-  } catch (e) {
-    error(`Error while getting user settings.`);
-    error(e);
-    return null;
-  }
+  const settings = await pool.manyOrNone(sql.getUserSettings, {
+    firebase_id: firebaseId,
+  });
+  log(`Fetched settings for user ${firebaseId}:`);
+  info(settings);
+  return parseSettings(settings);
 };
 
 export const updateUserSettings = async ({
@@ -138,7 +132,7 @@ export const createFirebaseUser = async ({
 }: {
   email: string;
   password: string;
-}): Promise<auth.UserRecord> => {
+}): Promise<auth.UserRecord | null> => {
   try {
     const newUser = await firebaseAuth.auth().createUser({
       email,
@@ -162,7 +156,7 @@ export const createNewUser = async ({
   email: string;
   password: string;
   invitedBy: number;
-}): Promise<string> => {
+}): Promise<string | null> => {
   try {
     const newUser = await createFirebaseUser({
       email,

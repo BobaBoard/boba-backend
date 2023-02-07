@@ -18,13 +18,13 @@ export const getBoardActivityByExternalId = async ({
   pageSize,
 }: {
   boardExternalId: string;
-  firebaseId: string;
+  firebaseId: string | null;
   categoryFilter?: string | null;
   cursor: string | null;
   pageSize?: number;
-}): Promise<DbFeedType | false> => {
+}): Promise<DbFeedType | null | false> => {
   try {
-    const decodedCursor = cursor && decodeCursor(cursor);
+    const decodedCursor = cursor ? decodeCursor(cursor) : null;
 
     const finalPageSize =
       decodedCursor?.page_size || pageSize || DEFAULT_PAGE_SIZE;
@@ -44,7 +44,7 @@ export const getBoardActivityByExternalId = async ({
     if (rows.length == 1 && rows[0].thread_id == null) {
       // Only one row with just the null thread)
       log(`Board empty: ${boardExternalId}`);
-      return { cursor: undefined, activity: [] };
+      return { cursor: null, activity: [] };
     }
 
     let result = rows;
@@ -60,7 +60,9 @@ export const getBoardActivityByExternalId = async ({
       result.pop();
     }
 
-    log(`Fetched board ${boardExternalId} activity data for user ${firebaseId}`);
+    log(
+      `Fetched board ${boardExternalId} activity data for user ${firebaseId}`
+    );
     return { cursor: nextCursor, activity: rows };
   } catch (e) {
     error(`Error while fetching board by slug (${boardExternalId}).`);
@@ -85,7 +87,7 @@ export const getUserActivity = async ({
   pageSize?: number;
 }): Promise<DbFeedType | false> => {
   try {
-    const decodedCursor = cursor && decodeCursor(cursor);
+    const decodedCursor = cursor ? decodeCursor(cursor) : null;
 
     const finalPageSize =
       decodedCursor?.page_size || pageSize || DEFAULT_PAGE_SIZE;
@@ -101,7 +103,7 @@ export const getUserActivity = async ({
     if (rows.length == 1 && rows[0].thread_id == null) {
       // Only one row with just the null thread)
       log(`Feed empty.`);
-      return { cursor: undefined, activity: [] };
+      return { cursor: null, activity: [] };
     }
 
     let result = rows;
@@ -134,7 +136,7 @@ export const getUserStarFeed = async ({
   cursor: string | null;
   pageSize?: number;
 }): Promise<DbFeedType> => {
-  const decodedCursor = cursor && decodeCursor(cursor);
+  const decodedCursor = cursor ? decodeCursor(cursor) : null;
 
   const finalPageSize =
     decodedCursor?.page_size || pageSize || DEFAULT_PAGE_SIZE;
@@ -146,7 +148,7 @@ export const getUserStarFeed = async ({
 
   if (rows.length == 1 && rows[0].thread_id == null) {
     log(`Star Feed empty.`);
-    return { cursor: undefined, activity: [] };
+    return { cursor: null, activity: [] };
   }
 
   let result = rows;

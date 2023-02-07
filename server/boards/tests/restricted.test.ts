@@ -1,4 +1,6 @@
-import { getBoardBySlug, getBoards } from "../queries";
+import { getBoardByExternalId, getBoards } from "../queries";
+
+import { RESTRICTED_BOARD_ID } from "test/data/boards";
 
 const extractRestrictions = (board: any) => {
   return {
@@ -9,8 +11,8 @@ const extractRestrictions = (board: any) => {
 
 describe("Tests restricted board queries", () => {
   test("board fetch contains lock access restriction for logged out users", async () => {
-    const board = await getBoardBySlug({
-      slug: "restricted",
+    const board = await getBoardByExternalId({
+      boardExternalId: RESTRICTED_BOARD_ID,
       // Oncest
       firebaseId: "fb3",
     });

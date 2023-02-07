@@ -10,16 +10,16 @@ import {
   extractPermissions,
 } from "types/permissions";
 import { DbBoardMetadata, QueryTagsType } from "Types";
-import { getBoardByExternalId, getBoardBySlug } from "server/boards/queries";
 
 import debug from "debug";
+import { getBoardByExternalId } from "server/boards/queries";
 
 const info = debug("bobaserver:board:utils-info");
 const log = debug("bobaserver::permissions-utils-log");
 
 export const hasPermission = (
   permission: DbRolePermissions,
-  permissions?: string[]
+  permissions: string[] = []
 ) => {
   return permissions.some((p) => p == permission || p == DbRolePermissions.all);
 };
@@ -32,26 +32,25 @@ export const canPostAs = (permissions?: string[]) => {
 };
 
 export const extractPostPermissions = (permissions?: string[]) => {
-  return extractPermissions(PostPermissions, permissions);
+  return extractPermissions(PostPermissions, permissions || []);
 };
 
 export const extractThreadPermissions = (permissions?: string[]) => {
-  return extractPermissions(ThreadPermissions, permissions);
+  return extractPermissions(ThreadPermissions, permissions || []);
 };
 
 export const extractBoardPermissions = (permissions?: string[]) => {
-  return extractPermissions(BoardPermissions, permissions);
+  return extractPermissions(BoardPermissions, permissions || []);
 };
 
 export const extractRealmPermissions = (permissions?: string[]) => {
-  return extractPermissions(RealmPermissions, permissions);
+  return extractPermissions(RealmPermissions, permissions || []);
 };
 
 export const getUserPermissionsForBoard = (
   permissions?: string[]
 ): UserBoardPermissions => {
   info(`Transforming the following user permissions: ${permissions}`);
-
   return {
     board_permissions: extractBoardPermissions(permissions),
     post_permissions: extractPostPermissions(permissions),
@@ -107,31 +106,6 @@ export const getBoardRestrictions = ({
   };
 };
 
-// TODO: return value has issues differentiating between the board not being found, the board
-// only being accessible to logged in users, or the user not having sufficient
-// permissions
-export const canAccessBoard = async ({
-  slug,
-  firebaseId,
-}: {
-  slug: string;
-  firebaseId?: string;
-}) => {
-  const board = await getBoardBySlug({
-    firebaseId,
-    slug,
-  });
-
-  if (!board) {
-    return false;
-  }
-  if (board.logged_out_restrictions.includes(BoardRestrictions.LOCK_ACCESS)) {
-    return !!firebaseId;
-  }
-
-  return hasBoardAccessPermission({ boardMetadata: board, firebaseId });
-};
-
 export const canAccessBoardByExternalId = async ({
   boardExternalId,
   firebaseId,
@@ -160,7 +134,7 @@ export const hasBoardAccessPermission = ({
   firebaseId,
 }: {
   boardMetadata: DbBoardMetadata;
-  firebaseId: string;
+  firebaseId: string | undefined;
 }) => {
   if (
     boardMetadata.logged_out_restrictions.includes(

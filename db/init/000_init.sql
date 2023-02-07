@@ -112,16 +112,6 @@ CREATE TABLE IF NOT EXISTS board_tags
     tag_id BIGINT REFERENCES tags(id) ON DELETE RESTRICT NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS tag_deny_list
-(
-    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
-    user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
-    tag_id BIGINT REFERENCES tags(id) ON DELETE RESTRICT NOT NULL,
-    /* If not null the tag is deny-listed only on the given board. */
-    board_id BIGINT REFERENCES boards(id) ON DELETE RESTRICT
-);
-CREATE INDEX tag_deny_list_user_id on tag_deny_list(user_id);
-
 CREATE TYPE view_types AS ENUM ('thread', 'gallery', 'timeline');
 
 CREATE TABLE IF NOT EXISTS threads

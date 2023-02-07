@@ -98,7 +98,7 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
     });
 
     const boards = await getBoards({
-      firebaseId: req.currentUser?.uid,
+      firebaseId: req.currentUser?.uid || null,
       realmExternalId: realmData.id,
     });
 
@@ -109,7 +109,7 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
     const realmBoards = processBoardsSummary({
       boards,
       isLoggedIn: !!req.currentUser?.uid,
-      hasRealmMemberAccess: realmPermissions.includes(
+      hasRealmMemberAccess: realmPermissions!.includes(
         RealmPermissions.accessLockedBoardsOnRealm
       ),
     });
@@ -169,7 +169,7 @@ router.get("/:realm_id/activity", ensureRealmExists, async (req, res) => {
 
     // TODO[realms]: use a per-realm query here
     const boards = await getBoards({
-      firebaseId: req.currentUser?.uid,
+      firebaseId: req.currentUser?.uid || null,
       realmExternalId: realm_id,
     });
 
@@ -228,7 +228,7 @@ router.get("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
   const { realm_id } = req.params;
 
   const boards = await getBoards({
-    firebaseId: req.currentUser?.uid,
+    firebaseId: req.currentUser?.uid || null,
     realmExternalId: realm_id,
   });
 
@@ -307,7 +307,7 @@ router.get("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
  *         description: The notifications were successfully dismissed.
  */
 router.delete("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
-  let currentUserId: string = req.currentUser?.uid;
+  let currentUserId: string = req.currentUser!.uid;
   log(`Dismissing notifications for firebase id: ${currentUserId}`);
   const { realm_id } = req.params;
 
@@ -389,12 +389,12 @@ router.get(
   ensureLoggedIn,
   ensureRealmPermission(RealmPermissions.createRealmInvite),
   async (req, res) => {
-    const realm = req.currentRealmIds;
-    const userId = req.currentUser.uid;
+    const realm = req.currentRealmIds!;
+    const userId = req.currentUser!.uid;
     const unformattedInvites = await getRealmInvites({
       realmExternalId: realm.string_id,
     });
-    if (!unformattedInvites.length) {
+    if (!unformattedInvites?.length) {
       res.status(200).json({ invites: [] });
       return;
     }
@@ -473,7 +473,9 @@ router.get("/:realm_id/invites/:nonce", async (req, res) => {
   if (!invite) {
     throw new NotFound404Error("The invite was not found");
   }
-  const inviteRealm = await getRealmByExternalId({ realmExternalId: invite.realmExternalId });
+  const inviteRealm = await getRealmByExternalId({
+    realmExternalId: invite.realmExternalId,
+  });
   if (!inviteRealm) {
     throw new Internal500Error("failed to get realm ids");
   }
@@ -555,7 +557,7 @@ router.post(
   ensureLoggedIn,
   ensureRealmPermission(RealmPermissions.createRealmInvite),
   async (req, res) => {
-    const user = req.currentUser?.uid;
+    const user = req.currentUser!.uid;
     const realmExternalId = req.params.realm_id;
     const { email, label } = req.body;
 
@@ -583,7 +585,7 @@ router.post(
       // TODO: we should probably just return the details here and let the client construct
       // the URL. If we don't do this, then we leak info that the client is in charge of
       // to the server.
-      invite_url: `https://${realm.slug}.boba.social/invites/${inviteCode}`,
+      invite_url: `https://${realm!.slug}.boba.social/invites/${inviteCode}`,
     });
   }
 );
@@ -647,7 +649,9 @@ router.get("/:realm_id/invites/:nonce", async (req, res) => {
   if (!invite) {
     throw new NotFound404Error("The invite was not found");
   }
-  const inviteRealm = await getRealmByExternalId({ realmExternalId: invite.realmExternalId });
+  const inviteRealm = await getRealmByExternalId({
+    realmExternalId: invite.realmExternalId,
+  });
   if (!inviteRealm) {
     throw new Internal500Error("failed to get realm ids");
   }
@@ -784,7 +788,7 @@ router.post(
     if (inviteDetails.expired || inviteDetails.used) {
       throw new Forbidden403Error(`Invite expired or already used`);
     }
-    if (inviteDetails.email?.length > 0) {
+    if (inviteDetails.email?.length) {
       if (
         inviteDetails.email.toLowerCase() != (email as string).toLowerCase()
       ) {
@@ -799,7 +803,7 @@ router.post(
     if (userId) {
       const alreadyOnRealm = await checkUserOnRealm({
         firebaseId: userId,
-        realmExternalId: inviteRealm.string_id,
+        realmExternalId: inviteRealm!.string_id,
       });
       if (alreadyOnRealm) {
         res
@@ -830,14 +834,14 @@ router.post(
     const accepted = await acceptInvite({
       nonce,
       firebaseId,
-      realmExternalId: inviteRealm.string_id,
+      realmExternalId: inviteRealm!.string_id,
     });
     if (!accepted) {
       throw new Internal500Error(`Failed to accept invite`);
     }
     res.status(200).json({
-      realm_id: inviteRealm.string_id,
-      realm_slug: inviteRealm.slug,
+      realm_id: inviteRealm!.string_id,
+      realm_slug: inviteRealm!.slug,
     });
   }
 );

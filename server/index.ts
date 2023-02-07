@@ -25,7 +25,8 @@ import { handleApiErrors } from "handlers/errors";
 import { applyRoutes } from "./all-routes";
 import { registerEventHandlers } from "./event-handlers";
 
-const serviceAccount = require(process.env.GOOGLE_APPLICATION_CREDENTIALS_PATH);
+const serviceAccount = require(process.env
+  .GOOGLE_APPLICATION_CREDENTIALS_PATH!);
 
 if (!firebaseAuth.apps.length) {
   firebaseAuth.initializeApp({

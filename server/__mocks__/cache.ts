@@ -1,9 +1,9 @@
 const { CacheKeys: OriginalCacheKeys } = jest.requireActual("../cache.ts");
 
 const cacheMock = {
-  hdel: jest.fn(),
-  hget: jest.fn(),
-  hset: jest.fn(),
+  hDel: jest.fn(),
+  hGet: jest.fn(),
+  hSet: jest.fn(),
 };
 export const cache = jest.fn().mockImplementation(() => {
   return cacheMock;

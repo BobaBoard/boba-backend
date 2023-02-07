@@ -39,7 +39,7 @@ describe("Tests boards REST API", () => {
   test("should cache board data (logged out)", async () => {
     await request(server.app).get(`/${GORE_BOARD_ID}`);
 
-    expect(cache().hset).toBeCalledWith(
+    expect(cache().hSet).toBeCalledWith(
       CacheKeys.BOARD_METADATA,
       GORE_BOARD_ID,
       stringify(GORE_BOARD_METADATA.LOGGED_OUT)
@@ -52,11 +52,11 @@ describe("Tests boards REST API", () => {
       tagline:
         "this is a modified board data to ensure we're returning the cached one",
     };
-    mocked(cache().hget).mockResolvedValueOnce(stringify(modifiedData));
+    mocked(cache().hGet).mockResolvedValueOnce(stringify(modifiedData));
     const res = await request(server.app).get(`/${GORE_BOARD_ID}`);
 
-    expect(cache().hget).toBeCalledTimes(1);
-    expect(cache().hget).toBeCalledWith(
+    expect(cache().hGet).toBeCalledTimes(1);
+    expect(cache().hGet).toBeCalledWith(
       CacheKeys.BOARD_METADATA,
       GORE_BOARD_ID
     );

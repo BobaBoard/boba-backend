@@ -44,7 +44,7 @@ router.get("/:subscription_id", async (req, res) => {
   const { subscription_id: subscriptionExternalId } = req.params;
   log(`Fetching data for subscription with id ${subscriptionExternalId}`);
 
-  const cachedSubscription = await cache().hget(
+  const cachedSubscription = await cache().hGet(
     CacheKeys.SUBSCRIPTION,
     subscriptionExternalId
   );
@@ -75,14 +75,14 @@ router.get("/:subscription_id", async (req, res) => {
     },
     activity: [
       {
-        id: subscriptionData[0].latest_post_string_id,
+        id: subscriptionData[0].latest_post_string_id!,
         parent_thread_id: subscriptionData[0].thread_external_id,
         parent_post_id: null,
         content: subscriptionData[0].post_content,
         created_at: subscriptionData[0].last_updated_at,
         secret_identity: {
-          avatar: subscriptionData[0].secret_identity_avatar,
-          name: subscriptionData[0].secret_identity_name,
+          avatar: subscriptionData[0].secret_identity_avatar!,
+          name: subscriptionData[0].secret_identity_name!,
           color: subscriptionData[0].secret_identity_color || undefined,
           accessory: subscriptionData[0].secret_identity_accessory || undefined,
         },
@@ -102,7 +102,11 @@ router.get("/:subscription_id", async (req, res) => {
   };
 
   res.status(200).json(response);
-  cache().hset(CacheKeys.SUBSCRIPTION, subscriptionExternalId, stringify(response));
+  cache().hSet(
+    CacheKeys.SUBSCRIPTION,
+    subscriptionExternalId,
+    stringify(response)
+  );
 });
 
 export default router;

@@ -36,17 +36,25 @@ const publishSubscriptionsUpdates = async ({
       async ({ webhook, webhookHandlerType, subscriptionIds }) => {
         await Promise.all(
           subscriptionIds.map((subscriptionId) =>
-            cache().hdel(CacheKeys.SUBSCRIPTION, subscriptionId)
+            cache().hDel(CacheKeys.SUBSCRIPTION, subscriptionId)
           )
         );
         axios.post(
           webhook,
           getWebhookPayload({
             webhookHandlerType,
-            subscriptionNames: subscriptionIds.map(
-              (subscriptionId) =>
-                subscriptions.find((s) => s.id === subscriptionId)?.name
-            ),
+            subscriptionNames: subscriptionIds
+              .map(
+                (subscriptionId) =>
+                  subscriptions.find((s) => s.id === subscriptionId)?.name
+              )
+              .filter(
+                // Typescript function to assert subscriptionName will be not null.
+                // Should extract to its own utility function.
+                <TValue>(
+                  subscriptionName: undefined | null | TValue
+                ): subscriptionName is TValue => !!subscriptionName
+              ),
             eventPayload,
           })
         );
@@ -90,30 +98,29 @@ const maybeUpdateSubscriptionsOnThreadChange = async (
   });
 };
 
-// TODO: figure out this type
-type EventsWithHandlers<
-  T extends threadEvents.EVENT_TYPES = threadEvents.EVENT_TYPES
-> = [T, (eventPayload: threadEvents.EventToPayload[T]) => void];
+type EventsWithHandlers = {
+  [eventType in threadEvents.EVENT_TYPES]: (
+    e: threadEvents.EventToPayload[eventType]
+  ) => void;
+};
 
-const EVENTS_WITH_HANDLERS: EventsWithHandlers[] = [
-  [
-    threadEvents.EVENT_TYPES.THREAD_CREATED,
+const EVENTS_WITH_HANDLERS: EventsWithHandlers = {
+  [threadEvents.EVENT_TYPES.THREAD_CREATED]:
     maybeUpdateSubscriptionsOnThreadCreated,
-  ],
-  [
-    threadEvents.EVENT_TYPES.THREAD_UPDATED,
+  [threadEvents.EVENT_TYPES.THREAD_UPDATED]:
     maybeUpdateSubscriptionsOnThreadChange,
-  ],
-];
+};
 
 export const registerAll = () => {
-  EVENTS_WITH_HANDLERS.forEach(([eventType, handler]) => {
+  Object.entries(EVENTS_WITH_HANDLERS).forEach(([eventType, handler]) => {
+    // @ts-ignore Type safety is given by the EVENTS_WITH_HANDLERS definition
     threadEvents.register(eventType, handler);
   });
 };
 
 export const unregisterAll = () => {
-  EVENTS_WITH_HANDLERS.forEach(([eventType, handler]) => {
+  Object.entries(EVENTS_WITH_HANDLERS).forEach(([eventType, handler]) => {
+    // @ts-ignore Type safety is given by the EVENTS_WITH_HANDLERS definition
     threadEvents.register(eventType, handler);
   });
 };
