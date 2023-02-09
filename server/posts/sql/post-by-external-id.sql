@@ -67,7 +67,7 @@ LEFT JOIN thread_identities
     ON thread_identities.user_id = posts.author AND threads.id = thread_identities.thread_id
 LEFT JOIN thread_notification_dismissals tnd
     ON tnd.thread_id = threads.id AND ${firebase_id} IS NOT NULL AND tnd.user_id = (SELECT id FROM users WHERE firebase_id = ${firebase_id})
-WHERE posts.string_id = ${post_string_id}
+WHERE posts.string_id = ${post_external_id}
 GROUP BY 
     posts.id,
     posts.string_id,

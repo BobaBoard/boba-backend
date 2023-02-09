@@ -16,12 +16,12 @@ SELECT
     COALESCE(hidden, FALSE) as hidden,
     COALESCE(starred, FALSE) as starred,
     -- Post details (DbPostType)
-    first_post_string_id as post_id,
+    first_post_external_id as post_id,
     thread_external_id as parent_thread_id,
     NULL as parent_post_id,
     board_slug as parent_board_slug,
     realm_slug,
-    realm_string_id as realm_id,
+    realm_external_id as realm_id,
     -- Author details
     author,
     author_identity.username,

@@ -19,7 +19,7 @@ CROSS JOIN threads
 LEFT JOIN posts
     ON posts.parent_thread = threads.id
 LEFT JOIN comments
-    ON comments.parent_thread = threads.id AND comments.string_id = ${parent_comment_string_id}
+    ON comments.parent_thread = threads.id AND comments.string_id = ${parent_comment_external_id}
 LEFT JOIN user_thread_identities as uti
     ON uti.thread_id = threads.id AND uti.user_id = users.id
 LEFT JOIN secret_identities 
@@ -39,4 +39,4 @@ LEFT JOIN LATERAL (
     ON 1 = 1
 LEFT JOIN boards
     ON threads.parent_board = boards.id
-WHERE posts.string_id = ${post_string_id} AND firebase_id = ${firebase_id}
+WHERE posts.string_id = ${post_external_id} AND firebase_id = ${firebase_id}

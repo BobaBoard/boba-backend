@@ -225,10 +225,10 @@ const getThreadDetails = async (
   } = await transaction.one(
     parentPostId ? sql.getPostDetails : sql.getThreadDetails,
     {
-      post_string_id: parentPostId,
+      post_external_id: parentPostId,
       thread_external_id: threadExternalId,
       firebase_id: firebaseId,
-      parent_comment_string_id: parentCommentId,
+      parent_comment_external_id: parentCommentId,
     }
   );
 
@@ -339,7 +339,7 @@ export const postNewContribution = async (
       firebaseId,
     });
     const result = await t.one(sql.makePost, {
-      post_string_id: uuidv4(),
+      post_external_id: uuidv4(),
       parent_post: post_id,
       parent_thread: thread_id,
       user_id,
@@ -696,7 +696,7 @@ export const getPostByExternalId = async (
 ): Promise<DbPostType> => {
   return await (transaction ?? pool).one(sql.postByExternalId, {
     firebase_id: firebaseId,
-    post_string_id: postExternalId,
+    post_external_id: postExternalId,
   });
 };
 
@@ -722,7 +722,7 @@ export const updatePostTags = async (
     });
     const numericId = (
       await transaction.one<{ id: number }>(sql.getPostIdFromExternalId, {
-        post_string_id: postExternalId,
+        post_external_id: postExternalId,
       })
     ).id;
     await maybeAddIndexTags(transaction, {

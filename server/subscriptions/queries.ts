@@ -21,7 +21,7 @@ export const getLatestSubscriptionData = async ({
       secret_identity_accessory: string | null;
       post_content: string;
       thread_external_id: string;
-      latest_post_string_id: string | null;
+      latest_post_external_id: string | null;
     }[]
   | false
 > => {

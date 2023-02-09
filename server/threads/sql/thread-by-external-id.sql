@@ -7,7 +7,7 @@ WITH
             COALESCE(COUNT(*), 0) as total_comments,
             json_agg(json_build_object(
                 'comment_id', thread_comments.string_id,
-                'parent_post_id', thread_comments.post_string_id,
+                'parent_post_id', thread_comments.post_external_id,
                 'parent_comment_id', (SELECT string_id FROM comments WHERE comments.id = thread_comments.parent_comment),
                 'chain_parent_id', (SELECT string_id FROM comments WHERE comments.id = thread_comments.chain_parent_comment),
                 'author', thread_comments.author,
@@ -28,7 +28,7 @@ WITH
          FROM (
             SELECT
                 comments.*,
-                posts.string_id as post_string_id,
+                posts.string_id as post_external_id,
                 thread_identities.*,
                 ${firebase_id} IS NOT NULL AND comments.author = (SELECT id FROM users WHERE firebase_id = ${firebase_id}) as is_own,
                 ${firebase_id} IS NOT NULL AND comments.author = ANY(

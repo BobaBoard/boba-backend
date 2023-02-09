@@ -6,7 +6,7 @@ SELECT
     board_slug,
     board_external_id as board_id,
     realm_slug,
-    realm_string_id as realm_id,
+    realm_external_id as realm_id,
     TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z') as thread_last_activity,
     thread_details.default_view,
     -- Amount details
@@ -19,7 +19,7 @@ SELECT
     COALESCE(hidden, FALSE) as hidden,
     COALESCE(starred, FALSE) as starred,
     -- Post details (DbPostType)
-    first_post_string_id as post_id,
+    first_post_external_id as post_id,
     thread_external_id as parent_thread_id,
     NULL as parent_post_id,
     board_slug as parent_board_slug,

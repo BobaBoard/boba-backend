@@ -62,7 +62,7 @@ const addAccessoryToIdentity = `
 const makePost = `
     INSERT INTO posts(string_id, parent_post, parent_thread, author, content, type, whisper_tags, anonymity_type, options)
     VALUES(
-        $/post_string_id/,
+        $/post_external_id/,
         $/parent_post/,
         $/parent_thread/,
         $/user_id/,
@@ -210,7 +210,7 @@ const createAddContentWarningsToPostQuery = (
 };
 
 const getPostIdFromExternalId = `
-  SELECT id FROM posts WHERE string_id = $/post_string_id/;
+  SELECT id FROM posts WHERE string_id = $/post_external_id/;
 `;
 
 const isPostOwner = `
@@ -218,7 +218,7 @@ const isPostOwner = `
       users.firebase_id = $/firebase_id/ as is_post_owner
     FROM posts
       LEFT JOIN users ON posts.author = users.id
-    WHERE posts.string_id = $/post_string_id/
+    WHERE posts.string_id = $/post_external_id/
 `;
 
 export default {
