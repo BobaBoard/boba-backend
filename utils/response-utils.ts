@@ -1,4 +1,7 @@
-import { BoardMetadata, LoggedInBoardMetadata } from "types/rest/boards";
+import {
+  BoardMetadata,
+  LoggedInBoardMetadata,
+} from "types/open-api/generated/types";
 import { Comment, Post, Thread, ThreadSummary } from "types/rest/threads";
 import {
   DbBoardCategoryDescription,
@@ -280,15 +283,15 @@ export const processBoardMetadata = ({
   };
 
   if (!isLoggedIn) {
-    // @ts-expect-error Fix this when fixing the type of metadata to truly match the db
+    // @ts-expect-error Fix this when fixing the type of metadata to truly match the db (done)
     delete finalMetadata.permissions;
-    // @ts-expect-error Fix this when fixing the type of metadata to truly match the db
+    // @ts-expect-error Fix this when fixing the type of metadata to truly match the db (done)
     delete finalMetadata.posting_identities;
-    // @ts-expect-error Fix this when fixing the type of metadata to truly match the db
+    // @ts-expect-error Fix this when fixing the type of metadata to truly match the db (done)
     delete finalMetadata.accessories;
   }
 
-  // @ts-expect-error Fix this when fixing the type of metadata to truly match the db
+  // @ts-expect-error Fix this when fixing the type of metadata to truly match the db (done)
   if (!hasBoardAccess && metadata.loggedInOnly) {
     finalMetadata.descriptions = [];
   }

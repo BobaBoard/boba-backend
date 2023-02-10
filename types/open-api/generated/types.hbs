@@ -1,0 +1,7 @@
+import * as schemas from "./schemas";
+
+import { z } from "zod";
+
+{{#each schemas}}
+export type {{@key}} = z.infer<typeof schemas.{{@key}}Schema>;
+{{/each}}
