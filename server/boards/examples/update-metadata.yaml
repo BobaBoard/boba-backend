@@ -76,9 +76,9 @@ components:
             accessory:
             avatar: https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F6518df53-2031-4ac5-8d75-57a0051ed924?alt=media&token=23df54b7-297c-42ff-a0ea-b9862c9814f8
         accessories:
-          - id: 4
+          - id: 7071e443-4168-4afa-9454-871c48e59701
             name: Rolling
             accessory: "/420accessories/weed_hands.png"
-          - id: 5
+          - id: e495f6cc-f313-4cc4-9882-f8ac89e8c2e4
             name: Joint
             accessory: "/420accessories/joint.png"
