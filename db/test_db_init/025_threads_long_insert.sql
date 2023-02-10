@@ -2,7 +2,7 @@
 -- methods that need many posts to work (e.g. pagination)
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         '90119d99-359d-4a60-b5ab-9b6077d0dc39',
         (SELECT id FROM boards WHERE slug = 'long'))
@@ -57,7 +57,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id) VALUES
 
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         'dacfb175-0d47-4c5e-8ecc-7fbf176ad915',
         (SELECT id FROM boards WHERE slug = 'long'))
@@ -82,7 +82,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         'd6369940-6415-4de8-b8fd-393cfe3013dd',
         (SELECT id FROM boards WHERE slug = 'long'))
@@ -107,7 +107,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         'e26976bf-e61a-4dc3-8c0e-60e16d5d4b31',
         (SELECT id FROM boards WHERE slug = 'long'))
@@ -132,7 +132,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         '9c60fdd5-0b9c-4e14-bf0d-417f2ab36ff1',
         (SELECT id FROM boards WHERE slug = 'long'))
@@ -157,7 +157,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         '38ee861a-fec4-4877-a603-f1ff9f96b4c7',
         (SELECT id FROM boards WHERE slug = 'long'))
@@ -182,7 +182,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         'bcbde425-7f84-4e68-acd5-65aaae95714c',
         (SELECT id FROM boards WHERE slug = 'long'))
@@ -207,7 +207,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         '8d227983-7649-49c9-9fa4-b3c398f4648c',
         (SELECT id FROM boards WHERE slug = 'long'))
@@ -232,7 +232,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         '06ba998d-82d8-4e0b-8bbb-a3b3455c4167',
         (SELECT id FROM boards WHERE slug = 'long'))
@@ -257,7 +257,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         '72470830-7984-4bf6-a0bf-dc5af7d4779b',
         (SELECT id FROM boards WHERE slug = 'long'))
@@ -282,7 +282,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         '7006e0dc-7c7b-4cc5-8c08-61362e8d288b',
         (SELECT id FROM boards WHERE slug = 'long'))
@@ -307,7 +307,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         '3e9a317f-2bcd-4db3-abbb-619fa7c03f24',
         (SELECT id FROM boards WHERE slug = 'long'))
@@ -332,7 +332,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         '1c92ab43-4309-454f-be27-d85d3fd78808',
         (SELECT id FROM boards WHERE slug = 'long'))
@@ -357,7 +357,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         '8d0be581-5cc7-47c1-947c-f8242898682d',
         (SELECT id FROM boards WHERE slug = 'long'))
@@ -382,7 +382,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         'c5004e2b-4358-43df-8078-905b608e9ceb',
         (SELECT id FROM boards WHERE slug = 'long'))
@@ -407,7 +407,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         '78d98a6a-c24b-4b7a-8e06-4a30862afa2d',
         (SELECT id FROM boards WHERE slug = 'long'))
@@ -432,7 +432,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         '7f46031b-cc9d-4729-99f0-fcd8302eea0b',
         (SELECT id FROM boards WHERE slug = 'long'))
@@ -457,7 +457,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         '43784970-31f1-4e09-99d6-2b6526b353fe',
         (SELECT id FROM boards WHERE slug = 'long'))
@@ -482,7 +482,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         '32a0174b-091e-4fe6-82f3-bffd6c6026ae',
         (SELECT id FROM boards WHERE slug = 'long'))
@@ -507,7 +507,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         '8799b916-0837-4bfb-b972-5e7fb0b3d68b',
         (SELECT id FROM boards WHERE slug = 'long'))
@@ -532,7 +532,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         '23e35e53-57dd-4fa2-8911-89276a99af59',
         (SELECT id FROM boards WHERE slug = 'long'))
@@ -557,7 +557,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         '00174331-d4c5-4254-8178-afbd46f45275',
         (SELECT id FROM boards WHERE slug = 'long'))
@@ -582,7 +582,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         '031cd7f4-cbaa-46d0-aaa4-911df0e097b5',
         (SELECT id FROM boards WHERE slug = 'long'))
@@ -607,7 +607,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         'c55314b4-0b61-41c9-aa2f-b7fa28adf651',
         (SELECT id FROM boards WHERE slug = 'long'))
@@ -632,7 +632,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         'd1ec7d2a-c237-41f7-bc67-77727a61a501',
         (SELECT id FROM boards WHERE slug = 'long'))
@@ -657,7 +657,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
     new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
         VALUES (
         '7d88a537-f23f-46de-970e-29ae392cd5f9',
         (SELECT id FROM boards WHERE slug = 'long'))

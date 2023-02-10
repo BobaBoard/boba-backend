@@ -117,12 +117,12 @@ CREATE TYPE view_types AS ENUM ('thread', 'gallery', 'timeline');
 CREATE TABLE IF NOT EXISTS threads
 (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
-    string_id TEXT NOT NULL,
+    external_id TEXT NOT NULL,
     parent_board BIGINT REFERENCES boards(id) ON DELETE RESTRICT NOT NULL,
     options JSONB NOT NULL DEFAULT '{}'::jsonb
     /* TODO: decide what to do with threads with deleted posts */
 );
-CREATE INDEX threads_string_id on threads(string_id);
+CREATE INDEX threads_external_id on threads(external_id);
 
 /* TODO: decide whether to switch this to who the user is visible to rather than hidden from. */
 CREATE TYPE anonymity_type AS ENUM ('everyone', 'strangers');

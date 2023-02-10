@@ -14,7 +14,7 @@ INSERT INTO board_category_subscriptions(subscription_id, board_id, category_id)
 
 INSERT INTO thread_category_subscriptions (thread_id, category_id, subscription_id) VALUES (
     -- Somnium files memes thread
-    (SELECT id FROM threads WHERE string_id = '2765f36a-b4f9-4efe-96f2-cb34f055d032'),
+    (SELECT id FROM threads WHERE external_id = '2765f36a-b4f9-4efe-96f2-cb34f055d032'),
     (SELECT id FROM categories WHERE category = 'aiba'),
     3);
 

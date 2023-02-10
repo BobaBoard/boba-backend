@@ -9,8 +9,8 @@ SELECT
 	COUNT(DISTINCT comments.id) as comments_amount,
 	COUNT(DISTINCT posts.id) as contributions_amount,
 	COUNT(DISTINCT posts.id) + COUNT(DISTINCT comments.id) as total_amount,
-	threads.string_id as thread_id,
-	CONCAT('https://v0.boba.social/!', boards.slug, '/thread/', threads.string_id) as thread_url
+	threads.external_id as thread_id,
+	CONCAT('https://v0.boba.social/!', boards.slug, '/thread/', threads.external_id) as thread_url
 FROM threads
 LEFT JOIN boards
 	ON threads.parent_board = boards.id
@@ -18,16 +18,16 @@ LEFT JOIN comments
 	ON comments.parent_thread = threads.id
 LEFT JOIN posts
 	ON posts.parent_thread = threads.id
-GROUP BY threads.string_id, boards.slug
+GROUP BY threads.external_id, boards.slug
 ORDER by total_amount DESC;
 
 -- COMMENT THREAD WITH MOST ACTIVITY --
 SELECT
 	COUNT(DISTINCT comments.id) as comments_amount,
 	posts.string_id as post_id,
-	threads.string_id as thread_id,
+	threads.external_id as thread_id,
 	CONCAT('https://v0.boba.social/!', boards.slug, '/thread/', 
-		   threads.string_id, '/', posts.string_id) as post_url
+		   threads.external_id, '/', posts.string_id) as post_url
 FROM comments
 LEFT JOIN threads
 	ON comments.parent_thread = threads.id
@@ -36,7 +36,7 @@ LEFT JOIN boards
 LEFT JOIN posts
 	ON comments.parent_post = posts.id
 WHERE chain_parent_comment IS NULL
-GROUP BY threads.string_id, posts.string_id, boards.slug
+GROUP BY threads.external_id, posts.string_id, boards.slug
 ORDER by comments_amount DESC;
 
 -- BOARD WITH MOST ACTIVITY --
@@ -80,41 +80,41 @@ ORDER by users_count DESC;
 -- MOST HIDDEN THREADS --
 SELECT
 	COUNT(DISTINCT user_id) as users_count,
-	threads.string_id,
-	CONCAT('https://v0.boba.social/!', boards.slug, '/thread/', threads.string_id) as thread_url
+	threads.external_id,
+	CONCAT('https://v0.boba.social/!', boards.slug, '/thread/', threads.external_id) as thread_url
 FROM threads
 LEFT JOIN boards
 	ON threads.parent_board = boards.id
 LEFT JOIN user_hidden_threads
 	ON threads.id = user_hidden_threads.thread_id
-GROUP BY threads.string_id, boards.slug
+GROUP BY threads.external_id, boards.slug
 ORDER by users_count DESC;
 
 -- MOST MUTED THREADS --
 SELECT
 	COUNT(DISTINCT user_id) as users_count,
-	threads.string_id,
-	CONCAT('https://v0.boba.social/!', boards.slug, '/thread/', threads.string_id) as thread_url
+	threads.external_id,
+	CONCAT('https://v0.boba.social/!', boards.slug, '/thread/', threads.external_id) as thread_url
 FROM threads
 LEFT JOIN boards
 	ON threads.parent_board = boards.id
 LEFT JOIN user_muted_threads
 	ON threads.id = user_muted_threads.thread_id
-GROUP BY threads.string_id, boards.slug
+GROUP BY threads.external_id, boards.slug
 ORDER by users_count DESC;
 
 -- BOARDS WITH MOST MUTE ACTIONS TAKEN --
 WITH muted_threads AS (
 	SELECT
 		COUNT(DISTINCT user_id) as users_count,
-		threads.string_id,
+		threads.external_id,
 		boards.slug
 	FROM threads
 	LEFT JOIN boards
 		ON threads.parent_board = boards.id
 	LEFT JOIN user_muted_threads
 		ON threads.id = user_muted_threads.thread_id
-	GROUP BY threads.string_id, boards.slug)
+	GROUP BY threads.external_id, boards.slug)
 SELECT
 	SUM(users_count) as muted_amount,
 	slug
@@ -126,14 +126,14 @@ ORDER BY muted_amount DESC;
 WITH muted_threads AS (
 	SELECT
 		COUNT(DISTINCT user_id) as users_count,
-		threads.string_id,
+		threads.external_id,
 		boards.slug
 	FROM threads
 	LEFT JOIN boards
 		ON threads.parent_board = boards.id
 	LEFT JOIN user_muted_threads
 		ON threads.id = user_muted_threads.thread_id
-	GROUP BY threads.string_id, boards.slug)
+	GROUP BY threads.external_id, boards.slug)
 SELECT
 	COUNT(DISTINCT(string_id)) as muted_amount,
 	slug
@@ -146,14 +146,14 @@ ORDER BY muted_amount DESC;
 WITH hidden_threads AS (
 	SELECT
 		COUNT(DISTINCT user_id) as users_count,
-		threads.string_id,
+		threads.external_id,
 		boards.slug
 	FROM threads
 	LEFT JOIN boards
 		ON threads.parent_board = boards.id
 	LEFT JOIN user_hidden_threads
 		ON threads.id = user_hidden_threads.thread_id
-	GROUP BY threads.string_id, boards.slug)
+	GROUP BY threads.external_id, boards.slug)
 SELECT
 	SUM(users_count) as hidden_amount,
 	slug
@@ -166,14 +166,14 @@ ORDER BY hidden_amount DESC;
 WITH hidden_threads AS (
 	SELECT
 		COUNT(DISTINCT user_id) as users_count,
-		threads.string_id,
+		threads.external_id,
 		boards.slug
 	FROM threads
 	LEFT JOIN boards
 		ON threads.parent_board = boards.id
 	LEFT JOIN user_hidden_threads
 		ON threads.id = user_hidden_threads.thread_id
-	GROUP BY threads.string_id, boards.slug)
+	GROUP BY threads.external_id, boards.slug)
 SELECT
 	COUNT(DISTINCT(string_id)) as hidden_amount,
 	slug
@@ -236,22 +236,22 @@ SELECT
 	posts.string_id,
 	COUNT(DISTINCT unnested_whisper_tags) as tags_in_post,
 	CONCAT('https://v0.boba.social/!', boards.slug, '/thread/', 
-		   threads.string_id, '/', posts.string_id) as post_url
+		   threads.external_id, '/', posts.string_id) as post_url
 FROM posts
 CROSS JOIN unnest(posts.whisper_tags) unnested_whisper_tags
 LEFT JOIN threads
 	ON posts.parent_thread = threads.id
 LEFT JOIN boards
 	ON threads.parent_board = boards.id
-GROUP BY posts.string_id, boards.slug, threads.string_id
+GROUP BY posts.string_id, boards.slug, threads.external_id
 ORDER BY tags_in_post DESC;
 
 -- POSTS WITH MOST UNIQUE CONTENT NOTICES --
 SELECT
-	threads.string_id,
+	threads.external_id,
 	COUNT(DISTINCT warning_id) as warnings_in_thread,
 	CONCAT('https://v0.boba.social/!', boards.slug, '/thread/', 
-		   threads.string_id) as thread_url
+		   threads.external_id) as thread_url
 FROM posts
 LEFT JOIN post_warnings
 	ON posts.id = post_warnings.post_id
@@ -259,7 +259,7 @@ LEFT JOIN threads
 	ON posts.parent_thread = threads.id
 LEFT JOIN boards
 	ON threads.parent_board = boards.id
-GROUP BY  boards.slug, threads.string_id
+GROUP BY  boards.slug, threads.external_id
 ORDER BY warnings_in_thread DESC;
 
 -- PERSON WITH MOST WHISPER TAGS -- 
@@ -372,14 +372,14 @@ ORDER BY identities_count DESC;
 --- TOP THREADS BY USERS COUNT ---
 SELECT 
     slug, 
-    threads.string_id, 
+    threads.external_id, 
     COUNT(user_id) as users_count,
-	CONCAT('https://v0.boba.social/!', boards.slug, '/thread/', threads.string_id) as thread_url
+	CONCAT('https://v0.boba.social/!', boards.slug, '/thread/', threads.external_id) as thread_url
 FROM user_thread_identities 
 LEFT JOIN threads 
     ON thread_id = threads.id 
 LEFT JOIN boards on parent_board = boards.id 
-GROUP BY threads.string_id, slug 
+GROUP BY threads.external_id, slug 
 ORDER BY users_count DESC;
 
 -- MOST USED ACCESSORIES --

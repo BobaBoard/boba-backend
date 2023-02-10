@@ -1,7 +1,7 @@
 
 WITH
   new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
       VALUES (
         '4d8471e5-a066-419c-96e4-456c95ade41d',
         (SELECT id FROM boards WHERE slug = 'MODS'))

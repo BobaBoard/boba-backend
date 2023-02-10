@@ -54,7 +54,7 @@ VALUES
 
 WITH
   new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
       VALUES (
         '8b2646af-2778-487e-8e44-7ae530c2549c',
         (SELECT id FROM boards WHERE slug = 'gore'))

@@ -12,7 +12,7 @@ WITH board_subscription_threads AS (
     COALESCE(thread_identities.secret_identity_color, NULL) as secret_identity_color,
     COALESCE(thread_identities.accessory_avatar, NULL) as secret_identity_accessory,
     top_posts."content" AS post_content,
-    threads.string_id AS thread_external_id,
+    threads.external_id AS thread_external_id,
     top_posts.string_id AS latest_post_external_id
   FROM subscriptions
     INNER JOIN board_category_subscriptions bcs ON bcs.subscription_id = subscriptions.id
@@ -41,7 +41,7 @@ thread_subscription_threads AS (
     COALESCE(thread_identities.accessory_avatar, NULL) as secret_identity_accessory,
     posts."content" AS post_content,
     posts.string_id AS latest_post_external_id,
-    threads.string_id AS thread_external_id
+    threads.external_id AS thread_external_id
   FROM subscriptions
   INNER JOIN thread_category_subscriptions tcs ON tcs.subscription_id = subscriptions.id
   INNER JOIN threads ON threads.id = tcs.thread_id

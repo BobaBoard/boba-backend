@@ -16,7 +16,7 @@ INSERT INTO board_description_sections (string_id, board_id, title, description,
 
 WITH
   new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
       VALUES (
         'b3f4174e-c9e2-4f79-9d22-7232aa48744e',
         (SELECT id FROM boards WHERE slug = 'restricted'))

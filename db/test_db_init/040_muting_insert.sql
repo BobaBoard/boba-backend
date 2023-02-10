@@ -1,6 +1,6 @@
 WITH
   new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
       VALUES (
         'b86710a8-66h7-4c09-b3a5-54668bab7051',
         (SELECT id FROM boards WHERE slug = 'muted'))

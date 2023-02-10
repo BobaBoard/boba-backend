@@ -1,6 +1,6 @@
 SELECT 
     posts.string_id as post_id,
-    threads.string_id as parent_thread_id,
+    threads.external_id as parent_thread_id,
     parent.string_id as parent_post_id,
     boards.slug as parent_board_slug,
     boards.string_id as parent_board_id,
@@ -71,7 +71,7 @@ WHERE posts.string_id = ${post_external_id}
 GROUP BY 
     posts.id,
     posts.string_id,
-    threads.string_id,
+    threads.external_id,
     parent.string_id,
     boards.slug,
     boards.string_id,

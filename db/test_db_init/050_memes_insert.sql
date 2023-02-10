@@ -1,7 +1,7 @@
 
 WITH 
 new_thread_id AS (
-  INSERT INTO threads (string_id,parent_board,options) VALUES 
+  INSERT INTO threads (external_id,parent_board,options) VALUES 
       ('2765f36a-b4f9-4efe-96f2-cb34f055d032',5,'{"default_view": "gallery"}')
   RETURNING id),
 root_post_id AS (

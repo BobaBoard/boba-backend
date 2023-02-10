@@ -1,7 +1,7 @@
 
 WITH
   new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
       VALUES (
         '29d1b2da-3289-454a-9089-2ed47db4967b',
         (SELECT id FROM boards WHERE slug = 'gore'))
@@ -72,7 +72,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
   new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
       VALUES (
         'a5c903df-35e8-43b2-a41a-208c43154671',
         (SELECT id FROM boards WHERE slug = 'gore'))
@@ -121,7 +121,7 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
 
 WITH
   new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
       VALUES (
         'b27710a8-0a9f-4c09-b3a5-54668bab7051',
         (SELECT id FROM boards WHERE slug = 'anime'))
@@ -196,7 +196,7 @@ INSERT INTO post_categories(post_id, category_id) VALUES
 
  WITH
   new_thread_id AS
-    (INSERT INTO threads(string_id, parent_board)
+    (INSERT INTO threads(external_id, parent_board)
       VALUES (
         '1cf90c6b-7b81-4662-a6c6-1ab5f69e8daf',
         (SELECT id FROM boards WHERE slug = 'ssshh'))
