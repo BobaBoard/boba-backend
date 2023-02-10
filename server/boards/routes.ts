@@ -1,5 +1,9 @@
 import * as threadEvents from "handlers/events/threads";
 
+import {
+  BoardMetadataSchema,
+  LoggedInBoardMetadataSchema,
+} from "types/open-api/generated/schemas";
 import { BoardPermissions, RealmPermissions } from "types/permissions";
 import { CacheKeys, cache } from "server/cache";
 import {
@@ -29,7 +33,6 @@ import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
 import { getBoardMetadataByExternalId } from "./utils";
 import { getThreadByExternalId } from "server/threads/queries";
-import { schemas } from "types/open-api/generated/open-api";
 
 const info = debug("bobaserver:board:routes-info");
 const log = debug("bobaserver:board:routes");
@@ -119,8 +122,8 @@ router.get("/:board_id", ensureBoardAccess, async (req, res) => {
     .status(200)
     .json(
       firebaseId
-        ? schemas.LoggedInBoardMetadata.parse(boardMetadata)
-        : schemas.BoardMetadata.parse(boardMetadata)
+        ? LoggedInBoardMetadataSchema.parse(boardMetadata)
+        : BoardMetadataSchema.parse(boardMetadata)
     );
 });
 

@@ -3,7 +3,6 @@ import {
   JERSEY_DEVIL_USER_ID,
   SEXY_DADDY_USER_ID,
 } from "test/data/auth";
-import { BoardMetadata, BoardSummary } from "types/rest/boards";
 import { GORE_BOARD_METADATA, extractBoardSummary } from "test/data/boards";
 import { TWISTED_MINDS_REALM_SLUG, UWU_REALM_SLUG } from "test/data/realms";
 import express, { Express } from "express";

@@ -1,6 +1,3 @@
-import { schemas } from "types/open-api/generated/open-api";
-import z from "zod";
-
 export interface BoardTextDescription {
   id: string;
   index: number;
@@ -42,8 +39,3 @@ export interface LoggedInBoardSummary {
   muted: boolean;
   pinned: boolean;
 }
-
-export type BoardMetadata = z.infer<typeof schemas.BoardMetadata>;
-export type LoggedInBoardMetadata = z.infer<
-  typeof schemas.LoggedInBoardMetadata
->;
