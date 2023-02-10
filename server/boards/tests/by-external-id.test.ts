@@ -1,10 +1,10 @@
 import { BOBATAN_USER_ID } from "test/data/auth";
-import { DbBoardMetadata } from "Types";
+import { BoardByExternalId } from "../sql/types";
 import { GORE_BOARD_ID } from "test/data/boards";
 import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
 import { getBoardByExternalId } from "../queries";
 
-const GORE_BOARD_LOGGED_OUT: DbBoardMetadata = {
+const GORE_BOARD_LOGGED_OUT: BoardByExternalId = {
   settings: {
     accentColor: "#f96680",
   },
@@ -53,7 +53,7 @@ const GORE_BOARD_LOGGED_OUT: DbBoardMetadata = {
   logged_out_restrictions: [],
 };
 
-const GORE_BOARD_LOGGED_IN: DbBoardMetadata = {
+const GORE_BOARD_LOGGED_IN: BoardByExternalId = {
   settings: {
     accentColor: "#f96680",
   },
