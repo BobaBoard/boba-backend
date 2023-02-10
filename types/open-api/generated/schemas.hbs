@@ -18,11 +18,9 @@ const {{@key}}{{#if (lookup ../circularTypeByName @key)}}: z.ZodType<{{@key}}>{{
 {{/each}}
 
 {{#ifNotEmptyObj schemas}}
-export const schemas = {
 {{#each schemas}}
-	{{@key}},
+	export const {{@key}}Schema = {{@key}};
 {{/each}}
-};
 {{/ifNotEmptyObj}}
 
 export const endpoints = {

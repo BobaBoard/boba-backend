@@ -337,66 +337,64 @@ const updateUserSettings_Body = z.object({
   value: z.union([z.string(), z.boolean()]),
 });
 
-export const schemas = {
-  BoardSummary,
-  BaseDescription,
-  TextDescription,
-  CategoryFilterDescription,
-  Description,
-  BoardMetadata,
-  LoggedInBoardSummary,
-  Accessory,
-  BoardPermissions,
-  PostPermissions,
-  ThreadPermission,
-  Permissions,
-  PostingIdentity,
-  LoggedInBoardMetadata,
-  CreateThread,
-  SecretIdentity,
-  Identity,
-  Tags,
-  Contribution,
-  Comment,
-  ThreadActivitySummary,
-  ThreadSummary,
-  Thread,
-  BoardDescription,
-  Cursor,
-  FeedActivity,
-  IdentityParams,
-  postContribution_Body,
-  postComment_Body,
-  BaseBlock,
-  TextBlock,
-  RulesBlock,
-  SubscriptionBlock,
-  UiBlock,
-  BooleanSetting,
-  Setting,
-  RealmSettings,
-  RealmPermissions,
-  Realm,
-  BoardActivitySummary,
-  RealmActivity,
-  ActivityNotifications,
-  NotificationsResponse,
-  InviteWithDetails,
-  genericResponse,
-  createInviteByRealmId_Body,
-  Invite,
-  InviteStatus,
-  acceptInviteByNonce_Body,
-  AcceptedInviteResponse,
-  Subscription,
-  SubscriptionActivity,
-  updateThreadExternalId_Body,
-  updateCurrentUser_Body,
-  BobaDexSeason,
-  BobaDex,
-  UserSettings,
-  updateUserSettings_Body,
-};
+export const BoardSummarySchema = BoardSummary;
+export const BaseDescriptionSchema = BaseDescription;
+export const TextDescriptionSchema = TextDescription;
+export const CategoryFilterDescriptionSchema = CategoryFilterDescription;
+export const DescriptionSchema = Description;
+export const BoardMetadataSchema = BoardMetadata;
+export const LoggedInBoardSummarySchema = LoggedInBoardSummary;
+export const AccessorySchema = Accessory;
+export const BoardPermissionsSchema = BoardPermissions;
+export const PostPermissionsSchema = PostPermissions;
+export const ThreadPermissionSchema = ThreadPermission;
+export const PermissionsSchema = Permissions;
+export const PostingIdentitySchema = PostingIdentity;
+export const LoggedInBoardMetadataSchema = LoggedInBoardMetadata;
+export const CreateThreadSchema = CreateThread;
+export const SecretIdentitySchema = SecretIdentity;
+export const IdentitySchema = Identity;
+export const TagsSchema = Tags;
+export const ContributionSchema = Contribution;
+export const CommentSchema = Comment;
+export const ThreadActivitySummarySchema = ThreadActivitySummary;
+export const ThreadSummarySchema = ThreadSummary;
+export const ThreadSchema = Thread;
+export const BoardDescriptionSchema = BoardDescription;
+export const CursorSchema = Cursor;
+export const FeedActivitySchema = FeedActivity;
+export const IdentityParamsSchema = IdentityParams;
+export const postContribution_BodySchema = postContribution_Body;
+export const postComment_BodySchema = postComment_Body;
+export const BaseBlockSchema = BaseBlock;
+export const TextBlockSchema = TextBlock;
+export const RulesBlockSchema = RulesBlock;
+export const SubscriptionBlockSchema = SubscriptionBlock;
+export const UiBlockSchema = UiBlock;
+export const BooleanSettingSchema = BooleanSetting;
+export const SettingSchema = Setting;
+export const RealmSettingsSchema = RealmSettings;
+export const RealmPermissionsSchema = RealmPermissions;
+export const RealmSchema = Realm;
+export const BoardActivitySummarySchema = BoardActivitySummary;
+export const RealmActivitySchema = RealmActivity;
+export const ActivityNotificationsSchema = ActivityNotifications;
+export const NotificationsResponseSchema = NotificationsResponse;
+export const InviteWithDetailsSchema = InviteWithDetails;
+export const genericResponseSchema = genericResponse;
+export const createInviteByRealmId_BodySchema = createInviteByRealmId_Body;
+export const InviteSchema = Invite;
+export const InviteStatusSchema = InviteStatus;
+export const acceptInviteByNonce_BodySchema = acceptInviteByNonce_Body;
+export const AcceptedInviteResponseSchema = AcceptedInviteResponse;
+export const SubscriptionSchema = Subscription;
+export const SubscriptionActivitySchema = SubscriptionActivity;
+export const updateThreadExternalId_BodySchema = updateThreadExternalId_Body;
+export const updateCurrentUser_BodySchema = updateCurrentUser_Body;
+export const BobaDexSeasonSchema = BobaDexSeason;
+export const BobaDexSchema = BobaDex;
+export const UserSettingsSchema = UserSettings;
+export const updateUserSettings_BodySchema = updateUserSettings_Body;
 
 export const endpoints = {
   getBoardsByExternalId: {
