@@ -9,8 +9,9 @@ import {
   extractBoardRestrictions,
   extractPermissions,
 } from "types/permissions";
-import { DbBoardMetadata, QueryTagsType } from "Types";
 
+import { BoardRestrictionsEnum } from "server/boards/sql/types";
+import { QueryTagsType } from "Types";
 import debug from "debug";
 import { getBoardByExternalId } from "server/boards/queries";
 
@@ -133,7 +134,9 @@ export const hasBoardAccessPermission = ({
   boardMetadata,
   firebaseId,
 }: {
-  boardMetadata: DbBoardMetadata;
+  boardMetadata: {
+    logged_out_restrictions: BoardRestrictionsEnum[];
+  };
   firebaseId: string | undefined;
 }) => {
   if (

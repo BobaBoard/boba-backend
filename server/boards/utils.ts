@@ -1,14 +1,11 @@
 import { CacheKeys, cache } from "server/cache";
-import {
-  DbBoardCategoryDescription,
-  DbBoardMetadata,
-  DbBoardTextDescription,
-} from "Types";
+import { DbBoardCategoryDescription, DbBoardTextDescription } from "Types";
 import {
   processBoardMetadata,
   processBoardsSummary,
 } from "utils/response-utils";
 
+import { BoardByExternalId } from "./sql/types";
 import debug from "debug";
 import { getBoardByExternalId } from "./queries";
 import stringify from "fast-json-stable-stringify";
@@ -23,8 +20,8 @@ export const getMetadataDelta = ({
   oldMetadata,
   newMetadata,
 }: {
-  oldMetadata: Partial<DbBoardMetadata>;
-  newMetadata: Partial<DbBoardMetadata>;
+  oldMetadata: Partial<BoardByExternalId>;
+  newMetadata: Partial<BoardByExternalId>;
 }): {
   tagline?: string;
   accentColor?: string;
