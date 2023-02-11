@@ -56,7 +56,9 @@ CREATE TABLE IF NOT EXISTS board_restrictions(
      */
     logged_out_restrictions board_restrictions_type[] NOT NULL DEFAULT ARRAY[]::board_restrictions_type[],
     /**
-     * These restrictions are added to determine what logged out users can or cannot do.
+     * These restrictions are added to determine what logged in users can or cannot do.
+     * User roles and associated permissions might change what is effectively allowed for the
+     * user.
      */
     logged_in_base_restrictions board_restrictions_type[] NOT NULL DEFAULT ARRAY[]::board_restrictions_type[]
 );
