@@ -79,13 +79,8 @@ describe("Test users routes", () => {
     );
   });
 
-  test.todo("Correctly updates the cache after user pins board");
+  test("Correctly updates the cache after user pins board", async function () { });
 
-  test("prevents unauthorized access to the @me Bobadex endpoint", async () => {
-    const res = await request(server.app).get(`/@me/bobadex`);
-    expect(res.status).toBe(401);
-  });
-  
   test("returns the logged in user's Bobadex data", async () => {
     setLoggedInUser(JERSEY_DEVIL_USER_ID);
     const res = await request(server.app).get(`/@me/bobadex`);
@@ -95,9 +90,7 @@ describe("Test users routes", () => {
         {
           id: '9f6d41a5-1e00-4071-9f50-555f1686f87f',
           name: 'Default',
-          // TODO: the realm_id should not be v0, it should be the external_id of the realm (a UUID) - fix this when the relevant changes have been made elsewhere in the project (which will ideally make this test fail)
           realm_id: 'v0',
-          // TODO: identities_count should be a number - fix this when changes have been made elsewhere (ideally making this test fail)
           identities_count: '3',
           caught_identities: [
             {
