@@ -609,6 +609,33 @@ router.delete(
   }
 );
 
+/**
+ * @openapi
+ * /threads/{thread_id}/delete:
+ *   delete:
+ *     summary: Hard delete of thread in entirety
+ *     operationId: deleteThread
+ *     description: Deletes selected thread from database
+ *     tags:
+ *       - /threads/
+ *     parameters:
+ *       - name: thread_id
+ *         in: path
+ *         description: The id of the thread to fetch.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       500:
+ *         description: Internal Server Error
+ *       401:
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         $ref: "#/components/responses/ensureThreadAccess403"
+ *       404:
+ *         $ref: "#/components/responses/threadNotFound404"
+ */
+
 router.delete(
   "/:thread_id/delete",
   ensureLoggedIn,
