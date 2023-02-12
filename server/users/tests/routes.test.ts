@@ -79,7 +79,7 @@ describe("Test users routes", () => {
     );
   });
 
-  test("Correctly updates the cache after user pins board", async function () { });
+  test("Correctly updates the cache after user pins board", async function () {});
 
   test("returns the logged in user's Bobadex data", async () => {
     setLoggedInUser(JERSEY_DEVIL_USER_ID);
