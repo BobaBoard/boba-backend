@@ -79,8 +79,14 @@ describe("Test users routes", () => {
     );
   });
 
+  // TODO: add content to the body of this test
   test("Correctly updates the cache after user pins board", async function () {});
 
+  test("prevents unauthorized access to the @me Bobadex endpoint", async () => {
+    const res = await request(server.app).get(`/@me/bobadex`);
+    expect(res.status).toBe(401);
+  });
+  
   test("returns the logged in user's Bobadex data", async () => {
     setLoggedInUser(JERSEY_DEVIL_USER_ID);
     const res = await request(server.app).get(`/@me/bobadex`);
