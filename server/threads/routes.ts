@@ -4,15 +4,7 @@ import {
   NotFound404Error,
 } from "types/errors/api";
 import {
-  ensureNoIdentityLeakage,
-  makeServerThread,
-} from "utils/response-utils";
-import {
-  ensureThreadAccess,
-  ensureThreadPermission,
-  withThreadPermissions,
-} from "handlers/permissions";
-import {
+  deleteThread,
   hideThread,
   markThreadVisit,
   muteThread,
@@ -22,6 +14,15 @@ import {
   unstarThread,
   updateThreadView,
 } from "./queries";
+import {
+  ensureNoIdentityLeakage,
+  makeServerThread,
+} from "utils/response-utils";
+import {
+  ensureThreadAccess,
+  ensureThreadPermission,
+  withThreadPermissions,
+} from "handlers/permissions";
 
 import { ThreadPermissions } from "types/permissions";
 import { canAccessBoardByExternalId } from "utils/permissions-utils";
@@ -605,6 +606,26 @@ router.delete(
 
     info(`Marked last visited time for thread: ${threadExternalId}.`);
     res.status(204).json();
+  }
+);
+
+router.delete(
+  "/:thread_id/delete",
+  ensureLoggedIn,
+  // ensureModPermissions? at some point
+  async (req, res) => {
+    const { thread_id: threadExternalId } = req.params;
+    log(`Deleting thread: ${threadExternalId}`);
+
+    if (
+      !(await deleteThread({
+        // firebaseId: req.currentUser!.uid,
+        threadExternalId,
+      }))
+    ) {
+      res.sendStatus(500);
+      return;
+    }
   }
 );
 

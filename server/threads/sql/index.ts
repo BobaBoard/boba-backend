@@ -143,8 +143,6 @@ const moveThread = `
     WHERE string_id = $/thread_external_id/;
 `;
 
-
-
 export default {
   threadByExternalId: new QueryFile(
     path.join(__dirname, "thread-by-external-id.sql")
