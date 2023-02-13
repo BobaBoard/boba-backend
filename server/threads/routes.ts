@@ -637,7 +637,7 @@ router.delete(
  */
 
 router.delete(
-  "/:thread_id/delete",
+  "/:thread_id",
   ensureLoggedIn,
   // ensureModPermissions? at some point
   async (req, res) => {
