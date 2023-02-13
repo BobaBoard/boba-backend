@@ -646,13 +646,15 @@ router.delete(
 
     if (
       !(await deleteThread({
-        // firebaseId: req.currentUser!.uid,
+        firebaseId: req.currentUser!.uid,
         threadExternalId,
       }))
     ) {
       res.sendStatus(500);
       return;
     }
+    info(`Thread deleted: ${threadExternalId}.`);
+    res.status(204).json();
   }
 );
 

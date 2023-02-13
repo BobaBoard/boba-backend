@@ -245,14 +245,14 @@ export const moveThread = async ({
 export const deleteThread = async ({
   threadExternalId,
   // implement mod permissions later
-  // firebaseId, 
+  firebaseId, 
 }: {
   threadExternalId: string;
-  // firebaseId: string;
+  firebaseId: string;
 }) => {
   try {
     const result = await pool.none(sql.deleteThread, {
-      // firebaseId,
+      firebaseId,
       thread_external_id: threadExternalId,
     });
     return true;
