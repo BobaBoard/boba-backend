@@ -15,6 +15,8 @@ import { CHARACTER_TO_MAIM_POST_ID } from "test/data/posts";
 import { EventEmitter } from "events";
 import { FAVORITE_CHARACTER_THREAD_ID } from "test/data/threads";
 import { Post } from "types/rest/threads";
+import debug from "debug";
+import { mocked } from "jest-mock";
 import request from "supertest";
 import router from "../../routes";
 
