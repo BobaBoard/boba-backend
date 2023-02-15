@@ -6,7 +6,7 @@ import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
 import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
 import { getUserFromFirebaseId } from "../queries";
-import { mocked } from "ts-jest/utils";
+import { mocked } from "jest-mock";
 import request from "supertest";
 import router from "../routes";
 import stringify from "fast-json-stable-stringify";

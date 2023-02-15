@@ -51,7 +51,10 @@ export const BoardCategoryDescriptionSchema = z.object({
   title: z.string(),
   type: z.literal("category_filter"),
   categories: z.array(z.string()),
-  description: z.null(),
+  // TODO: this should just be null, unless we decide to make the categories also
+  // have description. Right now, some categories sections are saved with an empty
+  // description, which is the worst of both worlds.
+  description: z.string().nullable(),
 });
 
 export const BoardSettingsSchema = z.object({
