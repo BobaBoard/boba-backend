@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS board_user_roles(
     board_id BIGINT REFERENCES boards(id) ON DELETE RESTRICT NOT NULL,
     role_id BIGINT REFERENCES roles(id) ON DELETE RESTRICT NOT NULL
 );
-CREATE UNIQUE INDEX board_user_roles_entry on board_user_roles(user_id, board_id);
+CREATE UNIQUE INDEX board_user_roles_entry on board_user_roles(user_id, board_id, role_id);
 
 CREATE TABLE IF NOT EXISTS realm_user_roles(
     realm_id BIGINT REFERENCES realms(id) ON DELETE RESTRICT NOT NULL,
