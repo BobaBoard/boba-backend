@@ -170,3 +170,84 @@ describe("Tests tag-related queries", () => {
     });
   });
 });
+
+test("removes index tags from post", async () => {
+  await runWithinTransaction(async (transaction) => {
+    const postExternalId = REVOLVER_OCELOT_POST.id;
+    await removeIndexTags(transaction, {
+      postId: REVOLVER_OCELOT_POST_ID,
+      indexTags: ["EVIL", "   metal gear      "],
+    });
+
+    const result = await getPostByExternalId(transaction, {
+      firebaseId: undefined,
+      postExternalId: postExternalId,
+    });
+
+    expect(result.index_tags).toIncludeSameMembers([
+      "bobapost",
+      "oddly specific",
+    ]);
+  });
+});
+
+test("removes category tags from post", async () => {
+  await runWithinTransaction(async (transaction) => {
+    const postExternalId = VIDEO_GAME_MURDER_POST_EXTERNAL_ID;
+
+    await removeCategoryTags(transaction, {
+      postId: VIDEO_GAME_MURDER_POST_ID,
+      categoryTags: ["bruises"],
+    });
+
+    const result = await getPostByExternalId(transaction, {
+      firebaseId: undefined,
+      postExternalId: postExternalId,
+    });
+
+    expect(result.category_tags).toIncludeSameMembers(["blood"]);
+  });
+});
+
+test("removes content warning tags from post", async () => {
+  await runWithinTransaction(async (transaction) => {
+    const postExternalId = NO_HARASSMENT_POST_EXTERNAL_ID;
+
+    await removeContentWarningTags(transaction, {
+      postId: NO_HARASSMENT_POST_ID,
+      contentWarnings: ["harassment PSA"],
+    });
+
+    const result = await getPostByExternalId(transaction, {
+      firebaseId: undefined,
+      postExternalId: postExternalId,
+    });
+
+    console.log("**************************");
+    console.log({ result });
+    console.log("**************************");
+
+
+    expect(result.content_warnings).toIncludeSameMembers([]);
+  });
+});
+
+test("updates whisper tags", async () => {
+  await runWithinTransaction(async (transaction) => {
+    const postId = HIMBO_POST_ID;
+    await updateWhisperTags(transaction, {
+      postId,
+      whisperTags: ["whisper whisper", "babble babble"],
+    });
+
+    const result = await getPostByExternalId(transaction, {
+      firebaseId: undefined,
+      postExternalId: HIMBO_POST_EXTERNAL_ID,
+    });
+
+    expect(result.whisper_tags).toIncludeSameMembers([
+      "babble babble",
+      "whisper whisper",
+    ]);
+  });
+});
