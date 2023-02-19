@@ -3,6 +3,8 @@ import {
   maybeAddCategoryTags,
   maybeAddContentWarningTags,
   maybeAddIndexTags,
+  removeCategoryTags,
+  removeContentWarningTags,
   removeIndexTags,
   updateWhisperTags,
 } from "../queries";
@@ -15,6 +17,11 @@ const log = debug("bobaserver:posts:queries-test-log");
 
 const HIMBO_POST_ID = 6;
 const REVOLVER_OCELOT_POST_ID = 2;
+const VIDEO_GAME_MURDER_POST_ID = 4;
+const VIDEO_GAME_MURDER_POST_EXTERNAL_ID =
+  "3db477e0-57ed-491d-ba11-b3a0110b59b0";
+const NO_HARASSMENT_POST_ID = 173;
+const NO_HARASSMENT_POST_EXTERNAL_ID = "ff9f2ae2-a254-4069-9791-3ac5e6dff5bb";
 const HIMBO_POST_EXTERNAL_ID = "1f1ad4fa-f02a-48c0-a78a-51221a7db170";
 describe("Tests posts queries", () => {
   test("adds index tags to post (and database)", async () => {
@@ -82,7 +89,7 @@ describe("Tests posts queries", () => {
   });
 });
 
-test("removes tags from post", async () => {
+test("removes index tags from post", async () => {
   await runWithinTransaction(async (transaction) => {
     const postExternalId = REVOLVER_OCELOT_POST.id;
     await removeIndexTags(transaction, {
@@ -102,7 +109,46 @@ test("removes tags from post", async () => {
   });
 });
 
-// TODO: do the same for categories and content warnings
+test("removes category tags from post", async () => {
+  await runWithinTransaction(async (transaction) => {
+    const postExternalId = VIDEO_GAME_MURDER_POST_EXTERNAL_ID;
+
+    await removeCategoryTags(transaction, {
+      postId: VIDEO_GAME_MURDER_POST_ID,
+      categoryTags: ["bruises"],
+    });
+
+    const result = await getPostByExternalId(transaction, {
+      firebaseId: undefined,
+      postExternalId: postExternalId,
+    });
+
+    expect(result.category_tags).toIncludeSameMembers(["blood"]);
+  });
+});
+
+test("removes content warning tags from post", async () => {
+  await runWithinTransaction(async (transaction) => {
+    const postExternalId = NO_HARASSMENT_POST_EXTERNAL_ID;
+
+    await removeContentWarningTags(transaction, {
+      postId: NO_HARASSMENT_POST_ID,
+      contentWarnings: ["harassment PSA"],
+    });
+
+    const result = await getPostByExternalId(transaction, {
+      firebaseId: undefined,
+      postExternalId: postExternalId,
+    });
+
+    console.log("**************************");
+    console.log({ result });
+    console.log("**************************");
+
+
+    expect(result.content_warnings).toIncludeSameMembers([]);
+  });
+});
 
 test("updates whisper tags", async () => {
   await runWithinTransaction(async (transaction) => {
