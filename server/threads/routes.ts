@@ -639,6 +639,7 @@ router.delete(
 router.delete(
   "/:thread_id",
   ensureLoggedIn,
+  ensureThreadAccess,
   // ensureModPermissions? at some point
   async (req, res) => {
     const { thread_id: threadExternalId } = req.params;
