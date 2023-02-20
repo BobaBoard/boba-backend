@@ -26,7 +26,7 @@ jest.mock("server/db-pool");
 describe("Tests threads REST API - delete thread", () => {
   const server = startTestServer(router);
 
-  test("should hide thread", async () => {
+  test("should delete thread", async () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(BOBATAN_USER_ID);
       const res = await request(server.app).post(
