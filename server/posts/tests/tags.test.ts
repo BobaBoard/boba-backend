@@ -23,7 +23,8 @@ const VIDEO_GAME_MURDER_POST_EXTERNAL_ID =
 const NO_HARASSMENT_POST_ID = 173;
 const NO_HARASSMENT_POST_EXTERNAL_ID = "ff9f2ae2-a254-4069-9791-3ac5e6dff5bb";
 const HIMBO_POST_EXTERNAL_ID = "1f1ad4fa-f02a-48c0-a78a-51221a7db170";
-describe("Tests posts queries", () => {
+
+describe("Tests tag-related queries", () => {
   test("adds index tags to post (and database)", async () => {
     await runWithinTransaction(async (transaction) => {
       const postId = HIMBO_POST_ID;
@@ -64,108 +65,108 @@ describe("Tests posts queries", () => {
       expect(result.content_warnings).toIncludeSameMembers(["zombies", "vore"]);
     });
   });
-
-  // TODO: I have no idea why but sometimes tests decide they should not
-  // pass on CI.
-  // Periodically, try to remove this cause sometimes they start passing again.
-  describe("ci-disable", () => {
-    test("adds category tags to post (and database)", async () => {
-      await runWithinTransaction(async (transaction) => {
-        const postId = HIMBO_POST_ID;
-        const addedTags = await maybeAddCategoryTags(transaction, {
-          postId,
-          categoryTags: ["thirst"],
-        });
-        expect(addedTags).toIncludeSameMembers(["thirst"]);
-
-        const result = await getPostByExternalId(transaction, {
-          firebaseId: undefined,
-          postExternalId: HIMBO_POST_EXTERNAL_ID,
-        });
-
-        expect(result.category_tags).toIncludeSameMembers(["thirst"]);
+  
+  test("adds category tags to post (and database)", async () => {
+    await runWithinTransaction(async (transaction) => {
+      const postId = HIMBO_POST_ID;
+      const addedTags = await maybeAddCategoryTags(transaction, {
+        postId,
+        categoryTags: ["thirst"],
       });
+      expect(addedTags).toIncludeSameMembers(["thirst"]);
+
+      const result = await getPostByExternalId(transaction, {
+        firebaseId: undefined,
+        postExternalId: HIMBO_POST_EXTERNAL_ID,
+      });
+
+      expect(result.category_tags).toIncludeSameMembers(["thirst"]);
     });
   });
-});
 
-test("removes index tags from post", async () => {
-  await runWithinTransaction(async (transaction) => {
-    const postExternalId = REVOLVER_OCELOT_POST.id;
-    await removeIndexTags(transaction, {
-      postId: REVOLVER_OCELOT_POST_ID,
-      indexTags: ["EVIL", "   metal gear      "],
+  test("removes index tags from post", async () => {
+    await runWithinTransaction(async (transaction) => {
+      const postExternalId = REVOLVER_OCELOT_POST.id;
+      await removeIndexTags(transaction, {
+        postId: REVOLVER_OCELOT_POST_ID,
+        indexTags: ["EVIL", "   metal gear      "],
+      });
+
+      const result = await getPostByExternalId(transaction, {
+        firebaseId: undefined,
+        postExternalId: postExternalId,
+      });
+
+      expect(result.index_tags).toIncludeSameMembers([
+        "bobapost",
+        "oddly specific",
+      ]);
     });
-
-    const result = await getPostByExternalId(transaction, {
-      firebaseId: undefined,
-      postExternalId: postExternalId,
-    });
-
-    expect(result.index_tags).toIncludeSameMembers([
-      "bobapost",
-      "oddly specific",
-    ]);
   });
-});
 
-test("removes category tags from post", async () => {
-  await runWithinTransaction(async (transaction) => {
-    const postExternalId = VIDEO_GAME_MURDER_POST_EXTERNAL_ID;
+  test("removes category tags from post", async () => {
+    await runWithinTransaction(async (transaction) => {
+      const postExternalId = VIDEO_GAME_MURDER_POST_EXTERNAL_ID;
 
-    await removeCategoryTags(transaction, {
-      postId: VIDEO_GAME_MURDER_POST_ID,
-      categoryTags: ["bruises"],
+      await removeCategoryTags(transaction, {
+        postId: VIDEO_GAME_MURDER_POST_ID,
+        categoryTags: ["bruises"],
+      });
+
+      const result = await getPostByExternalId(transaction, {
+        firebaseId: undefined,
+        postExternalId: postExternalId,
+      });
+
+      expect(result.category_tags).toIncludeSameMembers(["blood"]);
     });
-
-    const result = await getPostByExternalId(transaction, {
-      firebaseId: undefined,
-      postExternalId: postExternalId,
-    });
-
-    expect(result.category_tags).toIncludeSameMembers(["blood"]);
   });
-});
 
-test("removes content warning tags from post", async () => {
-  await runWithinTransaction(async (transaction) => {
-    const postExternalId = NO_HARASSMENT_POST_EXTERNAL_ID;
+  test("removes content warning tags from post", async () => {
+    await runWithinTransaction(async (transaction) => {
+      const postId = NO_HARASSMENT_POST_ID;
+      const postExternalId = NO_HARASSMENT_POST_EXTERNAL_ID;
 
-    await removeContentWarningTags(transaction, {
-      postId: NO_HARASSMENT_POST_ID,
-      contentWarnings: ["harassment PSA"],
+      // adding some content warnings to take them away; there is a known issue where the test will not take away the pre-existing content warning
+      await maybeAddContentWarningTags(transaction, {
+        postId,
+        contentWarnings: ["proclamation", "important thing"],
+      });
+
+      await removeContentWarningTags(transaction, {
+        postId,
+        contentWarnings: ["important thing"],
+      });
+
+      const result = await getPostByExternalId(transaction, {
+        firebaseId: undefined,
+        postExternalId,
+      });
+
+      expect(result.content_warnings).toIncludeSameMembers([
+        "harassment PSA",
+        "proclamation",
+      ]);
     });
-
-    const result = await getPostByExternalId(transaction, {
-      firebaseId: undefined,
-      postExternalId: postExternalId,
-    });
-
-    console.log("**************************");
-    console.log({ result });
-    console.log("**************************");
-
-
-    expect(result.content_warnings).toIncludeSameMembers([]);
   });
-});
 
-test("updates whisper tags", async () => {
-  await runWithinTransaction(async (transaction) => {
-    const postId = HIMBO_POST_ID;
-    await updateWhisperTags(transaction, {
-      postId,
-      whisperTags: ["whisper whisper", "babble babble"],
+  test("updates whisper tags", async () => {
+    await runWithinTransaction(async (transaction) => {
+      const postId = HIMBO_POST_ID;
+      await updateWhisperTags(transaction, {
+        postId,
+        whisperTags: ["whisper whisper", "babble babble"],
+      });
+
+      const result = await getPostByExternalId(transaction, {
+        firebaseId: undefined,
+        postExternalId: HIMBO_POST_EXTERNAL_ID,
+      });
+
+      expect(result.whisper_tags).toIncludeSameMembers([
+        "babble babble",
+        "whisper whisper",
+      ]);
     });
-
-    const result = await getPostByExternalId(transaction, {
-      firebaseId: undefined,
-      postExternalId: HIMBO_POST_EXTERNAL_ID,
-    });
-
-    expect(result.whisper_tags).toIncludeSameMembers([
-      "babble babble",
-      "whisper whisper",
-    ]);
   });
 });
