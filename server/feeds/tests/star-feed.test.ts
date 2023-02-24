@@ -28,7 +28,6 @@ describe("user star feed queries", () => {
         parent_post_id: null,
         content: '[{"insert":"Favorite murder scene in videogames?"}]',
         default_view: "thread",
-        options: {},
         muted: false,
         hidden: false,
         starred: true,

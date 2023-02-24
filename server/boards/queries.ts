@@ -399,7 +399,6 @@ export const dismissBoardNotifications = async ({
 export const createThread = async ({
   firebaseId,
   content,
-  isLarge,
   anonymityType,
   boardExternalId,
   whisperTags,
@@ -412,7 +411,6 @@ export const createThread = async ({
 }: {
   firebaseId: string;
   content: string;
-  isLarge: boolean;
   defaultView: string;
   anonymityType: string;
   boardExternalId: string;
@@ -440,7 +438,6 @@ export const createThread = async ({
         identityId,
         accessoryId,
         content,
-        isLarge,
         anonymityType,
         whisperTags,
         indexTags,

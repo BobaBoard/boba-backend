@@ -144,7 +144,7 @@ CREATE TABLE IF NOT EXISTS posts
      * space for comments.
      */
     whisper_tags TEXT[],
-    options JSONB NOT NULL DEFAULT '{}'::jsonb,
+    /* options JSONB NOT NULL DEFAULT '{}'::jsonb, */
     /* Mark deleted rather than actually delete for moderation purposes. */
     is_deleted BOOLEAN DEFAULT false,
     anonymity_type anonymity_type NOT NULL

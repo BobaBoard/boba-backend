@@ -57,7 +57,6 @@ describe("threads queries", () => {
           whisper_tags: [],
           category_tags: ["bruises"],
           content_warnings: [],
-          options: {},
         },
         {
           anonymity_type: "strangers",
@@ -87,7 +86,6 @@ describe("threads queries", () => {
           whisper_tags: ["fight me on this"],
           category_tags: [],
           content_warnings: [],
-          options: {},
         },
         {
           anonymity_type: "everyone",
@@ -166,7 +164,6 @@ describe("threads queries", () => {
           ],
           category_tags: [],
           content_warnings: [],
-          options: {},
         },
       ],
     });
@@ -222,7 +219,6 @@ describe("threads queries", () => {
           whisper_tags: ["mwehehehehe"],
           category_tags: ["blood", "bruises"],
           content_warnings: [],
-          options: {},
         },
         {
           anonymity_type: "strangers",
@@ -250,7 +246,6 @@ describe("threads queries", () => {
           whisper_tags: ["joseph oda is love", "joseph oda is life"],
           category_tags: [],
           content_warnings: [],
-          options: {},
         },
         {
           anonymity_type: "strangers",
@@ -282,7 +277,6 @@ describe("threads queries", () => {
           ],
           category_tags: [],
           content_warnings: [],
-          options: {},
         },
       ],
     });
@@ -339,7 +333,6 @@ describe("threads queries", () => {
           whisper_tags: [],
           category_tags: ["bruises"],
           content_warnings: [],
-          options: {},
         },
         {
           anonymity_type: "strangers",
@@ -369,7 +362,6 @@ describe("threads queries", () => {
           whisper_tags: ["fight me on this"],
           category_tags: [],
           content_warnings: [],
-          options: {},
         },
         {
           anonymity_type: "everyone",
@@ -448,7 +440,6 @@ describe("threads queries", () => {
           ],
           category_tags: [],
           content_warnings: [],
-          options: {},
         },
       ],
     });
