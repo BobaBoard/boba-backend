@@ -48,22 +48,28 @@ describe("Tests threads REST API - hide", () => {
   });
 
   // TODO: don't know how to generate invalid token
-  test("TODO: should fail when user has invalid authentication", async () => {
+  test.todo(
+    "should fail when user has invalid authentication"
+    // , async () => {
     //const res = await request(server.app).post(
     //  `/${FAVORITE_CHARACTER_THREAD_ID}/hide`
     //);
     //expect(res.status).toBe(401);
     //expect(res.body).toEqual<GenericResponse>(ENSURE_LOGGED_IN_NO_TOKEN);
-  });
+    // }
+  );
 
   // TODO: permissions don't exist yet
-  test("TODO: should fail when user is not authorized to access thread", async () => {
+  test.todo(
+    "should fail when user is not authorized to access thread"
+    // , async () => {
     //const res = await request(server.app).post(
     //  `/${FAVORITE_CHARACTER_THREAD_ID}/hide`
     //);
     //expect(res.status).toBe(403);
     //expect(res.body).toEqual<GenericResponse>(ENSURE_THREAD_ACCESS_UNAUTHORIZED);
-  });
+    // }
+  );
 
   test("should fail when thread does not exist", async () => {
     setLoggedInUser(BOBATAN_USER_ID);
@@ -98,22 +104,28 @@ describe("Tests threads REST API - unhide", () => {
   });
 
   // TODO: don't know how to generate invalid token
-  test("TODO: should fail when user has invalid authentication", async () => {
+  test.todo(
+    "should fail when user has invalid authentication"
+    // , async () => {
     //const res = await request(server.app).delete(
     //  `/${FAVORITE_CHARACTER_THREAD_ID}/hide`
     //);
     //expect(res.status).toBe(401);
     //expect(res.body).toEqual<GenericResponse>(ENSURE_LOGGED_IN_NO_TOKEN);
-  });
+    // }
+  );
 
   // TODO: permissions don't exist yet
-  test("TODO: should fail when user is not authorized to access thread", async () => {
+  test.todo(
+    "should fail when user is not authorized to access thread"
+    // , async () => {
     //const res = await request(server.app).delete(
     //  `/${FAVORITE_CHARACTER_THREAD_ID}/hide`
     //);
     //expect(res.status).toBe(403);
     //expect(res.body).toEqual<GenericResponse>(ENSURE_THREAD_ACCESS_UNAUTHORIZED);
-  });
+    // }
+  );
 
   test("should fail when thread does not exist", async () => {
     setLoggedInUser(BOBATAN_USER_ID);
