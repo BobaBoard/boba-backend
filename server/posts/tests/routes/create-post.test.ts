@@ -249,4 +249,10 @@ describe("Test commenting on post REST API", () => {
       expect(res.body).toEqual(expectedResponse);
     });
   });
+
+  // for this test, send a request body with empty comment contents
+  test.todo("if the request's comment contents is empty, throws a BadRequest400Error");
+
+  // for this test, mock the db response
+  test.todo("if nothing comes back from the attempt to post a new comment, throws a 500");
 });
