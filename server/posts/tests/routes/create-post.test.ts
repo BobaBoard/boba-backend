@@ -183,7 +183,7 @@ describe("Test commenting on post REST API", () => {
 
   // TODO: find out if we should allow an empty array of contents through - this wasn't what I actually needed to test for the BadRequest400Error test, but I was surprised that it didn't throw an error
   const emptyTestCommentBody = { ...testCommentBody, contents: [] };
-  
+
   const nonArrayContentsTestCommentBody = {
     ...testCommentBody,
     contents: "hey what are you going to do with this string I wonder",
