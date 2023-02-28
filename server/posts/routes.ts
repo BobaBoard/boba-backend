@@ -35,7 +35,7 @@ const router = express.Router();
  * @openapi
  * /posts/{post_id}/contributions:
  *   post:
- *     summary: Replies to a contribution.
+ *     summary: Replies to a contribution with another contribution.
  *     operationId: postContribution
  *     description: Posts a contribution replying to the one with id {postId}.
  *     tags:
