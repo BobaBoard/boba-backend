@@ -1,9 +1,10 @@
 import {
   CANT_SEE_ME_POST,
   CHARACTER_TO_MAIM_POST,
+  DELETED_POST,
   KERMIT_COMMENTS,
   KERMIT_POST,
-  REVOLVER_OCELOT_POST,
+  REVOLVER_OCELOT_POST
 } from "./posts";
 import { GORE_BOARD_ID, RESTRICTED_BOARD_ID } from "./boards";
 import { Thread, ThreadSummary } from "../../types/rest/threads";
@@ -18,6 +19,7 @@ export const FAVORITE_CHARACTER_THREAD_ID =
   "29d1b2da-3289-454a-9089-2ed47db4967b";
 export const FAVORITE_MURDER_THREAD_ID = "a5c903df-35e8-43b2-a41a-208c43154671";
 export const RESTRICTED_THREAD_ID = "b3f4174e-c9e2-4f79-9d22-7232aa48744e";
+export const DELETED_THREAD_ID = "5e35fb94-b8d1-4578-b4f2-184cfe295c84";
 export const NULL_ID = "00000000-0000-0000-0000-000000000000";
 
 export const EXCELLENT_THREAD_SUMMARY: ThreadSummary = {
@@ -267,6 +269,27 @@ export const CREATE_GORE_THREAD_RESPONSE: Thread = {
   comments: {
     //expect.any(String): []
   },
+};
+
+// todo: finish filling fields
+export const DELETED_THREAD_SUMMARY: ThreadSummary = {
+  id: DELETED_THREAD_ID,
+  parent_board_slug: "gore",
+  parent_board_id: GORE_BOARD_ID,
+  parent_realm_slug: "twisted-minds",
+  parent_realm_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
+  starter: DELETED_POST,
+  new_posts_amount: 0,
+  new_comments_amount: 0,
+  total_comments_amount: 2,
+  total_posts_amount: 3,
+  last_activity_at: KERMIT_COMMENTS[1].created_at,
+  direct_threads_amount: 2,
+  muted: false,
+  starred: false,
+  hidden: false,
+  new: false,
+  default_view: "thread",
 };
 
 export const NULL_THREAD_NOT_FOUND: GenericResponse = {

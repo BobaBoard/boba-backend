@@ -1,17 +1,16 @@
 import {
   FAVORITE_CHARACTER_THREAD,
   FAVORITE_CHARACTER_THREAD_ID,
-  RESTRICTED_THREAD,
-  RESTRICTED_THREAD_ID,
   NULL_ID,
   NULL_THREAD_NOT_FOUND,
+  RESTRICTED_THREAD,
+  RESTRICTED_THREAD_ID,
 } from "test/data/threads";
-
 import { setLoggedInUser, startTestServer } from "utils/test-utils";
 
 import { BOBATAN_USER_ID } from "test/data/auth";
-import { Thread } from "types/rest/threads";
 import { GenericResponse } from "types/rest/responses";
+import { Thread } from "types/rest/threads";
 import request from "supertest";
 import router from "../../routes";
 
@@ -43,11 +42,14 @@ describe("Tests threads REST API", () => {
     expect(res.body).toEqual<Thread>(RESTRICTED_THREAD);
   });
 
-  test("TODO: should lock when user does not have access to board", async () => {
+  test.todo(
+    "should lock when user does not have access to board"
+    // , async () => {
     //setLoggedInUser(BOBATAN_USER_ID);
     //expect(res.status).toBe(403);
     //expect(res.body).toEqual<Thread>(RESTRICTED_THREAD);
-  });
+    // }
+  );
 
   test("should fail when thread does not exist", async () => {
     setLoggedInUser(BOBATAN_USER_ID);

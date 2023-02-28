@@ -40,25 +40,19 @@ export const getBoardByExternalId = async ({
   firebaseId: string | undefined;
   boardExternalId: string;
 }) => {
-  try {
-    const rows = await pool.oneOrNone(sql.getBoardByExternalId, {
-      firebase_id: firebaseId,
-      board_id: boardExternalId,
-    });
+  const rows = await pool.oneOrNone(sql.getBoardByExternalId, {
+    firebase_id: firebaseId,
+    board_id: boardExternalId,
+  });
 
-    if (!rows) {
-      log(`Board not found: ${boardExternalId}`);
-      return null;
-    }
-
-    info(`Got getBoardByExternalId query result:`, rows);
-    log(`Fetched board ${boardExternalId} for user ${firebaseId}`);
-    return BoardByExternalIdSchema.parse(rows);
-  } catch (e) {
-    error(`Error while fetching board by id (${boardExternalId}).`);
-    error(e);
+  if (!rows) {
+    log(`Board not found: ${boardExternalId}`);
     return null;
   }
+
+  info(`Got getBoardByExternalId query result:`, rows);
+  log(`Fetched board ${boardExternalId} for user ${firebaseId}`);
+  return BoardByExternalIdSchema.parse(rows);
 };
 
 const updateCategoriesDescriptions = async (

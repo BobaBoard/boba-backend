@@ -1,14 +1,14 @@
 import {
+  DELETED_THREAD_ID,
+  NULL_ID,
+  NULL_THREAD_NOT_FOUND,
+  RESTRICTED_THREAD_ID
+} from "test/data/threads";
+import {
   ENSURE_LOGGED_IN_INVALID_TOKEN,
   ENSURE_LOGGED_IN_NO_TOKEN,
   ENSURE_THREAD_ACCESS_UNAUTHORIZED,
 } from "test/data/responses";
-import {
-  FAVORITE_CHARACTER_THREAD_ID,
-  NULL_ID,
-  NULL_THREAD_NOT_FOUND,
-  RESTRICTED_THREAD_ID,
-} from "test/data/threads";
 import {
   setLoggedInUser,
   startTestServer,
@@ -29,8 +29,8 @@ describe("Tests threads REST API - delete thread", () => {
   test("should delete thread", async () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(BOBATAN_USER_ID);
-      const res = await request(server.app).post(
-        `/${FAVORITE_CHARACTER_THREAD_ID}/hide`
+      const res = await request(server.app).delete(
+        `/${DELETED_THREAD_ID}`
       );
 
       expect(res.status).toBe(204);
@@ -38,8 +38,8 @@ describe("Tests threads REST API - delete thread", () => {
   });
 
   test("should fail when user is unauthenticated", async () => {
-    const res = await request(server.app).post(
-      `/${FAVORITE_CHARACTER_THREAD_ID}/hide`
+    const res = await request(server.app).delete(
+      `/${DELETED_THREAD_ID}`
     );
 
     expect(res.status).toBe(401);
@@ -71,7 +71,9 @@ describe("Tests threads REST API - delete thread", () => {
 
   test("should fail when thread does not exist", async () => {
     setLoggedInUser(BOBATAN_USER_ID);
-    const res = await request(server.app).post(`/${NULL_ID}/hide`);
+    const res = await request(server.app).delete(
+      `/${DELETED_THREAD_ID}`
+    );
 
     expect(res.status).toBe(404);
     expect(res.body).toEqual<GenericResponse>(NULL_THREAD_NOT_FOUND);

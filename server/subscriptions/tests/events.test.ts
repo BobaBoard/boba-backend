@@ -20,7 +20,7 @@ import { registerAll, unregisterAll } from "../events";
 
 import { Thread } from "types/rest/threads";
 import axios from "axios";
-import { mocked } from "ts-jest/utils";
+import { mocked } from "jest-mock";
 
 jest.mock("axios", () => ({
   post: jest.fn(() => Promise.resolve({ data: {} })),
