@@ -46,6 +46,16 @@ describe("Tests threads REST API - delete thread", () => {
     expect(res.body).toEqual<GenericResponse>(ENSURE_LOGGED_IN_NO_TOKEN);
   });
 
+  test("should fail when thread has already been deleted/does not exist", async () => {
+    setLoggedInUser(BOBATAN_USER_ID);
+    const res = await request(server.app).delete(
+      `/${DELETED_THREAD_ID}`
+    );
+
+    expect(res.status).toBe(404);
+    expect(res.body).toEqual<GenericResponse>(NULL_THREAD_NOT_FOUND);
+  });
+
   // TODO: don't know how to generate invalid token
   test.todo("TODO: should fail when user has invalid authentication"//, async () => {
     //const res = await request(server.app).post(
@@ -69,9 +79,7 @@ describe("Tests threads REST API - delete thread", () => {
 
   test("should fail when thread does not exist", async () => {
     setLoggedInUser(BOBATAN_USER_ID);
-    const res = await request(server.app).delete(
-      `/${NULL_ID}`
-    );
+    const res = await request(server.app).post(`/${NULL_ID}/hide`);
 
     expect(res.status).toBe(404);
     expect(res.body).toEqual<GenericResponse>(NULL_THREAD_NOT_FOUND);

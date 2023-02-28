@@ -4,6 +4,7 @@ export const CHARACTER_TO_MAIM_POST_ID = "11b85dac-e122-40e0-b09a-8829c5e0250e";
 export const DELETED_POST_ID = "4cd6d41d-1350-4898-9882-254356e5bf86"
 export const KERMIT_POST_ID = "b95bb260-eae0-456c-a5d0-8ae9e52608d8";
 export const KERMIT_FRIEND_COMMENT_ID = "89fc3682-cb74-43f9-9a63-bd97d0f59bb9";
+export const DELETED_POST_ID = "4cd6d41d-1350-4898-9882-254356e5bf86"
 
 export const CHARACTER_TO_MAIM_POST: Post = {
   id: CHARACTER_TO_MAIM_POST_ID,
