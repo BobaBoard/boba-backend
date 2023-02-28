@@ -181,6 +181,12 @@ describe("Test commenting on post REST API", () => {
     identity_id: null,
   };
 
+  const emptyTestCommentBody = { ...testCommentBody, contents: [] };
+  const nonArrayContentsTestCommentBody = {
+    ...testCommentBody,
+    contents: "hey what are you going to do with this string I wonder",
+  };
+
   test("doesn't allow commenting on a post when logged out", async () => {
     await wrapWithTransaction(async () => {
       const res = await request(server.app)
@@ -218,7 +224,7 @@ describe("Test commenting on post REST API", () => {
         .post(`/${CHARACTER_TO_MAIM_POST_ID}/comments`)
         .send(testCommentBody);
 
-        // TODO: see if this actually looks right
+      // TODO: see if this actually looks right
       const expectedResponse = {
         comments: [
           {
@@ -250,9 +256,25 @@ describe("Test commenting on post REST API", () => {
     });
   });
 
-  // for this test, send a request body with empty comment contents
-  test.todo("if the request's comment contents is empty, throws a BadRequest400Error");
+  test("if the request's comment contents is not an array, throws a BadRequest400Error", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(BOBATAN_USER_ID);
+      const commentId = testCommentBody.contents[0].id;
+      jest.spyOn(uuid, "v4").mockReturnValueOnce(commentId);
+      const mockedEmit = jest.spyOn(EventEmitter.prototype, "emit");
+      const res = await request(server.app)
+        .post(`/${CHARACTER_TO_MAIM_POST_ID}/comments`)
+        .send(nonArrayContentsTestCommentBody);
+
+      expect(res.status).toBe(400);
+      expect(res.body).toEqual({
+        message: "Received non-array type as contents of comments.",
+      });
+    });
+  });
 
   // for this test, mock the db response
-  test.todo("if nothing comes back from the attempt to post a new comment, throws a 500");
+  test.todo(
+    "if nothing comes back from the attempt to post a new comment, throws a 500"
+  );
 });
