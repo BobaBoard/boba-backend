@@ -181,7 +181,9 @@ describe("Test commenting on post REST API", () => {
     identity_id: null,
   };
 
+  // TODO: find out if we should allow an empty array of contents through - this wasn't what I actually needed to test for the BadRequest400Error test, but I was surprised that it didn't throw an error
   const emptyTestCommentBody = { ...testCommentBody, contents: [] };
+  
   const nonArrayContentsTestCommentBody = {
     ...testCommentBody,
     contents: "hey what are you going to do with this string I wonder",
@@ -256,12 +258,9 @@ describe("Test commenting on post REST API", () => {
     });
   });
 
-  test("if the request's comment contents is not an array, throws a BadRequest400Error", async () => {
+  test("if the request's comment contents is not an array, throws a bad request error", async () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(BOBATAN_USER_ID);
-      const commentId = testCommentBody.contents[0].id;
-      jest.spyOn(uuid, "v4").mockReturnValueOnce(commentId);
-      const mockedEmit = jest.spyOn(EventEmitter.prototype, "emit");
       const res = await request(server.app)
         .post(`/${CHARACTER_TO_MAIM_POST_ID}/comments`)
         .send(nonArrayContentsTestCommentBody);
