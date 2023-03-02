@@ -74,7 +74,7 @@ describe("Test creating new post REST API", () => {
     });
   });
 
-  test("allows replying to post when logged in", async () => {
+  test("allows replying to post with a new contribution when logged in", async () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(BOBATAN_USER_ID);
       const newContributionId = "ca62bbb7-1916-4aa6-8796-dc44588afc40";
@@ -145,30 +145,22 @@ describe("Test creating new post REST API", () => {
 describe("Test commenting on post REST API", () => {
   const server = startTestServer(router);
 
-  const testCommentBody: {
-    contents: Comment[];
-    reply_to_comment_id: string | null;
-    accessory_id: string | null;
-    identity_id: string | null;
-  } = {
+  const testCommentBody = {
     contents: [
       {
-        id: "497f6eca-6276-4993-bfeb-53cbbbba6f08",
         parent_post_id: CHARACTER_TO_MAIM_POST_ID,
         parent_comment_id: null,
         chain_parent_id: null,
         content: "HEY I HAVE SOMETHING TO SAY",
         secret_identity: {
-          name: "Seeeeeekrit Identity",
-          avatar:
-            "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2F5c2c3867-2323-4209-8bd4-9dfcc88808f3%2Fd931f284-5c22-422d-9343-e509cfb44ffc.png?alt=media&token=94e52fff-4e6b-4110-94c3-90b8800f541c",
+          name: "Outdated Meme",
+          avatar: "outdated-meme.png",
           color: null,
           accessory: null,
         },
         user_identity: {
-          name: "realUser",
-          avatar:
-            "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2F5c2c3867-2323-4209-8bd4-9dfcc88808f3%2Fd931f284-5c22-422d-9343-e509cfb44ffc.png?alt=media&token=94e52fff-4e6b-4110-94c3-90b8800f541c",
+          name: "jersey_devil_69",
+          avatar: "hannibal.png",
         },
         created_at: "2019-08-24T14:15:22Z",
         own: true,
@@ -219,24 +211,24 @@ describe("Test commenting on post REST API", () => {
   test("allows commenting on a post when logged in", async () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(BOBATAN_USER_ID);
-      const commentId = testCommentBody.contents[0].id;
+      const commentId = "e1a0230c-da57-4703-8bab-54c12494e8b1";
       jest.spyOn(uuid, "v4").mockReturnValueOnce(commentId);
+      // TODO: figure out if this should follow the same pattern as testing the thread updates in the the contribution reply test
       const mockedEmit = jest.spyOn(EventEmitter.prototype, "emit");
       const res = await request(server.app)
         .post(`/${CHARACTER_TO_MAIM_POST_ID}/comments`)
         .send(testCommentBody);
 
-      // TODO: see if this actually looks right
       const expectedResponse = {
         comments: [
           {
-            id: "497f6eca-6276-4993-bfeb-53cbbbba6f08",
+            id: commentId,
             parent_comment_id: null,
             chain_parent_id: null,
             parent_post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
             created_at: expect.any(String),
-            content:
-              '{"id":"497f6eca-6276-4993-bfeb-53cbbbba6f08","parent_post_id":"11b85dac-e122-40e0-b09a-8829c5e0250e","parent_comment_id":null,"chain_parent_id":null,"content":"HEY I HAVE SOMETHING TO SAY","secret_identity":{"name":"Seeeeeekrit Identity","avatar":"https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2F5c2c3867-2323-4209-8bd4-9dfcc88808f3%2Fd931f284-5c22-422d-9343-e509cfb44ffc.png?alt=media&token=94e52fff-4e6b-4110-94c3-90b8800f541c","color":null,"accessory":null},"user_identity":{"name":"realUser","avatar":"https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2F5c2c3867-2323-4209-8bd4-9dfcc88808f3%2Fd931f284-5c22-422d-9343-e509cfb44ffc.png?alt=media&token=94e52fff-4e6b-4110-94c3-90b8800f541c"},"created_at":"2019-08-24T14:15:22Z","own":true,"new":true,"friend":true}',
+            // TODO: There is a lot of complicated stuff going on here that seems not quite to be what I would expect to see - why do comments have an array of contents, can you make more than one at once? This seems to flatten it out when it gets to this stage, should try a comment with multiple content items to see what happens. Also the comment ID doesn't appear to get added in the query process? Maybe? Now that I've take it off the sample comment the test fails if I try to expect it. I'm also leery about why Old Time-y Anon and Bobatan are included below - I don't think they have anything to do with the parent post? A lot to unpack.
+            content: JSON.stringify({ ...testCommentBody.contents[0] }),
             secret_identity: {
               name: "Old Time-y Anon",
               avatar:
@@ -257,6 +249,8 @@ describe("Test commenting on post REST API", () => {
       expect(res.body).toEqual(expectedResponse);
     });
   });
+
+  test.todo("allows a commenting as a reply to another comment");
 
   test("if the request's comment contents is not an array, throws a bad request error", async () => {
     await wrapWithTransaction(async () => {
