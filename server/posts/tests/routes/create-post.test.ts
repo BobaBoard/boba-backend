@@ -145,35 +145,14 @@ describe("Test creating new post REST API", () => {
 describe("Test commenting on post REST API", () => {
   const server = startTestServer(router);
 
+  // TODO: check the documentation for this endpoint, pretty sure I went down waaaay the wrong route because the real res body is much simpler than what I had put together
   const testCommentBody = {
-    contents: [
-      {
-        parent_post_id: CHARACTER_TO_MAIM_POST_ID,
-        parent_comment_id: null,
-        chain_parent_id: null,
-        content: "HEY I HAVE SOMETHING TO SAY",
-        secret_identity: {
-          name: "Outdated Meme",
-          avatar: "outdated-meme.png",
-          color: null,
-          accessory: null,
-        },
-        user_identity: {
-          name: "jersey_devil_69",
-          avatar: "hannibal.png",
-        },
-        created_at: "2019-08-24T14:15:22Z",
-        own: true,
-        new: true,
-        friend: true,
-      },
-    ],
+    contents: ['[{"insert":"HEY I HAVE SOMETHING TO SAY"}]'],
+    forceAnonymous: false,
     reply_to_comment_id: null,
-    accessory_id: null,
-    identity_id: null,
   };
 
-  // TODO: find out if we should allow an empty array of contents through - this wasn't what I actually needed to test for the BadRequest400Error test, but I was surprised that it didn't throw an error
+  // TODO: find out if we should allow an empty array of contents through - this wasn't what I actually needed to test for the BadRequest400Error test, but I was surprised that it didn't throw an error - is there any problem posed by empty contents?
   const emptyTestCommentBody = { ...testCommentBody, contents: [] };
 
   const nonArrayContentsTestCommentBody = {
@@ -213,7 +192,7 @@ describe("Test commenting on post REST API", () => {
       setLoggedInUser(BOBATAN_USER_ID);
       const commentId = "e1a0230c-da57-4703-8bab-54c12494e8b1";
       jest.spyOn(uuid, "v4").mockReturnValueOnce(commentId);
-      // TODO: figure out if this should follow the same pattern as testing the thread updates in the the contribution reply test
+      // TODO: figure out if this should follow the same pattern as testing the thread updates in the the contribution reply test, then figure out how to do it (first attempt had the contribution from before coming through, which doesn't seem like what we'd expect)
       const mockedEmit = jest.spyOn(EventEmitter.prototype, "emit");
       const res = await request(server.app)
         .post(`/${CHARACTER_TO_MAIM_POST_ID}/comments`)
@@ -225,10 +204,9 @@ describe("Test commenting on post REST API", () => {
             id: commentId,
             parent_comment_id: null,
             chain_parent_id: null,
-            parent_post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
+            parent_post_id: CHARACTER_TO_MAIM_POST_ID,
             created_at: expect.any(String),
-            // TODO: There is a lot of complicated stuff going on here that seems not quite to be what I would expect to see - why do comments have an array of contents, can you make more than one at once? This seems to flatten it out when it gets to this stage, should try a comment with multiple content items to see what happens. Also the comment ID doesn't appear to get added in the query process? Maybe? Now that I've take it off the sample comment the test fails if I try to expect it. I'm also leery about why Old Time-y Anon and Bobatan are included below - I don't think they have anything to do with the parent post? A lot to unpack.
-            content: JSON.stringify({ ...testCommentBody.contents[0] }),
+            content: '[{"insert":"HEY I HAVE SOMETHING TO SAY"}]',
             secret_identity: {
               name: "Old Time-y Anon",
               avatar:
@@ -251,6 +229,7 @@ describe("Test commenting on post REST API", () => {
   });
 
   test.todo("allows a commenting as a reply to another comment");
+  test.todo("allows posting multiple comments at once");
 
   test("if the request's comment contents is not an array, throws a bad request error", async () => {
     await wrapWithTransaction(async () => {
