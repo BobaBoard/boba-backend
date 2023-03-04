@@ -506,7 +506,7 @@ export const postNewCommentChain = async ({
   accessoryId?: string;
 }): Promise<DbCommentType[] | false> => {
   return pool
-    .tx("create-comment-chaim", async (transaction) => {
+    .tx("create-comment-chain", async (transaction) => {
       let prevId: number | null = null;
       let prevExternalId: string | null = null;
       const comments = [];
