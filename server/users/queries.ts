@@ -2,7 +2,6 @@ import { SettingEntry, SettingValueTypes } from "../../types/settings";
 import { decodeCursor, encodeCursor } from "utils/queries-utils";
 import firebaseAuth, { auth } from "firebase-admin";
 
-import { DbActivityThreadType } from "Types";
 import debug from "debug";
 import { parseSettings } from "utils/settings";
 import pool from "server/db-pool";

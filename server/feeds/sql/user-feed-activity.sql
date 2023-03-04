@@ -1,5 +1,3 @@
--- The return type of this query is DbActivityThreadType.
--- If updating, please also update DbActivityThreadType in Types.
 -- TODO: enforce this through tests
 SELECT
     -- Thread details (DbThreadType)
