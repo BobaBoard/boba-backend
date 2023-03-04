@@ -20,7 +20,6 @@ SELECT
     ) as friend,
     TO_CHAR(posts.created, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as created_at,
     posts.content,
-    posts.options,
     posts.type,
     array(
         SELECT tag FROM post_tags 
@@ -83,7 +82,6 @@ GROUP BY
     thread_identities.accessory_avatar,
     posts.created,
     posts.content,
-    posts.options,
     posts.type,
     tnd.thread_cutoff_time
 ;

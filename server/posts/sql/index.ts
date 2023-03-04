@@ -60,7 +60,7 @@ const addAccessoryToIdentity = `
     ) RETURNING *`;
 
 const makePost = `
-    INSERT INTO posts(string_id, parent_post, parent_thread, author, content, type, whisper_tags, anonymity_type, options)
+    INSERT INTO posts(string_id, parent_post, parent_thread, author, content, type, whisper_tags, anonymity_type)
     VALUES(
         $/post_string_id/,
         $/parent_post/,
@@ -69,8 +69,7 @@ const makePost = `
         $/content/,
         'text',
         $/whisper_tags/,
-        $/anonymity_type/,
-        $/options/
+        $/anonymity_type/
     ) RETURNING *, TO_CHAR(posts.created, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as created_at
     `;
 
