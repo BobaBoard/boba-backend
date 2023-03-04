@@ -9,7 +9,7 @@ import { setLoggedInUser, startTestServer } from "utils/test-utils";
 
 import { BoardMetadata } from "types/rest/boards";
 import debug from "debug";
-import { mocked } from "ts-jest/utils";
+import { mocked } from "jest-mock";
 import request from "supertest";
 import router from "../../routes";
 import stringify from "fast-json-stable-stringify";

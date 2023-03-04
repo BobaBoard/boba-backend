@@ -22,7 +22,7 @@ import { ENSURE_LOGGED_IN_NO_TOKEN } from "test/data/responses";
 import { EventEmitter } from "events";
 import { GenericResponse } from "types/rest/responses";
 import { Thread } from "types/rest/threads";
-import { mocked } from "ts-jest/utils";
+import { mocked } from "jest-mock";
 import request from "supertest";
 import router from "../../routes";
 
@@ -62,7 +62,9 @@ describe("Tests threads REST API - create", () => {
   });
 
   // TODO: don't know how to generate invalid token
-  test("TODO: should fail when user has invalid authentication", async () => {
+  test.todo(
+    "should fail when user has invalid authentication"
+    // , async () => {
     //await wrapWithTransaction(async () => {
     //const res = await request(server.app)
     //  .post(`/${GORE_BOARD_ID}`)
@@ -70,10 +72,13 @@ describe("Tests threads REST API - create", () => {
     //expect(res.status).toBe(401);
     //expect(res.body).toEqual<GenericResponse>(ENSURE_LOGGED_IN_INVALID_TOKEN);
     //});
-  });
+    // }
+  );
 
   // Currently no specific permission for creating a thread exists
-  test("TODO: should fail when user does not have permissions", async () => {
+  test.todo(
+    "should fail when user does not have permissions"
+    // , async () => {
     //await wrapWithTransaction(async () => {
     //  setLoggedInUser(BOBATAN_USER_ID);
     //  const res = await request(server.app)
@@ -81,7 +86,8 @@ describe("Tests threads REST API - create", () => {
     //    .send(CREATE_GORE_THREAD_BASE_REQUEST);
     //  expect(res.status).toBe(403);
     //});
-  });
+    // }
+  );
 
   test("should fail when board does not exist", async () => {
     await wrapWithTransaction(async () => {
@@ -96,14 +102,17 @@ describe("Tests threads REST API - create", () => {
   });
 
   // No request body validation for  yet
-  test("TODO: should fail if request body is invalid", async () => {
+  test.todo(
+    "should fail if request body is invalid"
+    // , async () => {
     //await wrapWithTransaction(async () => {
     //  setLoggedInUser(BOBATAN_USER_ID);
     //  const res = await request(server.app)
     //    .post(`/${NULL_ID}`)
     //    .send(CREATE_GORE_THREAD_BASE_REQUEST);
     //  expect(res.status).toBe(422);
-  });
+    // }
+  );
 
   test("should create thread with accessory", async () => {
     await wrapWithTransaction(async () => {

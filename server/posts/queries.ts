@@ -289,7 +289,6 @@ export const postNewContribution = async (
     parentPostId,
     threadExternalId,
     content,
-    isLarge,
     anonymityType,
     whisperTags,
     indexTags,
@@ -300,7 +299,6 @@ export const postNewContribution = async (
     identityId?: string;
     accessoryId?: string;
     content: string;
-    isLarge: boolean;
     anonymityType: string;
     whisperTags: string[];
     indexTags: string[];
@@ -346,9 +344,6 @@ export const postNewContribution = async (
       content,
       anonymity_type: anonymityType,
       whisper_tags: whisperTags,
-      options: {
-        wide: isLarge,
-      },
     });
     log(`Added new contribution to thread ${thread_id}.`);
     log(result);
@@ -383,7 +378,6 @@ export const postNewContribution = async (
         accessory_avatar,
         created_at: result.created_at,
         content: result.content,
-        options: result.options,
         type: result.type,
         whisper_tags: result.whisper_tags,
         index_tags: indexedTags,

@@ -7,7 +7,7 @@ import { Server } from "http";
 import bodyParser from "body-parser";
 import debug from "debug";
 import { handleApiErrors } from "handlers/errors";
-import { mocked } from "ts-jest/utils";
+import { mocked } from "jest-mock";
 import pool from "server/db-pool";
 
 require("express-async-errors");
@@ -158,7 +158,6 @@ export const extractsMetadata = (thread: any) => {
     default_view: thread.default_view,
     muted: thread.muted,
     starred: thread.starred,
-    options: thread.options,
     parent_post_id: thread.parent_post_id,
     post_id: thread.post_id,
     index_tags: thread.index_tags,
