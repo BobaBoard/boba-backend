@@ -35,8 +35,6 @@ SELECT
     TO_CHAR(first_post_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as created,
     -- Generic details
     content,
-    -- TODO[realms]: deprecated
-    thread_details.options,
     -- post tags
     index_tags,
     category_tags,

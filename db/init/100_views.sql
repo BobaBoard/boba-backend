@@ -70,7 +70,6 @@ SELECT
     first_post.string_id AS first_post_string_id,
     first_post.content AS content,
     first_post.author AS author,
-    first_post.options AS options,
     COALESCE(threads.OPTIONS ->> 'default_view', 'thread')::view_types AS default_view,
     COALESCE(first_post.whisper_tags, '{}') AS whisper_tags,
     array(
