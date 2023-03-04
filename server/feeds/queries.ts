@@ -1,5 +1,6 @@
 import { decodeCursor, encodeCursor } from "utils/queries-utils";
 
+import { BoardActivityByExternalIdType } from "server/feeds/sql/types";
 import { DbFeedType } from "Types";
 import debug from "debug";
 import pool from "server/db-pool";
@@ -22,7 +23,7 @@ export const getBoardActivityByExternalId = async ({
   categoryFilter?: string | null;
   cursor: string | null;
   pageSize?: number;
-}): Promise<DbFeedType | null | false> => {
+}): Promise<BoardActivityByExternalIdType | null | false> => {
   try {
     const decodedCursor = cursor ? decodeCursor(cursor) : null;
 
