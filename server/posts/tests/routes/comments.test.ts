@@ -8,7 +8,6 @@ import {
 } from "utils/test-utils";
 
 import { CHARACTER_TO_MAIM_POST_ID } from "test/data/posts";
-import { EventEmitter } from "events";
 import request from "supertest";
 import router from "../../routes";
 
@@ -24,7 +23,7 @@ jest.mock("uuid", () => ({
 describe("Test commenting on post REST API", () => {
   const server = startTestServer(router);
 
-  // TODO: check the documentation for this endpoint, pretty sure I went down waaaay the wrong route because the real res body is much simpler than what I had put together
+  // TODO: check the documentation for this endpoint, pretty sure I went down waaaay the wrong route because the real req body is much simpler than what I had put together
   const testCommentBody = {
     contents: ['[{"insert":"HEY I HAVE SOMETHING TO SAY"}]'],
     forceAnonymous: false,
@@ -71,8 +70,6 @@ describe("Test commenting on post REST API", () => {
       setLoggedInUser(BOBATAN_USER_ID);
       const commentId = "e1a0230c-da57-4703-8bab-54c12494e8b1";
       jest.spyOn(uuid, "v4").mockReturnValueOnce(commentId);
-      // TODO: figure out if this should follow the same pattern as testing the thread updates in the the contribution reply test, then figure out how to do it (first attempt had the contribution from before coming through, which doesn't seem like what we'd expect)
-      const mockedEmit = jest.spyOn(EventEmitter.prototype, "emit");
       const res = await request(server.app)
         .post(`/${CHARACTER_TO_MAIM_POST_ID}/comments`)
         .send(testCommentBody);
