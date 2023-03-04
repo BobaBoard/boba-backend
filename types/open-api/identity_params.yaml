@@ -15,3 +15,9 @@ components:
             - type: string
               format: uuid
             - type: "null"
+        forceAnonymous:
+          deprecated: true # confirm this, I just noticed it was deprecated in the 'thread' docs so mirrored that here
+          description: Force anonymity even among friends.
+          oneOf:
+            - type: boolean
+            - type: "null"
