@@ -5,6 +5,7 @@ import { BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID } from "test/data/auth";
 import {
   CHARACTER_TO_MAIM_POST_ID,
   KERMIT_FRIEND_COMMENT_ID,
+  KERMIT_POST_ID,
 } from "test/data/posts";
 import {
   setLoggedInUser,
@@ -48,12 +49,13 @@ describe("Test commenting on post REST API", () => {
   };
 
   const testReplyCommentBody = {
-    ...testCommentBody,
     contents: ['[{"insert":"society for maiming muppets when?"}]'],
+    forceAnonymous: false,
     reply_to_comment_id: KERMIT_FRIEND_COMMENT_ID,
   };
 
-  const emptyArrayTestCommentBody = { ...testCommentBody, contents: [] };
+  // TODO: find out if we should allow an empty array of contents through or if we should bounce it back when it hits the route; we currently let it through, I don't think it does any harm? But it's also not doing any good
+  const emptyTestCommentBody = { ...testCommentBody, contents: [] };
 
   const nonArrayContentsTestCommentBody = {
     ...testCommentBody,
