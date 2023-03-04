@@ -1,10 +1,10 @@
+import * as postQueries from "../../queries";
 import * as uuid from "uuid";
 
 import { BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID } from "test/data/auth";
 import {
   CHARACTER_TO_MAIM_POST_ID,
   KERMIT_FRIEND_COMMENT_ID,
-  KERMIT_POST_ID,
 } from "test/data/posts";
 import {
   setLoggedInUser,
@@ -34,6 +34,11 @@ describe("Test commenting on post REST API", () => {
     reply_to_comment_id: null,
   };
 
+  const testAnonCommentBody = {
+    ...testCommentBody,
+    forceAnonymous: true,
+  };
+
   const testMultiCommentBody = {
     ...testCommentBody,
     contents: [
@@ -49,13 +54,16 @@ describe("Test commenting on post REST API", () => {
     reply_to_comment_id: KERMIT_FRIEND_COMMENT_ID,
   };
 
-  // TODO: find out if we should allow an empty array of contents through or if we should bounce it back when it hits the route; we currently let it through, I don't think it does any harm? But it's also not doing any good
   const emptyArrayTestCommentBody = { ...testCommentBody, contents: [] };
 
   const nonArrayContentsTestCommentBody = {
     ...testCommentBody,
     contents: "hey what are you going to do with this string I wonder",
   };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
   test("doesn't allow commenting on a post when logged out", async () => {
     await wrapWithTransaction(async () => {
@@ -89,9 +97,50 @@ describe("Test commenting on post REST API", () => {
       setLoggedInUser(BOBATAN_USER_ID);
       const commentId = "e1a0230c-da57-4703-8bab-54c12494e8b1";
       jest.spyOn(uuid, "v4").mockReturnValueOnce(commentId);
+
       const res = await request(server.app)
         .post(`/${CHARACTER_TO_MAIM_POST_ID}/comments`)
         .send(testCommentBody);
+
+      const expectedResponse = {
+        comments: [
+          {
+            id: commentId,
+            parent_comment_id: null,
+            chain_parent_id: null,
+            parent_post_id: CHARACTER_TO_MAIM_POST_ID,
+            created_at: expect.any(String),
+            content: '[{"insert":"HEY I HAVE SOMETHING TO SAY"}]',
+            secret_identity: {
+              name: "Old Time-y Anon",
+              avatar:
+                "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2F5c2c3867-2323-4209-8bd4-9dfcc88808f3%2Fd931f284-5c22-422d-9343-e509cfb44ffc.png?alt=media&token=94e52fff-4e6b-4110-94c3-90b8800f541c",
+              color: null,
+              accessory:
+                "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",
+            },
+            user_identity: { name: "bobatan", avatar: "/bobatan.png" },
+            friend: false,
+            own: true,
+            new: true,
+          },
+        ],
+      };
+
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual(expectedResponse);
+    });
+  });
+
+  test("also allows commenting with forceAnonymous set to true", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(BOBATAN_USER_ID);
+      const commentId = "e1a0230c-da57-4703-8bab-54c12494e8b1";
+      jest.spyOn(uuid, "v4").mockReturnValueOnce(commentId);
+
+      const res = await request(server.app)
+        .post(`/${CHARACTER_TO_MAIM_POST_ID}/comments`)
+        .send(testAnonCommentBody);
 
       const expectedResponse = {
         comments: [
@@ -264,21 +313,40 @@ describe("Test commenting on post REST API", () => {
   test("does not write to the db when the comment's content array is empty", async () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(BOBATAN_USER_ID);
+
+      // spy on whatever query is making the actual DB write; NOTE: tightly coupled to the queries.ts file; this check may no longer be useful if there are changes there
+      const commentTransactionSpy = jest.spyOn(
+        postQueries,
+        "postNewCommentWithTransaction"
+      );
+
       const res = await request(server.app)
         .post(`/${CHARACTER_TO_MAIM_POST_ID}/comments`)
         .send(emptyArrayTestCommentBody);
 
-      // TODO: add a spy to the db function that writes and make sure it didn't get called
-      
       expect(res.status).toBe(200);
       expect(res.body).toEqual({
         comments: [],
       });
+      expect(commentTransactionSpy).not.toHaveBeenCalled();
     });
   });
 
-  // for this test, mock the db response
-  test.todo(
-    "if nothing comes back from the attempt to post a new comment, throws a 500"
-  );
+  test("if the attempt to post a comment comes back falsy, throws a 500", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(BOBATAN_USER_ID);
+
+      // spy on the function that gives us the db response; NOTE: tightly coupled to the queries.ts file; this check may no longer be useful if there are changes there
+      jest
+        .spyOn(postQueries, "postNewCommentChain")
+        .mockResolvedValueOnce(false);
+
+      const res = await request(server.app)
+        .post(`/${CHARACTER_TO_MAIM_POST_ID}/comments`)
+        .send(testCommentBody);
+
+      expect(res.status).toBe(500);
+      expect(res.body).toEqual({});
+    });
+  });
 });
