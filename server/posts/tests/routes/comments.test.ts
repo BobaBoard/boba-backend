@@ -50,7 +50,7 @@ describe("Test commenting on post REST API", () => {
   };
 
   // TODO: find out if we should allow an empty array of contents through or if we should bounce it back when it hits the route; we currently let it through, I don't think it does any harm? But it's also not doing any good
-  const emptyTestCommentBody = { ...testCommentBody, contents: [] };
+  const emptyArrayTestCommentBody = { ...testCommentBody, contents: [] };
 
   const nonArrayContentsTestCommentBody = {
     ...testCommentBody,
@@ -257,6 +257,22 @@ describe("Test commenting on post REST API", () => {
       expect(res.status).toBe(400);
       expect(res.body).toEqual({
         message: "Received non-array type as contents of comments.",
+      });
+    });
+  });
+
+  test("does not write to the db when the comment's content array is empty", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(BOBATAN_USER_ID);
+      const res = await request(server.app)
+        .post(`/${CHARACTER_TO_MAIM_POST_ID}/comments`)
+        .send(emptyArrayTestCommentBody);
+
+      // TODO: add a spy to the db function that writes and make sure it didn't get called
+      
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({
+        comments: [],
       });
     });
   });
