@@ -1,9 +1,8 @@
 import { BadRequest400Error, Forbidden403Error } from "types/errors/api";
 import { DbCommentType, DbPostType, QueryTagsType } from "Types";
-import { POST_OWNER_PERMISSIONS, PostPermissions } from "types/permissions";
-import { canPostAs, extractPostPermissions } from "utils/permissions-utils";
 
 import { ITask } from "pg-promise";
+import { canPostAs } from "utils/permissions-utils";
 import debug from "debug";
 import invariant from "tiny-invariant";
 import pool from "server/db-pool";
