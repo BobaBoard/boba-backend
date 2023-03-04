@@ -89,7 +89,7 @@ export const REVOLVER_OCELOT_POST: Post = {
 export const KERMIT_POST: Post = {
   content: '[{"insert":"Kermit the Frog"}]',
   created_at: "2020-05-02T06:04:00.00Z",
-  id: KERMIT_POST_ID,
+  id: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
   new: false,
   own: false,
   friend: false,
