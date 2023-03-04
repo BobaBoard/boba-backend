@@ -93,8 +93,6 @@ router.post(
       content,
       // TODO: remove
       forceAnonymous,
-      // TODO: remove
-      large,
       whisper_tags,
       index_tags,
       category_tags,
@@ -111,7 +109,6 @@ router.post(
       accessoryId: accessory_id,
       parentPostId: post_id,
       content,
-      isLarge: !!large,
       anonymityType: forceAnonymous ? "everyone" : "strangers",
       whisperTags: whisper_tags,
       indexTags: index_tags,

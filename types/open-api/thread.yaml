@@ -102,12 +102,6 @@ components:
           type: string
           enum: [thread, gallery, timeline]
           description: The default view that the thread will display as.
-        large:
-          deprecated: true
-          description: Whether the thread will contain large posts.
-          oneOf:
-            - type: boolean
-            - type: "null"
         identityId:
           type: string
           format: uuid

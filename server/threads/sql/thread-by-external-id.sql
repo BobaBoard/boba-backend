@@ -74,7 +74,6 @@ WITH
             ) as friend,
             TO_CHAR(posts.created, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as created_at,
             posts.content,
-            posts.options,
             posts.type,
             array(
                SELECT tag FROM post_tags
