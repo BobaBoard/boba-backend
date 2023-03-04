@@ -1,7 +1,6 @@
 import { Comment, Post } from "types/rest/threads";
 
 export const CHARACTER_TO_MAIM_POST_ID = "11b85dac-e122-40e0-b09a-8829c5e0250e";
-export const KERMIT_POST_ID = "b95bb260-eae0-456c-a5d0-8ae9e52608d8";
 export const KERMIT_FRIEND_COMMENT_ID = "89fc3682-cb74-43f9-9a63-bd97d0f59bb9";
 
 export const CHARACTER_TO_MAIM_POST: Post = {
@@ -61,7 +60,7 @@ export const REVOLVER_OCELOT_POST: Post = {
 export const KERMIT_POST: Post = {
   content: '[{"insert":"Kermit the Frog"}]',
   created_at: "2020-05-02T06:04:00.00Z",
-  id: KERMIT_POST_ID,
+  id: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
   new: false,
   own: false,
   friend: false,

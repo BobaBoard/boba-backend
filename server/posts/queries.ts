@@ -399,7 +399,7 @@ export const postNewContribution = async (
     : pool.tx("create-contribution", createContribution);
 };
 
-const postNewCommentWithTransaction = async ({
+export const postNewCommentWithTransaction = async ({
   firebaseId,
   parentPostId,
   parentCommentId,
