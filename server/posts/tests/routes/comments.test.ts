@@ -2,12 +2,16 @@ import * as uuid from "uuid";
 
 import { BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID } from "test/data/auth";
 import {
+  CHARACTER_TO_MAIM_POST_ID,
+  KERMIT_FRIEND_COMMENT_ID,
+  KERMIT_POST_ID,
+} from "test/data/posts";
+import {
   setLoggedInUser,
   startTestServer,
   wrapWithTransaction,
 } from "utils/test-utils";
 
-import { CHARACTER_TO_MAIM_POST_ID } from "test/data/posts";
 import request from "supertest";
 import router from "../../routes";
 
@@ -37,6 +41,12 @@ describe("Test commenting on post REST API", () => {
       '[{"insert":"and they will appear in a chain"}]',
       '[{"insert":"because I am adding them all at once"}]',
     ],
+  };
+
+  const testReplyCommentBody = {
+    contents: ['[{"insert":"society for maiming muppets when?"}]'],
+    forceAnonymous: false,
+    reply_to_comment_id: KERMIT_FRIEND_COMMENT_ID,
   };
 
   // TODO: find out if we should allow an empty array of contents through or if we should bounce it back when it hits the route; we currently let it through, I don't think it does any harm? But it's also not doing any good
@@ -198,7 +208,44 @@ describe("Test commenting on post REST API", () => {
     });
   });
 
-  test.todo("allows a commenting as a reply to another comment");
+  test("allows a commenting as a reply to another comment", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(BOBATAN_USER_ID);
+      const commentId = "f2v1349d-da57-4703-8bab-54c12494e8b1";
+      jest.spyOn(uuid, "v4").mockReturnValueOnce(commentId);
+      const res = await request(server.app)
+        .post(`/${CHARACTER_TO_MAIM_POST_ID}/comments`)
+        .send(testReplyCommentBody);
+
+      const expectedResponse = {
+        comments: [
+          {
+            id: commentId,
+            parent_comment_id: KERMIT_FRIEND_COMMENT_ID,
+            chain_parent_id: null,
+            parent_post_id: CHARACTER_TO_MAIM_POST_ID,
+            created_at: expect.any(String),
+            content: '[{"insert":"society for maiming muppets when?"}]',
+            secret_identity: {
+              name: "Old Time-y Anon",
+              avatar:
+                "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2F5c2c3867-2323-4209-8bd4-9dfcc88808f3%2Fd931f284-5c22-422d-9343-e509cfb44ffc.png?alt=media&token=94e52fff-4e6b-4110-94c3-90b8800f541c",
+              color: null,
+              accessory:
+                "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",
+            },
+            user_identity: { name: "bobatan", avatar: "/bobatan.png" },
+            friend: false,
+            own: true,
+            new: true,
+          },
+        ],
+      };
+
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual(expectedResponse);
+    });
+  });
 
   test("if the request's comment contents is not an array, throws a bad request error", async () => {
     await wrapWithTransaction(async () => {
