@@ -27,7 +27,6 @@ jest.mock("uuid", () => ({
 describe("Test commenting on post REST API", () => {
   const server = startTestServer(router);
 
-  // TODO: update the documentation for this endpoint to reflect exactly what is required - currently it describes needing the full shape of a Comment, but what will happen is the query will put all that together from context and respond with what it made
   const testCommentBody = {
     contents: ['[{"insert":"HEY I HAVE SOMETHING TO SAY"}]'],
     forceAnonymous: false,
@@ -49,8 +48,8 @@ describe("Test commenting on post REST API", () => {
   };
 
   const testReplyCommentBody = {
+    ...testCommentBody,
     contents: ['[{"insert":"society for maiming muppets when?"}]'],
-    forceAnonymous: false,
     reply_to_comment_id: KERMIT_FRIEND_COMMENT_ID,
   };
 

@@ -1,0 +1,12 @@
+components:
+  schemas:
+    CommentRequestBody:
+      type: object
+      properties:
+        contents:
+          type: array
+          items:
+            type: string
+            format: quill-delta
+      required:
+        - contents
