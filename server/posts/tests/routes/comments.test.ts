@@ -23,14 +23,23 @@ jest.mock("uuid", () => ({
 describe("Test commenting on post REST API", () => {
   const server = startTestServer(router);
 
-  // TODO: check the documentation for this endpoint, pretty sure I went down waaaay the wrong route because the real req body is much simpler than what I had put together
+  // TODO: update the documentation for this endpoint to reflect exactly what is required - currently it describes needing the full shape of a Comment, but what will happen is the query will put all that together from context and respond with what it made
   const testCommentBody = {
     contents: ['[{"insert":"HEY I HAVE SOMETHING TO SAY"}]'],
     forceAnonymous: false,
     reply_to_comment_id: null,
   };
 
-  // TODO: find out if we should allow an empty array of contents through - this wasn't what I actually needed to test for the BadRequest400Error test, but I was surprised that it didn't throw an error - is there any problem posed by empty contents?
+  const testMultiCommentBody = {
+    ...testCommentBody,
+    contents: [
+      '[{"insert":"I have a few things to say"}]',
+      '[{"insert":"and they will appear in a chain"}]',
+      '[{"insert":"because I am adding them all at once"}]',
+    ],
+  };
+
+  // TODO: find out if we should allow an empty array of contents through or if we should bounce it back when it hits the route; we currently let it through, I don't think it does any harm? But it's also not doing any good
   const emptyTestCommentBody = { ...testCommentBody, contents: [] };
 
   const nonArrayContentsTestCommentBody = {
@@ -104,8 +113,92 @@ describe("Test commenting on post REST API", () => {
     });
   });
 
+  test("allows posting multiple comments at once", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(BOBATAN_USER_ID);
+
+      const comment1Id = "a408cb1f-0d3c-43a8-97aa-784fabc281b9";
+      const comment2Id = "0af5d8ca-170d-4d29-b711-8fe7712289fc";
+      const comment3Id = "312b17ac-f430-4335-a6b0-b74081973eff";
+      jest.spyOn(uuid, "v4").mockReturnValueOnce(comment1Id);
+      jest.spyOn(uuid, "v4").mockReturnValueOnce(comment2Id);
+      jest.spyOn(uuid, "v4").mockReturnValueOnce(comment3Id);
+
+      const res = await request(server.app)
+        .post(`/${CHARACTER_TO_MAIM_POST_ID}/comments`)
+        .send(testMultiCommentBody);
+
+      const expectedResponse = {
+        comments: [
+          {
+            id: comment1Id,
+            parent_comment_id: null,
+            chain_parent_id: null,
+            parent_post_id: CHARACTER_TO_MAIM_POST_ID,
+            created_at: expect.any(String),
+            content: '[{"insert":"I have a few things to say"}]',
+            secret_identity: {
+              name: "Old Time-y Anon",
+              avatar:
+                "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2F5c2c3867-2323-4209-8bd4-9dfcc88808f3%2Fd931f284-5c22-422d-9343-e509cfb44ffc.png?alt=media&token=94e52fff-4e6b-4110-94c3-90b8800f541c",
+              color: null,
+              accessory:
+                "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",
+            },
+            user_identity: { name: "bobatan", avatar: "/bobatan.png" },
+            friend: false,
+            own: true,
+            new: true,
+          },
+          {
+            id: comment2Id,
+            parent_comment_id: null,
+            chain_parent_id: comment1Id,
+            parent_post_id: CHARACTER_TO_MAIM_POST_ID,
+            created_at: expect.any(String),
+            content: '[{"insert":"and they will appear in a chain"}]',
+            secret_identity: {
+              name: "Old Time-y Anon",
+              avatar:
+                "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2F5c2c3867-2323-4209-8bd4-9dfcc88808f3%2Fd931f284-5c22-422d-9343-e509cfb44ffc.png?alt=media&token=94e52fff-4e6b-4110-94c3-90b8800f541c",
+              color: null,
+              accessory:
+                "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",
+            },
+            user_identity: { name: "bobatan", avatar: "/bobatan.png" },
+            friend: false,
+            own: true,
+            new: true,
+          },
+          {
+            id: comment3Id,
+            parent_comment_id: null,
+            chain_parent_id: comment2Id,
+            parent_post_id: CHARACTER_TO_MAIM_POST_ID,
+            created_at: expect.any(String),
+            content: '[{"insert":"because I am adding them all at once"}]',
+            secret_identity: {
+              name: "Old Time-y Anon",
+              avatar:
+                "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2F5c2c3867-2323-4209-8bd4-9dfcc88808f3%2Fd931f284-5c22-422d-9343-e509cfb44ffc.png?alt=media&token=94e52fff-4e6b-4110-94c3-90b8800f541c",
+              color: null,
+              accessory:
+                "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",
+            },
+            user_identity: { name: "bobatan", avatar: "/bobatan.png" },
+            friend: false,
+            own: true,
+            new: true,
+          },
+        ],
+      };
+
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual(expectedResponse);
+    });
+  });
+
   test.todo("allows a commenting as a reply to another comment");
-  test.todo("allows posting multiple comments at once");
 
   test("if the request's comment contents is not an array, throws a bad request error", async () => {
     await wrapWithTransaction(async () => {
