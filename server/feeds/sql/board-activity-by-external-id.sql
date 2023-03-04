@@ -1,5 +1,3 @@
--- The return type of this query is DbActivityThreadType.
--- If updating, please also update DbActivityThreadType in Types.
 SELECT
     -- Thread details (DbThreadType)
     thread_external_id as thread_id,
