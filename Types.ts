@@ -43,9 +43,6 @@ export interface DbPostType {
   friend: boolean;
   created_at: string;
   content: string;
-  options: {
-    wide?: boolean;
-  };
   type: string;
   index_tags: string[];
   category_tags: string[];
@@ -121,9 +118,6 @@ export interface DbActivityThreadType {
   muted: boolean;
   hidden: boolean;
   starred: boolean;
-  options: {
-    wide?: boolean;
-  };
   posts_amount: number;
   threads_amount: number;
   friend: boolean;
