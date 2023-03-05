@@ -12,7 +12,7 @@ import router from "../../routes";
 jest.mock("server/cache");
 jest.mock("handlers/auth");
 
-describe("Tests users REST API", () => {
+describe("Tests detailed routes of users REST API", () => {
   const server = startTestServer(router);
 
   test("should return pinned boards for current realm", async () => {
@@ -96,7 +96,8 @@ describe("Tests users REST API", () => {
     });
   });
 
-  // TODO: check if any test user has outdated notifications or none, and test there
+  test.todo(
+    "check if any test user has outdated notifications or none, and test there"
+  );
+  test.todo("test dismiss notifications");
 });
-
-// TODO: test dismiss notifications
