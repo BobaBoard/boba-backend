@@ -52,9 +52,25 @@ describe("Tests basic routes of users REST API", () => {
       );
     });
 
-    test.todo("Correctly updates the cache after user pins board");
+    test("updates the cache after user updates their data", async () => {
+      await wrapWithTransaction(async () => {
+        setLoggedInUser(JERSEY_DEVIL_USER_ID);
+        const testPatch = {
+          username: "*~JerseyGirl~*",
+          avatarUrl: "placeholder-url.png",
+        };
 
-    test.todo("Correctly updates the cache after user updates their data (via PATCH /@me)");
+        const res = await request(server.app).patch(`/@me`).send(testPatch);
+        expect(res.status).toBe(200);
+        expect(cache().hDel).toBeCalledTimes(1);
+        expect(cache().hDel).toBeCalledWith(
+          CacheKeys.USER,
+          JERSEY_DEVIL_USER_ID
+        );
+      });
+    });
+
+    test.todo("correctly updates the cache after user pins board");
   });
 
   describe("GET tests", () => {
