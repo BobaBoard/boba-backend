@@ -105,4 +105,23 @@ describe("Tests PATCH routes of users REST API", () => {
       });
     });
   });
+
+  test("returns an error if something went wrong while updating settings", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(JERSEY_DEVIL_USER_ID);
+      const testError = new Error("update failed");
+      jest
+        .spyOn(userQueries, "updateUserSettings")
+        .mockRejectedValueOnce(testError);
+
+      const res = await request(server.app)
+        .patch(`/@me/settings`)
+        .send(testSettingsPatch);
+
+      expect(res.status).toBe(500);
+      expect(res.body).toEqual({
+        message: `Failed to update user settings. Reason: ${testError}`,
+      });
+    });
+  });
 });
