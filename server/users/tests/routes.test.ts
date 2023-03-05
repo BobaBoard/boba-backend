@@ -1,3 +1,5 @@
+import * as userQueries from "../queries";
+
 import { CacheKeys, cache } from "../../cache";
 import {
   setLoggedInUser,
@@ -6,9 +8,7 @@ import {
 } from "utils/test-utils";
 
 import { JERSEY_DEVIL_USER_ID } from "test/data/auth";
-import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
 import debug from "debug";
-import { ensureLoggedIn } from "handlers/auth";
 import { getUserFromFirebaseId } from "../queries";
 import { mocked } from "jest-mock";
 import request from "supertest";
@@ -173,7 +173,35 @@ describe("Test users routes", () => {
       const res = await request(server.app).patch(`/@me`).send(testPatch);
 
       expect(res.status).toBe(200);
-      expect(res.body).toEqual({ username: testPatch.username, avatar_url: testPatch.avatarUrl })
+      expect(res.body).toEqual({
+        username: testPatch.username,
+        avatar_url: testPatch.avatarUrl,
+      });
     });
+  });
+
+  test("returns a bad request error if username or avatar URL is missing", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(JERSEY_DEVIL_USER_ID);
+      const res = await request(server.app)
+        .patch(`/@me`)
+        .send({ username: "Newname" });
+
+      expect(res.status).toBe(400);
+      expect(res.body).toEqual({ message: "Missing username or avatar url" });
+    });
+  });
+
+  test("returns a 500 error if the database response is falsy", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(JERSEY_DEVIL_USER_ID);
+      jest.spyOn(userQueries, "updateUserData").mockResolvedValueOnce(null);
+      const res = await request(server.app)
+        .patch(`/@me`)
+        .send(testPatch);
+
+      expect(res.status).toBe(500);
+      expect(res.body).toEqual({});
+    })
   });
 });
