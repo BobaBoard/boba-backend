@@ -1,7 +1,7 @@
 import { JERSEY_DEVIL_USER_ID } from "test/data/auth";
 import { getUserFromFirebaseId } from "../queries";
 
-describe("queries", () => {
+describe("Tests user queries", () => {
   test("gets user from id", async () => {
     const user = await getUserFromFirebaseId({
       firebaseId: JERSEY_DEVIL_USER_ID,

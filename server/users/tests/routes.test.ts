@@ -17,7 +17,7 @@ jest.mock("../../cache");
 jest.mock("handlers/auth");
 jest.mock("server/db-pool");
 
-describe("Test users REST API", () => {
+describe("Tests basic routes of users REST API", () => {
   const server = startTestServer(router);
 
   describe("Cache tests", () => {
