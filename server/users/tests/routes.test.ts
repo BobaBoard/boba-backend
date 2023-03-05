@@ -53,6 +53,8 @@ describe("Tests basic routes of users REST API", () => {
     });
 
     test.todo("Correctly updates the cache after user pins board");
+
+    test.todo("Correctly updates the cache after user updates their data (via PATCH /@me)");
   });
 
   describe("GET tests", () => {
