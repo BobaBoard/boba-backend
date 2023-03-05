@@ -95,41 +95,6 @@ export interface DbThreadType {
   starred: boolean;
 }
 
-// TODO[realms]: deprecate this
-export interface DbActivityThreadType {
-  post_id: string;
-  parent_post_id: null;
-  thread_id: string;
-  board_slug: string;
-  realm_id: string;
-  realm_slug: string;
-  author: number;
-  username: string;
-  user_avatar: string;
-  secret_identity_name: string;
-  secret_identity_avatar: string;
-  accessory_avatar?: string;
-  created: string;
-  content: string;
-  index_tags: string[];
-  whisper_tags: string[];
-  category_tags: string[];
-  content_warnings: string[];
-  muted: boolean;
-  hidden: boolean;
-  starred: boolean;
-  posts_amount: number;
-  threads_amount: number;
-  friend: boolean;
-  self: boolean;
-  new_posts_amount: number;
-  new_comments_amount: number;
-  is_new: boolean;
-  comments_amount: number;
-  thread_last_activity: string;
-  default_view: "thread" | "gallery" | "timeline";
-}
-
 export interface DbThreadSummaryType
   extends Omit<DbThreadType, "posts">,
     Omit<
