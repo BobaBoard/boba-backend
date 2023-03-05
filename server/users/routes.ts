@@ -310,7 +310,7 @@ router.get(
   ensureLoggedIn,
   withUserSettings,
   async (req, res) => {
-    res.status(200).json(aggregateByType(req.currentUser?.settings || []));
+    res.status(200).json(aggregateByType(req.currentUser!.settings || []));
   }
 );
 

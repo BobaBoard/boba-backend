@@ -99,4 +99,19 @@ describe("Tests GET routes of users REST API", () => {
     expect(res.status).toBe(200);
     expect(res.body).toEqual(JERSEY_DEVIL_BOBADEX);
   });
+
+  test("prevents unauthorized access to the @me settings endpoint", async () => {
+    const res = await request(server.app).get(`/@me/settings`);
+    expect(res.status).toBe(401);
+  });
+
+  test("returns the logged in user's settings", async () => {
+    setLoggedInUser(JERSEY_DEVIL_USER_ID);
+    const res = await request(server.app).get(`/@me/settings`);
+    
+    const expectedResponse = { decorations: [] };
+
+    expect(res.status).toBe(200);
+    expect(res.body).toEqual(expectedResponse);
+  })
 });
