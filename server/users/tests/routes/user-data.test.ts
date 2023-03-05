@@ -14,22 +14,9 @@ const log = debug("bobaserver:board:routes");
 jest.mock("server/cache");
 jest.mock("handlers/auth");
 
-describe("Tests boards REST API", () => {
+// NOTE: I am in the process of cleaning; I removed tests from this file that were already represented in the routes.test.ts file in the next directory up; consider whether to move the other tests there as well, or whether to move some here, or generally just how to organize
+describe("Tests users REST API", () => {
   const server = startTestServer(router);
-
-  test("should not return user data (logged out)", async () => {
-    const res = await request(server.app).get(`/@me`);
-
-    expect(res.status).toBe(401);
-  });
-
-  test("should return user data (logged in)", async () => {
-    setLoggedInUser(BOBATAN_USER_ID);
-    const res = await request(server.app).get(`/@me`);
-
-    expect(res.status).toBe(200);
-    expect(res.body).toEqual(BOBATAN_USER_DATA);
-  });
 
   test("should return pinned boards for current realm", async () => {
     setLoggedInUser(BOBATAN_USER_ID);
@@ -50,7 +37,7 @@ describe("Tests boards REST API", () => {
     expect(res.status).toBe(200);
     expect(res.body.pinned_boards).toEqual({});
   });
-
+  
   // TODO: check if any test user has outdated notifications or none, and test there
 });
 
