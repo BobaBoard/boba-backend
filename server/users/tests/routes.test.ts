@@ -8,8 +8,6 @@ import {
 } from "utils/test-utils";
 
 import { JERSEY_DEVIL_USER_ID } from "test/data/auth";
-import debug from "debug";
-import { getUserFromFirebaseId } from "../queries";
 import { mocked } from "jest-mock";
 import request from "supertest";
 import router from "../routes";
@@ -19,189 +17,111 @@ jest.mock("../../cache");
 jest.mock("handlers/auth");
 jest.mock("server/db-pool");
 
-const log = debug("bobaserver:test:users:routes-log");
-
-// TODO: consider studying and pruning duplicate tests between this testfile and user-data.test.ts
-describe("Test users routes", () => {
+describe("Test users REST API", () => {
   const server = startTestServer(router);
 
-  // NOTE: testing a function rather than an endpoint
-  test("gets user from id", async () => {
-    const user = await getUserFromFirebaseId({
-      firebaseId: JERSEY_DEVIL_USER_ID,
-    });
-
-    expect(user).toEqual({
-      avatar_reference_id: "hannibal.png",
-      created_on: null,
-      firebase_id: JERSEY_DEVIL_USER_ID,
-      id: "2",
-      invited_by: "1",
-      username: "jersey_devil_69",
-    });
-  });
-
-  // NOTE: testing an endpoint and whether it looks at the cache
-  test("returns data logged in user (cached)", async function () {
-    const cachedData = {
-      avatar_url: "/this_was_cached.png",
-      username: "super_cached",
-    };
-    mocked(cache().hGet).mockResolvedValueOnce(stringify(cachedData));
-    setLoggedInUser(JERSEY_DEVIL_USER_ID);
-
-    const res = await request(server.app).get(`/@me`);
-
-    expect(res.status).toBe(200);
-    expect(res.body).toEqual(cachedData);
-    expect(cache().hGet).toBeCalledTimes(1);
-    expect(cache().hGet).toBeCalledWith(CacheKeys.USER, JERSEY_DEVIL_USER_ID);
-  });
-
-  test("Prevents unauthorized access if no user logged in", async () => {
-    const res = await request(server.app).get(`/@me`);
-    expect(res.status).toBe(401);
-  });
-
-  test("Returns data for the logged in user", async () => {
-    setLoggedInUser(JERSEY_DEVIL_USER_ID);
-    const res = await request(server.app).get(`/@me`);
-    expect(res.status).toBe(200);
-    expect(res.body).toEqual({
-      avatar_url: "/hannibal.png",
-      username: "jersey_devil_69",
-    });
-  });
-
-  // TODO: I'm thinking the logical way to do the separation I'm thinking of is to move the cache tests elsewhere
-  test("caches logged in user data", async function () {
-    setLoggedInUser(JERSEY_DEVIL_USER_ID);
-
-    const res = await request(server.app).get(`/@me`);
-    expect(res.status).toBe(200);
-    expect(cache().hSet).toBeCalledTimes(1);
-    expect(cache().hSet).toBeCalledWith(
-      CacheKeys.USER,
-      JERSEY_DEVIL_USER_ID,
-      // TODO: this will fail if we change what we cache. We should not
-      // rely on the whole response being cached, but declare the object ourselves.
-      stringify(res.body)
-    );
-  });
-
-  test.todo("Correctly updates the cache after user pins board");
-
-  test("prevents unauthorized access to the @me Bobadex endpoint", async () => {
-    const res = await request(server.app).get(`/@me/bobadex`);
-    expect(res.status).toBe(401);
-  });
-
-  test("returns the logged in user's Bobadex data", async () => {
-    setLoggedInUser(JERSEY_DEVIL_USER_ID);
-    const res = await request(server.app).get(`/@me/bobadex`);
-    expect(res.status).toBe(200);
-    expect(res.body).toEqual({
-      seasons: [
-        {
-          id: "9f6d41a5-1e00-4071-9f50-555f1686f87f",
-          name: "Default",
-          // TODO: the realm_id should not be v0, it should be the external_id of the realm (a UUID) - fix this when the relevant changes have been made elsewhere in the project (which will ideally make this test fail)
-          realm_id: "v0",
-          // TODO: identities_count should be a number - fix this when changes have been made elsewhere (ideally making this test fail)
-          identities_count: "3",
-          caught_identities: [
-            {
-              id: "85e33a3c-f987-41fd-a555-4c0cfdedf737",
-              name: "Old Time-y Anon",
-              index: 1,
-              avatar:
-                "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2F5c2c3867-2323-4209-8bd4-9dfcc88808f3%2Fd931f284-5c22-422d-9343-e509cfb44ffc.png?alt=media&token=94e52fff-4e6b-4110-94c3-90b8800f541c",
-            },
-            {
-              id: "07f4cbbb-6a62-469e-8789-1b673a6d622f",
-              name: "DragonFucker",
-              index: 2,
-              avatar:
-                "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
-            },
-          ],
-        },
-        {
-          id: "9b496931-ba27-43e0-953b-c38e01803879",
-          name: "Halloween",
-          realm_id: "v0",
-          identities_count: "3",
-          caught_identities: [
-            {
-              id: "47bf62fa-755f-489f-9735-27c884a0dec3",
-              name: "The OG OG Komaeda",
-              index: 3,
-              avatar:
-                "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F1237fd9e-cd40-41b8-8ee7-11c865f27b6b?alt=media&token=4bb418a6-cb45-435c-85ed-7bdcb294f5b5",
-            },
-          ],
-        },
-        {
-          id: "be93274d-cdb9-4fcc-a4f9-a9c69270ce0d",
-          name: "Coders",
-          realm_id: "v0",
-          identities_count: "5",
-          caught_identities: [],
-        },
-      ],
-    });
-  });
-
-  const testPatch = {
-    username: "SnazzyNewName",
-    avatarUrl:
-      "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fusers%2Favatar%2F4f5fde75-e670-4bb2-a04f-e90a5038ee34.jpeg?alt=media&token=7bdc5534-3159-4856-8d98-937cc1ee642f",
-  };
-
-  test("prevents unauthorized PATCH access to the @me endpoint", async () => {
-    await wrapWithTransaction(async () => {
-      const res = await request(server.app).patch(`/@me`).send(testPatch);
-
-      expect(res.status).toBe(401);
-    });
-  });
-
-  test("should update the logged-in user's information", async () => {
-    await wrapWithTransaction(async () => {
+  describe("Cache tests", () => {
+    test("returns data logged in user (cached)", async function () {
+      const cachedData = {
+        avatar_url: "/this_was_cached.png",
+        username: "super_cached",
+      };
+      mocked(cache().hGet).mockResolvedValueOnce(stringify(cachedData));
       setLoggedInUser(JERSEY_DEVIL_USER_ID);
 
-      const res = await request(server.app).patch(`/@me`).send(testPatch);
+      const res = await request(server.app).get(`/@me`);
 
       expect(res.status).toBe(200);
+      expect(res.body).toEqual(cachedData);
+      expect(cache().hGet).toBeCalledTimes(1);
+      expect(cache().hGet).toBeCalledWith(CacheKeys.USER, JERSEY_DEVIL_USER_ID);
+    });
+
+    test("caches logged in user data", async function () {
+      setLoggedInUser(JERSEY_DEVIL_USER_ID);
+
+      const res = await request(server.app).get(`/@me`);
+      expect(res.status).toBe(200);
+      expect(cache().hSet).toBeCalledTimes(1);
+      expect(cache().hSet).toBeCalledWith(
+        CacheKeys.USER,
+        JERSEY_DEVIL_USER_ID,
+        // TODO: this will fail if we change what we cache. We should not
+        // rely on the whole response being cached, but declare the object ourselves.
+        stringify(res.body)
+      );
+    });
+
+    test.todo("Correctly updates the cache after user pins board");
+  });
+
+  describe("GET tests", () => {
+    test("Prevents unauthorized access if no user logged in", async () => {
+      const res = await request(server.app).get(`/@me`);
+      expect(res.status).toBe(401);
+    });
+
+    test("Returns data for the logged in user", async () => {
+      setLoggedInUser(JERSEY_DEVIL_USER_ID);
+      const res = await request(server.app).get(`/@me`);
+      expect(res.status).toBe(200);
       expect(res.body).toEqual({
-        username: testPatch.username,
-        avatar_url: testPatch.avatarUrl,
+        avatar_url: "/hannibal.png",
+        username: "jersey_devil_69",
       });
     });
   });
 
-  test("returns a bad request error if username or avatar URL is missing", async () => {
-    await wrapWithTransaction(async () => {
-      setLoggedInUser(JERSEY_DEVIL_USER_ID);
-      const res = await request(server.app)
-        .patch(`/@me`)
-        .send({ username: "Newname" });
+  describe("PATCH tests", () => {
+    const testPatch = {
+      username: "SnazzyNewName",
+      avatarUrl:
+        "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fusers%2Favatar%2F4f5fde75-e670-4bb2-a04f-e90a5038ee34.jpeg?alt=media&token=7bdc5534-3159-4856-8d98-937cc1ee642f",
+    };
 
-      expect(res.status).toBe(400);
-      expect(res.body).toEqual({ message: "Missing username or avatar url" });
+    test("prevents unauthorized PATCH access to the @me endpoint", async () => {
+      await wrapWithTransaction(async () => {
+        const res = await request(server.app).patch(`/@me`).send(testPatch);
+
+        expect(res.status).toBe(401);
+      });
     });
-  });
 
-  test("returns a 500 error if the database response is falsy", async () => {
-    await wrapWithTransaction(async () => {
-      setLoggedInUser(JERSEY_DEVIL_USER_ID);
-      jest.spyOn(userQueries, "updateUserData").mockResolvedValueOnce(null);
-      const res = await request(server.app)
-        .patch(`/@me`)
-        .send(testPatch);
+    test("should update the logged-in user's information", async () => {
+      await wrapWithTransaction(async () => {
+        setLoggedInUser(JERSEY_DEVIL_USER_ID);
 
-      expect(res.status).toBe(500);
-      expect(res.body).toEqual({});
-    })
+        const res = await request(server.app).patch(`/@me`).send(testPatch);
+
+        expect(res.status).toBe(200);
+        expect(res.body).toEqual({
+          username: testPatch.username,
+          avatar_url: testPatch.avatarUrl,
+        });
+      });
+    });
+
+    test("returns a bad request error if username or avatar URL is missing", async () => {
+      await wrapWithTransaction(async () => {
+        setLoggedInUser(JERSEY_DEVIL_USER_ID);
+        const res = await request(server.app)
+          .patch(`/@me`)
+          .send({ username: "Newname" });
+
+        expect(res.status).toBe(400);
+        expect(res.body).toEqual({ message: "Missing username or avatar url" });
+      });
+    });
+
+    test("returns a 500 error if the database response is falsy", async () => {
+      await wrapWithTransaction(async () => {
+        setLoggedInUser(JERSEY_DEVIL_USER_ID);
+        jest.spyOn(userQueries, "updateUserData").mockResolvedValueOnce(null);
+        const res = await request(server.app).patch(`/@me`).send(testPatch);
+
+        expect(res.status).toBe(500);
+        expect(res.body).toEqual({});
+      });
+    });
   });
 });
