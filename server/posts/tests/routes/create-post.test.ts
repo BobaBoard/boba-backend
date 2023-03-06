@@ -4,7 +4,6 @@ import { BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID } from "test/data/auth";
 import {
   EVENT_TYPES as THREAD_EVENT_TYPES,
   ThreadUpdatedPayload,
-  emit as threadEventsEmit,
 } from "handlers/events/threads";
 import {
   setLoggedInUser,
@@ -16,12 +15,8 @@ import { CHARACTER_TO_MAIM_POST_ID } from "test/data/posts";
 import { EventEmitter } from "events";
 import { FAVORITE_CHARACTER_THREAD_ID } from "test/data/threads";
 import { Post } from "types/rest/threads";
-import debug from "debug";
-import { mocked } from "jest-mock";
 import request from "supertest";
 import router from "../../routes";
-
-const log = debug("bobaserver:posts:create-post-test-log");
 
 jest.mock("handlers/auth");
 jest.mock("server/db-pool");
@@ -74,7 +69,7 @@ describe("Test creating new post REST API", () => {
     });
   });
 
-  test("allows replying to post when logged in", async () => {
+  test("allows replying to post with a new contribution when logged in", async () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(BOBATAN_USER_ID);
       const newContributionId = "ca62bbb7-1916-4aa6-8796-dc44588afc40";

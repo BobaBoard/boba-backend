@@ -1,7 +1,3 @@
-import { Accessory, Role } from "./identity";
-
-import { UserBoardPermissions } from "types/permissions";
-
 export interface BoardTextDescription {
   id: string;
   index: number;
@@ -42,16 +38,4 @@ export interface LoggedInBoardSummary {
   delisted: boolean;
   muted: boolean;
   pinned: boolean;
-}
-
-export interface BoardMetadata extends BoardSummary {
-  descriptions: BoardDescription[];
-}
-
-export interface LoggedInBoardMetadata
-  extends BoardMetadata,
-    LoggedInBoardSummary {
-  permissions: UserBoardPermissions;
-  posting_identities: Role[];
-  accessories: Accessory[];
 }

@@ -1,3 +1,7 @@
+import {
+  BoardMetadata,
+  LoggedInBoardMetadata,
+} from "types/open-api/generated/types";
 import { CacheKeys, cache } from "server/cache";
 import { DbBoardCategoryDescription, DbBoardTextDescription } from "Types";
 import {
@@ -146,7 +150,7 @@ export const getBoardMetadataByExternalId = async ({
   boardExternalId: string;
   firebaseId?: string;
   hasBoardAccess: boolean;
-}) => {
+}): Promise<BoardMetadata | LoggedInBoardMetadata | null> => {
   if (!firebaseId) {
     const cachedBoard = await cache().hGet(
       CacheKeys.BOARD_METADATA,
@@ -165,7 +169,7 @@ export const getBoardMetadataByExternalId = async ({
   info(`Found board`, board);
 
   if (!board) {
-    return;
+    return null;
   }
 
   const boardSummary = processBoardsSummary({
@@ -190,5 +194,6 @@ export const getBoardMetadataByExternalId = async ({
     );
   }
   log(`Processed board metadata (${boardExternalId}) for user ${firebaseId}`);
+  // @ts-ignore TODO: figure out typings for this whole section
   return finalMetadata;
 };

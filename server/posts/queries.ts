@@ -1,9 +1,8 @@
 import { BadRequest400Error, Forbidden403Error } from "types/errors/api";
 import { DbCommentType, DbPostType, QueryTagsType } from "Types";
-import { POST_OWNER_PERMISSIONS, PostPermissions } from "types/permissions";
-import { canPostAs, extractPostPermissions } from "utils/permissions-utils";
 
 import { ITask } from "pg-promise";
+import { canPostAs } from "utils/permissions-utils";
 import debug from "debug";
 import invariant from "tiny-invariant";
 import pool from "server/db-pool";
@@ -400,7 +399,7 @@ export const postNewContribution = async (
     : pool.tx("create-contribution", createContribution);
 };
 
-const postNewCommentWithTransaction = async ({
+export const postNewCommentWithTransaction = async ({
   firebaseId,
   parentPostId,
   parentCommentId,
@@ -506,7 +505,7 @@ export const postNewCommentChain = async ({
   accessoryId?: string;
 }): Promise<DbCommentType[] | false> => {
   return pool
-    .tx("create-comment-chaim", async (transaction) => {
+    .tx("create-comment-chain", async (transaction) => {
       let prevId: number | null = null;
       let prevExternalId: string | null = null;
       const comments = [];

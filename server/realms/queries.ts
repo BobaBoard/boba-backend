@@ -12,6 +12,7 @@ import {
 import { filterOutDisabledSettings, getRealmCursorSetting } from "./utils";
 
 import { CssVariableSetting } from "../../types/settings";
+import { GetRealmBySlugDbSchema } from "./sql/types";
 import { ITask } from "pg-promise";
 import { SettingEntry } from "../../types/settings";
 import debug from "debug";
@@ -118,9 +119,11 @@ export const getRealmDataBySlug = async ({
 }: {
   realmSlug: string;
 }): Promise<Omit<Realm, "boards" | "permissions"> | null> => {
-  const realmDbData = await pool.oneOrNone(sql.getRealmBySlug, {
-    realm_slug: realmSlug,
-  });
+  const realmDbData = GetRealmBySlugDbSchema.parse(
+    await pool.oneOrNone(sql.getRealmBySlug, {
+      realm_slug: realmSlug,
+    })
+  );
 
   return {
     id: realmDbData.realm_id,

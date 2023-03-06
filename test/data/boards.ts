@@ -1,14 +1,8 @@
 import {
   BoardMetadata,
-  BoardSummary,
   LoggedInBoardMetadata,
-  LoggedInBoardSummary,
-} from "types/rest/boards";
-import {
-  BoardPermissions,
-  PostPermissions,
-  ThreadPermissions,
-} from "types/permissions";
+} from "types/open-api/generated/types";
+import { BoardSummary, LoggedInBoardSummary } from "types/rest/boards";
 
 import { GenericResponse } from "../../types/rest/responses";
 
@@ -101,12 +95,9 @@ const GORE_WITH_ROLE_METADATA: LoggedInBoardMetadata = {
     },
   ],
   permissions: {
-    board_permissions: [BoardPermissions.editMetadata],
-    post_permissions: [
-      PostPermissions.editCategoryTags,
-      PostPermissions.editContentNotices,
-    ],
-    thread_permissions: [ThreadPermissions.moveThread],
+    board_permissions: ["edit_board_details"],
+    post_permissions: ["edit_category_tags", "edit_content_notices"],
+    thread_permissions: ["move_thread"],
   },
   posting_identities: [
     {

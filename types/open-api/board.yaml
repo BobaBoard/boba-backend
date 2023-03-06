@@ -41,9 +41,9 @@ components:
               type: boolean
             pinned:
               type: boolean
-      required:
-        - muted
-        - pinned
+          required:
+            - muted
+            - pinned
     BoardMetadata:
       allOf:
         - $ref: "#/components/schemas/BoardSummary"
@@ -53,8 +53,8 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/Description"
-      required:
-        - descriptions
+          required:
+            - descriptions
     LoggedInBoardMetadata:
       allOf:
         - $ref: "#/components/schemas/LoggedInBoardSummary"
@@ -71,7 +71,7 @@ components:
               type: array
               items:
                 $ref: "#/components/schemas/PostingIdentity"
-      required:
-        - accessories
-        - permissions
-        - posting_identities
+          required:
+            - accessories
+            - permissions
+            - posting_identities

@@ -35,7 +35,7 @@ const router = express.Router();
  * @openapi
  * /posts/{post_id}/contributions:
  *   post:
- *     summary: Replies to a contribution.
+ *     summary: Replies to a contribution with another contribution.
  *     operationId: postContribution
  *     description: Posts a contribution replying to the one with id {postId}.
  *     tags:
@@ -161,17 +161,7 @@ router.post(
  *         application/json:
  *           schema:
  *             allOf:
- *               - type: object
- *                 properties:
- *                   contents:
- *                     type: array
- *                     items:
- *                       $ref: "#/components/schemas/Comment"
- *                   reply_to_comment_id:
- *                     oneOf:
- *                       - type: string
- *                         format: uuid
- *                       - type: "null"
+ *               - $ref: "#/components/schemas/CommentRequestBody"
  *               - $ref: "#/components/schemas/IdentityParams"
  *     responses:
  *       401:
