@@ -360,25 +360,21 @@ router.patch("/@me/settings", ensureLoggedIn, async (req, res) => {
   const { name, value } = req.body;
 
   const firebaseId = req.currentUser!.uid;
+  
   try {
     await updateUserSettings({
       firebaseId,
       settingName: name,
       settingValue: value,
     });
-
-    const settings = await getUserSettings({ firebaseId });
-    await cache().hSet(
-      CacheKeys.USER_SETTINGS,
-      firebaseId,
-      stringify(settings)
-    );
-
-    res.status(200).json(aggregateByType(settings));
   } catch (e) {
-    // TODO: there are three different awaits in the try block, only one whose failure would suggest the settings weren't updated, consider adjusting this message
     throw new Internal500Error(`Failed to update user settings. Reason: ${e}`);
   }
+
+  const settings = await getUserSettings({ firebaseId });
+  await cache().hSet(CacheKeys.USER_SETTINGS, firebaseId, stringify(settings));
+
+  res.status(200).json(aggregateByType(settings));
 });
 
 export default router;
