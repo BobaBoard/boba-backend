@@ -3,6 +3,7 @@ import {
   LoggedInBoardMetadata,
 } from "types/open-api/generated/types";
 import { Comment, Post, Thread, ThreadSummary } from "types/rest/threads";
+// TODO: deprecate these
 import {
   DbBoardCategoryDescription,
   DbBoardTextDescription,
@@ -11,9 +12,16 @@ import {
   DbThreadSummaryType,
   DbThreadType,
 } from "Types";
+import {
+  ZodDbThreadSummaryType,
+  ZodDbThreadType,
+} from "server/feeds/sql/types";
 
 import { BoardByExternalId } from "server/boards/sql/types";
 import { BoardRestrictions } from "types/permissions";
+import{
+  ZodThreadSummary,
+} from "types/rest/zodthreads"
 import debug from "debug";
 import { getUserPermissionsForBoard } from "./permissions-utils";
 
@@ -107,8 +115,8 @@ export const mergeObjectIdentity = <T>(
 };
 
 export const makeServerThreadSummary = (
-  thread: DbThreadType | DbThreadSummaryType
-): ThreadSummary => {
+  thread: ZodDbThreadType | ZodDbThreadSummaryType
+): ZodThreadSummary => {
   const starter =
     "posts" in thread
       ? makeServerPost(thread.posts[0])
@@ -137,7 +145,8 @@ export const makeServerThreadSummary = (
   };
 };
 
-export const makeServerThread = (thread: DbThreadType): Thread => {
+// TODO: finish type safeing this
+export const makeServerThread = (thread: ZodDbThreadType): Thread => {
   const posts = thread.posts?.map(makeServerPost) || [];
   // TODO[realms]: remove this
   const postsWithoutComments = posts.map((post) => {

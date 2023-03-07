@@ -1,7 +1,7 @@
 import { decodeCursor, encodeCursor } from "utils/queries-utils";
 
-import { BoardActivityByExternalIdType } from "server/feeds/sql/types";
 import { DbFeedType } from "Types";
+import { ZodDbFeedType } from "server/feeds/sql/types";
 import debug from "debug";
 import pool from "server/db-pool";
 import sql from "./sql";
@@ -23,7 +23,7 @@ export const getBoardActivityByExternalId = async ({
   categoryFilter?: string | null;
   cursor: string | null;
   pageSize?: number;
-}): Promise<BoardActivityByExternalIdType | null | false> => {
+}): Promise<ZodDbFeedType | null | false> => {
   try {
     const decodedCursor = cursor ? decodeCursor(cursor) : null;
 
@@ -86,7 +86,7 @@ export const getUserActivity = async ({
   realmExternalId: string;
   cursor: string | null;
   pageSize?: number;
-}): Promise<DbFeedType | false> => {
+}): Promise<ZodDbFeedType | false> => {
   try {
     const decodedCursor = cursor ? decodeCursor(cursor) : null;
 
@@ -136,7 +136,7 @@ export const getUserStarFeed = async ({
   firebaseId: string;
   cursor: string | null;
   pageSize?: number;
-}): Promise<DbFeedType> => {
+}): Promise<ZodDbFeedType> => {
   const decodedCursor = cursor ? decodeCursor(cursor) : null;
 
   const finalPageSize =
