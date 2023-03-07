@@ -48,7 +48,7 @@ export const PostTypeSchema = z.object({
   anonymity_type: z.enum(["everyone", "strangers"]),
   total_comments_amount: z.number(),
   new_comments_amount: z.number(),
-  comments: CommentTypeSchema.nullable(),
+  comments: z.array(CommentTypeSchema).nullable(),
   is_own: z.boolean(),
   is_new: z.boolean(),
 });
@@ -60,7 +60,7 @@ export const ThreadTypeSchema = z.object({
   realm_slug: z.string(),
   realm_id: z.string(),
   thread_last_activity: z.string(),
-  posts: PostTypeSchema,
+  posts: z.array(PostTypeSchema),
   default_view: z.enum(["thread", "gallery", "timeline"]),
   thread_new_comments_amount: z.number(),
   thread_total_comments_amount: z.number(),
@@ -71,7 +71,7 @@ export const ThreadTypeSchema = z.object({
   muted: z.boolean(),
   hidden: z.boolean(),
   starred: z.boolean(),
-});
+});export type ZodDbThreadType = z.infer<typeof ThreadTypeSchema>;
 
 export const ThreadSummaryTypeSchema = ThreadTypeSchema.extend({
   thread_last_activity_at_micro: z.string().nullable(),
@@ -89,5 +89,5 @@ export const FeedTypeSchema = z.object({
   cursor: z.string().nullable(),
   activity: z.array(ThreadSummaryTypeSchema),
 });
-export type BoardActivityByExternalIdType = z.infer<typeof FeedTypeSchema>;
+export type ZodDbFeedType = z.infer<typeof FeedTypeSchema>;
 
