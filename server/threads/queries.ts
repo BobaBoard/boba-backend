@@ -1,6 +1,7 @@
 import { THREAD_OWNER_PERMISSIONS, ThreadPermissions } from "types/permissions";
 
 import { DbThreadType } from "Types";
+import { ZodDbThreadType } from "server/feeds/sql/zodtypes";
 import debug from "debug";
 import { extractThreadPermissions } from "utils/permissions-utils";
 import { getBoardByExternalId } from "../boards/queries";
@@ -16,8 +17,8 @@ export const getThreadByExternalId = async ({
 }: {
   threadExternalId: string;
   firebaseId?: string | null;
-}): Promise<DbThreadType | null> => {
-  const thread = await pool.oneOrNone<DbThreadType>(sql.threadByExternalId, {
+}): Promise<ZodDbThreadType | null> => {
+  const thread = await pool.oneOrNone<ZodDbThreadType>(sql.threadByExternalId, {
     thread_external_id: threadExternalId,
     firebase_id: firebaseId,
   });

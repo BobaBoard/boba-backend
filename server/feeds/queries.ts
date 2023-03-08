@@ -1,7 +1,7 @@
 import { decodeCursor, encodeCursor } from "utils/queries-utils";
 
 import { DbFeedType } from "Types";
-import { ZodDbFeedType } from "server/feeds/sql/types";
+import { ZodDbFeedType } from "server/feeds/sql/zodtypes";
 import debug from "debug";
 import pool from "server/db-pool";
 import sql from "./sql";

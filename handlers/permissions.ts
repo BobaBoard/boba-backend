@@ -25,6 +25,7 @@ import {
 import { BoardByExternalId } from "server/boards/sql/types";
 import { DbThreadType } from "Types";
 import { Internal500Error } from "types/errors/api";
+import { ZodDbThreadType } from "server/feeds/sql/zodtypes";
 import { getBoardByExternalId } from "server/boards/queries";
 import { getPostByExternalId } from "server/posts/queries";
 
@@ -32,7 +33,7 @@ declare global {
   namespace Express {
     export interface Request {
       currentThreadPermissions?: ThreadPermissions[];
-      currentThreadData?: DbThreadType;
+      currentThreadData?: ZodDbThreadType;
       currentBoardPermissions?: BoardPermissions[];
       currentBoardMetadata?: BoardByExternalId;
       currentBoardRestrictions?: {

@@ -1,5 +1,7 @@
 import { z } from "zod";
 
+// Currently only used by zodthreads.ts
+
 export const Role= z.object({
     id: z.string(),
     name: z.string(),
