@@ -15,7 +15,7 @@ import {
 import {
   ZodDbThreadSummaryType,
   ZodDbThreadType,
-} from "server/feeds/sql/types";
+} from "server/feeds/sql/zodtypes";
 
 import { BoardByExternalId } from "server/boards/sql/types";
 import { BoardRestrictions } from "types/permissions";
