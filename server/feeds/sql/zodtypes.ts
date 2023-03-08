@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-// this may need to be moved 
+// Database type schemas
 
 export const CommentTypeSchema = z.object({
   comment_id: z.string(),
@@ -83,7 +83,7 @@ export const ThreadSummaryTypeSchema = ThreadTypeSchema.extend({
   }));
 export type ZodDbThreadSummaryType = z.infer<typeof ThreadSummaryTypeSchema>;
 //TODO: come up with good names for this or 
-//  replace all current db types out right
+//  replace all current DB types out right
 
 export const FeedTypeSchema = z.object({
   cursor: z.string().nullable(),

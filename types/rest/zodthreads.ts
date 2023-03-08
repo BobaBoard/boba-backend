@@ -64,10 +64,11 @@ export const ThreadSummary = ThreadActivitySummary.extend({
 });
 export type ZodThreadSummary = z.infer<typeof ThreadSummary>;
 
+// TODO: figure out how to convert ThreadSummary to Zod 
+
 /*export const Thread = ThreadSummary.extend({
   posts: Post.array(),
   comments: z.object({contribution_id: z.string(): Comment.array() }),
-  // aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 });
 */
 export const Feed = z.object({
