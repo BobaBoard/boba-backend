@@ -6,7 +6,7 @@ export const Role= z.object({
     id: z.string(),
     name: z.string(),
     color: z.string().optional(),
-    accessory: z.string().optional().nullable(),
+    accessory: z.optional(z.string().nullable()),
     avatar_url: z.string(),
   });
   
@@ -24,7 +24,7 @@ export const Role= z.object({
   export const SecretIdentity= z.object({
     name: z.string(),
     avatar: z.string(),
-    color: z.string().optional().nullable(),
-    accessory: z.string().optional().nullable(),
+    color: z.optional(z.string().nullable()),
+    accessory: z.optional(z.string().nullable()),
   });
   

@@ -9,7 +9,6 @@ export const Tags = z.object({
   content_warnings: z.string().array(),
 });
 
-// TODO: check to verify Identity is correctly declared here
 export const Post = z.object({
   id: z.string(),
   parent_thread_id: z.string(),
@@ -17,7 +16,7 @@ export const Post = z.object({
   content: z.string(),
   created_at: z.string(),
   secret_identity: SecretIdentity,
-  user_identity: Identity.optional().nullable(),
+  user_identity: z.optional(Identity.nullable()),
   own: z.boolean(),
   new: z.boolean(),
   friend: z.boolean(),
@@ -25,7 +24,7 @@ export const Post = z.object({
   new_comments_amount: z.number(),
   tags: Tags,
 });
-// TODO: check to verify Identity is correctly declared here
+
 export const Comment = z.object({
   id: z.string(),
   parent_post_id: z.string(),
@@ -33,7 +32,7 @@ export const Comment = z.object({
   chain_parent_id: z.string().nullable(),
   content: z.string(),
   secret_identity: SecretIdentity,
-  user_identity: Identity.optional().nullable(),
+  user_identity: z.optional(Identity.nullable()),
   created_at: z.string(),
   own: z.boolean(),
   new: z.boolean(),
@@ -64,16 +63,18 @@ export const ThreadSummary = ThreadActivitySummary.extend({
 });
 export type ZodThreadSummary = z.infer<typeof ThreadSummary>;
 
-// TODO: figure out how to convert ThreadSummary to Zod 
-
-/*export const Thread = ThreadSummary.extend({
-  posts: Post.array(),
-  comments: z.object({contribution_id: z.string(): Comment.array() }),
+export const Thread = ThreadSummary.extend({
+  posts: z.array(Post),
+  comments: z.record(
+    // contribution_id: string
+    z.string(), z.array(Comment)
+  ),
 });
-*/
+
 export const Feed = z.object({
   cursor: z.object({
     next: z.string().nullable(),
   }),
-  activity: ThreadSummary.array(),
+  activity: z.array(ThreadSummary),
 });
+export type ZodFeed = z.infer<typeof Feed>;
