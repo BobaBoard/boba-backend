@@ -10,6 +10,7 @@ import {
 } from "./queries";
 
 import { Feed } from "types/rest/threads";
+import { ZodFeed } from "types/rest/zodthreads";
 import debug from "debug";
 import { ensureBoardAccess } from "handlers/permissions";
 import { ensureLoggedIn } from "handlers/auth";
@@ -101,7 +102,7 @@ router.get("/boards/:board_id", ensureBoardAccess, async (req, res) => {
   }
 
   const threadsWithIdentity = result.activity.map(makeServerThreadSummary);
-  const response: Feed = {
+  const response: ZodFeed = {
     cursor: {
       next: result.cursor,
     },
