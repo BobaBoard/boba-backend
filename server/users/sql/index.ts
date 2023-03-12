@@ -40,14 +40,31 @@ const createNewUser = `
 INSERT INTO users(firebase_id, invited_by, created_on)
 VALUES ($/firebase_id/, $/invited_by/, $/created_on/)`;
 
-const getUserRolesByRealm = `
+const getUserRealmRoles = `
 SELECT *
 FROM roles
 JOIN realm_user_roles
 ON roles.id = realm_user_roles.role_id
-JOIN users
-ON users.id = realm_user_roles.user_id
-WHERE realm_user_roles.user_id = $/user_id/;`
+WHERE realm_user_roles.user_id = $/user_id/`;
+
+const getUserBoardRoles = `
+SELECT
+  board_user_roles.board_id,
+  roles.*
+FROM roles
+JOIN board_user_roles
+ON roles.id = board_user_roles.role_id
+WHERE board_user_roles.user_id = $/user_id/`;
+
+const getUserRolesByBoard = `
+SELECT
+  roles.*
+FROM roles
+JOIN board_user_roles
+ON roles.id = board_user_roles.role_id
+WHERE board_user_roles.user_id = $/user_id/
+AND
+board_user_roles.board_id = $/board_id/`;
 
 export default {
   getUserDetails,
