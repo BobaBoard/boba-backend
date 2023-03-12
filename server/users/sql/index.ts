@@ -40,7 +40,7 @@ const createNewUser = `
 INSERT INTO users(firebase_id, invited_by, created_on)
 VALUES ($/firebase_id/, $/invited_by/, $/created_on/)`;
 
-const getUserRealmRoles = `
+const getUserRoles = `
 SELECT roles.*
 FROM roles
 JOIN realm_user_roles
@@ -73,7 +73,6 @@ export default {
   getBobadexIdentities: new QueryFile(
     path.join(__dirname, "fetch-bobadex.sql")
   ),
-  getUserRealmRoles,
-  getUserBoardRoles,
+  getUserRoles,
   getUserRolesByBoard
 };
