@@ -181,3 +181,11 @@ export const createNewUser = async ({
     return null;
   }
 };
+
+export const getUserRolesByRealm = async () => {
+
+}
+
+export const getUserRolesByBoard = async () => {
+  
+}
