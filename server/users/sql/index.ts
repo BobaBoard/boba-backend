@@ -41,11 +41,13 @@ INSERT INTO users(firebase_id, invited_by, created_on)
 VALUES ($/firebase_id/, $/invited_by/, $/created_on/)`;
 
 const getUserRealmRoles = `
-SELECT *
+SELECT roles.*
 FROM roles
 JOIN realm_user_roles
 ON roles.id = realm_user_roles.role_id
-WHERE realm_user_roles.user_id = $/user_id/`;
+JOIN users
+ON users.id = realm_user_roles.user_id
+WHERE users.firebase_id = $/firebase_id/`;
 
 const getUserBoardRoles = `
 SELECT
@@ -54,7 +56,9 @@ SELECT
 FROM roles
 JOIN board_user_roles
 ON roles.id = board_user_roles.role_id
-WHERE board_user_roles.user_id = $/user_id/`;
+JOIN users
+ON users.id = board_user_roles.user_id
+WHERE users.firebase_id = $/firebase_id/`;
 
 const getUserRolesByBoard = `
 SELECT
@@ -62,9 +66,13 @@ SELECT
 FROM roles
 JOIN board_user_roles
 ON roles.id = board_user_roles.role_id
-WHERE board_user_roles.user_id = $/user_id/
+JOIN users
+ON users.id = board_user_roles.user_id
+JOIN boards
+ON boards.id = board_user_roles.board_id
+WHERE users.firebase_id = $/firebase_id/
 AND
-board_user_roles.board_id = $/board_id/`;
+boards.string_id = $/board_external_id/`;
 
 export default {
   getUserDetails,
@@ -76,4 +84,7 @@ export default {
   getBobadexIdentities: new QueryFile(
     path.join(__dirname, "fetch-bobadex.sql")
   ),
+  getUserRealmRoles,
+  getUserBoardRoles,
+  getUserRolesByBoard
 };
