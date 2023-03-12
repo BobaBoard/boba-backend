@@ -182,7 +182,7 @@ export const createNewUser = async ({
   }
 };
 
-export const getUserRolesByRealm = async () => {
+export const getUserRealmRoles = async () => {
 
 }
 

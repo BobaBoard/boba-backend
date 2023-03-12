@@ -49,17 +49,6 @@ JOIN users
 ON users.id = realm_user_roles.user_id
 WHERE users.firebase_id = $/firebase_id/`;
 
-const getUserBoardRoles = `
-SELECT
-  board_user_roles.board_id,
-  roles.*
-FROM roles
-JOIN board_user_roles
-ON roles.id = board_user_roles.role_id
-JOIN users
-ON users.id = board_user_roles.user_id
-WHERE users.firebase_id = $/firebase_id/`;
-
 const getUserRolesByBoard = `
 SELECT
   roles.*
