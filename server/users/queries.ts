@@ -182,11 +182,18 @@ export const createNewUser = async ({
   }
 };
 
-export const getUserRoles = async ({ firebaseId }: { firebaseId: string }) => {
+export const getUserRoles = async ({
+  firebaseId,
+  realmId,
+}: {
+  firebaseId: string;
+  realmId: string;
+}) => {
   const roles = await pool.manyOrNone(sql.getUserRoles, {
     firebase_id: firebaseId,
+    realm_id: realmId,
   });
-  log(`Fetched roles for user ${firebaseId}:`);
+  log(`Fetched roles for user ${firebaseId} in realm ${realmId}:`);
   info(roles);
   return roles;
 };
