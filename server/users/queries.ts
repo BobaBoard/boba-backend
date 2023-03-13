@@ -200,7 +200,7 @@ export const getUserRolesByBoard = async ({
 }) => {
   const roles = await pool.manyOrNone(sql.getUserRolesByBoard, {
     firebase_id: firebaseId,
-    board_external_id: boardId,
+    board_id: boardId,
   });
   log(`Fetched roles for user ${firebaseId} on board ${boardId}:`);
   info(roles);

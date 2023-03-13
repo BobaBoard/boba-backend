@@ -50,8 +50,7 @@ ON users.id = realm_user_roles.user_id
 WHERE users.firebase_id = $/firebase_id/`;
 
 const getUserRolesByBoard = `
-SELECT
-  roles.*
+SELECT roles.*
 FROM roles
 JOIN board_user_roles
 ON roles.id = board_user_roles.role_id
@@ -61,7 +60,7 @@ JOIN boards
 ON boards.id = board_user_roles.board_id
 WHERE users.firebase_id = $/firebase_id/
 AND
-boards.string_id = $/board_external_id/`;
+boards.string_id = $/board_id/`;
 
 export default {
   getUserDetails,
@@ -74,5 +73,5 @@ export default {
     path.join(__dirname, "fetch-bobadex.sql")
   ),
   getUserRoles,
-  getUserRolesByBoard
+  getUserRolesByBoard,
 };
