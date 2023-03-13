@@ -188,7 +188,7 @@ export const getUserRolesByRealm = async ({
   firebaseId: string;
   realmId: string;
 }) => {
-  const roles = await pool.manyOrNone(sql.getUserRoles, {
+  const roles = await pool.manyOrNone(sql.getUserRolesByRealm, {
     firebase_id: firebaseId,
     realm_id: realmId,
   });
