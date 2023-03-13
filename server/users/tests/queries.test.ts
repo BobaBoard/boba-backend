@@ -9,8 +9,8 @@ import {
 } from "test/data/realms";
 import {
   getUserFromFirebaseId,
-  getUserRoles,
   getUserRolesByBoard,
+  getUserRolesByRealm,
 } from "../queries";
 
 import { GORE_BOARD_ID } from "test/data/boards";
@@ -32,7 +32,7 @@ describe("Tests user queries", () => {
   });
 
   test("returns an empty array if the user has no roles in the current realm", async () => {
-    const roles = await getUserRoles({
+    const roles = await getUserRolesByRealm({
       firebaseId: JERSEY_DEVIL_USER_ID,
       realmId: TWISTED_MINDS_REALM_EXTERNAL_ID,
     });
@@ -40,7 +40,7 @@ describe("Tests user queries", () => {
   });
 
   test("returns all the roles a user has in the current realm", async () => {
-    const roles = await getUserRoles({
+    const roles = await getUserRolesByRealm({
       firebaseId: ZODIAC_KILLER_USER_ID,
       realmId: UWU_REALM_EXTERNAL_ID,
     });

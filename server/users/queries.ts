@@ -1,5 +1,4 @@
 import { SettingEntry, SettingValueTypes } from "../../types/settings";
-import { decodeCursor, encodeCursor } from "utils/queries-utils";
 import firebaseAuth, { auth } from "firebase-admin";
 
 import debug from "debug";
@@ -182,7 +181,7 @@ export const createNewUser = async ({
   }
 };
 
-export const getUserRoles = async ({
+export const getUserRolesByRealm = async ({
   firebaseId,
   realmId,
 }: {
