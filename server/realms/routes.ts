@@ -857,7 +857,7 @@ router.post(
  *     tags:
  *       - /realms/
  *     security:
- *       - firebase: []
+ *       - {}
  *     parameters:
  *       - name: realm_id
  *         in: path
@@ -898,7 +898,7 @@ router.post(
 router.get(
   "/:realm_id/roles",
   ensureRealmExists, ensureLoggedIn,
-  ensureRealmPermission(RealmPermissions.createRealmInvite),
+  ensureRealmPermission(RealmPermissions.viewRolesOnRealm),
   async (req, res) => {
 	  try {
 	    const { realm_id } = req.params;
