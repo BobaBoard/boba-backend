@@ -128,7 +128,7 @@ CREATE INDEX threads_string_id on threads(string_id);
 CREATE TYPE anonymity_type AS ENUM ('everyone', 'strangers');
 CREATE TYPE post_type AS ENUM ('text');
 
-CREATE TABLE IF NOT EXISTS posts 
+CREATE TABLE IF NOT EXISTS posts
 (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     string_id TEXT NOT NULL,
@@ -153,7 +153,7 @@ CREATE INDEX posts_string_id on posts(string_id);
 CREATE INDEX posts_parent_thread on posts(parent_thread);
 CREATE INDEX posts_author on posts(author);
 
-CREATE TABLE IF NOT EXISTS post_tags 
+CREATE TABLE IF NOT EXISTS post_tags
 (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     post_id BIGINT REFERENCES posts(id) ON DELETE RESTRICT NOT NULL,
@@ -162,7 +162,7 @@ CREATE TABLE IF NOT EXISTS post_tags
 CREATE INDEX post_tags_post_id on post_tags(post_id);
 CREATE INDEX post_tags_tag_id on post_tags(tag_id);
 
-CREATE TABLE IF NOT EXISTS post_categories 
+CREATE TABLE IF NOT EXISTS post_categories
 (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     post_id BIGINT REFERENCES posts(id) ON DELETE RESTRICT NOT NULL,
@@ -171,7 +171,7 @@ CREATE TABLE IF NOT EXISTS post_categories
 CREATE INDEX post_categories_post_id on post_categories(post_id);
 CREATE INDEX post_categories_category_id on post_categories(category_id);
 
-CREATE TABLE IF NOT EXISTS post_warnings 
+CREATE TABLE IF NOT EXISTS post_warnings
 (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     post_id BIGINT REFERENCES posts(id) ON DELETE RESTRICT NOT NULL,
@@ -180,7 +180,7 @@ CREATE TABLE IF NOT EXISTS post_warnings
 CREATE INDEX post_warnings_post_id on post_warnings(post_id);
 CREATE INDEX post_warnings_category_id on post_warnings(warning_id);
 
-CREATE TABLE IF NOT EXISTS comments 
+CREATE TABLE IF NOT EXISTS comments
 (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
     string_id TEXT NOT NULL,

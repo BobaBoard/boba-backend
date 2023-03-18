@@ -12,6 +12,7 @@ import {
   getRealmByExternalId,
   getRealmInvites,
   getUserPermissionsForRealm,
+	getRealmRoles,
 } from "server/realms/queries";
 import { createNewUser, getUserFromFirebaseId } from "server/users/queries";
 import { ensureLoggedIn, withLoggedIn, withUserSettings } from "handlers/auth";
@@ -845,5 +846,88 @@ router.post(
     });
   }
 );
+
+
+/**
+ * @openapi
+ * /realms/{realm_id}/roles:
+ *   get:
+ *     summary: Fetches latest roles summary for the realm.
+ *     operationId: getRealmsRolesByExternalId
+ *     tags:
+ *       - /realms/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: realm_id
+ *         in: path
+ *         description: The id of the realm.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: The realm roles summary.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/RealmRoles"
+ *             examples:
+ *               twisted_minds:
+ *                 value:
+ *                   invites:
+ *                     - user_id: "1"
+ *                       username: "bobatan"
+ *                       role_id: "3"
+ *                       role_name: "The Owner"
+ *       401:
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         $ref: "#/components/responses/ensurePermission403"
+ *       404:
+ *         description: The realm was not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/genericResponse"
+ *       500:
+ *         description: There was an error fetching realm roles.
+ */
+
+router.get(
+  "/:realm_id/roles",
+  ensureRealmExists, ensureLoggedIn,
+  ensureRealmPermission(RealmPermissions.createRealmInvite),
+  async (req, res) => {
+	  try {
+	    const { realm_id } = req.params;
+	    const realmRoles = await getRealmRoles({
+	      realmExternalId: realm_id,
+	    });
+			if (!realmRoles?.length){
+				res.status(200).json({roles:[]});
+				return;
+			}
+			const formattedRealmRoles = realmRoles.map((roleEntry) => {
+				const formattedRealmRole = {
+					user_id:roleEntry.user_id,
+					username:roleEntry.username,
+					role_id:roleEntry.role_id,
+					role_name:roleEntry.role_name,
+					...(roleEntry.label && { label: roleEntry.label }),
+				};
+				return formattedRealmRole;
+			});
+	    res.status(200).json({
+	      roles: formattedRealmRoles || [],
+	    });
+	  } catch (e) {
+	    error(e);
+	    res.status(500).json({
+	      message: "There was an error fetching realm roles.",
+	    });
+  }
+});
 
 export default router;

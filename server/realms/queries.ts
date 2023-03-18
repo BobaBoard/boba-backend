@@ -406,3 +406,29 @@ export const checkUserOnRealm = async ({
     return null;
   }
 };
+
+export const getRealmRoles = async ({
+  realmExternalId,
+}: {
+  realmExternalId: string;
+}): Promise<
+  | {
+      user_id: string;
+			username:string
+			role_id: string;
+			role_name: string;
+      label: string | null;
+    }[]
+  | null
+> => {
+  try {
+    const realmRoles = await pool.manyOrNone(sql.fetchRolesInRealm, {
+      realm_external_id: realmExternalId,
+    });
+    return realmRoles;
+  } catch (e) {
+    error(`Error while fetching realm roles.`);
+    error(e);
+    return null;
+  }
+};

@@ -84,3 +84,26 @@ components:
                     type: string
                     format: uuid
               - $ref: "#/components/schemas/BoardActivitySummary"
+    RealmRoles:
+      type: object
+      properties:
+        roles:
+          type: array
+          items:
+            type: object
+            properties:
+              user_id:
+                description: User id.
+                type: string
+              username:
+                description: Username.
+                type: string
+              role_id:
+                description: id of role.
+                type: string
+              role_name:
+                description: name of role.
+                type: string
+              lable:
+                description: label associated with role assignment
+                type: string
