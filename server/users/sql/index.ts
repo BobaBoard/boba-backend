@@ -45,19 +45,19 @@ const getAllUserRoles = `
     realms.string_id AS realm_external_id,
     boards.string_id AS board_external_id
   FROM roles
-  JOIN realm_user_roles ON
+  LEFT JOIN realm_user_roles ON
     roles.id = realm_user_roles.role_id
-  JOIN board_user_roles ON
+  LEFT JOIN board_user_roles ON
     roles.id = board_user_roles.role_id
-  JOIN users ON
+  INNER JOIN users ON
     users.id = realm_user_roles.user_id
-  JOIN realms ON
+  LEFT JOIN realms ON
     realms.id = realm_user_roles.realm_id
-  JOIN boards ON
+  LEFT JOIN boards ON
     boards.id = board_user_roles.board_id
   WHERE users.firebase_id = $/firebase_id/`;
-// also this does not work yet! it doesn't grab realm roles that aren't also board roles, which I think is where some fancy joins come in to allow stuff to be null
-// what I'll want to do here is aggregate down duplicates - the same role on multiple boards should only appear once but the boards field should be an array with the list of boards where it appears; same for realms; there's probably also some left/right/idk join optimization I could do but I do not remember the point of any of it
+// should work now, not clear if the user join is a possible point of weirdness, could be a problem if we have, like, roles that are associated with a board but not a realm? which isn't true in the test data, but should be wary here
+// what we'll want to do here is aggregate down duplicates (which don't exist in the test data right now, so we may want to make some examples to test on) - the same role on multiple boards should only appear once but the boards field should be an array with the list of boards where it appears; same for realms
 
 const getUserRolesByRealm = `
   SELECT
