@@ -39,6 +39,26 @@ const createNewUser = `
 INSERT INTO users(firebase_id, invited_by, created_on)
 VALUES ($/firebase_id/, $/invited_by/, $/created_on/)`;
 
+const getAllUserRoles = `
+  SELECT
+    roles.*,
+    realms.string_id AS realm_external_id,
+    boards.string_id AS board_external_id
+  FROM roles
+  JOIN realm_user_roles ON
+    roles.id = realm_user_roles.role_id
+  JOIN board_user_roles ON
+    roles.id = board_user_roles.role_id
+  JOIN users ON
+    users.id = realm_user_roles.user_id
+  JOIN realms ON
+    realms.id = realm_user_roles.realm_id
+  JOIN boards ON
+    boards.id = board_user_roles.board_id
+  WHERE users.firebase_id = $/firebase_id/`;
+// also this does not work yet! it doesn't grab realm roles that aren't also board roles, which I think is where some fancy joins come in to allow stuff to be null
+// what I'll want to do here is aggregate down duplicates - the same role on multiple boards should only appear once but the boards field should be an array with the list of boards where it appears; same for realms; there's probably also some left/right/idk join optimization I could do but I do not remember the point of any of it
+
 const getUserRolesByRealm = `
   SELECT
     roles.*
