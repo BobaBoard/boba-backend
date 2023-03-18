@@ -40,30 +40,30 @@ INSERT INTO users(firebase_id, invited_by, created_on)
 VALUES ($/firebase_id/, $/invited_by/, $/created_on/)`;
 
 const getUserRolesByRealm = `
-SELECT
-  roles.*
-FROM roles
-JOIN realm_user_roles ON
-  roles.id = realm_user_roles.role_id
-JOIN users ON
-  users.id = realm_user_roles.user_id
-JOIN realms ON
-  realms.id = realm_user_roles.realm_id
-WHERE users.firebase_id = $/firebase_id/
-  AND realms.string_id = $/realm_id/`;
+  SELECT
+    roles.*
+  FROM roles
+  JOIN realm_user_roles ON
+    roles.id = realm_user_roles.role_id
+  JOIN users ON
+    users.id = realm_user_roles.user_id
+  JOIN realms ON
+    realms.id = realm_user_roles.realm_id
+  WHERE users.firebase_id = $/firebase_id/
+    AND realms.string_id = $/realm_id/`;
 
 const getUserRolesByBoard = `
-SELECT
-  roles.*
-FROM roles
-JOIN board_user_roles ON
-  roles.id = board_user_roles.role_id
-JOIN users ON
-  users.id = board_user_roles.user_id
-JOIN boards ON
-  boards.id = board_user_roles.board_id
-WHERE users.firebase_id = $/firebase_id/
-  AND boards.string_id = $/board_id/`;
+  SELECT
+    roles.*
+  FROM roles
+  JOIN board_user_roles ON
+    roles.id = board_user_roles.role_id
+  JOIN users ON
+    users.id = board_user_roles.user_id
+  JOIN boards ON
+    boards.id = board_user_roles.board_id
+  WHERE users.firebase_id = $/firebase_id/
+    AND boards.string_id = $/board_id/`;
 
 export default {
   getUserDetails,
