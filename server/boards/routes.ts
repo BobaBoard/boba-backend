@@ -686,4 +686,87 @@ router.delete(
   }
 );
 
+
+/**
+ * @openapi
+ * /boards/{board_id}/roles:
+ *   get:
+ *     summary: Fetches latest roles summary for the board.
+ *     operationId: getBoardRolesByExternalId
+ *     tags:
+ *       - /boards/
+ *     security:
+ *       - {}
+ *     parameters:
+ *       - name: board_id
+ *         in: path
+ *         description: The id of the board.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: The board roles summary.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/RealmRoles"
+ *             examples:
+ *               twisted_minds:
+ *                 value:
+ *                   roles:
+ *                     - user_id: "1"
+ *                       username: "bobatan"
+ *                       role_id: "3"
+ *                       role_name: "The Owner"
+ *       401:
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         $ref: "#/components/responses/ensurePermission403"
+ *       404:
+ *         description: The board was not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/genericResponse"
+ *       500:
+ *         description: There was an error fetching board roles.
+ */
+
+router.get(
+  "/:board_id/roles",
+  ensureBoardAccess, ensureLoggedIn,
+  ensureBoardPermission(BoardPermissions.viewRolesOnBoard),
+  async (req, res) => {
+	  try {
+	    const { realm_id } = req.params;
+	    const boardRoles = await getBoardRoles({
+	      boardExternalId: board_id,
+	    });
+			if (!boardRoles?.length){
+				res.status(200).json({roles:[]});
+				return;
+			}
+			const formattedBoardRoles = boardRoles.map((roleEntry) => {
+				const formattedBoardRoles = {
+					user_id:roleEntry.user_id,
+					username:roleEntry.username,
+					role_id:roleEntry.role_id,
+					role_name:roleEntry.role_name,
+					...(roleEntry.label && { label: roleEntry.label }),
+				};
+				return formattedBoardRoles;
+			});
+	    res.status(200).json({
+	      roles: formattedBoardRoles || [],
+	    });
+	  } catch (e) {
+	    error(e);
+	    res.status(500).json({
+	      message: "There was an error fetching board roles.",
+	    });
+  }
+});
+
 export default router;
