@@ -1,20 +1,10 @@
 import {
   BOBATAN_USER_ID,
-  JERSEY_DEVIL_USER_ID,
-  SEXY_DADDY_USER_ID,
 } from "test/data/auth";
-import { BoardMetadata, BoardSummary } from "types/rest/boards";
-import { GORE_BOARD_METADATA, extractBoardSummary } from "test/data/boards";
 import {
-	TWISTED_MINDS_REALM_SLUG,
-	UWU_REALM_SLUG,
 	TWISTED_MINDS_REALM_EXTERNAL_ID,
 	UWU_REALM_EXTERNAL_ID } from "test/data/realms";
-import express, { Express } from "express";
 import { setLoggedInUser, startTestServer } from "utils/test-utils";
-
-import { BOBATAN_TWISTED_MINDS_REALM_PERMISSIONS } from "test/data/user";
-import { REALM_MEMBER_PERMISSIONS } from "types/permissions";
 import request from "supertest";
 import router from "../routes";
 
