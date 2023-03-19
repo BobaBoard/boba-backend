@@ -17,7 +17,8 @@ VALUES
               'post_as_role'::role_permissions_type,
               'move_thread'::role_permissions_type,
               'create_realm_invite'::role_permissions_type,
-							'view_roles_on_realm'::role_permissions_type]);
+							'view_roles_on_realm'::role_permissions_type,
+							'view_roles_on_board'::role_permissions_type]);
 
 INSERT INTO board_user_roles(user_id, board_id, role_id, label)
 VALUES
@@ -50,7 +51,7 @@ VALUES
 		 'well earned'),
     ((SELECT id FROM realms WHERE slug = 'uwu'),
      (SELECT id FROM users WHERE username = 'The Zodiac Killer'),
-     (SELECT id FROM roles WHERE name = 'The Owner'), 
+     (SELECT id FROM roles WHERE name = 'The Owner'),
 		 'hello world'),
     ((SELECT id FROM realms WHERE slug = 'twisted-minds'),
      (SELECT id FROM users WHERE username = 'oncest5evah'),
