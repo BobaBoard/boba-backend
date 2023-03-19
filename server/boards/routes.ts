@@ -11,6 +11,7 @@ import {
   unmuteBoard,
   unpinBoard,
   updateBoardMetadata,
+	getBoardRoles,
 } from "./queries";
 import {
   ensureBoardAccess,
@@ -32,6 +33,7 @@ import { getThreadByExternalId } from "server/threads/queries";
 
 const info = debug("bobaserver:board:routes-info");
 const log = debug("bobaserver:board:routes");
+const error = debug("bobaserver:board:routes-error");
 
 const router = express.Router();
 
@@ -740,7 +742,7 @@ router.get(
   ensureBoardPermission(BoardPermissions.viewRolesOnBoard),
   async (req, res) => {
 	  try {
-	    const { realm_id } = req.params;
+	    const { board_id } = req.params;
 	    const boardRoles = await getBoardRoles({
 	      boardExternalId: board_id,
 	    });

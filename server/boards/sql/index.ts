@@ -147,4 +147,5 @@ export default {
   pinBoardByExternalId,
   unpinBoardByExternalId,
   dismissNotificationsByExternalId,
+	fetchRolesInBoard
 };
