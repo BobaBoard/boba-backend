@@ -76,8 +76,8 @@ SELECT
 	realm_user_roles.user_id as user_id,
 	users.username as username,
 	realm_user_roles.role_id as role_id,
-	roles.name as role_name
-	roles.label as label
+	roles.name as role_name,
+	realm_user_roles.label as label
 FROM ((realm_user_roles
 INNER JOIN realms ON realm_user_roles.realm_id = realms.id)
 INNER JOIN roles ON realm_user_roles.role_id=roles.id)

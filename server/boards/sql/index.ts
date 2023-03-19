@@ -121,7 +121,7 @@ const fetchRolesInBoard = `
 			board_user_roles.user_id as user_id,
 			users.username as username,
 			board_user_roles.role_id as role_id,
-			roles.name as role_name
+			roles.name as role_name,
 			board_user_roles.label as label
 		FROM ((realm_user_roles
 		INNER JOIN boards ON board_user_roles.board_id = boards.id)
