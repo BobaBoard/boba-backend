@@ -101,7 +101,7 @@ const GORE_WITH_ROLE_METADATA: LoggedInBoardMetadata = {
     },
   ],
   permissions: {
-    board_permissions: [BoardPermissions.editMetadata],
+    board_permissions: [BoardPermissions.editMetadata, BoardPermissions.viewRolesOnBoard],
     post_permissions: [
       PostPermissions.editCategoryTags,
       PostPermissions.editContentNotices,

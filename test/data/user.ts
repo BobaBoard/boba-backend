@@ -45,5 +45,6 @@ export const ONCEST_USER_IDENTITY = {
 
 export const BOBATAN_TWISTED_MINDS_REALM_PERMISSIONS = [
   RealmPermissions.createRealmInvite,
+	RealmPermissions.viewRolesOnRealm,
   ...REALM_MEMBER_PERMISSIONS,
 ];

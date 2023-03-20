@@ -87,6 +87,8 @@ const GORE_BOARD_LOGGED_IN: BoardByExternalId = {
     "edit_content_notices",
     "move_thread",
     "create_realm_invite",
+		"view_roles_on_realm",
+    "view_roles_on_board",
   ],
   pinned_order: 1,
   posting_identities: [
