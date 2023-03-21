@@ -47,32 +47,30 @@ describe("Tests threads REST API - delete thread", () => {
   });
 
   // TODO: don't know how to generate invalid token
-  test("TODO: should fail when user has invalid authentication", async () => {
+  test.todo("TODO: should fail when user has invalid authentication"//, async () => {
     //const res = await request(server.app).post(
     //  `/${FAVORITE_CHARACTER_THREAD_ID}/hide`
     //);
     //expect(res.status).toBe(401);
-    //expect(res.body).toEqual<GenericResponse>(ENSURE_LOGGED_IN_NO_TOKEN);
-  });
+    //expect(res.body).toEqual<GenericResponse>(ENSURE_LOGGED_IN_NO_TOKEN);}
+  );
 
   // TODO: permissions don't exist yet
-  test("TODO: should fail when user is not authorized to access thread", async () => {
+  test.todo("TODO: should fail when user is not authorized to access thread"//, async () => {
     //const res = await request(server.app).post(
     //  `/${FAVORITE_CHARACTER_THREAD_ID}/hide`
     //);
     //expect(res.status).toBe(403);
-    //expect(res.body).toEqual<GenericResponse>(ENSURE_THREAD_ACCESS_UNAUTHORIZED);
-  });
+    //expect(res.body).toEqual<GenericResponse>(ENSURE_THREAD_ACCESS_UNAUTHORIZED);}
+    );
 
   // TODO: haven't implemented mod permissions yet
-  test("TODO: should fail when user is not a mod", async () => {
-
-  });
+  test.todo("TODO: should fail when user is not a mod" /* , async () => {  }*/ ); 
 
   test("should fail when thread does not exist", async () => {
     setLoggedInUser(BOBATAN_USER_ID);
     const res = await request(server.app).delete(
-      `/${DELETED_THREAD_ID}`
+      `/${NULL_ID}`
     );
 
     expect(res.status).toBe(404);
