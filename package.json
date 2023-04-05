@@ -7,7 +7,7 @@
     "dev:watch": "cross-env DEBUG=bobaserver:*,-*info DEBUG_DEPTH=10 yarn run start:watch",
     "dev:debug": "nodemon --exec node --inspect -r ts-node/register server/index.ts",
     "typecheck": "tsc",
-    "setup-env": "cp ./env-setup/.env-example ./.env && cp ./env-setup/firebase-sdk-example.json ./firebase-sdk.json",
+    "setup-env": "node env-setup/copyfiles.js",
     "start": "cross-env DEBUG=bobaserver:*,-*info node -r tsconfig-paths/register -r dotenv/config -r ts-node/register server/index.ts dotenv_config_path=./.env.prod",
     "start:watch": "nodemon --watch . --exec node -r tsconfig-paths/register -r ts-node/register server/index.ts -e yaml,ts,sql",
     "start-db": "docker compose down && docker compose up",
