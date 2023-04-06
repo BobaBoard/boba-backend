@@ -193,35 +193,3 @@ export const getAllUserRoles = async ({
   info(roles);
   return roles;
 };
-
-export const getUserRolesByRealm = async ({
-  firebaseId,
-  realmId,
-}: {
-  firebaseId: string;
-  realmId: string;
-}) => {
-  const roles = await pool.manyOrNone(sql.getUserRolesByRealm, {
-    firebase_id: firebaseId,
-    realm_id: realmId,
-  });
-  log(`Fetched roles for user ${firebaseId} in realm ${realmId}:`);
-  info(roles);
-  return roles;
-};
-
-export const getUserRolesByBoard = async ({
-  firebaseId,
-  boardId,
-}: {
-  firebaseId: string;
-  boardId: string;
-}) => {
-  const roles = await pool.manyOrNone(sql.getUserRolesByBoard, {
-    firebase_id: firebaseId,
-    board_id: boardId,
-  });
-  log(`Fetched roles for user ${firebaseId} on board ${boardId}:`);
-  info(roles);
-  return roles;
-};
