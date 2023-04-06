@@ -106,4 +106,5 @@ export default {
     path.join(__dirname, "fetch-bobadex.sql")
   ),
   getUserRolesByRealm,
+  getAllUserRoles,
 };
