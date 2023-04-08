@@ -39,10 +39,9 @@ const createNewUser = `
 INSERT INTO users(firebase_id, invited_by, created_on)
 VALUES ($/firebase_id/, $/invited_by/, $/created_on/)`;
 
-const getAllUserRoles = `
+const getUserRolesByRealm = `
   SELECT
     roles.*,
-    COALESCE(ARRAY_AGG(DISTINCT realms.string_id) FILTER (WHERE realms.string_id IS NOT NULL), '{}') realm_ids,
     COALESCE(ARRAY_AGG(DISTINCT boards.string_id) FILTER (WHERE boards.string_id IS NOT NULL), '{}') board_ids,
     accessories.string_id AS accessory_external_id
   FROM roles
@@ -60,8 +59,12 @@ const getAllUserRoles = `
     realms.id = realm_user_roles.realm_id
   LEFT JOIN boards ON
     boards.id = board_user_roles.board_id
-  WHERE users.firebase_id = $/firebase_id/
-  GROUP BY roles.id, accessory_external_id`;
+  WHERE
+    users.firebase_id = $/firebase_id/
+    AND
+    realms.string_id = $/realm_external_id/
+  GROUP BY roles.id, accessory_external_id
+`;
 
 export default {
   getUserDetails,
@@ -73,5 +76,5 @@ export default {
   getBobadexIdentities: new QueryFile(
     path.join(__dirname, "fetch-bobadex.sql")
   ),
-  getAllUserRoles,
+  getUserRolesByRealm,
 };
