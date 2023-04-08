@@ -44,11 +44,10 @@ describe("Tests user queries", () => {
           "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F2df7dfb4-4c64-4370-8e74-9ee30948f05d?alt=media&token=26b16bef-0fd2-47b5-b6df-6cf2799010ca",
         color: "pink",
         description: "A role for the owner.",
-        id: "3",
         name: "The Owner",
         permissions:
           "{edit_board_details,post_as_role,move_thread,create_realm_invite}",
-        string_id: OWNER_ROLE_EXTERNAL_ID,
+        id: OWNER_ROLE_EXTERNAL_ID,
         board_ids: [],
         accessory_external_id: "9e593709-419f-4b2c-b7ee-88ed47884c3c",
       },
@@ -66,11 +65,10 @@ describe("Tests user queries", () => {
           "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F6518df53-2031-4ac5-8d75-57a0051ed924?alt=media&token=23df54b7-297c-42ff-a0ea-b9862c9814f8",
         color: "red",
         description: "A role for people who can edit the gore board.",
-        id: "1",
         name: "GoreMaster5000",
         permissions:
           "{edit_board_details,post_as_role,edit_category_tags,edit_content_notices}",
-        string_id: GOREMASTER_ROLE_EXTERNAL_ID,
+        id: GOREMASTER_ROLE_EXTERNAL_ID,
         board_ids: [GORE_BOARD_ID],
         accessory_external_id: null,
       },
@@ -84,8 +82,7 @@ describe("Tests user queries", () => {
     });
     expect(roles).toEqual([
       {
-        id: "1",
-        string_id: GOREMASTER_ROLE_EXTERNAL_ID,
+        id: GOREMASTER_ROLE_EXTERNAL_ID,
         name: "GoreMaster5000",
         avatar_reference_id:
           "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F6518df53-2031-4ac5-8d75-57a0051ed924?alt=media&token=23df54b7-297c-42ff-a0ea-b9862c9814f8",
@@ -97,8 +94,7 @@ describe("Tests user queries", () => {
         accessory_external_id: null,
       },
       {
-        id: "3",
-        string_id: OWNER_ROLE_EXTERNAL_ID,
+        id: OWNER_ROLE_EXTERNAL_ID,
         name: "The Owner",
         avatar_reference_id:
           "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F2df7dfb4-4c64-4370-8e74-9ee30948f05d?alt=media&token=26b16bef-0fd2-47b5-b6df-6cf2799010ca",
