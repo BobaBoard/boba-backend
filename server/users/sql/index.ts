@@ -41,7 +41,12 @@ VALUES ($/firebase_id/, $/invited_by/, $/created_on/)`;
 
 const getUserRolesByRealm = `
   SELECT
-    roles.*,
+    roles.string_id AS id,
+    roles.name,
+    roles.avatar_reference_id,
+    roles.color,
+    roles.description,
+    roles.permissions,
     COALESCE(ARRAY_AGG(DISTINCT boards.string_id) FILTER (WHERE boards.string_id IS NOT NULL), '{}') board_ids,
     accessories.string_id AS accessory_external_id
   FROM roles
