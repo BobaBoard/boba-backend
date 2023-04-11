@@ -30,9 +30,9 @@ describe("Tests board role queries", () => {
     expect(res.body).toEqual({
         roles: [
           {
-            user_id: '1',
+            user_firebase_id: 'c6HimTlg2RhVH3fC1psXZORdLcx2',
             username: 'bobatan',
-            role_id: '1',
+            role_string_id: "e5f86f53-6dcd-4f15-b6ea-6ca1f088e62d",
             role_name: 'GoreMaster5000',
             label: 'Test Label'
           }

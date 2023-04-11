@@ -4,8 +4,6 @@ echo "****************"
 echo "Running db init!"
 echo "****************"
 echo "****************"
-echo $POSTGRES_USER
-echo $POSTGRES_DB
 for f in docker-entrypoint-initdb.d/init/*.sql; do
   echo "$0: running $f"
   psql -U $POSTGRES_USER $POSTGRES_DB -f $f -v ON_ERROR_STOP=1

@@ -20,8 +20,8 @@ CREATE TYPE role_permissions_type AS ENUM (
     'comment_on_realm',
     'create_thread_on_realm',
     'access_locked_boards_on_realm',
-		'view_roles_on_realm',
-		'view_roles_on_board'
+    'view_roles_on_realm',
+    'view_roles_on_board'
 );
 
 CREATE TABLE IF NOT EXISTS roles

@@ -718,10 +718,11 @@ router.delete(
  *               twisted_minds:
  *                 value:
  *                   roles:
- *                     - user_id: "1"
+ *                     - user_firebase_id: "c6HimTlg2RhVH3fC1psXZORdLcx2"
  *                       username: "bobatan"
- *                       role_id: "3"
+ *                       role_string_id: "3df1d417-c36a-43dd-aaba-9590316ffc32"
  *                       role_name: "The Owner"
+ *                       label: "Look ma, a label"
  *       401:
  *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
@@ -750,18 +751,8 @@ router.get(
 				res.status(200).json({roles:[]});
 				return;
 			}
-			const formattedBoardRoles = boardRoles.map((roleEntry) => {
-				const formattedBoardRoles = {
-					user_id:roleEntry.user_id,
-					username:roleEntry.username,
-					role_id:roleEntry.role_id,
-					role_name:roleEntry.role_name,
-					...(roleEntry.label && { label: roleEntry.label }),
-				};
-				return formattedBoardRoles;
-			});
 	    res.status(200).json({
-	      roles: formattedBoardRoles || [],
+	      roles: boardRoles || [],
 	    });
 	  } catch (e) {
 	    error(e);

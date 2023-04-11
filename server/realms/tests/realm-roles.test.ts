@@ -21,31 +21,32 @@ describe("Tests realm role queries", () => {
     expect(res.body).toEqual({
       roles: [
         {
-          user_id: '1',
+          user_firebase_id: 'c6HimTlg2RhVH3fC1psXZORdLcx2',
           username: 'bobatan',
-          role_id: '3',
+          role_string_id: '3df1d417-c36a-43dd-aaba-9590316ffc32',
           role_name: 'The Owner',
           label: 'Look ma, a label'
         },
         {
-          user_id: '1',
+          user_firebase_id: 'c6HimTlg2RhVH3fC1psXZORdLcx2',
           username: 'bobatan',
-          role_id: '1',
+          role_string_id: 'e5f86f53-6dcd-4f15-b6ea-6ca1f088e62d',
           role_name: 'GoreMaster5000',
           label: 'we have fun here'
         },
         {
-          user_id: '4',
+          user_firebase_id: 'fb4',
           username: 'SexyDaddy69',
-          role_id: '3',
+          role_string_id: '3df1d417-c36a-43dd-aaba-9590316ffc32',
           role_name: 'The Owner',
           label: 'well earned'
         },
         {
-          user_id: '3',
+          user_firebase_id: 'fb3',
           username: 'oncest5evah',
-          role_id: '1',
-          role_name: 'GoreMaster5000'
+          role_string_id: 'e5f86f53-6dcd-4f15-b6ea-6ca1f088e62d',
+          role_name: 'GoreMaster5000',
+          label: ''
         }
       ]
     });
