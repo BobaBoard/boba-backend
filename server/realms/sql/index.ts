@@ -73,11 +73,11 @@ WHERE users.firebase_id = $/firebase_id/ AND realms.string_id = $/realm_external
 
 const fetchRolesInRealm = `
 SELECT
-	users.firebase_id as user_firebase_id,
-	users.username as username,
-	roles.string_id as role_string_id,
-	roles.name as role_name,
-	realm_user_roles.label as label
+  users.firebase_id as user_firebase_id,
+  users.username as username,
+  roles.string_id as role_string_id,
+  roles.name as role_name,
+  realm_user_roles.label as label
 FROM realm_user_roles
 INNER JOIN realms ON realm_user_roles.realm_id = realms.id
 INNER JOIN roles ON realm_user_roles.role_id=roles.id

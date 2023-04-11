@@ -2,8 +2,8 @@ import {
   BOBATAN_USER_ID,
 } from "test/data/auth";
 import {
-	TWISTED_MINDS_REALM_EXTERNAL_ID,
-	UWU_REALM_EXTERNAL_ID } from "test/data/realms";
+  TWISTED_MINDS_REALM_EXTERNAL_ID,
+  UWU_REALM_EXTERNAL_ID } from "test/data/realms";
 import { setLoggedInUser, startTestServer } from "utils/test-utils";
 import request from "supertest";
 import router from "../routes";
@@ -16,7 +16,7 @@ describe("Tests realm role queries", () => {
   test("fetches realm roles with permissions", async () => {
     setLoggedInUser(BOBATAN_USER_ID);
     const res = await request(server.app).get(`/${TWISTED_MINDS_REALM_EXTERNAL_ID}/roles`);
-		console.log(res.body)
+    console.log(res.body)
     expect(res.status).toBe(200);
     expect(res.body).toEqual({
       roles: [
@@ -52,10 +52,10 @@ describe("Tests realm role queries", () => {
     });
   });
 
-	test("does not fetch realm roles without permissions", async () => {
+  test("does not fetch realm roles without permissions", async () => {
     setLoggedInUser(BOBATAN_USER_ID);
     const res = await request(server.app).get(`/${UWU_REALM_EXTERNAL_ID}/roles`);
-		console.log(res.body)
+    console.log(res.body)
     expect(res.status).toBe(403);
     expect(res.body).toEqual({
       message: 'User does not have required permissions for realm operation.'

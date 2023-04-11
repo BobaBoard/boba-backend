@@ -117,18 +117,18 @@ const updateBoardSettings = `
     WHERE boards.string_id = $/board_id/`;
 
 const fetchRolesInBoard = `
-		SELECT
-			users.firebase_id as user_firebase_id,
-			users.username as username,
-			roles.string_id as role_string_id,
-			roles.name as role_name,
-			board_user_roles.label as label
-		FROM board_user_roles
-		INNER JOIN boards ON board_user_roles.board_id = boards.id
-		INNER JOIN roles ON board_user_roles.role_id=roles.id
-		INNER JOIN users ON users.id=board_user_roles.user_id
-		WHERE boards.string_id = $/board_external_id/
-		`;
+    SELECT
+      users.firebase_id as user_firebase_id,
+      users.username as username,
+      roles.string_id as role_string_id,
+      roles.name as role_name,
+      board_user_roles.label as label
+    FROM board_user_roles
+    INNER JOIN boards ON board_user_roles.board_id = boards.id
+    INNER JOIN roles ON board_user_roles.role_id=roles.id
+    INNER JOIN users ON users.id=board_user_roles.user_id
+    WHERE boards.string_id = $/board_external_id/
+    `;
 
 export default {
   getAllBoards: new QueryFile(path.join(__dirname, "all-boards.sql")),

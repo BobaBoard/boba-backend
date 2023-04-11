@@ -12,7 +12,7 @@ import {
   getRealmByExternalId,
   getRealmInvites,
   getUserPermissionsForRealm,
-	getRealmRoles,
+  getRealmRoles,
 } from "server/realms/queries";
 import { createNewUser, getUserFromFirebaseId } from "server/users/queries";
 import { ensureLoggedIn, withLoggedIn, withUserSettings } from "handlers/auth";
@@ -857,7 +857,7 @@ router.post(
  *     tags:
  *       - /realms/
  *     security:
- *       - {}
+ *       - firebase: []
  *     parameters:
  *       - name: realm_id
  *         in: path
@@ -901,23 +901,23 @@ router.get(
   ensureRealmExists, ensureLoggedIn,
   ensureRealmPermission(RealmPermissions.viewRolesOnRealm),
   async (req, res) => {
-	  try {
-	    const { realm_id } = req.params;
-	    const realmRoles = await getRealmRoles({
-	      realmExternalId: realm_id,
-	    });
-			if (!realmRoles?.length){
-				res.status(200).json({roles:[]});
-				return;
-			}
-	    res.status(200).json({
-	      roles: realmRoles || [],
-	    });
-	  } catch (e) {
-	    error(e);
-	    res.status(500).json({
-	      message: "There was an error fetching realm roles.",
-	    });
+    try {
+      const { realm_id } = req.params;
+      const realmRoles = await getRealmRoles({
+        realmExternalId: realm_id,
+      });
+      if (!realmRoles?.length){
+        res.status(200).json({roles:[]});
+        return;
+      }
+      res.status(200).json({
+        roles: realmRoles || [],
+      });
+    } catch (e) {
+      error(e);
+      res.status(500).json({
+        message: "There was an error fetching realm roles.",
+      });
   }
 });
 
