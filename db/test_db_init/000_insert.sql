@@ -1,15 +1,15 @@
 INSERT INTO Realms(id, string_id, slug, icon_reference_id, favicon_reference_id, title, description, feedback_form_url)
 OVERRIDING SYSTEM VALUE VALUES
-    (1, '76ef4cc3-1603-4278-95d7-99c59f481d2e', 
-        'twisted-minds', 
-        'https://images-ext-1.discordapp.net/external/KLz7_JytTOB6vzGDmnAuXTgkDtWuUCluyB6VxiAL8FA/%3Fsize%3D1024/https/cdn.discordapp.com/icons/911351540504199168/d6f98ff59822c22b1ff650796c346166.png', 
+    (1, '76ef4cc3-1603-4278-95d7-99c59f481d2e',
+        'twisted-minds',
+        'https://images-ext-1.discordapp.net/external/KLz7_JytTOB6vzGDmnAuXTgkDtWuUCluyB6VxiAL8FA/%3Fsize%3D1024/https/cdn.discordapp.com/icons/911351540504199168/d6f98ff59822c22b1ff650796c346166.png',
         'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Ffancoders%2F290eafc5-123d-42d6-925b-2eedaf4f92dc%2F4de67370-8a82-47f4-876a-5f5d455044f8..icon?alt=media&token=8b50403e-e68e-4654-8684-44460a37ca92',
         'Where the code is buggy, but the people are cool!',
         'A community of people who love to code and share their love of fandom!',
         'https://docs.google.com/forms/d/e/1FAIpQLSfyMENg9eDNmRj-jIvIG5_ElJFwpGZ_VPvzAskarqu5kf0MSA/viewform'),
-    (2, 'e88590d8-c5fb-44f2-abc2-8cffb5b4cdb1', 
+    (2, 'e88590d8-c5fb-44f2-abc2-8cffb5b4cdb1',
         'uwu',
-        'https://images-ext-1.discordapp.net/external/KLz7_JytTOB6vzGDmnAuXTgkDtWuUCluyB6VxiAL8FA/%3Fsize%3D1024/https/cdn.discordapp.com/icons/911351540504199168/d6f98ff59822c22b1ff650796c346166.png', 
+        'https://images-ext-1.discordapp.net/external/KLz7_JytTOB6vzGDmnAuXTgkDtWuUCluyB6VxiAL8FA/%3Fsize%3D1024/https/cdn.discordapp.com/icons/911351540504199168/d6f98ff59822c22b1ff650796c346166.png',
         NULL,
         'UwwwwwwwU',
         'We''re very nice here.',
@@ -29,16 +29,16 @@ OVERRIDING SYSTEM VALUE VALUES
     (10, '2895f9c8-8419-4ab8-b33d-3ad18e77a589','MODS', 'HELP! I NEED AN ADULT!', 'https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2Fc3b86805-4df7-4b1a-9fa2-b96b5165a636?alt=media&token=7652d44a-38cb-40cc-82ef-908cd4265840', 2, '{ "accentColor": "#fa8628"}');
 
 INSERT INTO board_description_sections (id, string_id, board_id,title, description, "type", "index")
-OVERRIDING SYSTEM VALUE VALUES 
+OVERRIDING SYSTEM VALUE VALUES
     (1, 'e541f259-8e6a-42c9-84c3-9c8991945930', 2,'Gore Categories' ,NULL, 'category_filter', 2),
     (2, '51be2abf-d191-4269-830a-e0c51b9fd8e7', 2,'Gore description' ,'[{"insert": "pls b nice"}]', 'text', 1);
 
-INSERT INTO categories(id, category) 
-OVERRIDING SYSTEM VALUE VALUES 
+INSERT INTO categories(id, category)
+OVERRIDING SYSTEM VALUE VALUES
     (1, 'blood'),
     (2, 'bruises');
 
-INSERT INTO board_description_section_categories(section_id,category_id) VALUES 
+INSERT INTO board_description_section_categories(section_id,category_id) VALUES
     (1, 1),
     (1, 2);
 
@@ -48,10 +48,10 @@ OVERRIDING SYSTEM VALUE VALUES
     (4, 'even');
 
 INSERT INTO board_description_sections (id, string_id, board_id,title, description, "type", "index")
-OVERRIDING SYSTEM VALUE VALUES 
+OVERRIDING SYSTEM VALUE VALUES
     (3, 'db814c12-c530-46d2-b1a3-22ab958886f5', 4,'Long, long filter', NULL, 'category_filter', 1);
 ;
-INSERT INTO board_description_section_categories(section_id,category_id) VALUES 
+INSERT INTO board_description_section_categories(section_id,category_id) VALUES
     (3, 3),
     (3, 4);
 

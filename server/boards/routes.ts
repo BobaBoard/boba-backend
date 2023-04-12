@@ -718,7 +718,7 @@ router.delete(
  *               twisted_minds:
  *                 value:
  *                   roles:
- *                     - user_firebase_id: "c6HimTlg2RhVH3fC1psXZORdLcx2"
+ *                     - user_firebase_id: "a90b0809-2c57-4ff1-be7c-4b7ab1b7edcc"
  *                       username: "bobatan"
  *                       role_string_id: "3df1d417-c36a-43dd-aaba-9590316ffc32"
  *                       role_name: "The Owner"

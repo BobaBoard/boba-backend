@@ -93,7 +93,6 @@ components:
             type: object
             properties:
               user_firebase_id:
-                description: User firebase id.
                 type: string
                 format: uuid
               username:
@@ -109,9 +108,9 @@ components:
               label:
                 description: Label associated with role assignment
                 type: string
-      required:
-        - user_firebase_id
-        - username
-        - role_string_id
-        - role_name
-        - label
+            required:
+              - user_firebase_id
+              - username
+              - role_string_id
+              - role_name
+              - label
