@@ -15,7 +15,7 @@ function copySetupFile(srcName, destName) {
         console.error("Error copying file: ", err);
       } else {
         console.log(
-          `Successfully copied env-setup/${srcName} to /${destName}!`
+          `Successfully copied .env-setup/${srcName} to /${destName}!`
         );
       }
     }
