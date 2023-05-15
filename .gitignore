@@ -15,3 +15,7 @@ reports/
 yarn-error.log
 result
 .vscode/settings.json
+# Devenv
+.devenv*
+devenv.local.nix
+
