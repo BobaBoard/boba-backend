@@ -48,7 +48,7 @@ app.use((req, res, next) => {
 initOpenApiDocs(app);
 app.use(withLoggedIn);
 
-const port = process.env.PORT || 4200;
+const port = process.env.BOBASERVER_PORT || 4200;
 
 applyRoutes(app);
 registerEventHandlers();
