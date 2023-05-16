@@ -25,11 +25,9 @@ export const initCache = (createClientMethod?: any) => {
     client = createClientMethod();
     return;
   }
-
-  const redisConnectionSocket = `redis://${process.env.REDIS_HOST}:${parseInt(
-    process.env.REDIS_PORT!
-  )}`;
-
+  console.log(
+    `redis://${process.env.REDIS_HOST}:${parseInt(process.env.REDIS_PORT!)}`
+  );
   let innerClient: RedisClientType = createClient({
     socket: {
       host: process.env.REDIS_HOST,
@@ -46,7 +44,7 @@ export const initCache = (createClientMethod?: any) => {
     log("You are now connected to the cache");
   });
   innerClient.on("error", (err) => {
-    error(`Redis connection failed on ${redisConnectionSocket}`);
+    error("Redis connection failed");
   });
 
   client = innerClient;
