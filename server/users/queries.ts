@@ -1,5 +1,4 @@
 import { SettingEntry, SettingValueTypes } from "../../types/settings";
-import { decodeCursor, encodeCursor } from "utils/queries-utils";
 import firebaseAuth, { auth } from "firebase-admin";
 
 import debug from "debug";
@@ -180,4 +179,20 @@ export const createNewUser = async ({
     error(e);
     return null;
   }
+};
+
+export const getUserRolesByRealm = async ({
+  firebaseId,
+  realmId,
+}: {
+  firebaseId: string;
+  realmId: string;
+}) => {
+  const roles = await pool.manyOrNone(sql.getUserRolesByRealm, {
+    firebase_id: firebaseId,
+    realm_external_id: realmId,
+  });
+  log(`Fetched all roles for user ${firebaseId} on realm ${realmId}:`);
+  info(roles);
+  return roles;
 };

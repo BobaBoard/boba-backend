@@ -1,5 +1,4 @@
-import pg, { QueryFile } from "pg-promise";
-
+import { QueryFile } from "pg-promise";
 import path from "path";
 
 const updateUserSettings = `
@@ -40,6 +39,38 @@ const createNewUser = `
 INSERT INTO users(firebase_id, invited_by, created_on)
 VALUES ($/firebase_id/, $/invited_by/, $/created_on/)`;
 
+const getUserRolesByRealm = `
+  SELECT
+    roles.string_id AS id,
+    roles.name,
+    roles.avatar_reference_id,
+    roles.color,
+    roles.description,
+    roles.permissions,
+    COALESCE(ARRAY_AGG(DISTINCT boards.string_id) FILTER (WHERE boards.string_id IS NOT NULL), '{}') board_ids,
+    accessories.string_id AS accessory_external_id
+  FROM roles
+  LEFT JOIN role_accessories ON
+  	roles.id = role_accessories.role_id
+  LEFT JOIN accessories ON
+  	accessories.id = role_accessories.accessory_id
+  LEFT JOIN realm_user_roles ON
+    roles.id = realm_user_roles.role_id
+  LEFT JOIN board_user_roles ON
+    roles.id = board_user_roles.role_id
+  INNER JOIN users ON
+    users.id = realm_user_roles.user_id
+  LEFT JOIN realms ON
+    realms.id = realm_user_roles.realm_id
+  LEFT JOIN boards ON
+    boards.id = board_user_roles.board_id
+  WHERE
+    users.firebase_id = $/firebase_id/
+    AND
+    realms.string_id = $/realm_external_id/
+  GROUP BY roles.id, accessory_external_id
+`;
+
 export default {
   getUserDetails,
   createNewUser,
@@ -50,4 +81,5 @@ export default {
   getBobadexIdentities: new QueryFile(
     path.join(__dirname, "fetch-bobadex.sql")
   ),
+  getUserRolesByRealm,
 };
