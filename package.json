@@ -22,18 +22,22 @@
     "open-api:docker": "docker compose -f docker-compose.open-api.test.yml run --rm test",
     "open-api:typescript": "yarn run open-api:generate && openapi-zod-client ./open-api-spec.json -o ./types/open-api/generated/schemas.ts --export-schemas --template ./types/open-api/generated/schemas.hbs --with-alias &&  openapi-zod-client ./open-api-spec.json -o ./types/open-api/generated/types.ts --export-schemas --template ./types/open-api/generated/types.hbs --with-alias",
     "deploy": "gcloud config set project bobaboard && gcloud app deploy --version live",
-    "stage": "gcloud config set project bobaboard && gcloud app deploy --quiet --version staging --no-promote"
+    "stage": "gcloud config set project bobaboard && gcloud app deploy --quiet --version staging --no-promote",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format:fix": "prettier --write .",
+    "fix": "yarn run format:fix && yarn run lint:fix"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/essential-randomness/bobaserver.git"
+    "url": "git+https://github.com/BobaBoard/boba-backend"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/essential-randomness/bobaserver/issues"
+    "url": "https://github.com/BobaBoard/issues"
   },
-  "homepage": "https://github.com/essential-randomness/bobaserver#readme",
+  "homepage": "https://github.com/BobaBoard/boba-backend#readme",
   "dependencies": {
     "@types/clone": "^2.1.1",
     "@types/cors": "^2.8.6",
