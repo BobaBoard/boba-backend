@@ -2,38 +2,33 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
     systems.url = "github:nix-systems/default";
-    devenv.url = "github:cachix/devenv";
   };
 
-  outputs = { self, nixpkgs, devenv, systems, ... } @ inputs:
-    let
-      forEachSystem = nixpkgs.lib.genAttrs (import systems);
-    in
-    {
-      devShells = forEachSystem
-        (system:
-          let
-            pkgs = nixpkgs.legacyPackages.${system};
-          in
-          {
-            default = devenv.lib.mkShell {
-              inherit inputs pkgs;
-              modules = [
-                {
-                  # https://devenv.sh/reference/options/
-                  packages = [ 
-                    # pkgs.git
-                    # pkgs.yarn
-                    # pkgs.docker
-                  ];
-
-                  enterShell = ''
-                    yarn install
-                    yarn run start-db & yarn run dev:watch
-                  '';
-                }
-              ];
-            };
-          });
-    };
+  outputs = { self, nixpkgs, systems, ... } @ inputs:
+    # let
+    #   forEachSystem = nixpkgs.lib.genAttrs (import systems);
+    # in
+    # forEachSystem (system:
+      let
+        system = "aarch64-darwin"; 
+        pkgs = nixpkgs.legacyPackages.${system};
+      in {
+        packages.${system} = {
+          bobaServer = pkgs.buildNpmPackage {
+            name="boba-server";
+            version="0.0.1";
+            npmDepsHash = "sha256-ImoD8FMByVtcCc/FCeiP+hTwrV2aSga32FINlt0gQLA=";
+            npmBuild = ''
+              npm run build
+            '';
+            src = ./.;
+            installPhase = ''
+              cp -r dist $out
+              cp package-lock.json $out
+            '';
+          };
+        };
+        defaultPackage.${system} =  self.packages.${system}.bobaServer;
+      };
+      # );
 }
