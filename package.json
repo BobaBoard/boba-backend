@@ -4,7 +4,7 @@
   "description": "Server for BobaBoard",
   "main": "dist/server/index.js",
   "scripts": {
-    "dev:watch": "cross-env DEBUG=bobaserver:*,-*info DEBUG_DEPTH=10 yarn run start:watch",
+    "dev:watch": "cross-env DEBUG=bobaserver:*,-*info DEBUG_DEPTH=10 nodemon --watch . --exec node -r tsconfig-paths/register -r ts-node/register server/index.ts -e yaml,ts,sql",
     "start": "cross-env DEBUG=bobaserver:*,-*info node -r dotenv/config dist/server/index.js dotenv_config_path=./.env.prod",
     "build": "tsc && tsc-alias && copyfiles .env .env.prod firebase-sdk.json server/**/*.sql ./dist",
     "start-db": "docker compose down && docker compose up",
