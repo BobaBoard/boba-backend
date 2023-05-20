@@ -65,7 +65,7 @@ describe("Tests tag-related queries", () => {
       expect(result.content_warnings).toIncludeSameMembers(["zombies", "vore"]);
     });
   });
-  
+
   test("adds category tags to post (and database)", async () => {
     await runWithinTransaction(async (transaction) => {
       const postId = HIMBO_POST_ID;

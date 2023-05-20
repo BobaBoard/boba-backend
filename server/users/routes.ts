@@ -360,7 +360,7 @@ router.patch("/@me/settings", ensureLoggedIn, async (req, res) => {
   const { name, value } = req.body;
 
   const firebaseId = req.currentUser!.uid;
-  
+
   try {
     await updateUserSettings({
       firebaseId,

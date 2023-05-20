@@ -71,18 +71,22 @@ export const ThreadTypeSchema = z.object({
   muted: z.boolean(),
   hidden: z.boolean(),
   starred: z.boolean(),
-});export type ZodDbThreadType = z.infer<typeof ThreadTypeSchema>;
+});
+export type ZodDbThreadType = z.infer<typeof ThreadTypeSchema>;
 
 export const ThreadSummaryTypeSchema = ThreadTypeSchema.extend({
   thread_last_activity_at_micro: z.string().nullable(),
-  }).and(ThreadTypeSchema.omit({ posts: true }))
-  .and(PostTypeSchema.omit({
-     total_comments_amount: true, 
-     new_comments_amount: true, 
-     comments: true,
-  }));
+})
+  .and(ThreadTypeSchema.omit({ posts: true }))
+  .and(
+    PostTypeSchema.omit({
+      total_comments_amount: true,
+      new_comments_amount: true,
+      comments: true,
+    })
+  );
 export type ZodDbThreadSummaryType = z.infer<typeof ThreadSummaryTypeSchema>;
-//TODO: come up with good names for this or 
+//TODO: come up with good names for this or
 //  replace all current DB types out right
 
 export const FeedTypeSchema = z.object({
@@ -90,4 +94,3 @@ export const FeedTypeSchema = z.object({
   activity: z.array(ThreadSummaryTypeSchema),
 });
 export type ZodDbFeedType = z.infer<typeof FeedTypeSchema>;
-

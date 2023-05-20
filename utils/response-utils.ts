@@ -19,9 +19,7 @@ import {
 
 import { BoardByExternalId } from "server/boards/sql/types";
 import { BoardRestrictions } from "types/permissions";
-import{
-  ZodThreadSummary,
-} from "types/rest/zodthreads"
+import { ZodThreadSummary } from "types/rest/zodthreads";
 import debug from "debug";
 import { getUserPermissionsForBoard } from "./permissions-utils";
 

@@ -3,9 +3,12 @@ import {
   JERSEY_DEVIL_USER_ID,
   ONCEST_USER_ID,
   SEXY_DADDY_USER_ID,
-  ZODIAC_KILLER_USER_ID
+  ZODIAC_KILLER_USER_ID,
 } from "test/data/auth";
-import { FAVORITE_CHARACTER_THREAD_ID, FAVORITE_MURDER_THREAD_ID } from "test/data/threads";
+import {
+  FAVORITE_CHARACTER_THREAD_ID,
+  FAVORITE_MURDER_THREAD_ID,
+} from "test/data/threads";
 
 import { getThreadByExternalId } from "../queries";
 
