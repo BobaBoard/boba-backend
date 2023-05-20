@@ -98,7 +98,7 @@ export const mergeObjectIdentity = <T>(
       avatar: user_avatar,
     });
   }
-  let secret_identity = transformImageUrls({
+  const secret_identity = transformImageUrls({
     name: secret_identity_name,
     avatar: secret_identity_avatar,
     color: secret_identity_color || null,
@@ -258,7 +258,7 @@ export const processBoardMetadata = ({
   isLoggedIn: boolean;
   hasBoardAccess: boolean;
 }) => {
-  let finalMetadata: Partial<BoardMetadata> | LoggedInBoardMetadata = {
+  const finalMetadata: Partial<BoardMetadata> | LoggedInBoardMetadata = {
     id: metadata.external_id,
     slug: metadata.slug,
     avatar_url: metadata.avatar_url,

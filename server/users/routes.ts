@@ -53,7 +53,7 @@ const router = express.Router();
  *                   format: uri
  */
 router.get("/@me", ensureLoggedIn, async (req, res) => {
-  let currentUserId: string = req.currentUser!.uid;
+  const currentUserId: string = req.currentUser!.uid;
   const cachedData = await cache().hGet(CacheKeys.USER, currentUserId);
 
   if (cachedData) {
@@ -127,7 +127,7 @@ router.get("/@me", ensureLoggedIn, async (req, res) => {
  *                 - avatar_url
  */
 router.patch("/@me", ensureLoggedIn, async (req, res) => {
-  let currentUserId: string = req.currentUser!.uid;
+  const currentUserId: string = req.currentUser!.uid;
   const { username, avatarUrl } = req.body;
 
   if (!username || !avatarUrl) {
@@ -209,7 +209,7 @@ router.get(
   ensureLoggedIn,
   withRealmPermissions,
   async (req, res) => {
-    let currentUserId: string = req.currentUser!.uid;
+    const currentUserId: string = req.currentUser!.uid;
     const cachedData = await cache().hGet(CacheKeys.USER_PINS, currentUserId);
 
     if (cachedData) {
@@ -277,7 +277,7 @@ router.get(
  *                 $ref: '#/components/examples/BobaDexResponse'
  */
 router.get("/@me/bobadex", ensureLoggedIn, async (req, res) => {
-  let currentUserId: string = req.currentUser!.uid;
+  const currentUserId: string = req.currentUser!.uid;
   const identities = await getBobadexIdentities({ firebaseId: currentUserId });
   res.status(200).json(identities);
 });
