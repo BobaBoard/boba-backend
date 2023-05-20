@@ -308,7 +308,7 @@ export const withRealmPermissions = async (
         "Realm permissions can only be fetched on a route that includes a realm id."
       );
     }
-    if (!!req.currentRealmPermissions) {
+    if (req.currentRealmPermissions) {
       next();
       return;
     }

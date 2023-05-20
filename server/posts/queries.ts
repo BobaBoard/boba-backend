@@ -315,7 +315,7 @@ export const postNewContribution = async (
       parentPostId || threadExternalId,
       `ParentPostId (${parentPostId}) or threadExternalId (${threadExternalId}) is required when creating a new contribution`
     );
-    let {
+    const {
       board_slug,
       board_external_id,
       user_id,
@@ -420,7 +420,7 @@ export const postNewCommentWithTransaction = async ({
   identityId?: string;
   accessoryId?: string;
 }): Promise<{ id: number; comment: DbCommentType }> => {
-  let {
+  const {
     user_id,
     username,
     user_avatar,
@@ -509,7 +509,7 @@ export const postNewCommentChain = async ({
       let prevId: number | null = null;
       let prevExternalId: string | null = null;
       const comments = [];
-      for (let content of contentArray) {
+      for (const content of contentArray) {
         const newComment: { id: number; comment: DbCommentType } =
           await postNewCommentWithTransaction({
             firebaseId,

@@ -35,7 +35,7 @@ describe("user star feed queries", () => {
         whisper_tags: ["mwehehehehe"],
         category_tags: ["blood", "bruises"],
         content_warnings: [],
-      }
+      },
     ]);
   });
 });

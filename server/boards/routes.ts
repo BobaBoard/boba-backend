@@ -676,7 +676,7 @@ router.delete(
   async (req, res) => {
     const { board_id: boardExternalId } = req.params;
 
-    let currentUserId: string = req.currentUser!.uid;
+    const currentUserId: string = req.currentUser!.uid;
     log(
       `Dismissing ${boardExternalId} notifications for firebase id: ${currentUserId}`
     );

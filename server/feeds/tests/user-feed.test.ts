@@ -1,5 +1,8 @@
 import { BOBATAN_USER_ID, ONCEST_USER_ID } from "test/data/auth";
-import { FAVORITE_CHARACTER_THREAD_ID, FAVORITE_MURDER_THREAD_ID } from "test/data/threads";
+import {
+  FAVORITE_CHARACTER_THREAD_ID,
+  FAVORITE_MURDER_THREAD_ID,
+} from "test/data/threads";
 
 import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
 import { extractActivity } from "utils/test-utils";
