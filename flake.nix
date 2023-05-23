@@ -18,9 +18,7 @@
             name="boba-server";
             version="0.0.1";
             npmDepsHash = "sha256-ImoD8FMByVtcCc/FCeiP+hTwrV2aSga32FINlt0gQLA=";
-            npmBuild = ''
-              npm run build
-            '';
+            npmFlags = [ "--legacy-peer-deps" ];
             src = ./.;
             installPhase = ''
               cp -r dist $out
