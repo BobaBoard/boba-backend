@@ -13,20 +13,32 @@
         system = "aarch64-darwin"; 
         pkgs = nixpkgs.legacyPackages.${system};
       in {
-        packages.${system} = {
-          bobaServer = pkgs.buildNpmPackage {
+        packages.${system} = rec {
+          bobaserver-assets = pkgs.yarn2nix-moretea.mkYarnPackage {
             name="boba-server";
             version="0.0.1";
-            npmDepsHash = "sha256-ImoD8FMByVtcCc/FCeiP+hTwrV2aSga32FINlt0gQLA=";
-            npmFlags = [ "--legacy-peer-deps" ];
             src = ./.;
+            dontFixup = true;
+            doDist = false;
+            buildPhase = ''
+              yarn build
+            '';
+            distPhase = "";
             installPhase = ''
-              cp -r dist $out
-              cp package-lock.json $out
+              mkdir -p $out/libexec/bobaserver
+              mv node_modules $out/libexec/bobaserver/
+              mv deps $out/libexec/bobaserver/
             '';
           };
+          bobaserver = pkgs.writeShellScriptBin "bobaserver" ''
+            export NODE_PATH=${bobaserver-assets}/libexec/bobaserver/node_modules
+            export GOOGLE_APPLICATION_CREDENTIALS_PATH=$(pwd)/firebase-sdk.json
+            export DEBUG=bobaserver:*,-*info
+
+            ${pkgs.nodejs}/bin/node -r dotenv/config ${bobaserver-assets}/libexec/bobaserver/node_modules/bobaserver/dist/server/index.js
+          '';
+          default = bobaserver;
         };
-        defaultPackage.${system} =  self.packages.${system}.bobaServer;
       };
       # );
 }
