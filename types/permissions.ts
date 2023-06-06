@@ -22,6 +22,9 @@ export enum DbRolePermissions {
   comment_on_realm = "comment_on_realm",
   create_thread_on_realm = "create_thread_on_realm",
   access_locked_boards_on_realm = "access_locked_boards_on_realm",
+  delete_thread = 'delete_thread',
+  delete_contribution = 'delete_contribution',
+  delete_comment = 'delete_comment'
 }
 
 export interface UserBoardPermissions {
@@ -33,6 +36,7 @@ export interface UserBoardPermissions {
 export enum ThreadPermissions {
   editDefaultView = DbRolePermissions["edit_default_view"],
   moveThread = DbRolePermissions["move_thread"],
+  deleteThread = DbRolePermissions["delete_thread"]
 }
 
 export enum BoardPermissions {
@@ -44,9 +48,7 @@ export enum RealmPermissions {
   postOnRealm = DbRolePermissions["post_on_realm"],
   commentOnRealm = DbRolePermissions["comment_on_realm"],
   createThreadOnRealm = DbRolePermissions["create_thread_on_realm"],
-  accessLockedBoardsOnRealm = DbRolePermissions[
-    "access_locked_boards_on_realm"
-  ],
+  accessLockedBoardsOnRealm = DbRolePermissions["access_locked_boards_on_realm"],
 }
 
 export enum PostPermissions {
@@ -55,6 +57,8 @@ export enum PostPermissions {
   editCategoryTags = DbRolePermissions["edit_category_tags"],
   editIndexTags = DbRolePermissions["edit_index_tags"],
   editContentNotices = DbRolePermissions["edit_content_notices"],
+  deleteContribution = DbRolePermissions["delete_contribution"],
+  deleteComment = DbRolePermissions["delete_comment"]
 }
 
 export const extractPermissions = <T extends {}>(
@@ -98,6 +102,17 @@ export const REALM_MEMBER_PERMISSIONS = [
   RealmPermissions.commentOnRealm,
   RealmPermissions.postOnRealm,
   RealmPermissions.createThreadOnRealm,
+];
+
+/** 
+ *  A temporary set of permissions associated with every moderator to test deletion permissions. 
+ *  TODO: find out if this is actually temporary -nrdbstrd
+ */
+
+export const MOD_PERMISSIONS = [
+    ThreadPermissions.deleteThread,
+    PostPermissions.deleteContribution,
+    PostPermissions.deleteComment
 ];
 
 export enum BoardRestrictions {

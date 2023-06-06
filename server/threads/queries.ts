@@ -1,4 +1,4 @@
-import { THREAD_OWNER_PERMISSIONS, ThreadPermissions } from "types/permissions";
+import { MOD_PERMISSIONS, THREAD_OWNER_PERMISSIONS, ThreadPermissions } from "types/permissions";
 
 import { DbThreadType } from "Types";
 import debug from "debug";
