@@ -5,15 +5,13 @@
   };
 
   outputs = { self, nixpkgs, systems, ... } @ inputs:
-    # let
-    #   forEachSystem = nixpkgs.lib.genAttrs (import systems);
-    # in
-    # forEachSystem (system:
-      let
-        system = "x86_64-linux"; 
-        pkgs = nixpkgs.legacyPackages.${system};
-      in {
-        packages.${system} = rec {
+    let
+      forEachSystem = nixpkgs.lib.genAttrs (import systems);
+    in {
+      packages = forEachSystem (system:
+        let
+            pkgs = nixpkgs.legacyPackages.${system};
+        in rec {
           bobaserver-assets = pkgs.yarn2nix-moretea.mkYarnPackage {
             name="boba-server";
             version="0.0.1";
@@ -38,7 +36,8 @@
             ${pkgs.nodejs}/bin/node -r dotenv/config ${bobaserver-assets}/libexec/bobaserver/node_modules/bobaserver/dist/server/index.js
           '';
           default = bobaserver;
-        };
-      };
-      # );
+        }
+      );
+      defaultPackage = forEachSystem (system: self.packages.${system}.default);
+    };
 }
