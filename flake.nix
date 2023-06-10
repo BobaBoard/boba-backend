@@ -10,7 +10,7 @@
     # in
     # forEachSystem (system:
       let
-        system = "aarch64-darwin"; 
+        system = "x86_64-linux"; 
         pkgs = nixpkgs.legacyPackages.${system};
       in {
         packages.${system} = rec {
