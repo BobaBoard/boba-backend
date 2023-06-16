@@ -242,3 +242,24 @@ export const moveThread = async ({
     return false;
   }
 };
+
+export const deleteThread = async ({
+  threadExternalId,
+  // implement mod permissions later
+  firebaseId, 
+}: {
+  threadExternalId: string;
+  firebaseId: string;
+}) => {
+  try {
+    const result = await pool.none(sql.deleteThread, {
+      firebaseId,
+      thread_external_id: threadExternalId,
+    });
+    return true;
+  } catch (e) {
+    error(`Error while getting triggered webhooks.`);
+    error(e);
+    return false;
+  }
+};

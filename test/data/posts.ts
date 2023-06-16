@@ -2,6 +2,7 @@ import { Comment, Post } from "types/rest/threads";
 
 export const CHARACTER_TO_MAIM_POST_ID = "11b85dac-e122-40e0-b09a-8829c5e0250e";
 export const KERMIT_FRIEND_COMMENT_ID = "89fc3682-cb74-43f9-9a63-bd97d0f59bb9";
+export const DELETED_POST_ID = "4cd6d41d-1350-4898-9882-254356e5bf86"
 
 export const CHARACTER_TO_MAIM_POST: Post = {
   id: CHARACTER_TO_MAIM_POST_ID,
@@ -19,6 +20,33 @@ export const CHARACTER_TO_MAIM_POST: Post = {
     name: "DragonFucker",
     accessory:
       "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F989f4b40-c1b8-4793-93dd-57e93df3e7ec.png?alt=media&token=cabdd8d5-b6a9-4914-bb59-eda4629f151b",
+    color: null,
+  },
+  total_comments_amount: 0,
+  tags: {
+    index_tags: ["evil", "bobapost"],
+    whisper_tags: [],
+    category_tags: ["bruises"],
+    content_warnings: [],
+  },
+};
+
+export const DELETED_POST: Post = {
+  id: DELETED_POST_ID,
+  content: '[{"insert":"A thread to be deleted "}]',
+  created_at: "2023-02-14T17:33:37.00Z",
+  new: false,
+  own: true,
+  friend: false,
+  new_comments_amount: 0,
+  parent_post_id: null,
+  parent_thread_id: "5e35fb94-b8d1-4578-b4f2-184cfe295c84",
+  secret_identity: {
+    avatar:
+      "https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg",
+    name: "TheProphet",
+    accessory:
+      "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2Fbe6d2b51-8192-4b78-a140-fecd1ec54f71?alt=media&token=4a13133b-f8fb-478b-9be4-22fa0f4a97c8",
     color: null,
   },
   total_comments_amount: 0,

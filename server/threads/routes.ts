@@ -4,15 +4,7 @@ import {
   NotFound404Error,
 } from "types/errors/api";
 import {
-  ensureNoIdentityLeakage,
-  makeServerThread,
-} from "utils/response-utils";
-import {
-  ensureThreadAccess,
-  ensureThreadPermission,
-  withThreadPermissions,
-} from "handlers/permissions";
-import {
+  deleteThread,
   hideThread,
   markThreadVisit,
   muteThread,
@@ -22,6 +14,15 @@ import {
   unstarThread,
   updateThreadView,
 } from "./queries";
+import {
+  ensureNoIdentityLeakage,
+  makeServerThread,
+} from "utils/response-utils";
+import {
+  ensureThreadAccess,
+  ensureThreadPermission,
+  withThreadPermissions,
+} from "handlers/permissions";
 
 import { ThreadPermissions } from "types/permissions";
 import { canAccessBoardByExternalId } from "utils/permissions-utils";
@@ -604,6 +605,56 @@ router.delete(
     }
 
     info(`Marked last visited time for thread: ${threadExternalId}.`);
+    res.status(204).json();
+  }
+);
+
+/**
+ * @openapi
+ * /threads/{thread_id}/delete:
+ *   delete:
+ *     summary: Hard delete of thread in entirety
+ *     operationId: deleteThread
+ *     description: Deletes selected thread from database
+ *     tags:
+ *       - /threads/
+ *     parameters:
+ *       - name: thread_id
+ *         in: path
+ *         description: The id of the thread to fetch.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       500:
+ *         description: Internal Server Error
+ *       401:
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         $ref: "#/components/responses/ensureThreadAccess403"
+ *       404:
+ *         $ref: "#/components/responses/threadNotFound404"
+ */
+
+router.delete(
+  "/:thread_id",
+  ensureLoggedIn,
+  ensureThreadAccess,
+  // ensureModPermissions? at some point
+  async (req, res) => {
+    const { thread_id: threadExternalId } = req.params;
+    log(`Deleting thread: ${threadExternalId}`);
+
+    if (
+      !(await deleteThread({
+        firebaseId: req.currentUser!.uid,
+        threadExternalId,
+      }))
+    ) {
+      res.sendStatus(500);
+      return;
+    }
+    info(`Thread deleted: ${threadExternalId}.`);
     res.status(204).json();
   }
 );
