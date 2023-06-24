@@ -89,6 +89,14 @@ CREATE TABLE IF NOT EXISTS content_warnings
 );
 CREATE UNIQUE INDEX content_warnings_warning on content_warnings(warning);
 
+CREATE TABLE IF NOT EXISTS board_categories
+(
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
+    string_id TEXT NOT NULL,
+    name TEXT NOT NULL
+);
+CREATE UNIQUE INDEX board_categories_string_id on board_categories(string_id);
+
 CREATE TABLE IF NOT EXISTS boards
 (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY NOT NULL,
@@ -100,6 +108,7 @@ CREATE TABLE IF NOT EXISTS boards
     /* Reference to the id of the image on external storage provider. */
     avatar_reference_id TEXT,
     parent_realm_id BIGINT REFERENCES realms(id) ON DELETE RESTRICT NOT NULL,
+    board_category_id BIGINT REFERENCES board_categories(id) ON DELETE RESTRICT NOT NULL,
     settings JSONB NOT NULL
 );
 CREATE UNIQUE INDEX boards_string_id on boards(string_id);

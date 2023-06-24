@@ -8,6 +8,7 @@ SELECT
     boards.slug,
     boards.string_id,
     realms.string_id as realm_external_id,
+    board_categories.string_id as board_categories_string_id,
     boards.tagline,
     boards.avatar_reference_id,
     boards.settings,
@@ -27,6 +28,8 @@ SELECT
 FROM boards
 INNER JOIN realms
     ON boards.parent_realm_id = realms.id
+LEFT JOIN board_categories 
+    ON boards.board_category_id = board_categories.id
 LEFT JOIN logged_in_user ON 1 = 1
 LEFT JOIN user_muted_boards 
     ON boards.id = user_muted_boards.board_id
@@ -108,4 +111,4 @@ LEFT JOIN LATERAL (
             AND comments.parent_thread = threads.id) as comments
     ON 1=1
 WHERE $/realm_external_id/ IS NULL OR realms.string_id = $/realm_external_id/
-GROUP BY boards.id, user_muted_boards.board_id, ordered_pinned_boards.INDEX, logged_out_restrictions, logged_in_base_restrictions, logged_in_user.id, realms.string_id 
+GROUP BY boards.id, user_muted_boards.board_id, ordered_pinned_boards.INDEX, logged_out_restrictions, logged_in_base_restrictions, logged_in_user.id, realms.string_id, board_categories.string_id
