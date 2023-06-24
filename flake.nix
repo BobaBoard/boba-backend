@@ -32,7 +32,7 @@
             export NODE_PATH=${bobaserver-assets}/libexec/bobaserver/node_modules
             export DEBUG=bobaserver:*,-*info
 
-            ${pkgs.nodejs}/bin/node -r dotenv/config ${bobaserver-assets}/libexec/bobaserver/node_modules/bobaserver/dist/server/index.js
+            exec ${pkgs.nodejs}/bin/node -r dotenv/config ${bobaserver-assets}/libexec/bobaserver/node_modules/bobaserver/dist/server/index.js
           '';
           default = bobaserver;
         }
