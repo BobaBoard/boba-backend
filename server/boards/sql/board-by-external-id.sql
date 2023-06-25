@@ -48,6 +48,8 @@ SELECT
 FROM boards 
     INNER JOIN realms
         ON boards.parent_realm_id = realms.id
+    LEFT JOIN board_categories 
+        ON boards.board_category_id = board_categories.id
     LEFT JOIN user_muted_boards umb 
         ON boards.id = umb.board_id AND umb.user_id = (SELECT id FROM logged_in_user LIMIT 1)
     LEFT JOIN ordered_pinned_boards opb 
