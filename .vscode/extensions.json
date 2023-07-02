@@ -2,8 +2,6 @@
   "recommendations": [
     "dbaeumer.vscode-eslint",
     "esbenp.prettier-vscode",
-    "divlo.vscode-styled-jsx-languageserver",
-		"divlo.vscode-styled-jsx-syntax",
 		"visualstudioexptteam.vscodeintellicode",
 		"amatiasq.sort-imports",
 		"yoavbls.pretty-ts-errors"
