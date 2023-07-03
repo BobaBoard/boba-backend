@@ -30,7 +30,7 @@
           };
 
           bobadatabase = pkgs.writeShellScriptBin "bobadatabase" ''
-            /bin/sh -c \"${bobaserver-assets}/libexec/bobaserver/deps/bobaserver/db/init.sh"
+            /bin/sh -c "${bobaserver-assets}/libexec/bobaserver/deps/bobaserver/db/init.sh"
           '';
 
           bobaserver = pkgs.writeShellScriptBin "bobaserver" ''
