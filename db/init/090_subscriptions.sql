@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS user_reports
     text TEXT NOT NULL,
     reported_thread_id BIGINT REFERENCES threads(id) ON DELETE RESTRICT,
     reported_post_id BIGINT REFERENCES posts(id) ON DELETE RESTRICT,
-    reorted_comment_id BIGINT REFERENCES comments(id) ON DELETE RESTRICT,
+    reported_comment_id BIGINT REFERENCES comments(id) ON DELETE RESTRICT,
     CONSTRAINT at_most_one
         CHECK (
             (reported_thread_id IS NOT NULL)::INT +
