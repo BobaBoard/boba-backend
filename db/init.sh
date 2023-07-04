@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env
 set -e
 
 DB_INIT_DIR=${1:-docker-entrypoint-initdb.d}
