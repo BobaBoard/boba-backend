@@ -30,6 +30,9 @@
           };
 
           bobadatabase = pkgs.writeShellScriptBin "bobadatabase" ''
+            mkdir -p $out/docker-entrypoint-initdb.d/
+            cp db/* docker-entrypoint-initdb.d/
+
             /bin/sh -c "${bobaserver-assets}/libexec/bobaserver/deps/bobaserver/db/init.sh"
           '';
 
