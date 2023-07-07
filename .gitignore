@@ -14,3 +14,4 @@ junit.xml
 reports/
 yarn-error.log
 result
+.vscode/settings.json
