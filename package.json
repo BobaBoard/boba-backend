@@ -2,20 +2,23 @@
   "name": "bobaserver",
   "version": "1.0.0",
   "description": "Server for BobaBoard",
-  "homepage": "https://github.com/essential-randomness/bobaserver#readme",
+  "homepage": "https://docs.bobaboard.com/",
   "bugs": {
-    "url": "https://github.com/essential-randomness/bobaserver/issues"
+    "url": "https://github.com/BobaBoard/boba-backend/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/essential-randomness/bobaserver.git"
+    "url": "git+https://github.com/BobaBoard/boba-backend.git"
   },
   "license": "MIT",
-  "author": "",
+  "author": "BobaBoard Team",
   "main": "dist/server/index.js",
   "scripts": {
+    "build": "yarn run server:build",
     "db:start": "docker compose down && docker compose up",
     "deploy": "gcloud config set project bobaboard && gcloud app deploy --version live",
+    "dev": "yarn run db:start & yarn run server:dev",
+    "dev:watch": "node -e \"console.error('This command has been deprecated. Use server:dev now.')\"",
     "open-api:docker": "docker compose -f docker-compose.open-api.test.yml run --rm test",
     "open-api:generate": "node -r dotenv/config -r ts-node/register -r tsconfig-paths/register utils/generate-spec-file.ts dotenv_config_path=./.env.prod",
     "open-api:typescript": "yarn run open-api:generate && openapi-zod-client ./open-api-spec.json -o ./types/open-api/generated/schemas.ts --export-schemas --template ./types/open-api/generated/schemas.hbs --with-alias &&  openapi-zod-client ./open-api-spec.json -o ./types/open-api/generated/types.ts --export-schemas --template ./types/open-api/generated/types.hbs --with-alias",
@@ -23,6 +26,8 @@
     "server:build": "tsc && tsc-alias && copyfiles .env .env.prod firebase-sdk.json server/**/*.sql ./dist",
     "server:dev": "cross-env DEBUG=bobaserver:*,-*info DEBUG_DEPTH=10 nodemon --watch . --exec node -r tsconfig-paths/register -r ts-node/register server/index.ts -e yaml,ts,sql",
     "server:start": "cross-env DEBUG=bobaserver:*,-*info node -r dotenv/config dist/server/index.js dotenv_config_path=./.env.prod",
+    "start": "yarn run server:start",
+    "start-db": "node -e \"console.error('This command has been deprecated. Use db:start now.')\"",
     "test": "cross-env DEBUG=bobaserver:*,-*info jest --runInBand --no-cache",
     "test:changed": "yarn run test --watch",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --no-cache",
