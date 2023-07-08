@@ -1,6 +1,6 @@
 {
   "name": "bobaserver",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Server for BobaBoard",
   "homepage": "https://docs.bobaboard.com/",
   "bugs": {
@@ -27,6 +27,7 @@
     "test": "yarn run test:base",
     "test:base": "cross-env DEBUG=bobaserver:*,-*info jest --runInBand --no-cache",
     "test:changed": "yarn run test:base --watch --onlyChanged",
+    "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --no-cache",
     "test:docker": "docker compose down && docker compose -f docker-compose.test.yml run --rm test",
     "test:watch": "yarn run test --watchAll"
   },
