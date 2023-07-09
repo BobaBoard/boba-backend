@@ -1,7 +1,9 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-22.11";
-    systems.url = "github:nix-systems/default";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
+    flake-utils.url = "github:numtide/flake-utils";
+      
+    flake-utils.inputs.systems.follows = "systems";
   };
 
   outputs = { self, nixpkgs, systems, ... } @ inputs:
@@ -21,7 +23,6 @@
             buildPhase = ''
               yarn build
             '';
-            distPhase = "";
             installPhase = ''
               mkdir -p $out/libexec/bobaserver
               mv node_modules $out/libexec/bobaserver/
@@ -30,9 +31,10 @@
           };
 
           bobadatabase = pkgs.writeShellScriptBin "bobadatabase" ''
-            /bin/sh -c "${bobaserver-assets}/libexec/bobaserver/deps/bobaserver/db/init.sh ${bobaserver-assets}/libexec/bobaserver/deps/bobaserver/db/"
+            ${bobaserver-assets}/libexec/bobaserver/deps/bobaserver/db/init.sh ${bobaserver-assets}/libexec/bobaserver/deps/bobaserver/db/
           '';
 
+          # TODO: swap with wrapProgram 
           bobaserver = pkgs.writeShellScriptBin "bobaserver" ''
             export NODE_PATH=${bobaserver-assets}/libexec/bobaserver/node_modules
             export DEBUG=bobaserver:*,-*info
@@ -42,6 +44,5 @@
           default = bobaserver;
         }
       );
-      defaultPackage = forEachSystem (system: self.packages.${system}.default);
     };
 }
