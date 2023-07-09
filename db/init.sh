@@ -6,6 +6,7 @@ DB_INIT_DIR=${1:-docker-entrypoint-initdb.d}
 echo "****************"
 echo "****************"
 echo "Running db init!"
+echo "Using base directory: $DB_INIT_DIR"
 echo "****************"
 echo "****************"
 
