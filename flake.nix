@@ -2,18 +2,14 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-23.05";
     flake-utils.url = "github:numtide/flake-utils";
-      
-    flake-utils.inputs.systems.follows = "systems";
   };
 
-  outputs = { self, nixpkgs, systems, ... } @ inputs:
-    let
-      forEachSystem = nixpkgs.lib.genAttrs (import systems);
-    in {
-      packages = forEachSystem (system:
-        let
-            pkgs = nixpkgs.legacyPackages.${system};
-        in rec {
+  outputs = { self, nixpkgs, flake-utils, ... } @ inputs:
+    flake-utils.lib.eachDefaultSystem (system:
+      let
+          pkgs = nixpkgs.legacyPackages.${system};
+      in {
+        packages = rec {
           bobaserver-assets = pkgs.yarn2nix-moretea.mkYarnPackage {
             name="boba-server";
             version="0.0.1";
@@ -42,7 +38,7 @@
             exec ${pkgs.nodejs}/bin/node -r dotenv/config ${bobaserver-assets}/libexec/bobaserver/node_modules/bobaserver/dist/server/index.js
           '';
           default = bobaserver;
-        }
-      );
-    };
+        };
+      }
+    );
 }
