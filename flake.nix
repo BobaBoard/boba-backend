@@ -28,7 +28,7 @@
 
           bobadatabase = pkgs.writeShellApplication {
             name = "bobadatabase";
-            runtimeInputs = [ pkgs.postgresql_12 pkgs.bash ];
+            runtimeInputs = [ pkgs.postgresql_12 ];
 
             text = ''
               ${bobaserver-assets}/libexec/bobaserver/deps/bobaserver/db/init.sh ${bobaserver-assets}/libexec/bobaserver/deps/bobaserver/db/
