@@ -26,9 +26,14 @@
             '';
           };
 
-          bobadatabase = pkgs.writeShellScriptBin "bobadatabase" ''
-            ${bobaserver-assets}/libexec/bobaserver/deps/bobaserver/db/init.sh ${bobaserver-assets}/libexec/bobaserver/deps/bobaserver/db/
-          '';
+          bobadatabase = pkgs.writeShellApplication {
+            name = "bobadatabase";
+            runtimeInputs = [ pkgs.postgresql_12 pkgs.bash ];
+
+            text = ''
+              ${bobaserver-assets}/libexec/bobaserver/deps/bobaserver/db/init.sh ${bobaserver-assets}/libexec/bobaserver/deps/bobaserver/db/
+            '';
+          };
 
           # TODO: swap with wrapProgram 
           bobaserver = pkgs.writeShellScriptBin "bobaserver" ''
