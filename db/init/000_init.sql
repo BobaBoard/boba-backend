@@ -123,6 +123,7 @@ CREATE TABLE IF NOT EXISTS threads
     /* TODO: decide what to do with threads with deleted posts */
 );
 CREATE INDEX threads_string_id on threads(string_id);
+CREATE INDEX threads_parent_board_id on threads(parent_board);
 
 /* TODO: decide whether to switch this to who the user is visible to rather than hidden from. */
 CREATE TYPE anonymity_type AS ENUM ('everyone', 'strangers');
