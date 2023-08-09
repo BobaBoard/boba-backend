@@ -1,3 +1,9 @@
+/**
+ * This view is used to retrieve information about the identity of a user in a specific thread.
+ * 
+ * It collects information from identity-related tables (like roles and accessories) and aggregates
+ * them for ease of use by other queries. 
+ **/
 CREATE VIEW thread_identities AS (
 SELECT
     uti.thread_id as thread_id,
@@ -37,6 +43,16 @@ LEFT JOIN LATERAL (
 ON uti.role_id IS NOT NULL
 );
 
+/**
+ * This view returns information about when notifications in a thread were last dismissed by
+ * a user, either explicitly (e.g. by hitting the dismiss notifications button) or implicitly
+ * (by visiting the thread).
+ *
+ * This view provides two different definitions of cutoff time for thread notifications:
+ * - thread_cutoff_time, which only counts visits/dismissals to the thread itself
+ * - board_cutoff_time, which also counts the timing of dismissal for the board the thread belongs
+ *   to.
+ */
 CREATE VIEW thread_notification_dismissals AS (
 SELECT
     users.id as user_id,
@@ -56,6 +72,12 @@ LEFT JOIN dismiss_board_notifications_requests dbnr
     ON dbnr.user_id = users.id AND dbnr.board_id = threads.parent_board
 );
 
+/**
+ * This view returns thread details that often need to be retrieved when querying threads.
+ *
+ * Among others, it collects information about board and realm names, tags, timestamps of thread 
+ * updates, and content/author of the thread starter post.
+ */
 CREATE VIEW thread_details AS (
 SELECT
     threads.id as thread_id,
@@ -114,6 +136,12 @@ LEFT JOIN LATERAL (
   WHERE threads.id = comments.parent_thread) comments ON TRUE
 );
 
+/**
+ * This view returns details about thread details as they appear to a user.
+ *
+ * It surfaces information like whether the thread was made by the user, whether they have muted, hidden
+ * or starred it, and how many posts and comments in the thread are new to this user.
+ */
 CREATE VIEW thread_user_details AS (
 SELECT
     threads.id as thread_id,
