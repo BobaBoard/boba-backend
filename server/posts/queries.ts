@@ -168,132 +168,8 @@ export const updateWhisperTags = async (
   });
 };
 
-// TODO: rename this method since there's a mutation within it.
-const getThreadDetails = async (
-  transaction: ITask<any>,
-  {
-    parentPostId,
-    threadExternalId,
-    firebaseId,
-    parentCommentId,
-    identityId,
-    accessoryId,
-  }: {
-    firebaseId: string;
-    parentPostId?: string;
-    threadExternalId?: string;
-    parentCommentId?: string;
-    identityId?: string;
-    accessoryId?: string;
-  }
-): Promise<{
-  user_id: number;
-  username: string;
-  user_avatar: string;
-  secret_identity_name: string;
-  secret_identity_avatar: string;
-  secret_identity_color: string;
-  accessory_avatar?: string;
-  thread_id: number;
-  thread_external_id: string;
-  post_id: number;
-  comment_id: number;
-  board_slug: string;
-  board_external_id: string;
-}> => {
-  invariant(
-    parentPostId || threadExternalId,
-    "ParentPostId (${parentPostId}) or threadExternalId (${threadExternalId}) is required when getting details for a thread."
-  );
-  let {
-    user_id,
-    username,
-    user_avatar,
-    secret_identity_id,
-    role_identity_id,
-    secret_identity_name,
-    secret_identity_avatar,
-    secret_identity_color,
-    accessory_avatar,
-    thread_id,
-    thread_external_id,
-    post_id = null,
-    comment_id = null,
-    board_slug,
-    board_external_id,
-  } = await transaction.one(
-    parentPostId ? sql.getPostDetails : sql.getThreadDetails,
-    {
-      post_string_id: parentPostId,
-      thread_external_id: threadExternalId,
-      firebase_id: firebaseId,
-      parent_comment_string_id: parentCommentId,
-    }
-  );
-
-  log(`Found details for thread:`);
-  log({
-    user_id,
-    username,
-    user_avatar,
-    secret_identity_id,
-    role_identity_id,
-    secret_identity_name,
-    secret_identity_avatar,
-    thread_id,
-    thread_external_id,
-    post_id,
-  });
-
-  if (!role_identity_id && !secret_identity_id) {
-    ({
-      secret_identity_id,
-      secret_identity_name,
-      secret_identity_avatar,
-      secret_identity_color,
-      role_identity_id,
-      accessory_avatar,
-    } = await addNewIdentityToThreadByBoardId(transaction, {
-      user_id,
-      identityId: identityId || "",
-      accessory_id: accessoryId,
-      thread_id,
-      firebaseId,
-      board_external_id,
-    }));
-  }
-
-  return {
-    user_id,
-    username,
-    user_avatar,
-    secret_identity_name,
-    secret_identity_avatar,
-    accessory_avatar,
-    secret_identity_color,
-    thread_id,
-    thread_external_id,
-    post_id,
-    comment_id,
-    board_slug,
-    board_external_id,
-  };
-};
-
 export const postNewContribution = async (
-  {
-    firebaseId,
-    identityId,
-    accessoryId,
-    parentPostId,
-    threadExternalId,
-    content,
-    anonymityType,
-    whisperTags,
-    indexTags,
-    contentWarnings,
-    categoryTags,
-  }: {
+  contributionData: {
     firebaseId: string;
     identityId?: string;
     accessoryId?: string;
@@ -306,83 +182,118 @@ export const postNewContribution = async (
     parentPostId?: string;
     threadExternalId?: string;
   },
-  tx?: ITask<unknown>
+  transaction?: ITask<unknown>
 ): Promise<{ contribution: DbPostType; boardSlug: string } | false> => {
+  // We define an inner "createContribution" function that always relies on a transaction.
+  // At the end of this function, we'll call createContribution with either the transaction passed
+  // by the caller (if defined) or one we define ourselves.
+  //
+  // We need to do this because the create contribution SQL queries is actually made of many
+  // subqueries (e.g. for identities and tags), and if any of those fails the whole contribution creation
+  // needs to be cancelled as a single unit.
   const createContribution = async (
-    t: ITask<unknown>
+    transaction: ITask<unknown>
   ): Promise<{ contribution: DbPostType; boardSlug: string }> => {
+    const { parentPostId, threadExternalId, firebaseId } = contributionData;
     invariant(
       parentPostId || threadExternalId,
-      `ParentPostId (${parentPostId}) or threadExternalId (${threadExternalId}) is required when creating a new contribution`
+      `Either parentPostId (${parentPostId}) or threadExternalId (${threadExternalId}) is 
+       required when creating a new contribution.`
     );
-    let {
-      board_slug,
-      board_external_id,
-      user_id,
-      username,
-      user_avatar,
-      secret_identity_name,
-      secret_identity_avatar,
-      secret_identity_color,
-      accessory_avatar,
-      thread_id,
-      thread_external_id,
-      post_id = null,
-    } = await getThreadDetails(t, {
-      identityId,
-      accessoryId,
-      parentPostId,
-      threadExternalId,
-      firebaseId,
-    });
-    const result = await t.one(sql.makePost, {
-      post_string_id: uuidv4(),
-      parent_post: post_id,
-      parent_thread: thread_id,
-      user_id,
+
+    let threadData = await transaction.one(
+      parentPostId ? sql.getPostDetails : sql.getThreadDetails,
+      {
+        post_string_id: parentPostId,
+        thread_external_id: threadExternalId,
+        parent_comment_string_id: null,
+        firebase_id: firebaseId,
+      }
+    );
+
+    if (!threadData.secret_identity_id && !threadData.role_identity_id) {
+      // User has no identity assigned within this thread, so we assign it.
+      const threadIdentityDetails = await addNewIdentityToThread(transaction, {
+        // If an identityId was passed, then we'll try to add that specific identity
+        // if not, we'll let addNewIdentityToThreadByBoardId decide how to deal with
+        // assigning a new identity.
+        identityExternalId: contributionData.identityId ?? null,
+        accessory_id: contributionData.accessoryId ?? null,
+        thread_id: threadData.thread_id,
+        firebaseId,
+        boardExternalId: threadData.board_external_id,
+      });
+
+      // We update thread data with the newly returned identity details
+      threadData = {
+        ...threadData,
+        ...threadIdentityDetails,
+      };
+    }
+
+    const {
       content,
+      anonymityType,
+      whisperTags,
+      indexTags,
+      contentWarnings,
+      categoryTags,
+    } = contributionData;
+    const postedContribution = await transaction.one(sql.makePost, {
+      post_string_id: uuidv4(),
+      parent_post: threadData.post_id ?? null,
+      parent_thread: threadData.thread_id,
+      // TODO: we should remove references to firebaseId from within the server and just make it
+      // so the internal user_id is what the server always deals with.
+      // This way we won't have to take this information from threadData, where it really doesn't
+      // belong.
+      user_id: threadData.user_id,
+      content: content,
       anonymity_type: anonymityType,
       whisper_tags: whisperTags,
     });
-    log(`Added new contribution to thread ${thread_id}.`);
-    log(result);
+    log(`Added new contribution to thread ${threadData.thread_id}.`);
+    log(postedContribution);
 
-    const indexedTags = await maybeAddIndexTags(t, {
-      postId: result.id,
+    const indexedTags = await maybeAddIndexTags(transaction, {
+      postId: postedContribution.id,
       indexTags,
     });
 
-    const categoryTagsResult = await maybeAddCategoryTags(t, {
+    const categoryTagsResult = await maybeAddCategoryTags(transaction, {
       categoryTags,
-      postId: result.id,
+      postId: postedContribution.id,
     });
-    const contentWarningsResult = await maybeAddContentWarningTags(t, {
-      contentWarnings,
-      postId: result.id,
-    });
+    const contentWarningsResult = await maybeAddContentWarningTags(
+      transaction,
+      {
+        contentWarnings,
+        postId: postedContribution.id,
+      }
+    );
 
     return {
       contribution: {
-        post_id: result.string_id,
-        parent_thread_id: thread_external_id,
+        post_id: postedContribution.string_id,
+        parent_thread_id: threadData.thread_external_id,
         parent_post_id: parentPostId || null,
-        parent_board_slug: board_slug,
-        parent_board_id: board_external_id,
-        author: user_id,
-        username,
-        user_avatar,
-        secret_identity_name,
-        secret_identity_avatar,
-        secret_identity_color,
-        accessory_avatar,
-        created_at: result.created_at,
-        content: result.content,
-        type: result.type,
-        whisper_tags: result.whisper_tags,
+        parent_board_slug: threadData.board_slug,
+        parent_board_id: threadData.board_external_id,
+        author: threadData.user_id,
+        username: threadData.username,
+        user_avatar: threadData.user_avatar,
+        secret_identity_name: threadData.secret_identity_name,
+        secret_identity_avatar: threadData.secret_identity_avatar,
+        secret_identity_color: threadData.secret_identity_color,
+        accessory_avatar: threadData.accessory_avatar,
+        created_at: postedContribution.created_at,
+        content: postedContribution.content,
+        type: postedContribution.type,
+        whisper_tags: postedContribution.whisper_tags,
         index_tags: indexedTags,
         category_tags: categoryTagsResult,
         content_warnings: contentWarningsResult,
-        anonymity_type: result.anonymity_type,
+        anonymity_type: postedContribution.anonymity_type,
         total_comments_amount: 0,
         new_comments_amount: 0,
         comments: null,
@@ -391,85 +302,84 @@ export const postNewContribution = async (
         is_new: true,
         is_own: true,
       },
-      boardSlug: board_slug,
+      boardSlug: threadData.board_slug,
     };
   };
-  return tx
-    ? createContribution(tx)
+  return transaction
+    ? createContribution(transaction)
     : pool.tx("create-contribution", createContribution);
 };
 
-export const postNewCommentWithTransaction = async ({
-  firebaseId,
-  parentPostId,
-  parentCommentId,
-  chainParentId,
-  content,
-  anonymityType,
-  transaction,
-  identityId,
-  accessoryId,
-}: {
-  transaction?: ITask<any>;
-  firebaseId: string;
-  parentPostId: string;
-  parentCommentId: string;
-  chainParentId: number | null;
-  content: string;
-  anonymityType: string;
-  identityId?: string;
-  accessoryId?: string;
-}): Promise<{ id: number; comment: DbCommentType }> => {
-  let {
-    user_id,
+export const postNewCommentWithTransaction = async (
+  transaction: ITask<any>,
+  commentData: {
+    firebaseId: string;
+    parentPostId: string;
+    parentCommentId: string;
+    chainParentId: number | null;
+    content: string;
+    anonymityType: string;
+    identityId?: string;
+    accessoryId?: string;
+  }
+): Promise<{ id: number; comment: DbCommentType }> => {
+  const { parentPostId, firebaseId, identityId, accessoryId, parentCommentId } =
+    commentData;
+  let threadData = await transaction.one(sql.getPostDetails, {
+    post_string_id: parentPostId,
+    parent_comment_string_id: parentCommentId,
+    firebase_id: firebaseId,
+  });
+
+  if (!threadData.secret_identity_id && !threadData.role_identity_id) {
+    // User has no identity assigned within this thread, so we assign it.
+    const threadIdentityDetails = await addNewIdentityToThread(transaction, {
+      // If an identityId was passed, then we'll try to add that specific identity
+      // if not, we'll let addNewIdentityToThreadByBoardId decide how to deal with
+      // assigning a new identity.
+      identityExternalId: identityId ?? null,
+      accessory_id: accessoryId ?? null,
+      thread_id: threadData.thread_id,
+      firebaseId: firebaseId,
+      boardExternalId: threadData.board_external_id,
+    });
+
+    // We update thread data with the newly returned identity details
+    threadData = {
+      ...threadData,
+      ...threadIdentityDetails,
+    };
+  }
+
+  log(`Retrieved details for thread ${parentPostId}:`, threadData);
+
+  const result = await transaction!.one(sql.makeComment, {
+    comment_string_id: uuidv4(),
+    parent_post_id: threadData.post_id,
+    parent_comment_id: threadData.comment_id,
+    parent_thread_id: threadData.thread_id,
+    chain_parent_comment_id: commentData.chainParentId,
+    user_id: threadData.user_id,
+    content: commentData.content,
+    anonymity_type: commentData.anonymityType,
+  });
+
+  const {
     username,
     user_avatar,
     secret_identity_name,
     secret_identity_avatar,
     secret_identity_color,
     accessory_avatar,
-    thread_id,
-    post_id,
-    comment_id,
-  } = await getThreadDetails(transaction!, {
-    parentPostId,
-    firebaseId,
-    parentCommentId,
-    identityId,
-    accessoryId,
-  });
-
-  log(`Retrieved details for thread ${parentPostId}:`);
-  log({
-    user_id,
-    username,
-    user_avatar,
-    secret_identity_name,
-    secret_identity_avatar,
-    thread_id,
-    post_id,
-    comment_id,
-  });
-
-  const result = await transaction!.one(sql.makeComment, {
-    comment_string_id: uuidv4(),
-    parent_post_id: post_id,
-    parent_comment_id: comment_id,
-    parent_thread_id: thread_id,
-    chain_parent_comment_id: chainParentId,
-    user_id,
-    content,
-    anonymity_type: anonymityType,
-  });
-
+  } = threadData;
   return {
     id: result.id,
     comment: {
       comment_id: result.string_id,
       parent_post_id: parentPostId,
-      parent_comment_id: parentCommentId,
+      parent_comment_id: commentData.parentCommentId,
       chain_parent_id: result.chain_parent_comment_id,
-      author: user_id,
+      author: threadData.user_id,
       content: result.content,
       created_at: result.created_at,
       anonymity_type: result.anonymity_type,
@@ -511,14 +421,13 @@ export const postNewCommentChain = async ({
       const comments = [];
       for (let content of contentArray) {
         const newComment: { id: number; comment: DbCommentType } =
-          await postNewCommentWithTransaction({
+          await postNewCommentWithTransaction(transaction, {
             firebaseId,
             parentPostId,
             parentCommentId,
             chainParentId: prevId,
             content,
             anonymityType,
-            transaction,
             identityId,
             accessoryId,
           });
@@ -583,46 +492,50 @@ const addAccessoryToIdentity = async (
   };
 };
 
-// TODO: rename to addNewIdentityToThread
-export const addNewIdentityToThreadByBoardId = async (
+export const addNewIdentityToThread = async (
   transaction: ITask<any>,
-  {
-    user_id,
-    accessory_id,
-    identityId,
-    thread_id,
-    firebaseId,
-    board_external_id,
-  }: {
-    identityId: string;
+  params: {
     firebaseId: string;
-    user_id: any;
-    accessory_id?: string;
-    board_external_id: any;
-    thread_id: any;
+    boardExternalId: string;
+    // The external id of the identity/role to post as, if such identity is predetermined.
+    // If this is null, then the identity will be assigned randomly.
+    identityExternalId: string | null;
+    accessory_id: string | null;
+    thread_id: string;
   }
 ) => {
-  let secret_identity_id = null;
-  let role_identity_id = null;
+  const {
+    firebaseId,
+    boardExternalId,
+    identityExternalId,
+    thread_id,
+    accessory_id,
+  } = params;
+
+  let secret_identity_id;
+  let role_identity_id;
   let secret_identity_name;
   let secret_identity_avatar;
   let secret_identity_color;
 
-  if (identityId) {
-    // An identity was passed to this method, which means we don't need to randomize it.
+  if (identityExternalId) {
+    // An identity/role was passed to this method, which means we don't need to randomize it.
     // The only thing we need to check is whether the user is *actually able* to post
     // as that identity.
+    //
+    // We find this out by checking whether the user has that role assigned to them in the board
+    // or realm where the thread is, and whether the permission of that role are such that the
     const roleResult = await transaction.oneOrNone(
-      threadsSql.getRoleByExternalIdAndBoardId,
+      threadsSql.getUserBoardRoleByExternalId,
       {
-        role_id: identityId,
+        role_external_id: identityExternalId,
+        board_external_id: boardExternalId,
         firebase_id: firebaseId,
-        board_external_id,
       }
     );
     if (!roleResult || !canPostAs(roleResult.permissions)) {
       throw new Forbidden403Error(
-        `Attempted to post on thread with unauthorized identity for board ${board_external_id}.`
+        `Attempted to post on thread ${thread_id} with unauthorized identity ${identityExternalId} for board ${boardExternalId} and user ${firebaseId}.`
       );
     }
     role_identity_id = roleResult.id;
@@ -640,8 +553,7 @@ export const addNewIdentityToThreadByBoardId = async (
 
   // The secret identity id is not currently in the thread data.
   // Add it.
-  log(`Adding identity to thread:`);
-  log({
+  log(`Adding identity to thread:`, {
     role_identity_id,
     secret_identity_id,
     secret_identity_name,
@@ -651,7 +563,7 @@ export const addNewIdentityToThreadByBoardId = async (
   });
 
   await transaction.one(sql.addIdentityToThread, {
-    user_id,
+    firebase_id: firebaseId,
     thread_id,
     secret_identity_id,
     role_identity_id,
