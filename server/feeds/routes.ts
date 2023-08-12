@@ -10,6 +10,9 @@ import {
 } from "./queries";
 
 import { Feed } from "types/rest/threads";
+import {
+  FeedActivitySchema
+} from "types/open-api/generated/schemas";
 import { ZodFeed } from "types/rest/zodthreads";
 import debug from "debug";
 import { ensureBoardAccess } from "handlers/permissions";
@@ -113,7 +116,7 @@ router.get("/boards/:board_id", ensureBoardAccess, async (req, res) => {
   log(
     `Returning board activity data for board ${boardExternalId} for user ${req.currentUser?.uid}.`
   );
-  res.status(200).json(response);
+  res.status(200).json(FeedActivitySchema.parse(response));
 });
 
 /**
@@ -179,6 +182,8 @@ router.get("/users/@me", ensureLoggedIn, async (req, res) => {
   response.activity.map((post) => ensureNoIdentityLeakage(post));
   res.status(200).json(response);
 });
+
+// TODO: star feed needs 4xx response
 
 /**
  * @openapi
