@@ -33,6 +33,8 @@ components:
             id: 8b2646af-2778-487e-8e44-7ae530c2549c
             parent_board_slug: gore
             parent_board_id: c6d3d10e-8e49-4d73-b28a-9d652b41beec
+            parent_realm_slug: 'twisted-minds'
+            parent_realm_id: '76ef4cc3-1603-4278-95d7-99c59f481d2e'
             new_posts_amount: 0
             new_comments_amount: 0
             total_comments_amount: 2
@@ -71,6 +73,8 @@ components:
             id: 29d1b2da-3289-454a-9089-2ed47db4967b
             parent_board_slug: gore
             parent_board_id: c6d3d10e-8e49-4d73-b28a-9d652b41beec
+            parent_realm_slug: 'twisted-minds'
+            parent_realm_id: '76ef4cc3-1603-4278-95d7-99c59f481d2e'
             new_posts_amount: 0
             new_comments_amount: 0
             total_comments_amount: 2
@@ -109,6 +113,8 @@ components:
             id: a5c903df-35e8-43b2-a41a-208c43154671
             parent_board_slug: gore
             parent_board_id: c6d3d10e-8e49-4d73-b28a-9d652b41beec
+            parent_realm_slug: 'twisted-minds'
+            parent_realm_id: '76ef4cc3-1603-4278-95d7-99c59f481d2e'
             new_posts_amount: 0
             new_comments_amount: 0
             total_comments_amount: 0

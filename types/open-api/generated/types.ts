@@ -40,6 +40,9 @@ export type IdentityParams = z.infer<typeof schemas.IdentityParamsSchema>;
 export type postContribution_Body = z.infer<
   typeof schemas.postContribution_BodySchema
 >;
+export type CommentRequestBody = z.infer<
+  typeof schemas.CommentRequestBodySchema
+>;
 export type postComment_Body = z.infer<typeof schemas.postComment_BodySchema>;
 export type BaseBlock = z.infer<typeof schemas.BaseBlockSchema>;
 export type TextBlock = z.infer<typeof schemas.TextBlockSchema>;

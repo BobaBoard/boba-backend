@@ -21,6 +21,8 @@ components:
         id: 60634506-6ab1-4083-9867-905cef85cef6
         parent_board_slug: gore
         parent_board_id: c6d3d10e-8e49-4d73-b28a-9d652b41beec
+        parent_realm_slug: 'twisted-minds'
+        parent_realm_id: '76ef4cc3-1603-4278-95d7-99c59f481d2e'
         starter:
           id: 30f7b263-2406-495a-8ab7-4bd559738510
           parent_thread_id: 60634506-6ab1-4083-9867-905cef85cef6
