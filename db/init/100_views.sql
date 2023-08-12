@@ -137,7 +137,7 @@ LEFT JOIN LATERAL (
 );
 
 /**
- * This view returns details about thread details as they appear to a user.
+ * This view returns thread details as they appear to a user.
  *
  * It surfaces information like whether the thread was made by the user, whether they have muted, hidden
  * or starred it, and how many posts and comments in the thread are new to this user.
