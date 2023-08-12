@@ -70,7 +70,6 @@ const CreateThread = z.object({
   content: z.string(),
   forceAnonymous: z.union([z.boolean(), z.null()]).optional(),
   defaultView: z.enum(["thread", "gallery", "timeline"]).optional(),
-  large: z.union([z.boolean(), z.null()]).optional(),
   identityId: z.string().uuid().optional(),
   accessoryId: z.string().uuid().optional(),
   whisper_tags: z.array(z.string()).optional(),
@@ -170,6 +169,7 @@ const IdentityParams = z
   .object({
     accessory_id: z.union([z.string(), z.null()]),
     identity_id: z.union([z.string(), z.null()]),
+    forceAnonymous: z.union([z.boolean(), z.null()]),
   })
   .partial();
 const postContribution_Body = z
@@ -177,13 +177,8 @@ const postContribution_Body = z
   .partial()
   .and(Tags)
   .and(IdentityParams);
-const postComment_Body = z
-  .object({
-    contents: z.array(Comment),
-    reply_to_comment_id: z.union([z.string(), z.null()]),
-  })
-  .partial()
-  .and(IdentityParams);
+const CommentRequestBody = z.object({ contents: z.array(z.string()) });
+const postComment_Body = CommentRequestBody.and(IdentityParams);
 const BaseBlock = z.object({
   id: z.string().uuid(),
   index: z.number(),
@@ -367,6 +362,7 @@ export const CursorSchema = Cursor;
 export const FeedActivitySchema = FeedActivity;
 export const IdentityParamsSchema = IdentityParams;
 export const postContribution_BodySchema = postContribution_Body;
+export const CommentRequestBodySchema = CommentRequestBody;
 export const postComment_BodySchema = postComment_Body;
 export const BaseBlockSchema = BaseBlock;
 export const TextBlockSchema = TextBlock;
