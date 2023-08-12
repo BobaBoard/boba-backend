@@ -215,8 +215,7 @@ export const postNewContribution = async (
       // User has no identity assigned within this thread, so we assign it.
       const threadIdentityDetails = await addNewIdentityToThread(transaction, {
         // If an identityId was passed, then we'll try to add that specific identity
-        // if not, we'll let addNewIdentityToThreadByBoardId decide how to deal with
-        // assigning a new identity.
+        // if not, we'll let the function decide how to deal with assigning a new identity.
         identityExternalId: contributionData.identityId ?? null,
         accessory_id: contributionData.accessoryId ?? null,
         thread_id: threadData.thread_id,
@@ -335,7 +334,7 @@ export const postNewCommentWithTransaction = async (
     // User has no identity assigned within this thread, so we assign it.
     const threadIdentityDetails = await addNewIdentityToThread(transaction, {
       // If an identityId was passed, then we'll try to add that specific identity
-      // if not, we'll let addNewIdentityToThreadByBoardId decide how to deal with
+      // if not, we'll let addNewIdentityToThread decide how to deal with
       // assigning a new identity.
       identityExternalId: identityId ?? null,
       accessory_id: accessoryId ?? null,
@@ -525,6 +524,7 @@ export const addNewIdentityToThread = async (
     //
     // We find this out by checking whether the user has that role assigned to them in the board
     // or realm where the thread is, and whether the permission of that role are such that the
+    // identity can be assigned.
     const roleResult = await transaction.oneOrNone(
       threadsSql.getUserBoardRoleByExternalId,
       {
