@@ -134,6 +134,8 @@ const ThreadSummary = z
     id: z.string().uuid(),
     parent_board_slug: z.string(),
     parent_board_id: z.string(),
+    parent_realm_slug: z.string(),
+    parent_realm_id: z.string(),
     starter: Contribution,
     default_view: z.enum(["thread", "gallery", "timeline"]),
     new: z.boolean(),

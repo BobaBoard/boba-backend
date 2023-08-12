@@ -35,6 +35,10 @@ components:
               type: string
             parent_board_id:
               type: string
+            parent_realm_slug:
+              type: string
+            parent_realm_id:
+              type: string
             starter:
               description: "The contribution that starts the thread."
               $ref: "#/components/schemas/Contribution"
@@ -57,6 +61,8 @@ components:
             - id
             - parent_board_slug
             - parent_board_id
+            - parent_realm_slug
+            - parent_realm_id
             - starter
             - default_view
             - new
