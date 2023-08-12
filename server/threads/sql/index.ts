@@ -17,23 +17,26 @@ const getRandomIdentityId = `
  * on the given board.
  */
 const getUserBoardRoleByExternalId = `
+    WITH logged_in_user AS
+      (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
     SELECT
+      realm_user_roles.*,
       roles.id,
       roles.name,
       roles.avatar_reference_id,
       roles.color,
       to_json(roles.permissions) as permissions
     FROM roles
-    LEFT JOIN board_user_roles bur
-      ON roles.id = bur.role_id
-    LEFT JOIN realm_user_roles rur
-      ON roles.id = rur.role_id AND rur.realm_id = (SELECT parent_realm_id FROM boards WHERE boards.string_id = $/board_external_id/)
+    LEFT JOIN logged_in_user ON 1=1
+    LEFT JOIN board_user_roles board_user_roles
+      ON roles.id = board_user_roles.role_id AND board_user_roles.user_id = logged_in_user.id
+    LEFT JOIN realm_user_roles
+      ON roles.id = realm_user_roles.role_id AND realm_user_roles.user_id = logged_in_user.id
     INNER JOIN users
-      ON (users.id = bur.user_id OR bur.user_id IS NULL) AND (users.id = rur.user_id OR rur.user_id IS NULL)
+      ON logged_in_user.id = users.id
     WHERE
       roles.string_id = $/role_external_id/
-      AND (rur.role_id IS NOT NULL OR bur.board_id  = (SELECT id FROM boards WHERE boards.string_id = $/board_external_id/))
-      AND users.firebase_id = $/firebase_id/`;
+      AND (realm_user_roles.role_id IS NOT NULL OR board_user_roles.board_id  = (SELECT id FROM boards WHERE boards.string_id = $/board_external_id/))`;
 
 const insertNewIdentity = `
     INSERT INTO user_thread_identities(thread_id, user_id, identity_id, role_id)
