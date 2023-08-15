@@ -1,7 +1,6 @@
 import { THREAD_OWNER_PERMISSIONS, ThreadPermissions } from "types/permissions";
 
-import { DbThreadType } from "Types";
-import { ZodDbThreadType } from "server/feeds/sql/zodtypes";
+import { ZodDbThreadType } from "zodtypes";
 import debug from "debug";
 import { extractThreadPermissions } from "utils/permissions-utils";
 import { getBoardByExternalId } from "../boards/queries";

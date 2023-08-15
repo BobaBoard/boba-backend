@@ -2,7 +2,7 @@ import {
   BoardMetadata,
   LoggedInBoardMetadata,
 } from "types/open-api/generated/types";
-import { Comment, Post, Thread, ThreadSummary } from "types/rest/threads";
+import { Comment, Post, Thread } from "types/rest/threads";
 // TODO: deprecate these
 import {
   DbBoardCategoryDescription,
@@ -10,12 +10,11 @@ import {
   DbCommentType,
   DbPostType,
   DbThreadSummaryType,
-  DbThreadType,
 } from "Types";
 import {
   ZodDbThreadSummaryType,
   ZodDbThreadType,
-} from "server/feeds/sql/zodtypes";
+} from "zodtypes";
 
 import { BoardByExternalId } from "server/boards/sql/types";
 import { BoardRestrictions } from "types/permissions";

@@ -1,8 +1,8 @@
 import { BOBATAN_USER_ID, ONCEST_USER_ID } from "test/data/auth";
 import { FAVORITE_CHARACTER_THREAD_ID, FAVORITE_MURDER_THREAD_ID } from "test/data/threads";
 
-import { DbFeedType } from "Types";
 import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
+import { ZodDbFeedType } from "zodtypes";
 import { extractActivity } from "utils/test-utils";
 import { getUserActivity } from "../queries";
 import { getUserFromFirebaseId } from "../../users/queries";
@@ -30,7 +30,7 @@ describe("feed activity queries", () => {
       cursor: null,
       updatedOnly: true,
       ownOnly: true,
-    })) as DbFeedType;
+    })) as ZodDbFeedType;
 
     expect(feed.activity.map(extractActivity)).toEqual([
       {
@@ -56,7 +56,7 @@ describe("feed activity queries", () => {
       cursor: null,
       updatedOnly: false,
       ownOnly: true,
-    })) as DbFeedType;
+    })) as ZodDbFeedType;
 
     expect(feed.activity.map(extractActivity)).toEqual([
       {
@@ -95,7 +95,7 @@ describe("feed activity queries", () => {
       cursor: null,
       updatedOnly: true,
       ownOnly: false,
-    })) as DbFeedType;
+    })) as ZodDbFeedType;
 
     expect(feed.activity.map(extractActivity)).toEqual([
       {
@@ -121,7 +121,7 @@ describe("feed activity queries", () => {
       cursor: null,
       updatedOnly: false,
       ownOnly: false,
-    })) as DbFeedType;
+    })) as ZodDbFeedType;
 
     expect(feed.activity.map(extractActivity)).toEqual([
       {
@@ -174,7 +174,7 @@ describe("feed activity queries", () => {
       updatedOnly: false,
       ownOnly: false,
       pageSize: 1,
-    })) as DbFeedType;
+    })) as ZodDbFeedType;
 
     expect(feed.cursor).toBe(
       "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDUtMjNUMDU6NTI6MDAuMDAwMDAwIiwicGFnZV9zaXplIjoxfQ=="
@@ -205,7 +205,7 @@ describe("feed activity queries", () => {
       updatedOnly: false,
       ownOnly: false,
       pageSize: 1,
-    })) as DbFeedType;
+    })) as ZodDbFeedType;
 
     expect(feed.activity.map(extractActivity)).toEqual([
       {
@@ -233,7 +233,7 @@ describe("feed activity queries", () => {
         updatedOnly: false,
         ownOnly: false,
         pageSize: 10,
-      })) as DbFeedType;
+      })) as ZodDbFeedType;
 
       expect(feed.cursor).toBe(null);
       expect(feed.activity.length).toEqual(3);
@@ -264,7 +264,7 @@ describe("feed activity queries", () => {
         updatedOnly: true,
         ownOnly: false,
         pageSize: 10,
-      })) as DbFeedType;
+      })) as ZodDbFeedType;
 
       expect(feed.cursor).toBe(null);
       // Ensure that the post in !long with the dismissed board notifications
