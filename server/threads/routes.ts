@@ -44,6 +44,7 @@ const router = express.Router();
  *     description: Fetches data for the specified thread.
  *     tags:
  *       - /threads/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *       - {}
@@ -97,6 +98,7 @@ router.get("/:thread_id", ensureThreadAccess, async (req, res) => {
  *     description: Mutes the specified thread for the current user.
  *     tags:
  *       - /threads/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
@@ -153,6 +155,7 @@ router.post(
  *     description: Unmutes a specified thread.
  *     tags:
  *       - /threads/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
@@ -209,6 +212,7 @@ router.delete(
  *     description: Hides the specified thread for the current user.
  *     tags:
  *       - /threads/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
@@ -265,6 +269,7 @@ router.post(
  *     description: Unhides the specified thread for the current user.
  *     tags:
  *       - /threads/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
@@ -321,6 +326,7 @@ router.delete(
  *     description: Records a visit to a thread by the current user.
  *     tags:
  *       - /threads/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
@@ -377,6 +383,7 @@ router.post(
  *     description: Updates the default view that the thread uses or the parent board of the thread.
  *     tags:
  *       - /threads/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
@@ -508,6 +515,7 @@ router.patch(
  *     description: Adds selected thread to current user Star Feed.
  *     tags:
  *       - /threads/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
@@ -563,6 +571,7 @@ router.post(
  *     description: Deletes selected thread from current user Star Feed.
  *     tags:
  *       - /threads/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:

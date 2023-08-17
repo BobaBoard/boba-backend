@@ -40,6 +40,7 @@ const router = express.Router();
  *     description: Posts a contribution replying to the one with id {postId}.
  *     tags:
  *       - /posts/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
@@ -144,6 +145,7 @@ router.post(
  *     description: Creates a comment nested under the contribution with id {post_id}.
  *     tags:
  *       - /posts/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
@@ -240,6 +242,7 @@ router.post(
  *     description: Edits a contribution (for now just its tags).
  *     tags:
  *       - /posts/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
