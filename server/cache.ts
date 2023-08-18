@@ -25,9 +25,7 @@ export const initCache = (createClientMethod?: any) => {
     client = createClientMethod();
     return;
   }
-  console.log(
-    `redis://${process.env.REDIS_HOST}:${parseInt(process.env.REDIS_PORT!)}`
-  );
+
   let innerClient: RedisClientType = createClient({
     socket: {
       host: process.env.REDIS_HOST,

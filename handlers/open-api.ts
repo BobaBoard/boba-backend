@@ -100,6 +100,10 @@ This is just to test that sections work. It will be written better later.
         name: "models",
         tags: ["models"],
       },
+      {
+        name: "unzodded",
+        tags: ["unzodded"],
+      },
     ],
   },
   // Which paths to parse the API specs from.
@@ -128,6 +132,17 @@ export default (app: express.Express) => {
     redoc({
       title: "API Docs",
       specUrl: "/open-api.json",
+      redocOptions: {
+        showExtensions: true,
+        pathInMiddlePanel: true,
+        requiredPropsFirst: true,
+        sideNavStyle: "path-only",
+        sortEnumValuesAlphabetically: true,
+        expandSingleSchemaField: true,
+        expandResponses: "200,201,204",
+        showObjectSchemaExamples: true,
+        simpleOneOfTypeLabel: true,
+      },
     })
   );
 };

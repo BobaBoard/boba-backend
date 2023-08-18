@@ -50,7 +50,7 @@
     "honeycomb-beeline": "^2.7.2",
     "pg-promise": "^10.11.1",
     "redis": "^4.6.1",
-    "redoc-express": "^1.0.0",
+    "redoc-express": "^2.1.0",
     "swagger-jsdoc": "^6.1.0",
     "tiny-invariant": "^1.2.0",
     "uuid": "^8.1.0",

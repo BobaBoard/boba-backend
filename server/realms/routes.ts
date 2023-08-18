@@ -50,6 +50,7 @@ const router = express.Router();
  *     operationId: getRealmsBySlug
  *     tags:
  *       - /realms/
+ *       - unzodded
  *     security:
  *       - {}
  *       - firebase: []
@@ -142,6 +143,7 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
  *     operationId: getRealmsActivityByExternalId
  *     tags:
  *       - /realms/
+ *       - unzodded
  *     security:
  *       - {}
  *       - firebase: []
@@ -202,6 +204,7 @@ router.get("/:realm_id/activity", ensureRealmExists, async (req, res) => {
  *       If `realm_id` is present, also fetch notification data for the current realm.
  *     tags:
  *       - /users/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
@@ -285,6 +288,7 @@ router.get("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
  *     operationId: dismissUserNotifications
  *     tags:
  *       - /users/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
@@ -335,6 +339,7 @@ router.delete("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
  *     operationId: getInvitesByRealmId
  *     tags:
  *       - /realms/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
@@ -423,6 +428,7 @@ router.get(
  *     operationId: getInviteByNonce
  *     tags:
  *       - /realms/
+ *       - unzodded
  *     parameters:
  *       - name: realm_id
  *         in: path
@@ -499,6 +505,7 @@ router.get("/:realm_id/invites/:nonce", async (req, res) => {
  *     operationId: createInviteByRealmId
  *     tags:
  *       - /realms/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
@@ -600,6 +607,7 @@ router.post(
  *     operationId: getInviteByNonce
  *     tags:
  *       - /realms/
+ *       - unzodded
  *     parameters:
  *       - name: realm_id
  *         in: path
@@ -674,6 +682,7 @@ router.get("/:realm_id/invites/:nonce", async (req, res) => {
  *     operationId: acceptInviteByNonce
  *     tags:
  *       - /realms/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *       # Currently does not require logged-in, update if we decide to separate out sign-up invites

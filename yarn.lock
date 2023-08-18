@@ -5398,10 +5398,10 @@ redis@^4.6.1:
     "@redis/search" "1.1.1"
     "@redis/time-series" "1.0.4"
 
-redoc-express@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.npmjs.org/redoc-express/-/redoc-express-1.0.0.tgz"
-  integrity sha512-N/0/WrA6U2rJc9hzLy2Jh2CHrQttIcW02jE4xGCiKkU40uTlpFTcEfu9bpsJlTcpffPXVNhhaIbTwz8kxz+M5A==
+redoc-express@^2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/redoc-express/-/redoc-express-2.1.0.tgz#e524f11d6faf659513454f067a7dec94fea53253"
+  integrity sha512-gq6FvghNirD3dCJ7w8Z6escXYHnU1Hk50baQsIeGunQQ9YRoy6qR/MjEOJtDEKaPNB2NgkIzQ9ESNX5/27zkDA==
 
 regexp.prototype.flags@^1.3.0, regexp.prototype.flags@^1.4.3:
   version "1.4.3"

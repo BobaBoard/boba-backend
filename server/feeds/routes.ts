@@ -10,9 +10,7 @@ import {
 } from "./queries";
 
 import { Feed } from "types/rest/threads";
-import {
-  FeedActivitySchema
-} from "types/open-api/generated/schemas";
+import { FeedActivitySchema } from "types/open-api/generated/schemas";
 import { ZodFeed } from "types/rest/zodthreads";
 import debug from "debug";
 import { ensureBoardAccess } from "handlers/permissions";
@@ -127,6 +125,7 @@ router.get("/boards/:board_id", ensureBoardAccess, async (req, res) => {
  *     operationId: getPersonalFeed
  *     tags:
  *       - /feeds/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
@@ -193,6 +192,7 @@ router.get("/users/@me", ensureLoggedIn, async (req, res) => {
  *     operationId: getUserStarFeed
  *     tags:
  *       - /feeds/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:

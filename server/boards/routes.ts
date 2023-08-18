@@ -136,6 +136,7 @@ router.get("/:board_id", ensureBoardAccess, async (req, res) => {
  *     description: Creates a new thread in the specified board.
  *     tags:
  *       - /boards/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
@@ -257,6 +258,7 @@ router.post(
  *     operationId: patchBoardsByExternalId
  *     tags:
  *       - /boards/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
@@ -343,6 +345,7 @@ router.patch(
  *     operationId: visitsBoardsByExternalId
  *     tags:
  *       - /boards/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
@@ -404,6 +407,7 @@ router.post(
  *     description: Mutes the specified board for the current user.
  *     tags:
  *       - /boards/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
@@ -465,6 +469,7 @@ router.post(
  *     description: Unmutes the specified board for the current user.
  *     tags:
  *       - /boards/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
@@ -522,6 +527,7 @@ router.delete(
  *     description: Pins the specified board for the current user.
  *     tags:
  *       - /boards/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
@@ -580,6 +586,7 @@ router.post(
  *     description: Unpins the specified board for the current user.
  *     tags:
  *       - /boards/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
@@ -641,6 +648,7 @@ router.delete(
  *     operationId: dismissBoardsByExternalId
  *     tags:
  *       - /boards/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:

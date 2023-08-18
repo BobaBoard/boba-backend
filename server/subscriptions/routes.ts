@@ -19,6 +19,7 @@ const router = express.Router();
  *     operationId: getSubscription
  *     tags:
  *       - /subscriptions/
+ *       - unzodded
  *     security:
  *       - {}
  *       - firebase: []

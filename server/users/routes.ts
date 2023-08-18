@@ -32,6 +32,7 @@ const router = express.Router();
  *     operationId: getCurrentUser
  *     tags:
  *       - /users/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     responses:
@@ -85,6 +86,7 @@ router.get("/@me", ensureLoggedIn, async (req, res) => {
  *     operationId: updateCurrentUser
  *     tags:
  *       - /users/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     requestBody:
@@ -162,6 +164,7 @@ router.patch("/@me", ensureLoggedIn, async (req, res) => {
  *     operationId: getCurrentUserPinnedBoardsForRealm
  *     tags:
  *       - /users/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
@@ -261,6 +264,7 @@ router.get(
  *     operationId: getCurrentUserBobadex
  *     tags:
  *       - /users/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     responses:
@@ -290,6 +294,7 @@ router.get("/@me/bobadex", ensureLoggedIn, async (req, res) => {
  *     operationId: getUserSettings
  *     tags:
  *       - /users/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     responses:
@@ -322,6 +327,7 @@ router.get(
  *     operationId: updateUserSettings
  *     tags:
  *       - /users/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     requestBody:
@@ -360,7 +366,7 @@ router.patch("/@me/settings", ensureLoggedIn, async (req, res) => {
   const { name, value } = req.body;
 
   const firebaseId = req.currentUser!.uid;
-  
+
   try {
     await updateUserSettings({
       firebaseId,
