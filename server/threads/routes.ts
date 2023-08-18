@@ -29,6 +29,7 @@ import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
 import { moveThread } from "./queries";
+import { getThreadByExternalIdResponse } from "types/open-api/generated/types";
 
 const info = debug("bobaserver:threads:routes-info");
 const log = debug("bobaserver:threads:routes-log");
@@ -44,7 +45,6 @@ const router = express.Router();
  *     description: Fetches data for the specified thread.
  *     tags:
  *       - /threads/
- *       - unzodded
  *     security:
  *       - firebase: []
  *       - {}
@@ -86,7 +86,8 @@ router.get("/:thread_id", ensureThreadAccess, async (req, res) => {
   ensureNoIdentityLeakage(serverThread);
 
   info(`sending back data for thread ${serverThread.id}.`);
-  res.status(200).json(serverThread);
+
+  res.status(200).json(serverThread satisfies getThreadByExternalIdResponse);
 });
 
 /**

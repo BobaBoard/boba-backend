@@ -12,17 +12,18 @@ import {
   DbThreadSummaryType,
 } from "Types";
 import {
-  ZodDbThreadSummaryType,
-  ZodDbThreadType,
-} from "zodtypes";
+  ThreadSchema,
+  ThreadSummarySchema,
+} from "types/open-api/generated/schemas";
+import { ZodDbThreadSummaryType, ZodDbThreadType } from "zodtypes";
 
 import { BoardByExternalId } from "server/boards/sql/types";
 import { BoardRestrictions } from "types/permissions";
-import{
-  ZodThreadSummary,
-} from "types/rest/zodthreads"
+import { ThreadSummary } from "types/open-api/generated/types";
+import { ZodThreadSummary } from "types/rest/zodthreads";
 import debug from "debug";
 import { getUserPermissionsForBoard } from "./permissions-utils";
+import { z } from "zod";
 
 const info = debug("bobaserver:response-utils-info");
 const log = debug("bobaserver::response-utils-log");
@@ -115,7 +116,7 @@ export const mergeObjectIdentity = <T>(
 
 export const makeServerThreadSummary = (
   thread: ZodDbThreadType | ZodDbThreadSummaryType
-): ZodThreadSummary => {
+) => {
   const starter =
     "posts" in thread
       ? makeServerPost(thread.posts[0])
@@ -123,7 +124,9 @@ export const makeServerThreadSummary = (
   // TODO[realms]: remove comments from post in db
   // @ts-expect-error
   delete starter.comments;
-  return {
+
+  console.log(starter);
+  return ThreadSummarySchema.parse({
     id: thread.thread_id,
     parent_board_slug: thread.board_slug,
     parent_board_id: thread.board_id,
@@ -141,11 +144,11 @@ export const makeServerThreadSummary = (
     total_posts_amount: thread.thread_total_posts_amount,
     last_activity_at: thread.thread_last_activity,
     direct_threads_amount: thread.thread_direct_threads_amount,
-  };
+  });
 };
 
 // TODO: finish type safeing this
-export const makeServerThread = (thread: ZodDbThreadType): Thread => {
+export const makeServerThread = (thread: ZodDbThreadType) => {
   const posts = thread.posts?.map(makeServerPost) || [];
   // TODO[realms]: remove this
   const postsWithoutComments = posts.map((post) => {
@@ -153,7 +156,8 @@ export const makeServerThread = (thread: ZodDbThreadType): Thread => {
     const { comments, ...rest } = post;
     return rest;
   });
-  return {
+
+  return ThreadSchema.parse({
     ...makeServerThreadSummary(thread),
     posts: postsWithoutComments,
     comments: posts.reduce(
@@ -169,21 +173,22 @@ export const makeServerThread = (thread: ZodDbThreadType): Thread => {
       },
       {}
     ),
-  };
+  });
 };
 
 export const makeServerPost = (
   post: DbPostType | DbThreadSummaryType
 ): Post => {
   const oldPost = mergeObjectIdentity<DbPostType | DbThreadSummaryType>(post);
+
   const serverPost = {
     id: post.post_id,
     parent_thread_id: post.parent_thread_id,
     parent_post_id: post.parent_post_id,
     created_at: post.created_at,
     content: post.content,
-    secret_identity: oldPost.secret_identity,
-    user_identity: oldPost.user_identity,
+    secret_identity: oldPost.secret_identity ?? null,
+    user_identity: oldPost.user_identity ?? null,
     friend: post.friend,
     own: post.is_own,
     new: post.is_new,
@@ -213,8 +218,8 @@ export const makeServerComment = (comment: DbCommentType): Comment => {
     parent_post_id: comment.parent_post_id,
     created_at: comment.created_at,
     content: comment.content,
-    secret_identity: identityPost.secret_identity,
-    user_identity: identityPost.user_identity,
+    secret_identity: identityPost.secret_identity ?? null,
+    user_identity: identityPost.user_identity ?? null,
     friend: comment.friend,
     own: comment.is_own,
     new: comment.is_new,
