@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 
 import { ApiError } from "types/errors/api";
+import { ZodError } from "zod";
 import debug from "debug";
 
 const log = debug("bobaserver:handlers:errors");
@@ -19,6 +20,15 @@ export const handleApiErrors = (
       message: err.message,
     });
     return;
+  }
+  if (err instanceof ZodError) {
+    const message = `Invalid schema: [${err.issues
+      .map((e) => `"${e.code} (${e.path.join("/")}): ${e.message}"`)
+      .join(", ")}]`;
+    log("Sending back ZodError (500):", message);
+    res.status(500).json({
+      message,
+    });
   }
   next(err);
 };
