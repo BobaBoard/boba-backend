@@ -1,5 +1,8 @@
 import { BOBATAN_USER_ID, ONCEST_USER_ID } from "test/data/auth";
-import { FAVORITE_CHARACTER_THREAD_ID, FAVORITE_MURDER_THREAD_ID } from "test/data/threads";
+import {
+  FAVORITE_CHARACTER_THREAD_ID,
+  FAVORITE_MURDER_THREAD_ID,
+} from "test/data/threads";
 
 import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
 import { extractActivity } from "utils/test-utils";
@@ -29,7 +32,7 @@ describe("feed activity queries", () => {
         post_id: "ff9f2ae2-a254-4069-9791-3ac5e6dff5bb",
         posts_amount: 1,
         thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
-        thread_last_activity: "2020-10-04T05:44:00.00Z",
+        thread_last_activity_at: "2020-10-04T05:44:00.00Z",
         thread_last_activity_micro: "2020-10-04T05:44:00.000000",
         threads_amount: 0,
       },

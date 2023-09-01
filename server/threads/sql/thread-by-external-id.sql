@@ -1,6 +1,8 @@
 WITH
     thread_comments AS
         (SELECT
+            thread_comments.parent_thread as parent_thread_id,
+            post_string_id as parent_post_string_id,
             thread_comments.parent_post,
             -- Count all the new comments that aren't ours, unless we aren't logged in.
             COALESCE(SUM((${firebase_id} IS NOT NULL AND is_new AND NOT is_own)::int), 0) as new_comments,
@@ -21,7 +23,7 @@ WITH
                 'created_at',  TO_CHAR(thread_comments.created, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"'),
                 'anonymity_type', thread_comments.anonymity_type,
                 'self', thread_comments.is_own,
-                'friend', thread_comments.is_friend,
+                'friend', COALESCE(thread_comments.is_friend, FALSE),
                 'is_new', (is_new AND NOT is_own),
                 'is_own', is_own
             ) ORDER BY thread_comments.created ASC) as comments
@@ -31,13 +33,13 @@ WITH
                 posts.string_id as post_string_id,
                 thread_identities.*,
                 ${firebase_id} IS NOT NULL AND comments.author = (SELECT id FROM users WHERE firebase_id = ${firebase_id}) as is_own,
-                ${firebase_id} IS NOT NULL AND comments.author = ANY(
+                COALESCE(${firebase_id} IS NOT NULL AND comments.author = ANY(
                     SELECT friend_id
                     FROM users
                     LEFT JOIN friends
                         ON users.id = friends.user_id
                     WHERE firebase_id = ${firebase_id}
-                ) as is_friend,
+                ), FALSE) as is_friend,
                 ${firebase_id} IS NOT NULL AND (thread_cutoff_time IS NULL OR thread_cutoff_time < comments.created) as is_new,
                 threads.string_id as parent_thread_string_id,
                 tnd.thread_cutoff_time
@@ -51,12 +53,14 @@ WITH
             LEFT JOIN thread_notification_dismissals tnd
                ON tnd.thread_id = threads.id AND ${firebase_id} IS NOT NULL AND tnd.user_id = (SELECT id FROM users WHERE firebase_id = ${firebase_id})
             WHERE threads.string_id = ${thread_external_id}) as thread_comments
-         GROUP BY thread_comments.parent_post),
+         GROUP BY thread_comments.parent_post, thread_comments.parent_thread, parent_post_string_id),
     thread_posts AS
         (SELECT
             posts.string_id as post_id,
             threads.string_id as parent_thread_id,
             parent.string_id as parent_post_id,
+            boards.string_id as parent_board_id,
+            boards.slug as parent_board_slug,
             posts.author,
             thread_identities.username,
             thread_identities.user_avatar,
@@ -65,13 +69,13 @@ WITH
             thread_identities.secret_identity_color,
             thread_identities.accessory_avatar,
             ${firebase_id} IS NOT NULL AND posts.author = (SELECT id FROM users WHERE firebase_id = ${firebase_id}) as self,
-            ${firebase_id} IS NOT NULL AND posts.author = ANY(
+            COALESCE(${firebase_id} IS NOT NULL AND posts.author = ANY(
                SELECT friend_id
                FROM users
                LEFT JOIN friends
                      ON users.id = friends.user_id
                WHERE firebase_id = ${firebase_id}
-            ) as friend,
+            ), FALSE) as friend,
             TO_CHAR(posts.created, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as created_at,
             posts.content,
             posts.type,
@@ -91,7 +95,6 @@ WITH
             posts.anonymity_type,
             COALESCE(thread_comments.total_comments, 0) as total_comments_amount,
             COALESCE(thread_comments.new_comments, 0) as new_comments_amount,
-            thread_comments.comments,
             COALESCE(${firebase_id} IS NOT NULL AND posts.author = (SELECT id FROM users WHERE firebase_id = ${firebase_id}), FALSE) as is_own,
             CASE
                 WHEN ${firebase_id} IS NULL THEN FALSE
@@ -106,6 +109,8 @@ WITH
             ON posts.parent_post = parent.id
          LEFT JOIN threads
             ON posts.parent_thread = threads.id
+        LEFT JOIN boards
+            ON threads.parent_board = boards.id
          LEFT JOIN thread_identities
             ON thread_identities.user_id = posts.author AND threads.id = thread_identities.thread_id
          LEFT JOIN thread_comments
@@ -119,16 +124,17 @@ SELECT
     boards.string_id as board_id,
     realms.slug as realm_slug,
     realms.string_id as realm_id,
-    TO_CHAR(thread_details.last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as thread_last_activity,
-    json_agg(row_to_json(thread_posts) ORDER BY thread_posts.created_at ASC) as posts,
+    TO_CHAR(thread_details.last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as thread_last_activity_at,
+    json_agg(row_to_json(thread_posts) ORDER BY thread_posts.created_at ASC) as posts,    
+    json_agg(all_comments.value)  FILTER (WHERE all_comments.value IS NOT NULL) as comments,
     COALESCE(threads.OPTIONS ->> 'default_view', 'thread')::view_types AS default_view,
     COALESCE(SUM(thread_posts.new_comments_amount)::int, 0) as thread_new_comments_amount,
     COALESCE(SUM(thread_posts.total_comments_amount)::int, 0) as thread_total_comments_amount,
     -- Get all the posts that are direct answers to the first one
-    COALESCE((SELECT COUNT(post_id) FROM thread_posts WHERE parent_post_id = (SELECT post_id FROM thread_posts WHERE parent_post_id IS null))::int, 0) as thread_direct_threads_amount,
+    COALESCE((SELECT COUNT(DISTINCT post_id) FROM thread_posts WHERE parent_post_id = (SELECT post_id FROM thread_posts WHERE parent_post_id IS null))::int, 0) as thread_direct_threads_amount,
     -- Count all the new posts that aren't ours, unless we aren't logged in.
     COALESCE(SUM((${firebase_id} IS NOT NULL AND thread_posts.is_new AND NOT thread_posts.is_own)::int)::int, 0) as thread_new_posts_amount,
-    COALESCE(COUNT(thread_posts.*)::int, 0) as thread_total_posts_amount,
+    COALESCE(COUNT(DISTINCT thread_posts.post_id)::int, 0) as thread_total_posts_amount,
     uht.user_id IS NOT NULL as hidden,
     umt.user_id IS NOT NULL as muted,
     ust.user_id IS NOT NULL as starred
@@ -141,6 +147,13 @@ LEFT JOIN boards
     ON threads.parent_board = boards.id
 LEFT JOIN realms
     ON boards.parent_realm_id = realms.id
+LEFT JOIN thread_comments
+  ON threads.id = thread_comments.parent_thread_id 
+    AND thread_comments.parent_post_string_id = thread_posts.post_id
+LEFT JOIN LATERAL (
+    SELECT * FROM json_array_elements(thread_comments.comments)
+) AS all_comments ON threads.id = thread_comments.parent_thread_id
+    AND thread_comments.parent_post_string_id = thread_posts.post_id
 LEFT JOIN user_muted_threads umt
     ON  ${firebase_id} IS NOT NULL AND umt.user_id = (SELECT id FROM users WHERE firebase_id = ${firebase_id}) AND umt.thread_id = threads.id
 LEFT JOIN user_hidden_threads uht

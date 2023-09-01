@@ -64,8 +64,8 @@ export const mergeObjectIdentity = <T>(
     secret_identity_name: string;
     secret_identity_avatar: string;
     secret_identity_color: string | null;
-    accessory_avatar?: string;
-    friend: boolean;
+    accessory_avatar: string | null;
+    friend: boolean | null;
     self: boolean;
   }
 ): T & {
@@ -125,7 +125,6 @@ export const makeServerThreadSummary = (
   // @ts-expect-error
   delete starter.comments;
 
-  console.log(starter);
   return ThreadSummarySchema.parse({
     id: thread.thread_id,
     parent_board_slug: thread.board_slug,
@@ -142,7 +141,7 @@ export const makeServerThreadSummary = (
     new_comments_amount: thread.thread_new_comments_amount,
     total_comments_amount: thread.thread_total_comments_amount,
     total_posts_amount: thread.thread_total_posts_amount,
-    last_activity_at: thread.thread_last_activity,
+    last_activity_at: thread.thread_last_activity_at,
     direct_threads_amount: thread.thread_direct_threads_amount,
   });
 };
@@ -192,8 +191,7 @@ export const makeServerPost = (
     friend: post.friend,
     own: post.is_own,
     new: post.is_new,
-    comments:
-      ("comments" in post && post.comments?.map(makeServerComment)) || [],
+    comments: [],
     tags: {
       whisper_tags: post.whisper_tags || [],
       index_tags: post.index_tags || [],
