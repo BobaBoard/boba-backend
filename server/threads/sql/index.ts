@@ -9,6 +9,41 @@ const createThread = `
       $/thread_options/)
     RETURNING id`;
 
+    const deleteThread = `
+    DELETE FROM post_categories WHERE post_id IN (
+      SELECT id FROM posts WHERE posts.parent_thread IN (
+        SELECT id FROM threads WHERE string_id = $/thread_external_id/));
+
+    DELETE FROM post_warnings WHERE post_id IN (
+      SELECT id FROM posts WHERE posts.parent_thread IN (
+        SELECT id FROM threads WHERE string_id = $/thread_external_id/));
+
+    DELETE FROM comments WHERE id IN (
+      SELECT id FROM comments WHERE comments.parent_thread IN (
+        SELECT id FROM threads WHERE string_id = $/thread_external_id/));
+
+    DELETE FROM posts WHERE id IN (
+      SELECT id FROM posts WHERE posts.parent_thread IN (
+        SELECT id FROM threads WHERE string_id = $/thread_external_id/));
+
+    DELETE FROM user_thread_identities WHERE thread_id IN (
+      SELECT id FROM threads WHERE string_id = $/thread_external_id/);
+
+    DELETE FROM user_thread_last_visits WHERE thread_id IN (
+      SELECT id FROM threads WHERE string_id = $/thread_external_id/);
+
+    DELETE FROM user_muted_threads WHERE thread_id IN (
+      SELECT id FROM threads WHERE string_id = $/thread_external_id/);
+
+    DELETE FROM user_hidden_threads WHERE thread_id IN (
+      SELECT id FROM threads WHERE string_id = $/thread_external_id/);
+
+    DELETE FROM identity_thread_accessories WHERE thread_id IN (
+      SELECT id FROM threads WHERE string_id = $/thread_external_id/);
+
+    DELETE FROM threads WHERE string_id = $/thread_external_id/;
+    `
+
 const getRandomIdentityId = `
     SELECT id FROM secret_identities ORDER BY RANDOM() LIMIT 1`;
 
@@ -115,6 +150,7 @@ export default {
     path.join(__dirname, "visit-thread-by-external-id.sql")
   ),
   createThread,
+  deleteThread,
   getRandomIdentityId,
   insertNewIdentity,
   muteThreadByExternalId,

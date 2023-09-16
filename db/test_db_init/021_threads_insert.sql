@@ -220,3 +220,29 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
       (SELECT id FROM Users WHERE username = 'SexyDaddy69'),
       (SELECT id FROM secret_identities WHERE display_name = 'The Prophet'));
  
+/* Insert test thread for deleting */
+WITH
+  new_thread_id AS
+    (INSERT INTO threads(string_id, parent_board)
+      VALUES (
+        '5e35fb94-b8d1-4578-b4f2-184cfe295c84',
+        (SELECT id FROM boards WHERE slug = 'gore'))
+     RETURNING id),
+  posts_insert AS 
+    (INSERT INTO posts(string_id, parent_post, parent_thread, author, content, type, whisper_tags, anonymity_type, created)
+      VALUES
+        ('4cd6d41d-1350-4898-9882-254356e5bf86',
+         NULL,
+         (SELECT id FROM new_thread_id),
+         (SELECT id FROM Users WHERE username = 'bobatan'),
+         '[{"insert":"A thread to be deleted "}]', 
+         'text', 
+         ARRAY['a test of your reflexes'], 
+         'strangers',
+         to_timestamp('2022-10-24 08:40:00', 'YYYY-MM-DD HH:MI:SS'))
+         RETURNING id)
+INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
+    VALUES
+     ((SELECT id FROM new_thread_id),
+      (SELECT id FROM Users WHERE username = 'bobatan'),
+      (SELECT id FROM secret_identities WHERE display_name = 'The Prophet'));
