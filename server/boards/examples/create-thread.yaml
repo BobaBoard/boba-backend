@@ -21,13 +21,13 @@ components:
         id: 60634506-6ab1-4083-9867-905cef85cef6
         parent_board_slug: gore
         parent_board_id: c6d3d10e-8e49-4d73-b28a-9d652b41beec
-        parent_realm_slug: 'twisted-minds'
-        parent_realm_id: '76ef4cc3-1603-4278-95d7-99c59f481d2e'
+        parent_realm_slug: "twisted-minds"
+        parent_realm_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e"
         starter:
           id: 30f7b263-2406-495a-8ab7-4bd559738510
           parent_thread_id: 60634506-6ab1-4083-9867-905cef85cef6
           parent_post_id:
-          created_at: '2021-11-15T13:32:26.00Z'
+          created_at: "2021-11-15T13:32:26.00Z"
           content: '[{"insert":"Gore. Gore? Gore!"}]'
           secret_identity:
             name: Him Free
@@ -42,13 +42,13 @@ components:
           new: false
           tags:
             whisper_tags:
-            - whisper
+              - whisper
             index_tags:
-            - search
+              - search
             category_tags:
-            - filter
+              - filter
             content_warnings:
-            - content notice
+              - content notice
           total_comments_amount: 0
           new_comments_amount: 0
         default_view: thread
@@ -60,35 +60,33 @@ components:
         new_comments_amount: 0
         total_comments_amount: 0
         total_posts_amount: 1
-        last_activity_at: '2021-11-15T13:32:26.00Z'
+        last_activity_at: "2021-11-15T13:32:26.00Z"
         direct_threads_amount: 0
         posts:
-        - id: 30f7b263-2406-495a-8ab7-4bd559738510
-          parent_thread_id: 60634506-6ab1-4083-9867-905cef85cef6
-          parent_post_id:
-          created_at: '2021-11-15T13:32:26.00Z'
-          content: '[{"insert":"Gore. Gore? Gore!"}]'
-          secret_identity:
-            name: Him Free
-            avatar: https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F4e72a52a-9fdd-4a49-a7f0-ffa56a46836d?alt=media&token=153015fa-c46b-4184-a17f-10c3e609bf70
-            color:
-            accessory:
-          user_identity:
-            name: bobatan
-            avatar: "/bobatan.png"
-          friend: false
-          own: true
-          new: false
-          tags:
-            whisper_tags:
-            - whisper
-            index_tags:
-            - search
-            category_tags:
-            - filter
-            content_warnings:
-            - content notice
-          total_comments_amount: 0
-          new_comments_amount: 0
+          - id: 30f7b263-2406-495a-8ab7-4bd559738510
+            parent_thread_id: 60634506-6ab1-4083-9867-905cef85cef6
+            parent_post_id:
+            created_at: "2021-11-15T13:32:26.00Z"
+            content: '[{"insert":"Gore. Gore? Gore!"}]'
+            secret_identity:
+              name: Him Free
+              avatar: https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F4e72a52a-9fdd-4a49-a7f0-ffa56a46836d?alt=media&token=153015fa-c46b-4184-a17f-10c3e609bf70
+              color:
+              accessory:
+            user_identity: null
+            friend: false
+            own: true
+            new: false
+            tags:
+              whisper_tags:
+                - whisper
+              index_tags:
+                - search
+              category_tags:
+                - filter
+              content_warnings:
+                - content notice
+            total_comments_amount: 0
+            new_comments_amount: 0
         comments:
           30f7b263-2406-495a-8ab7-4bd559738510: []

@@ -14,6 +14,7 @@ components:
                 avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
                 color: null
                 accessory: null
+              user_identity: null
               friend: false
               created_at: "2020-04-15T05:42:00.00Z"
               content: '[{"insert":"Post 16!"}]'
@@ -30,8 +31,8 @@ components:
             id: 78d98a6a-c24b-4b7a-8e06-4a30862afa2d
             parent_board_slug: long
             parent_board_id: db8dc5b3-5b4a-4bfe-a303-e176c9b00b83
-            parent_realm_slug: 'twisted-minds'
-            parent_realm_id: '76ef4cc3-1603-4278-95d7-99c59f481d2e'
+            parent_realm_slug: "twisted-minds"
+            parent_realm_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e"
             new_posts_amount: 0
             new_comments_amount: 0
             total_comments_amount: 0
@@ -51,6 +52,7 @@ components:
                 avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
                 color: null
                 accessory: null
+              user_identity: null
               friend: false
               created_at: "2020-04-14T05:42:00.00Z"
               content: '[{"insert":"Post 15!"}]'
@@ -67,8 +69,8 @@ components:
             id: c5004e2b-4358-43df-8078-905b608e9ceb
             parent_board_slug: long
             parent_board_id: db8dc5b3-5b4a-4bfe-a303-e176c9b00b83
-            parent_realm_slug: 'twisted-minds'
-            parent_realm_id: '76ef4cc3-1603-4278-95d7-99c59f481d2e'
+            parent_realm_slug: "twisted-minds"
+            parent_realm_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e"
             new_posts_amount: 0
             new_comments_amount: 0
             total_comments_amount: 0
@@ -88,6 +90,7 @@ components:
                 avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
                 color: null
                 accessory: null
+              user_identity: null
               friend: false
               created_at: "2020-04-13T05:42:00.00Z"
               content: '[{"insert":"Post 14!"}]'
@@ -104,8 +107,8 @@ components:
             id: 8d0be581-5cc7-47c1-947c-f8242898682d
             parent_board_slug: long
             parent_board_id: db8dc5b3-5b4a-4bfe-a303-e176c9b00b83
-            parent_realm_slug: 'twisted-minds'
-            parent_realm_id: '76ef4cc3-1603-4278-95d7-99c59f481d2e'
+            parent_realm_slug: "twisted-minds"
+            parent_realm_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e"
             new_posts_amount: 0
             new_comments_amount: 0
             total_comments_amount: 0
@@ -125,6 +128,7 @@ components:
                 avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
                 color:
                 accessory:
+              user_identity: null
               friend: false
               created_at: "2020-04-12T05:42:00.00Z"
               content: '[{"insert":"Post 13!"}]'
@@ -141,8 +145,8 @@ components:
             id: 1c92ab43-4309-454f-be27-d85d3fd78808
             parent_board_slug: long
             parent_board_id: db8dc5b3-5b4a-4bfe-a303-e176c9b00b83
-            parent_realm_slug: 'twisted-minds'
-            parent_realm_id: '76ef4cc3-1603-4278-95d7-99c59f481d2e'
+            parent_realm_slug: "twisted-minds"
+            parent_realm_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e"
             new_posts_amount: 0
             new_comments_amount: 0
             total_comments_amount: 0
@@ -162,6 +166,7 @@ components:
                 avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
                 color: null
                 accessory: null
+              user_identity: null
               friend: false
               created_at: "2020-04-11T05:42:00.00Z"
               content: '[{"insert":"Post 12!"}]'
@@ -178,8 +183,8 @@ components:
             id: 3e9a317f-2bcd-4db3-abbb-619fa7c03f24
             parent_board_slug: long
             parent_board_id: db8dc5b3-5b4a-4bfe-a303-e176c9b00b83
-            parent_realm_slug: 'twisted-minds'
-            parent_realm_id: '76ef4cc3-1603-4278-95d7-99c59f481d2e'
+            parent_realm_slug: "twisted-minds"
+            parent_realm_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e"
             new_posts_amount: 0
             new_comments_amount: 0
             total_comments_amount: 0
@@ -199,6 +204,7 @@ components:
                 avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
                 color: null
                 accessory: null
+              user_identity: null
               friend: false
               created_at: "2020-04-10T05:42:00.00Z"
               content: '[{"insert":"Post 11!"}]'
@@ -215,8 +221,8 @@ components:
             id: 7006e0dc-7c7b-4cc5-8c08-61362e8d288b
             parent_board_slug: long
             parent_board_id: db8dc5b3-5b4a-4bfe-a303-e176c9b00b83
-            parent_realm_slug: 'twisted-minds'
-            parent_realm_id: '76ef4cc3-1603-4278-95d7-99c59f481d2e'
+            parent_realm_slug: "twisted-minds"
+            parent_realm_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e"
             new_posts_amount: 0
             new_comments_amount: 0
             total_comments_amount: 0
@@ -236,6 +242,7 @@ components:
                 avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
                 color: null
                 accessory: null
+              user_identity: null
               friend: false
               created_at: "2020-04-09T05:42:00.00Z"
               content: '[{"insert":"Post 10!"}]'
@@ -252,8 +259,8 @@ components:
             id: 72470830-7984-4bf6-a0bf-dc5af7d4779b
             parent_board_slug: long
             parent_board_id: db8dc5b3-5b4a-4bfe-a303-e176c9b00b83
-            parent_realm_slug: 'twisted-minds'
-            parent_realm_id: '76ef4cc3-1603-4278-95d7-99c59f481d2e'
+            parent_realm_slug: "twisted-minds"
+            parent_realm_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e"
             new_posts_amount: 0
             new_comments_amount: 0
             total_comments_amount: 0
@@ -273,6 +280,7 @@ components:
                 avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
                 color: null
                 accessory: null
+              user_identity: null
               friend: false
               created_at: "2020-04-08T05:42:00.00Z"
               content: '[{"insert":"Post 9!"}]'
@@ -289,8 +297,8 @@ components:
             id: 06ba998d-82d8-4e0b-8bbb-a3b3455c4167
             parent_board_slug: long
             parent_board_id: db8dc5b3-5b4a-4bfe-a303-e176c9b00b83
-            parent_realm_slug: 'twisted-minds'
-            parent_realm_id: '76ef4cc3-1603-4278-95d7-99c59f481d2e'
+            parent_realm_slug: "twisted-minds"
+            parent_realm_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e"
             new_posts_amount: 0
             new_comments_amount: 0
             total_comments_amount: 0
@@ -310,6 +318,7 @@ components:
                 avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
                 color: null
                 accessory: null
+              user_identity: null
               friend: false
               created_at: "2020-04-07T05:42:00.00Z"
               content: '[{"insert":"Post 8!"}]'
@@ -326,8 +335,8 @@ components:
             id: 8d227983-7649-49c9-9fa4-b3c398f4648c
             parent_board_slug: long
             parent_board_id: db8dc5b3-5b4a-4bfe-a303-e176c9b00b83
-            parent_realm_slug: 'twisted-minds'
-            parent_realm_id: '76ef4cc3-1603-4278-95d7-99c59f481d2e'
+            parent_realm_slug: "twisted-minds"
+            parent_realm_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e"
             new_posts_amount: 0
             new_comments_amount: 0
             total_comments_amount: 0
@@ -347,6 +356,7 @@ components:
                 avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
                 color: null
                 accessory: null
+              user_identity: null
               friend: false
               created_at: "2020-04-06T05:42:00.00Z"
               content: '[{"insert":"Post 7!"}]'
@@ -363,8 +373,8 @@ components:
             id: bcbde425-7f84-4e68-acd5-65aaae95714c
             parent_board_slug: long
             parent_board_id: db8dc5b3-5b4a-4bfe-a303-e176c9b00b83
-            parent_realm_slug: 'twisted-minds'
-            parent_realm_id: '76ef4cc3-1603-4278-95d7-99c59f481d2e'
+            parent_realm_slug: "twisted-minds"
+            parent_realm_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e"
             new_posts_amount: 0
             new_comments_amount: 0
             total_comments_amount: 0

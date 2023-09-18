@@ -84,14 +84,12 @@ const SecretIdentity = z.object({
   accessory: z.union([z.string(), z.null()]).optional(),
 });
 const Identity = z.object({ name: z.string(), avatar: z.string() });
-const Tags = z
-  .object({
-    whisper_tags: z.array(z.string()),
-    index_tags: z.array(z.string()),
-    category_tags: z.array(z.string()),
-    content_warnings: z.array(z.string()),
-  })
-  .partial();
+const Tags = z.object({
+  whisper_tags: z.array(z.string()),
+  index_tags: z.array(z.string()),
+  category_tags: z.array(z.string()),
+  content_warnings: z.array(z.string()),
+});
 const Contribution = z.object({
   id: z.string().uuid(),
   parent_thread_id: z.string().uuid(),
@@ -99,7 +97,7 @@ const Contribution = z.object({
   content: z.string(),
   created_at: z.string(),
   secret_identity: SecretIdentity,
-  user_identity: Identity.optional(),
+  user_identity: z.union([Identity, z.null()]),
   new: z.boolean(),
   own: z.boolean(),
   friend: z.boolean(),
@@ -110,11 +108,11 @@ const Contribution = z.object({
 const Comment = z.object({
   id: z.string().uuid(),
   parent_post_id: z.string().uuid(),
-  parent_comment_id: z.union([z.string(), z.null()]).optional(),
-  chain_parent_id: z.union([z.string(), z.null()]).optional(),
+  parent_comment_id: z.union([z.string(), z.null()]),
+  chain_parent_id: z.union([z.string(), z.null()]),
   content: z.string(),
-  secret_identity: z.union([SecretIdentity, z.null()]),
-  user_identity: z.union([Identity, z.null()]).optional(),
+  secret_identity: SecretIdentity,
+  user_identity: z.union([Identity, z.null()]),
   created_at: z.string(),
   own: z.boolean(),
   new: z.boolean(),
@@ -498,10 +496,10 @@ export const endpoints = {
       },
     ],
   },
-  mutesBoardsByExternalId: {
+  muteBoardsByExternalId: {
     method: "post",
     path: "/boards/:board_id/mute",
-    alias: "mutesBoardsByExternalId",
+    alias: "muteBoardsByExternalId",
     description: `Mutes the specified board for the current user.`,
     requestFormat: "json",
     parameters: [
@@ -532,10 +530,10 @@ export const endpoints = {
       },
     ],
   },
-  unmutesBoardsByExternalId: {
+  unmuteBoardsByExternalId: {
     method: "delete",
     path: "/boards/:board_id/mute",
-    alias: "unmutesBoardsByExternalId",
+    alias: "unmuteBoardsByExternalId",
     description: `Unmutes the specified board for the current user.`,
     requestFormat: "json",
     parameters: [
@@ -600,10 +598,10 @@ export const endpoints = {
       },
     ],
   },
-  pinsBoardsByExternalId: {
+  pinBoardsByExternalId: {
     method: "post",
     path: "/boards/:board_id/pin",
-    alias: "pinsBoardsByExternalId",
+    alias: "pinBoardsByExternalId",
     description: `Pins the specified board for the current user.`,
     requestFormat: "json",
     parameters: [
@@ -634,10 +632,10 @@ export const endpoints = {
       },
     ],
   },
-  unpinsBoardsByExternalId: {
+  unpinBoardsByExternalId: {
     method: "delete",
     path: "/boards/:board_id/pin",
-    alias: "unpinsBoardsByExternalId",
+    alias: "unpinBoardsByExternalId",
     description: `Unpins the specified board for the current user.`,
     requestFormat: "json",
     parameters: [
@@ -668,10 +666,10 @@ export const endpoints = {
       },
     ],
   },
-  visitsBoardsByExternalId: {
+  visitBoardsByExternalId: {
     method: "get",
     path: "/boards/:board_id/visits",
-    alias: "visitsBoardsByExternalId",
+    alias: "visitBoardsByExternalId",
     requestFormat: "json",
     parameters: [
       {

@@ -6,8 +6,8 @@ components:
         id: 8b2646af-2778-487e-8e44-7ae530c2549c
         parent_board_slug: gore
         parent_board_id: c6d3d10e-8e49-4d73-b28a-9d652b41beec
-        parent_realm_slug: 'twisted-minds'
-        parent_realm_id: '76ef4cc3-1603-4278-95d7-99c59f481d2e'
+        parent_realm_slug: "twisted-minds"
+        parent_realm_id: "76ef4cc3-1603-4278-95d7-99c59f481d2e"
         starter:
           id: ff9f2ae2-a254-4069-9791-3ac5e6dff5bb
           parent_thread_id: 8b2646af-2778-487e-8e44-7ae530c2549c
@@ -21,6 +21,7 @@ components:
             avatar: https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F6518df53-2031-4ac5-8d75-57a0051ed924?alt=media&token=23df54b7-297c-42ff-a0ea-b9862c9814f8
             color: red
             accessory:
+          user_identity: null
           friend: false
           own: false
           new: false
@@ -45,6 +46,7 @@ components:
               avatar: https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F6518df53-2031-4ac5-8d75-57a0051ed924?alt=media&token=23df54b7-297c-42ff-a0ea-b9862c9814f8
               color: red
               accessory:
+            user_identity: null
             friend: false
             own: false
             new: false
@@ -69,6 +71,7 @@ components:
                 avatar: https://pbs.twimg.com/profile_images/473496567366705152/JyHRKG7g.jpeg
                 color: null
                 accessory: null
+              user_identity: null
               friend: false
               own: false
               new: false
@@ -83,6 +86,7 @@ components:
                 avatar: https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fc26e8ce9-a547-4ff4-9486-7a2faca4d873%2F6518df53-2031-4ac5-8d75-57a0051ed924?alt=media&token=23df54b7-297c-42ff-a0ea-b9862c9814f8
                 color: red
                 accessory: null
+              user_identity: null
               friend: false
               own: false
               new: false

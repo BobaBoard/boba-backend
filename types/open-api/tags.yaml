@@ -20,3 +20,8 @@ components:
           type: array
           items:
             type: string
+      required:
+        - whisper_tags
+        - index_tags
+        - category_tags
+        - content_warnings

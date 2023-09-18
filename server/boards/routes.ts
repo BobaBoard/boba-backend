@@ -342,7 +342,7 @@ router.patch(
  * /boards/{board_id}/visits:
  *   get:
  *     summary: Sets last visited time for board
- *     operationId: visitsBoardsByExternalId
+ *     operationId: visitBoardsByExternalId
  *     tags:
  *       - /boards/
  *       - unzodded
@@ -403,7 +403,7 @@ router.post(
  * /boards/{board_id}/mute:
  *   post:
  *     summary: Mutes a board.
- *     operationId: mutesBoardsByExternalId
+ *     operationId: muteBoardsByExternalId
  *     description: Mutes the specified board for the current user.
  *     tags:
  *       - /boards/
@@ -465,7 +465,7 @@ router.post(
  * /boards/{board_id}/mute:
  *   delete:
  *     summary: Unmutes a board.
- *     operationId: unmutesBoardsByExternalId
+ *     operationId: unmuteBoardsByExternalId
  *     description: Unmutes the specified board for the current user.
  *     tags:
  *       - /boards/
@@ -523,7 +523,7 @@ router.delete(
  * /boards/{board_id}/pin:
  *   post:
  *     summary: Pins a board.
- *     operationId: pinsBoardsByExternalId
+ *     operationId: pinBoardsByExternalId
  *     description: Pins the specified board for the current user.
  *     tags:
  *       - /boards/
@@ -582,7 +582,7 @@ router.post(
  * /boards/{board_id}/pin:
  *   delete:
  *     summary: Unpins a board.
- *     operationId: unpinsBoardsByExternalId
+ *     operationId: unpinBoardsByExternalId
  *     description: Unpins the specified board for the current user.
  *     tags:
  *       - /boards/
