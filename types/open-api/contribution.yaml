@@ -27,7 +27,9 @@ components:
           $ref: "#/components/schemas/SecretIdentity"
         user_identity:
           description: The identity of the original poster, if visible to the requester.
-          $ref: "#/components/schemas/Identity"
+          oneOf:
+            - $ref: "#/components/schemas/Identity"
+            - type: "null"
         new:
           type: boolean
         own:
@@ -48,6 +50,7 @@ components:
         - content
         - created_at
         - secret_identity
+        - user_identity
         - friend
         - own
         - new
