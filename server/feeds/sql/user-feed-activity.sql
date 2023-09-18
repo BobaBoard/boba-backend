@@ -6,7 +6,7 @@ SELECT
     board_external_id as board_id,
     realm_slug,
     realm_string_id as realm_id,
-    TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as thread_last_activity,
+    TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as thread_last_activity_at,
     thread_details.default_view,
     -- Amount details
     COALESCE(posts_amount, 0) as thread_total_posts_amount,
@@ -67,5 +67,5 @@ WHERE
    AND muted IS FALSE
    AND hidden IS FALSE
    AND realm_string_id = ${realm_id}
-ORDER BY thread_last_activity DESC
+ORDER BY thread_last_activity_at DESC
 LIMIT ${page_size} + 1

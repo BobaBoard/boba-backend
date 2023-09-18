@@ -65,7 +65,7 @@ const TWISTED_MINDS_INVITES = [
     nonce: "321expired987",
     email: "expired@email.com",
     label: "expired invite",
-    created: "2016-06-22 19:10:25",
+    created_at: "2016-06-22 19:10:25",
   },
 ];
 
@@ -97,7 +97,7 @@ const USED_AND_EXPIRED_INVITES = [
     nonce: "321expired987",
     email: "expired@email.com",
     label: "expired invite",
-    created: "2016-06-22 19:10:25",
+    created_at: "2016-06-22 19:10:25",
   },
 ];
 
@@ -107,7 +107,7 @@ const insertInvites = async (
     email?: string;
     label?: string;
     used?: boolean;
-    created?: string;
+    created_at?: string;
   }[],
   inviter: string,
   realmExternalId: string
@@ -127,7 +127,7 @@ const insertInvites = async (
           nonce: invite.nonce,
           email: invite.email,
           label: invite.label,
-          created: invite.created ? invite.created : `now()`,
+          created: invite.created_at ? invite.created_at : `now()`,
           used: invite.used ? true : false,
         }
       );
