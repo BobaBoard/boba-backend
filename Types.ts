@@ -38,7 +38,7 @@ export interface DbPostType {
   secret_identity_name: string;
   secret_identity_avatar: string;
   secret_identity_color: string | null;
-  accessory_avatar?: string;
+  accessory_avatar: string | null;
   self: boolean;
   friend: boolean;
   created_at: string;
@@ -51,14 +51,13 @@ export interface DbPostType {
   anonymity_type: "everyone" | "strangers";
   total_comments_amount: number;
   new_comments_amount: number;
-  comments: DbCommentType[] | null;
   is_own: boolean;
   is_new: boolean;
 }
 export interface DbCommentType {
   comment_id: string;
   parent_post_id: string;
-  parent_comment_id: string;
+  parent_comment_id: string | null;
   chain_parent_id: string | null;
   author: number;
   username: string;
@@ -66,7 +65,7 @@ export interface DbCommentType {
   secret_identity_name: string;
   secret_identity_avatar: string;
   secret_identity_color: string | null;
-  accessory_avatar?: string;
+  accessory_avatar: string | null;
   content: string;
   created_at: string;
   anonymity_type: "everyone" | "strangers";
@@ -82,7 +81,7 @@ export interface DbThreadType {
   board_id: string;
   realm_slug: string;
   realm_id: string;
-  thread_last_activity: string;
+  thread_last_activity_at: string;
   posts: DbPostType[];
   default_view: "thread" | "gallery" | "timeline";
   thread_new_comments_amount: number;

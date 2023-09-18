@@ -6,7 +6,7 @@ import {
   REVOLVER_OCELOT_POST,
 } from "./posts";
 import { GORE_BOARD_ID, RESTRICTED_BOARD_ID } from "./boards";
-import { Thread, ThreadSummary } from "../../types/rest/threads";
+import { Thread, ThreadSummary } from "types/open-api/generated/types";
 
 import { GenericResponse } from "../../types/rest/responses";
 import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "./realms";
@@ -41,6 +41,7 @@ export const EXCELLENT_THREAD_SUMMARY: ThreadSummary = {
       accessory: null,
       color: "red",
     },
+    user_identity: null,
     own: false,
     friend: false,
     new: false,
@@ -105,6 +106,7 @@ export const FAVORITE_MURDER_THREAD_SUMMARY: ThreadSummary = {
       accessory: null,
       color: null,
     },
+    user_identity: null,
     new: false,
     own: false,
     friend: false,
@@ -182,6 +184,7 @@ export const RESTRICTED_THREAD: Thread = {
           color: null,
           name: "The OG OG Komaeda",
         },
+        user_identity: null,
       },
     ],
   },

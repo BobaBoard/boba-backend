@@ -295,7 +295,6 @@ export const postNewContribution = async (
         anonymity_type: postedContribution.anonymity_type,
         total_comments_amount: 0,
         new_comments_amount: 0,
-        comments: null,
         friend: false,
         self: true,
         is_new: true,

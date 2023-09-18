@@ -1,5 +1,8 @@
 import { BOBATAN_USER_ID, ONCEST_USER_ID } from "test/data/auth";
-import { FAVORITE_CHARACTER_THREAD_ID, FAVORITE_MURDER_THREAD_ID } from "test/data/threads";
+import {
+  FAVORITE_CHARACTER_THREAD_ID,
+  FAVORITE_MURDER_THREAD_ID,
+} from "test/data/threads";
 
 import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
 import { ZodDbFeedType } from "zodtypes";
@@ -43,7 +46,7 @@ describe("feed activity queries", () => {
         posts_amount: 1,
         thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
         thread_last_activity_micro: "2020-10-04T05:44:00.000000",
-        thread_last_activity: "2020-10-04T05:44:00.00Z",
+        thread_last_activity_at: "2020-10-04T05:44:00.00Z",
         threads_amount: 0,
       },
     ]);
@@ -69,7 +72,7 @@ describe("feed activity queries", () => {
         posts_amount: 1,
         thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
         thread_last_activity_micro: "2020-10-04T05:44:00.000000",
-        thread_last_activity: "2020-10-04T05:44:00.00Z",
+        thread_last_activity_at: "2020-10-04T05:44:00.00Z",
         threads_amount: 0,
       },
       {
@@ -82,7 +85,7 @@ describe("feed activity queries", () => {
         posts_amount: 3,
         thread_id: FAVORITE_MURDER_THREAD_ID,
         thread_last_activity_micro: "2020-05-03T09:47:00.000000",
-        thread_last_activity: "2020-05-03T09:47:00.00Z",
+        thread_last_activity_at: "2020-05-03T09:47:00.00Z",
         threads_amount: 2,
       },
     ]);
@@ -108,7 +111,7 @@ describe("feed activity queries", () => {
         posts_amount: 1,
         thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
         thread_last_activity_micro: "2020-10-04T05:44:00.000000",
-        thread_last_activity: "2020-10-04T05:44:00.00Z",
+        thread_last_activity_at: "2020-10-04T05:44:00.00Z",
         threads_amount: 0,
       },
     ]);
@@ -134,7 +137,7 @@ describe("feed activity queries", () => {
         posts_amount: 1,
         thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
         thread_last_activity_micro: "2020-10-04T05:44:00.000000",
-        thread_last_activity: "2020-10-04T05:44:00.00Z",
+        thread_last_activity_at: "2020-10-04T05:44:00.00Z",
         threads_amount: 0,
       },
       {
@@ -147,7 +150,7 @@ describe("feed activity queries", () => {
         posts_amount: 3,
         thread_id: FAVORITE_CHARACTER_THREAD_ID,
         thread_last_activity_micro: "2020-05-23T05:52:00.000000",
-        thread_last_activity: "2020-05-23T05:52:00.00Z",
+        thread_last_activity_at: "2020-05-23T05:52:00.00Z",
         threads_amount: 2,
       },
       {
@@ -160,7 +163,7 @@ describe("feed activity queries", () => {
         posts_amount: 3,
         thread_id: FAVORITE_MURDER_THREAD_ID,
         thread_last_activity_micro: "2020-05-03T09:47:00.000000",
-        thread_last_activity: "2020-05-03T09:47:00.00Z",
+        thread_last_activity_at: "2020-05-03T09:47:00.00Z",
         threads_amount: 2,
       },
     ]);
@@ -190,7 +193,7 @@ describe("feed activity queries", () => {
         posts_amount: 1,
         thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
         thread_last_activity_micro: "2020-10-04T05:44:00.000000",
-        thread_last_activity: "2020-10-04T05:44:00.00Z",
+        thread_last_activity_at: "2020-10-04T05:44:00.00Z",
         threads_amount: 0,
       },
     ]);
@@ -218,7 +221,7 @@ describe("feed activity queries", () => {
         posts_amount: 3,
         thread_id: FAVORITE_CHARACTER_THREAD_ID,
         thread_last_activity_micro: "2020-05-23T05:52:00.000000",
-        thread_last_activity: "2020-05-23T05:52:00.00Z",
+        thread_last_activity_at: "2020-05-23T05:52:00.00Z",
         threads_amount: 2,
       },
     ]);
@@ -249,7 +252,7 @@ describe("feed activity queries", () => {
         posts_amount: 1,
         thread_id: "90119d99-359d-4a60-b5ab-9b6077d0dc39",
         thread_last_activity_micro: "2020-04-01T05:22:00.000000",
-        thread_last_activity: "2020-04-01T05:22:00.00Z",
+        thread_last_activity_at: "2020-04-01T05:22:00.00Z",
         threads_amount: 0,
       });
     });
