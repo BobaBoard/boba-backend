@@ -1,9 +1,9 @@
-import { Comment, Post } from "types/rest/threads";
+import { Comment, Contribution } from "types/open-api/generated/types";
 
 export const CHARACTER_TO_MAIM_POST_ID = "11b85dac-e122-40e0-b09a-8829c5e0250e";
 export const KERMIT_FRIEND_COMMENT_ID = "89fc3682-cb74-43f9-9a63-bd97d0f59bb9";
 
-export const CHARACTER_TO_MAIM_POST: Post = {
+export const CHARACTER_TO_MAIM_POST: Contribution = {
   id: CHARACTER_TO_MAIM_POST_ID,
   content: '[{"insert":"Favorite character to maim?"}]',
   created_at: "2020-04-30T03:23:00.00Z",
@@ -21,6 +21,7 @@ export const CHARACTER_TO_MAIM_POST: Post = {
       "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F989f4b40-c1b8-4793-93dd-57e93df3e7ec.png?alt=media&token=cabdd8d5-b6a9-4914-bb59-eda4629f151b",
     color: null,
   },
+  user_identity: null,
   total_comments_amount: 0,
   tags: {
     index_tags: ["evil", "bobapost"],
@@ -30,7 +31,7 @@ export const CHARACTER_TO_MAIM_POST: Post = {
   },
 };
 
-export const REVOLVER_OCELOT_POST: Post = {
+export const REVOLVER_OCELOT_POST: Contribution = {
   id: "619adf62-833f-4bea-b591-03e807338a8e",
   content: '[{"insert":"Revolver Ocelot"}]',
   created_at: "2020-05-01T05:42:00.00Z",
@@ -48,6 +49,7 @@ export const REVOLVER_OCELOT_POST: Post = {
       "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",
     color: null,
   },
+  user_identity: null,
   total_comments_amount: 0,
   tags: {
     index_tags: ["evil", "oddly specific", "metal gear", "bobapost"],
@@ -57,7 +59,7 @@ export const REVOLVER_OCELOT_POST: Post = {
   },
 };
 
-export const KERMIT_POST: Post = {
+export const KERMIT_POST: Contribution = {
   content: '[{"insert":"Kermit the Frog"}]',
   created_at: "2020-05-02T06:04:00.00Z",
   id: "b95bb260-eae0-456c-a5d0-8ae9e52608d8",
@@ -75,6 +77,7 @@ export const KERMIT_POST: Post = {
       "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F989f4b40-c1b8-4793-93dd-57e93df3e7ec.png?alt=media&token=cabdd8d5-b6a9-4914-bb59-eda4629f151b",
     color: null,
   },
+  user_identity: null,
   total_comments_amount: 2,
   tags: {
     index_tags: ["good", "oddly specific", "bobapost"],
@@ -107,6 +110,7 @@ export const KERMIT_COMMENTS: Comment[] = [
         "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",
       color: null,
     },
+    user_identity: null,
   },
   {
     content: '[{"insert":"friends!!!!!"}]',
@@ -126,10 +130,11 @@ export const KERMIT_COMMENTS: Comment[] = [
         "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fbobaland%2Fundefined%2F9b7a5d90-4885-43bf-a5f5-e861b7b87505.png?alt=media&token=83ae88ca-5c81-4d1b-9208-0a936017c485",
       color: null,
     },
+    user_identity: null,
   },
 ];
 
-export const CANT_SEE_ME_POST: Post = {
+export const CANT_SEE_ME_POST: Contribution = {
   content: '[{"insert":"You can\'t see me!"}]',
   created_at: "2020-04-24T05:42:00.00Z",
   friend: false,
@@ -146,6 +151,7 @@ export const CANT_SEE_ME_POST: Post = {
     color: null,
     name: "The OG OG Komaeda",
   },
+  user_identity: null,
   tags: {
     category_tags: [],
     content_warnings: [],
