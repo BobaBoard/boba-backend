@@ -50,7 +50,7 @@ const getInvites = `
       users.firebase_id AS inviter_id,
       invitee_email,
       created + duration AS expires_at,
-      created,
+      created AS created_at,
       label 
     FROM account_invites
     JOIN realms ON account_invites.realm_id = realms.id 

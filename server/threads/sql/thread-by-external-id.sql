@@ -119,7 +119,7 @@ SELECT
     boards.string_id as board_id,
     realms.slug as realm_slug,
     realms.string_id as realm_id,
-    TO_CHAR(thread_details.last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as thread_last_activity,
+    TO_CHAR(thread_details.last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as thread_last_activity_at,
     json_agg(row_to_json(thread_posts) ORDER BY thread_posts.created_at ASC) as posts,
     COALESCE(threads.OPTIONS ->> 'default_view', 'thread')::view_types AS default_view,
     COALESCE(SUM(thread_posts.new_comments_amount)::int, 0) as thread_new_comments_amount,

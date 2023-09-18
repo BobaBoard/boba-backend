@@ -141,8 +141,7 @@ export const makeServerThreadSummary = (
     new_comments_amount: thread.thread_new_comments_amount,
     total_comments_amount: thread.thread_total_comments_amount,
     total_posts_amount: thread.thread_total_posts_amount,
-    // @ts-ignore [zodding]
-    last_activity_at: thread.thread_last_activity,
+    last_activity_at: thread.thread_last_activity_at,
     direct_threads_amount: thread.thread_direct_threads_amount,
   });
 };
@@ -392,13 +391,13 @@ export const processBoardsNotifications = ({ boards }: { boards: any[] }) => {
     id: board.string_id,
     has_updates: board.has_updates,
     is_outdated:
-      (board.last_activity_from_others &&
-        board.last_visit &&
-        new Date(board.last_visit) >=
-          new Date(board.last_activity_from_others)) ||
+      (board.last_activity_from_others_at &&
+        board.last_visit_at &&
+        new Date(board.last_visit_at) >=
+          new Date(board.last_activity_from_others_at)) ||
       false,
-    last_activity_at: board.last_activity,
-    last_activity_from_others_at: board.last_activity_from_others,
-    last_visited_at: board.last_visit,
+    last_activity_at: board.last_activity_at,
+    last_activity_from_others_at: board.last_activity_from_others_at,
+    last_visited_at: board.last_visit_at,
   }));
 };

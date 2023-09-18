@@ -25,7 +25,7 @@ describe("feed activity queries", () => {
     expect(feed.activity.map(extractActivity)).toEqual([
       {
         comments_amount: 2,
-        created: "2020-09-25T05:42:00.00Z",
+        created_at: "2020-09-25T05:42:00.00Z",
         is_new: false,
         new_comments_amount: 1,
         new_posts_amount: 0,
@@ -33,7 +33,7 @@ describe("feed activity queries", () => {
         posts_amount: 1,
         thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
         thread_last_activity_at: "2020-10-04T05:44:00.00Z",
-        thread_last_activity_micro: "2020-10-04T05:44:00.000000",
+        thread_last_activity_at_micro: "2020-10-04T05:44:00.000000",
         threads_amount: 0,
       },
     ]);
@@ -55,7 +55,7 @@ describe("feed activity queries", () => {
     expect(feed.activity.map(extractActivity)).toEqual([
       {
         comments_amount: 2,
-        created: "2020-09-25T05:42:00.00Z",
+        created_at: "2020-09-25T05:42:00.00Z",
         is_new: false,
         new_comments_amount: 1,
         new_posts_amount: 0,
@@ -63,12 +63,12 @@ describe("feed activity queries", () => {
         posts_amount: 1,
         thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
         thread_last_activity_at: "2020-10-04T05:44:00.00Z",
-        thread_last_activity_micro: "2020-10-04T05:44:00.000000",
+        thread_last_activity_at_micro: "2020-10-04T05:44:00.000000",
         threads_amount: 0,
       },
       {
         comments_amount: 0,
-        created: "2020-04-24T05:42:00.00Z",
+        created_at: "2020-04-24T05:42:00.00Z",
         is_new: false,
         new_comments_amount: 0,
         new_posts_amount: 0,
@@ -76,7 +76,7 @@ describe("feed activity queries", () => {
         posts_amount: 3,
         thread_id: FAVORITE_MURDER_THREAD_ID,
         thread_last_activity_at: "2020-05-03T09:47:00.00Z",
-        thread_last_activity_micro: "2020-05-03T09:47:00.000000",
+        thread_last_activity_at_micro: "2020-05-03T09:47:00.000000",
         threads_amount: 2,
       },
     ]);
@@ -98,7 +98,7 @@ describe("feed activity queries", () => {
     expect(feed.activity.map(extractActivity)).toEqual([
       {
         comments_amount: 2,
-        created: "2020-09-25T05:42:00.00Z",
+        created_at: "2020-09-25T05:42:00.00Z",
         is_new: false,
         new_comments_amount: 1,
         new_posts_amount: 0,
@@ -106,7 +106,7 @@ describe("feed activity queries", () => {
         posts_amount: 1,
         thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
         thread_last_activity_at: "2020-10-04T05:44:00.00Z",
-        thread_last_activity_micro: "2020-10-04T05:44:00.000000",
+        thread_last_activity_at_micro: "2020-10-04T05:44:00.000000",
         threads_amount: 0,
       },
     ]);
@@ -128,7 +128,7 @@ describe("feed activity queries", () => {
     expect(feed.activity.map(extractActivity)).toEqual([
       {
         comments_amount: 2,
-        created: "2020-09-25T05:42:00.00Z",
+        created_at: "2020-09-25T05:42:00.00Z",
         is_new: false,
         new_comments_amount: 1,
         new_posts_amount: 0,
@@ -136,12 +136,12 @@ describe("feed activity queries", () => {
         posts_amount: 1,
         thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
         thread_last_activity_at: "2020-10-04T05:44:00.00Z",
-        thread_last_activity_micro: "2020-10-04T05:44:00.000000",
+        thread_last_activity_at_micro: "2020-10-04T05:44:00.000000",
         threads_amount: 0,
       },
       {
         comments_amount: 2,
-        created: "2020-04-30T03:23:00.00Z",
+        created_at: "2020-04-30T03:23:00.00Z",
         is_new: false,
         new_comments_amount: 0,
         new_posts_amount: 0,
@@ -149,12 +149,12 @@ describe("feed activity queries", () => {
         posts_amount: 3,
         thread_id: FAVORITE_CHARACTER_THREAD_ID,
         thread_last_activity_at: "2020-05-23T05:52:00.00Z",
-        thread_last_activity_micro: "2020-05-23T05:52:00.000000",
+        thread_last_activity_at_micro: "2020-05-23T05:52:00.000000",
         threads_amount: 2,
       },
       {
         comments_amount: 0,
-        created: "2020-04-24T05:42:00.00Z",
+        created_at: "2020-04-24T05:42:00.00Z",
         is_new: false,
         new_comments_amount: 0,
         new_posts_amount: 0,
@@ -162,7 +162,7 @@ describe("feed activity queries", () => {
         posts_amount: 3,
         thread_id: FAVORITE_MURDER_THREAD_ID,
         thread_last_activity_at: "2020-05-03T09:47:00.00Z",
-        thread_last_activity_micro: "2020-05-03T09:47:00.000000",
+        thread_last_activity_at_micro: "2020-05-03T09:47:00.000000",
         threads_amount: 2,
       },
     ]);
@@ -188,7 +188,7 @@ describe("feed activity queries", () => {
     expect(feed.activity.map(extractActivity)).toEqual([
       {
         comments_amount: 2,
-        created: "2020-09-25T05:42:00.00Z",
+        created_at: "2020-09-25T05:42:00.00Z",
         is_new: false,
         new_comments_amount: 1,
         new_posts_amount: 0,
@@ -196,7 +196,7 @@ describe("feed activity queries", () => {
         posts_amount: 1,
         thread_id: "8b2646af-2778-487e-8e44-7ae530c2549c",
         thread_last_activity_at: "2020-10-04T05:44:00.00Z",
-        thread_last_activity_micro: "2020-10-04T05:44:00.000000",
+        thread_last_activity_at_micro: "2020-10-04T05:44:00.000000",
         threads_amount: 0,
       },
     ]);
@@ -220,7 +220,7 @@ describe("feed activity queries", () => {
     expect(feed.activity.map(extractActivity)).toEqual([
       {
         comments_amount: 2,
-        created: "2020-04-30T03:23:00.00Z",
+        created_at: "2020-04-30T03:23:00.00Z",
         is_new: false,
         new_comments_amount: 0,
         new_posts_amount: 0,
@@ -228,7 +228,7 @@ describe("feed activity queries", () => {
         posts_amount: 3,
         thread_id: FAVORITE_CHARACTER_THREAD_ID,
         thread_last_activity_at: "2020-05-23T05:52:00.00Z",
-        thread_last_activity_micro: "2020-05-23T05:52:00.000000",
+        thread_last_activity_at_micro: "2020-05-23T05:52:00.000000",
         threads_amount: 2,
       },
     ]);
@@ -255,7 +255,7 @@ describe("feed activity queries", () => {
       // is counted when "updatedOnly" is false.
       expect(extractActivity(feed.activity[2])).toEqual({
         comments_amount: 2,
-        created: "2020-04-01T05:20:00.00Z",
+        created_at: "2020-04-01T05:20:00.00Z",
         is_new: false,
         new_comments_amount: 0,
         new_posts_amount: 0,
@@ -263,7 +263,7 @@ describe("feed activity queries", () => {
         posts_amount: 1,
         thread_id: "90119d99-359d-4a60-b5ab-9b6077d0dc39",
         thread_last_activity_at: "2020-04-01T05:22:00.00Z",
-        thread_last_activity_micro: "2020-04-01T05:22:00.000000",
+        thread_last_activity_at_micro: "2020-04-01T05:22:00.000000",
         threads_amount: 0,
       });
     });

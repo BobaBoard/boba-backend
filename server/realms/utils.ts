@@ -83,11 +83,11 @@ export const processRealmActivity = ({ boards }: { boards: any[] }) => {
   return boards.reduce((result, current) => {
     result[current.slug] = {
       id: current.string_id,
-      last_post_at: current.last_post,
-      last_comment_at: current.last_comment,
-      last_activity_at: current.last_activity,
-      last_activity_from_others_at: current.last_activity_from_others,
-      last_visit_at: current.last_visit,
+      last_post_at: current.last_post_at,
+      last_comment_at: current.last_comment_at,
+      last_activity_at: current.last_activity_at,
+      last_activity_from_others_at: current.last_activity_from_others_at,
+      last_visit_at: current.last_visit_at,
     };
     return result;
   }, {});

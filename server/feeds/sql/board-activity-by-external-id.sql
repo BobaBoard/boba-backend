@@ -5,7 +5,7 @@ SELECT
     board_external_id as board_id,
     realm_slug,
     realm_string_id as realm_id,
-    TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z') as thread_last_activity,
+    TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z') as thread_last_activity_at,
     thread_details.default_view,
     -- Amount details
     COALESCE(posts_amount, 0) as thread_total_posts_amount,
@@ -63,5 +63,5 @@ WHERE
    AND (${filtered_category} IS NULL OR (
        (SELECT id FROM categories WHERE categories.category = ${filtered_category})
         IN (SELECT category_id FROM post_categories WHERE post_categories.post_id = first_post_id)))
-ORDER BY thread_last_activity DESC
+ORDER BY thread_last_activity_at DESC
 LIMIT ${page_size} + 1

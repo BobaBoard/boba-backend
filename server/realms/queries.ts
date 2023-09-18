@@ -369,7 +369,7 @@ export const getRealmInvites = async ({
   | {
       nonce: string;
       invitee_email: string | null;
-      created: string;
+      created_at: string;
       expires_at: string;
       inviter_id: string;
       label: string | null;

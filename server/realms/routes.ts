@@ -408,7 +408,7 @@ router.get(
         realm_id: realm.string_id,
         invite_url: `https://${realm.slug}.boba.social/invites/${invite.nonce}`,
         own: invite.inviter_id === userId ? true : false,
-        issued_at: invite.created,
+        issued_at: invite.created_at,
         expires_at: invite.expires_at,
         ...(invite.invitee_email && { invitee_email: invite.invitee_email }),
         ...(invite.label && { label: invite.label }),

@@ -11,14 +11,14 @@ SELECT
     boards.tagline,
     boards.avatar_reference_id,
     boards.settings,
-    MAX(posts.last_activity) as last_post,
-    MAX(comments.last_activity) as last_comment,
-    GREATEST(MAX(COMMENTS.last_activity), MAX(posts.last_activity)) AS last_activity,
+    MAX(posts.last_activity) as last_post_at,
+    MAX(comments.last_activity) as last_comment_at,
+    GREATEST(MAX(COMMENTS.last_activity), MAX(posts.last_activity)) AS last_activity_at,
     -- NOTE: last_activity_from_others also considers notification dismissals etc. This makes no sense given the name.
     -- TODO: maybe rename this as "last_notifiable_activity"
     -- TODO: remove this from the board query and make its own notifications query instead.
-    GREATEST(MAX(COMMENTS.last_activity_from_others), MAX(posts.last_activity_from_others)) AS last_activity_from_others,
-    MAX(GREATEST(user_board_last_visits.last_visit_time, posts.last_thread_visit)) as last_visit,
+    GREATEST(MAX(COMMENTS.last_activity_from_others), MAX(posts.last_activity_from_others)) AS last_activity_from_others_at,
+    MAX(GREATEST(user_board_last_visits.last_visit_time, posts.last_thread_visit)) as last_visit_at,
     user_muted_boards.board_id IS NOT NULL as muted,
     COALESCE(ordered_pinned_boards.index, NULL) as pinned_order,
     BOOL_OR(user_muted_boards.board_id IS NULL AND (posts.has_new OR comments.has_new)) as has_updates,
