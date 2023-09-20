@@ -7,6 +7,38 @@ const DbIdentitySchema = z.object({
   user_avatar: z.string().nullable(),
 });
 
+/**
+ * Expands object types recursively, thus making the resulting type
+ * more readable. Doesn't actually change the type.
+ */
+export type MakeRecursiveTypeReadable<T> = T extends object
+  ? T extends infer O
+    ? { [K in keyof O]: MakeRecursiveTypeReadable<O[K]> }
+    : never
+  : T;
+
+export const CommentTypeSchema = z.object({
+  comment_id: z.string(),
+  parent_post_id: z.string(),
+  parent_comment_id: z.string().nullable(),
+  chain_parent_id: z.string().nullable(),
+  author: z.number(),
+  username: z.string(),
+  user_avatar: z.string(),
+  secret_identity_name: z.string(),
+  secret_identity_avatar: z.string(),
+  secret_identity_color: z.string().nullable(),
+  accessory_avatar: z.string().nullable(),
+  content: z.string(),
+  created_at: z.string(),
+  // TODO: deprecate this
+  anonymity_type: z.enum(["everyone", "strangers"]),
+  self: z.boolean(),
+  friend: z.boolean(),
+  is_new: z.boolean(),
+  is_own: z.boolean(),
+});
+
 const DbSecretIdentitySchema = z.object({
   secret_identity_name: z.string(),
   secret_identity_avatar: z.string(),
@@ -82,8 +114,9 @@ const DbThreadTypeSchema = z.object({
 });
 export type ZodDbThreadType = z.infer<typeof DbThreadTypeSchema>;
 
-const ThreadSummaryTypeSchema = DbThreadTypeSchema.extend({
-  thread_last_activity_at_micro: z.string().nullable(),
+export const ThreadSummaryTypeSchema = DbThreadTypeSchema.omit({
+  posts: true,
+  comments: true,
 })
   .merge(DbThreadTypeSchema.omit({ posts: true }))
   .merge(
@@ -94,9 +127,9 @@ const ThreadSummaryTypeSchema = DbThreadTypeSchema.extend({
     })
   );
 
-export type ZodDbThreadSummaryType = z.infer<typeof ThreadSummaryTypeSchema>;
-//TODO: come up with good names for this or
-//  replace all current DB types out right
+export type ZodDbThreadSummaryType = MakeRecursiveTypeReadable<
+  z.infer<typeof ThreadSummaryTypeSchema>
+>;
 
 const FeedTypeSchema = z.object({
   cursor: z.string().nullable(),

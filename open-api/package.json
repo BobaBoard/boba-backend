@@ -1,0 +1,9 @@
+{
+  "name": "@bobaboard/boba-backend-open-api",
+  "version": "0.0.1",
+  "description": "Open API specification for boba-backend",
+  "main": "open-api-spec.json",
+  "scripts": {},
+  "author": "",
+  "license": "MIT"
+}

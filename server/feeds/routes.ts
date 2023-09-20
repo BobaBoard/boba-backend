@@ -132,6 +132,12 @@ router.get("/realms/:realm_id", ensureLoggedIn, async (req, res) => {
  *           cursor:
  *             summary: The feed for a board with a cursor.
  *             value: eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDQtMTVUMDU6NDI6MDAuMDAwMDAwIiwicGFnZV9zaXplIjoxMH0=
+ *       - name: categoryFilter
+ *         in: query
+ *         description: A category to filter the feed by.
+ *         schema:
+ *           type: string
+ *         allowEmptyValue: true
  *     responses:
  *       404:
  *         description: The board was not found.
@@ -163,22 +169,19 @@ router.get("/boards/:board_id", ensureBoardAccess, async (req, res) => {
   });
   info(`Found activity for board ${boardExternalId}:`, result);
 
-  if (result === false) {
-    res.sendStatus(500);
-    return;
-  }
   if (!result) {
     throw new NotFound404Error(
       `Board with id ${boardExternalId} was not found`
     );
   }
+
   if (!result.activity.length) {
     res.sendStatus(204);
     return;
   }
 
   const threadsWithIdentity = result.activity.map(makeServerThreadSummary);
-  const response: ZodFeed = {
+  const response = {
     cursor: {
       next: result.cursor,
     },
@@ -197,18 +200,17 @@ router.get("/boards/:board_id", ensureBoardAccess, async (req, res) => {
  * /feeds/users/@me:
  *   get:
  *     summary: Get the feed for the current user activity activity.
- *     operationId: getPersonalFeed
+ *     operationId: getUserFeed
  *     tags:
  *       - /feeds/
  *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
- *       - name: cursor
- *         in: query
- *         description: The cursor to start feeding the activity of the board from.
- *         schema:
- *           type: string
+ *       - $ref: '#/components/parameters/CursorParam'
+ *       - $ref: '#/components/parameters/ReadParam'
+ *       - $ref: '#/components/parameters/OwnOnlyParam'
+ *       - $ref: '#/components/parameters/RealmParam'
  *     responses:
  *       404:
  *         description: The board was not found.
@@ -238,6 +240,7 @@ router.get("/users/@me", ensureLoggedIn, async (req, res) => {
   if (!userActivity) {
     throw new NotFound404Error(`User with id ${currentUserId} was not found`);
   }
+
   if (!userActivity.activity.length) {
     res.sendStatus(204);
     return;
