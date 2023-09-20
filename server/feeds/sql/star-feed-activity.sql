@@ -19,7 +19,7 @@ SELECT
     NULL as parent_post_id,
     board_slug as parent_board_slug,
     realm_slug,
-    realm_string_id as realm_id,
+    realm_external_id as realm_id,
     -- Author details
     author,
     author_identity.username,

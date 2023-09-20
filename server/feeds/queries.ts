@@ -10,6 +10,59 @@ const log = debug("bobaserver:feeds:queries-log");
 const error = debug("bobaserver:feeds:queries-error");
 
 const DEFAULT_PAGE_SIZE = 10;
+
+export const getRealmActivityByExternalId = async({
+  realmExternalId,
+  firebaseId,
+  cursor,
+  pageSize,
+}: {
+  realmExternalId: string;
+  firebaseId: string | null;
+  cursor: string | null;
+  pageSize?: number;
+}): Promise<ZodDbFeedType | null | false> => {
+  const decodedCursor = cursor ? decodeCursor(cursor) : null;
+
+  const finalPageSize =
+    decodedCursor?.page_size || pageSize || DEFAULT_PAGE_SIZE;
+  const rows = await pool.manyOrNone(sql.getRealmActivity, {
+    realm_id: realmExternalId,
+    firebase_id: firebaseId,
+    last_activity_cursor: decodedCursor?.last_activity_cursor || null,
+    page_size: finalPageSize,
+  });
+
+  if (!rows) {
+    log(`Realm not found: ${realmExternalId}`);
+    return null;
+  };
+
+  if (rows.length == 1 && rows[0].thread_id == null) {
+    // Only one row with just the null thread)
+    log(`Realm empty: ${realmExternalId}`);
+    return { cursor: null, activity: [] };
+  };
+
+  let result = rows;
+  let nextCursor = null;
+  info(`Got getRealmActivityByExternalId query result`, result);
+  if (result.length > finalPageSize) {
+    nextCursor = encodeCursor({
+      last_activity_cursor:
+        result[result.length - 1].thread_last_activity_at_micro,
+      page_size: finalPageSize,
+    });
+    // remove last element from array
+    result.pop();
+  };
+
+  log(
+    `Fetched realm ${realmExternalId} activity data for user ${firebaseId}`
+  );
+  return { cursor: nextCursor, activity: rows };
+};
+
 export const getBoardActivityByExternalId = async ({
   boardExternalId,
   firebaseId,
