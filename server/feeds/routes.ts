@@ -5,6 +5,7 @@ import {
 } from "utils/response-utils";
 import {
   getBoardActivityByExternalId,
+  getRealmActivityByExternalId,
   getUserActivity,
   getUserStarFeed,
 } from "./queries";
@@ -21,6 +22,78 @@ const info = debug("bobaserver:feeds:routes-info");
 const log = debug("bobaserver:feeds:routes");
 
 const router = express.Router();
+
+/**
+ * /feeds/realms/{realm_id}:
+ *   get:
+ *     summary: Get latest activity on entire realm
+ *     operationId: getRealmActivity
+ *     tags:
+ *       - /feeds/
+ *     parameters:
+ *     responses:
+ *        404:
+ *          description: The board was not found.
+ *        200:
+ *          schema:
+ *            $ref: "#/components/schemas/FeedActivity"
+ * 
+ *  * only available to logged in people
+ *  * does not include muted boards
+ *  * does not include muted threads
+ *  * does not show hidden threads (?) **
+ *  * for whole realm rather than individual boards
+ *  * cursor based chunking of the feed
+ *  * chronological feed of everything
+ *  * just shows the op of every thread with activity
+ *  
+ *  - dbthreadsummarytype (output of the database)
+ *  - use in the route ^
+ *    ensureLoggedIn, ensureBoardAccess
+ */
+router.get("/realms/:realm_id", ensureLoggedIn, async (req, res) => {
+  const { realm_id: realmExternalId } = req.params;
+  const { cursor } = req.query;
+  log(
+    `Fetching activity data for realm with slug ${realmExternalId} with cursor ${cursor}`
+  );
+
+  log(cursor);
+  const result = await getRealmActivityByExternalId({
+    realmExternalId,
+    firebaseId: req.currentUser?.uid || null,
+    cursor: (cursor as string) || null,
+  });
+  info(`Found activity for board ${realmExternalId}:`, result);
+
+  if (result === false) {
+    res.sendStatus(500);
+    return;
+  }
+  if (!result) {
+    throw new NotFound404Error(
+      `Realm with id ${realmExternalId} was not found`
+    );
+  }
+  if (!result.activity.length) {
+    res.sendStatus(204);
+    return;
+  }
+
+  const threadsWithIdentity = result.activity.map(makeServerThreadSummary);
+  const response: ZodFeed = {
+    cursor: {
+      next: result.cursor,
+    },
+    activity: threadsWithIdentity,
+  };
+
+  response.activity.map((post) => ensureNoIdentityLeakage(post));
+  log(
+    `Returning board activity data for board ${realmExternalId} for user ${req.currentUser?.uid}.`
+  );
+  res.status(200).json(FeedActivitySchema.parse(response));
+});
 
 /**
  * @openapi

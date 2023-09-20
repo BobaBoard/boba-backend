@@ -16,7 +16,7 @@ SELECT
     COALESCE(muted, FALSE) as muted,
     COALESCE(hidden, FALSE) as hidden,
     COALESCE(starred, FALSE) as starred,
-    -- Post details (DbPostType)
+    -- Contribution details (DbContributionType)
     first_post_string_id as post_id,
     thread_external_id as parent_thread_id,
     NULL as parent_post_id,
@@ -35,12 +35,11 @@ SELECT
     TO_CHAR(first_post_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as created_at,
     -- Generic details
     content,
-    -- post tags
+    -- Contribution tags
     index_tags,
     category_tags,
     content_warnings,
     whisper_tags,
-    -- TODO[realms]: likely deprecated
     COALESCE(own_thread, FALSE) as is_own,
     COALESCE(is_new_board, FALSE) as is_new,
     -- This last activity must have the .US at the end or it will trigger a bug
@@ -49,19 +48,18 @@ SELECT
     TO_CHAR(last_update_timestamp, 'YYYY-MM-DD"T"HH24:MI:SS.US') as thread_last_activity_at_micro
 FROM threads
 INNER JOIN thread_details
-  ON threads.id = thread_details.thread_id AND thread_details.board_external_id = ${board_id}
+  ON threads.id = thread_details.thread_id AND thread_details.realm_external_id = ${realm_id}
 LEFT JOIN thread_identities
     ON thread_identities.user_id = thread_details.author AND thread_identities.thread_id = thread_details.thread_id
 LEFT JOIN thread_user_details
    ON ${firebase_id} IS NOT NULL AND thread_user_details.user_id = (SELECT id FROM users WHERE users.firebase_id = ${firebase_id} LIMIT 1)
          AND thread_details.thread_id = thread_user_details.thread_id
 WHERE
-   thread_details.board_external_id = ${board_id}
-   -- activity cursor condition
+   -- Activity cursor conditions
+   thread_details.realm_external_id = ${realm_id}
    AND last_update_timestamp <= COALESCE(${last_activity_cursor}, NOW())
-   -- categories condition
-   AND (${filtered_category} IS NULL OR (
-       (SELECT id FROM categories WHERE categories.category = ${filtered_category})
-        IN (SELECT category_id FROM post_categories WHERE post_categories.post_id = first_post_id)))
+   AND is_new IS TRUE
+   AND muted IS FALSE
+   AND hidden IS FALSE
 ORDER BY thread_last_activity_at DESC
 LIMIT ${page_size} + 1
