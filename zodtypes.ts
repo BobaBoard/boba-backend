@@ -2,6 +2,16 @@ import { z } from "zod";
 
 // Database type schemas
 
+/**
+ * Expands object types recursively, thus making the resulting type
+ * more readable. Doesn't actually change the type.
+ */
+export type MakeRecursiveTypeReadable<T> = T extends object
+  ? T extends infer O
+    ? { [K in keyof O]: MakeRecursiveTypeReadable<O[K]> }
+    : never
+  : T;
+
 export const CommentTypeSchema = z.object({
   comment_id: z.string(),
   parent_post_id: z.string(),
@@ -16,6 +26,7 @@ export const CommentTypeSchema = z.object({
   accessory_avatar: z.string().nullable(),
   content: z.string(),
   created_at: z.string(),
+  // TODO: deprecate this
   anonymity_type: z.enum(["everyone", "strangers"]),
   self: z.boolean(),
   friend: z.boolean(),
@@ -40,11 +51,13 @@ export const PostTypeSchema = z.object({
   friend: z.boolean(),
   created_at: z.string(),
   content: z.string(),
+  // TODO: deprecate this
   type: z.string(),
   index_tags: z.string().array(),
   category_tags: z.string().array(),
   content_warnings: z.string().array(),
   whisper_tags: z.string().array(),
+  // TODO: deprecate this
   anonymity_type: z.enum(["everyone", "strangers"]),
   total_comments_amount: z.number(),
   new_comments_amount: z.number(),
@@ -73,10 +86,13 @@ export const DbThreadTypeSchema = z.object({
 });
 export type ZodDbThreadType = z.infer<typeof DbThreadTypeSchema>;
 
-export const ThreadSummaryTypeSchema = DbThreadTypeSchema.extend({
-  thread_last_activity_at_micro: z.string().nullable(),
+export const DbThreadSummaryTypeSchema = DbThreadTypeSchema.omit({
+  posts: true,
+  comments: true,
 })
-  .and(DbThreadTypeSchema.omit({ posts: true }))
+  .extend({
+    thread_last_activity_at_micro: z.string().nullable(),
+  })
   .and(
     PostTypeSchema.omit({
       total_comments_amount: true,
@@ -85,12 +101,14 @@ export const ThreadSummaryTypeSchema = DbThreadTypeSchema.extend({
     })
   );
 
-export type ZodDbThreadSummaryType = z.infer<typeof ThreadSummaryTypeSchema>;
+export type ZodDbThreadSummaryType = MakeRecursiveTypeReadable<
+  z.infer<typeof DbThreadSummaryTypeSchema>
+>;
 //TODO: come up with good names for this or
 //  replace all current DB types out right
 
 export const FeedTypeSchema = z.object({
   cursor: z.string().nullable(),
-  activity: z.array(ThreadSummaryTypeSchema),
+  activity: z.array(DbThreadSummaryTypeSchema),
 });
 export type ZodDbFeedType = z.infer<typeof FeedTypeSchema>;

@@ -7,13 +7,15 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": ".",
+    "noErrorTruncation": true,
     "paths": {
       "utils/*": ["utils/*"],
       "handlers/*": ["handlers/*"],
       "server/*": ["server/*"],
       "types/*": ["types/*"],
       "test/*": ["test/*"],
-      "Types": ["Types"]
+      "Types": ["Types"],
+      "zodtypes": ["zodtypes"]
     },
     "skipLibCheck": true,
     "types": ["node", "jest", "jest-extended"],

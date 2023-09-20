@@ -11,7 +11,6 @@ import {
 
 import { Feed } from "types/rest/threads";
 import { FeedActivitySchema } from "types/open-api/generated/schemas";
-import { ZodFeed } from "types/rest/zodthreads";
 import debug from "debug";
 import { ensureBoardAccess } from "handlers/permissions";
 import { ensureLoggedIn } from "handlers/auth";
@@ -88,22 +87,19 @@ router.get("/boards/:board_id", ensureBoardAccess, async (req, res) => {
   });
   info(`Found activity for board ${boardExternalId}:`, result);
 
-  if (result === false) {
-    res.sendStatus(500);
-    return;
-  }
   if (!result) {
     throw new NotFound404Error(
       `Board with id ${boardExternalId} was not found`
     );
   }
+
   if (!result.activity.length) {
     res.sendStatus(204);
     return;
   }
 
   const threadsWithIdentity = result.activity.map(makeServerThreadSummary);
-  const response: ZodFeed = {
+  const response = {
     cursor: {
       next: result.cursor,
     },
@@ -163,6 +159,7 @@ router.get("/users/@me", ensureLoggedIn, async (req, res) => {
   if (!userActivity) {
     throw new NotFound404Error(`User with id ${currentUserId} was not found`);
   }
+
   if (!userActivity.activity.length) {
     res.sendStatus(204);
     return;
