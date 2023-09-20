@@ -24,6 +24,7 @@ const log = debug("bobaserver:feeds:routes");
 const router = express.Router();
 
 /**
+ * @openapi
  * /feeds/realms/{realm_id}:
  *   get:
  *     summary: Get latest activity on entire realm
@@ -31,27 +32,30 @@ const router = express.Router();
  *     tags:
  *       - /feeds/
  *     parameters:
+ *       - name: realm_id
+ *         in: path
+ *         description: The external id of the realm to fetch the activity of.
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - name: cursor
+ *         in: query
+ *         description: The cursor to start feeding the activity of the board from.
+ *         schema:
+ *           type: string
+ *         allowEmptyValue: true
  *     responses:
  *        404:
- *          description: The board was not found.
+ *          description: The realm was not found.
  *        200:
- *          schema:
- *            $ref: "#/components/schemas/FeedActivity"
- * 
- *  * only available to logged in people
- *  * does not include muted boards
- *  * does not include muted threads
- *  * does not show hidden threads (?) **
- *  * for whole realm rather than individual boards
- *  * cursor based chunking of the feed
- *  * chronological feed of everything
- *  * just shows the op of every thread with activity
- *  
- *  - dbthreadsummarytype (output of the database)
- *  - use in the route ^
- *    ensureLoggedIn, ensureBoardAccess
+ *         description: The realm's activity.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/FeedActivity"
  */
 router.get("/realms/:realm_id", ensureLoggedIn, async (req, res) => {
+  // TODO: ensureBoardAccess?
   const { realm_id: realmExternalId } = req.params;
   const { cursor } = req.query;
   log(
@@ -64,7 +68,7 @@ router.get("/realms/:realm_id", ensureLoggedIn, async (req, res) => {
     firebaseId: req.currentUser?.uid || null,
     cursor: (cursor as string) || null,
   });
-  info(`Found activity for board ${realmExternalId}:`, result);
+  info(`Found activity for realm ${realmExternalId}:`, result);
 
   if (result === false) {
     res.sendStatus(500);
