@@ -1,6 +1,6 @@
+import { BOBATAN_USER_ID, ONCEST_USER_ID } from "test/data/auth";
 import { setLoggedInUser, startTestServer } from "utils/test-utils";
 
-import { BOBATAN_USER_ID } from "test/data/auth";
 import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
 import debug from "debug";
 import request from "supertest";
@@ -20,8 +20,8 @@ const log = debug("bobaserver:board:routes");
         const res = await request(server.app).get(`/realms/${TWISTED_MINDS_REALM_EXTERNAL_ID}`);
         
         expect(res.status).toBe(200);
-        expect(res.body).toEqual({bobatan's expected realm activity feed})
-        // log(res.body); 
+        //expect(res.body).toEqual({bobatan's expected realm activity feed})
+        log(res.body); 
     }*/);
 
     test("return realm activity results when user isn't logged in", async () => { 

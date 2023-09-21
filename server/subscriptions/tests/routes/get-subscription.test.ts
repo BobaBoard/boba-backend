@@ -34,10 +34,8 @@ const AIBA_SUBSCRIPTION_RESULT: SubscriptionFeed = {
       own: false,
       parent_post_id: null,
       secret_identity: {
-        // @ts-ignore This post has no identity in the DB currently.
-        name: null,
-        // @ts-ignore This post has no identity in the DB currently.
-        avatar: null,
+        avatar: "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2F5c2c3867-2323-4209-8bd4-9dfcc88808f3%2Fd931f284-5c22-422d-9343-e509cfb44ffc.png?alt=media&token=94e52fff-4e6b-4110-94c3-90b8800f541c",
+        name: "Old Time-y Anon",
       },
       tags: {
         category_tags: [],
@@ -97,10 +95,8 @@ describe("Tests threads REST API", () => {
           own: false,
           parent_post_id: null,
           secret_identity: {
-            // @ts-ignore This post has no identity in the DB currently.
-            name: null,
-            // @ts-ignore This post has no identity in the DB currently.
-            avatar: null,
+            avatar: "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2F5c2c3867-2323-4209-8bd4-9dfcc88808f3%2Fd931f284-5c22-422d-9343-e509cfb44ffc.png?alt=media&token=94e52fff-4e6b-4110-94c3-90b8800f541c",
+            name: "Old Time-y Anon",
           },
           tags: {
             category_tags: [],
