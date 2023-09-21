@@ -12,8 +12,8 @@ describe("Tests posts queries", () => {
         subscription_name: "aiba!",
         subscription_external_id: "a87800a6-21e5-46dd-a979-a901cdcea563",
         last_updated_at: "2020-08-22T03:36:18.00Z",
-        secret_identity_name: null,
-        secret_identity_avatar: null,
+        secret_identity_avatar: "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2F5c2c3867-2323-4209-8bd4-9dfcc88808f3%2Fd931f284-5c22-422d-9343-e509cfb44ffc.png?alt=media&token=94e52fff-4e6b-4110-94c3-90b8800f541c",
+        secret_identity_name: "Old Time-y Anon",
         secret_identity_color: null,
         secret_identity_accessory: null,
         post_content:
