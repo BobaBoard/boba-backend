@@ -55,7 +55,6 @@ const router = express.Router();
  *               $ref: "#/components/schemas/FeedActivity"
  */
 router.get("/realms/:realm_id", ensureLoggedIn, async (req, res) => {
-  // TODO: ensureBoardAccess?
   const { realm_id: realmExternalId } = req.params;
   const { cursor } = req.query;
   log(
