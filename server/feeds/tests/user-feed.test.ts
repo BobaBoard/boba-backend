@@ -2,6 +2,7 @@ import { BOBATAN_USER_ID, ONCEST_USER_ID } from "test/data/auth";
 import {
   FAVORITE_CHARACTER_THREAD_ID,
   FAVORITE_MURDER_THREAD_ID,
+  FUNNY_MEMES_THREAD_ID,
 } from "test/data/threads";
 
 import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
@@ -74,7 +75,7 @@ describe("feed activity queries", () => {
         new_posts_amount: 0,
         post_id: "b2c57275-512e-4821-8cf8-b3ac76e1e044",
         posts_amount: 136,
-        thread_id: "2765f36a-b4f9-4efe-96f2-cb34f055d032", // Meme Thread Id
+        thread_id: FUNNY_MEMES_THREAD_ID, 
         thread_last_activity_at: "2020-08-22T03:36:55.00Z",
         thread_last_activity_at_micro: "2020-08-22T03:36:55.850000",
         threads_amount: 135,
@@ -160,7 +161,7 @@ describe("feed activity queries", () => {
         new_posts_amount: 0,
         post_id: "b2c57275-512e-4821-8cf8-b3ac76e1e044",
         posts_amount: 136,
-        thread_id: "2765f36a-b4f9-4efe-96f2-cb34f055d032", // Meme Thread Id
+        thread_id: FUNNY_MEMES_THREAD_ID, 
         thread_last_activity_at: "2020-08-22T03:36:55.00Z",
         thread_last_activity_at_micro: "2020-08-22T03:36:55.850000",
         threads_amount: 135,
@@ -252,7 +253,7 @@ describe("feed activity queries", () => {
         new_posts_amount: 0,
         post_id: "b2c57275-512e-4821-8cf8-b3ac76e1e044",
         posts_amount: 136,
-        thread_id: "2765f36a-b4f9-4efe-96f2-cb34f055d032", // Meme Thread Id
+        thread_id: FUNNY_MEMES_THREAD_ID, 
         thread_last_activity_at: "2020-08-22T03:36:55.00Z",
         thread_last_activity_at_micro: "2020-08-22T03:36:55.850000",
         threads_amount: 135,

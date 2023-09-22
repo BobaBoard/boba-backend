@@ -69,10 +69,6 @@ router.get("/realms/:realm_id", ensureLoggedIn, async (req, res) => {
   });
   info(`Found activity for realm ${realmExternalId}:`, result);
 
-  if (result === false) {
-    res.sendStatus(500);
-    return;
-  }
   if (!result) {
     throw new NotFound404Error(
       `Realm with id ${realmExternalId} was not found`
