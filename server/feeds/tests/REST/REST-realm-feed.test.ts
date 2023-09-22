@@ -22,7 +22,7 @@ const log = debug("bobaserver:board:routes");
         expect(res.body).toEqual(BOBATAN_REALM_FEED);
     });
 
-    test("return realm activity results when user isn't logged in", async () => { 
+    test("should return 401 when user isn't logged in", async () => { 
         const res = await request(server.app).get(`/realms/${TWISTED_MINDS_REALM_EXTERNAL_ID}`);
         
         expect(res.status).toBe(401);
