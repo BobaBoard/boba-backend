@@ -7,8 +7,9 @@ new_thread_id AS (
 root_post_id AS (
   INSERT INTO posts (string_id,parent_thread,parent_post,author,created,"content","type",whisper_tags,is_deleted,anonymity_type) OVERRIDING SYSTEM VALUE VALUES 
     ('b2c57275-512e-4821-8cf8-b3ac76e1e044',(SELECT id FROM new_thread_id), NULL, 1,'2020-08-22 03:34:39.806','[{"insert":"Somnium Files Funny Memes"},{"attributes":{"header":2},"insert":""}]','text','{}',false,'everyone')
-  RETURNING id)
-INSERT INTO posts (string_id,parent_thread,parent_post,author,created,"content","type",whisper_tags,is_deleted,anonymity_type) VALUES 
+  RETURNING id),
+post_inserts AS (
+  INSERT INTO posts (string_id,parent_thread,parent_post,author,created,"content","type",whisper_tags,is_deleted,anonymity_type) VALUES 
  ('d14e1001a-a22a-4673-8b8a-cd0423e38a3',(SELECT id FROM new_thread_id),(SELECT id FROM root_post_id),1,'2020-08-22 03:35:03.191','[{"insert":{"block-image":{"src":"https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fmemes%2F2765f36a-b4f9-4efe-96f2-cb34f055d032%2F45c75c3e-1086-4e72-8742-549335cdfbff?alt=media&token=97efd46b-f464-4620-a1d1-a97f61e96d91","spoilers":false,"width":1280,"height":720}}},{"insert":""}]','text','{}',false,'strangers')
 ,('a16d4b39-4e63-434f-9502-3c1e67cb253b',(SELECT id FROM new_thread_id),(SELECT id FROM root_post_id),1,'2020-08-22 03:35:24.049','[{"insert":{"block-image":{"src":"https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fmemes%2F2765f36a-b4f9-4efe-96f2-cb34f055d032%2F768fced9-5f46-42f0-8aeb-ad135b412ae9?alt=media&token=0840c22f-0781-4a83-8f17-f41338772c99","spoilers":false,"width":690,"height":388}}},{"insert":""}]','text','{}',false,'strangers')
 ,('41b1ed49-2235-4100d-bbf5-d7bd304a2d6',(SELECT id FROM new_thread_id),(SELECT id FROM root_post_id),1,'2020-08-22 03:35:44.507','[{"insert":{"block-image":{"src":"https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fmemes%2F2765f36a-b4f9-4efe-96f2-cb34f055d032%2F0c9c7e0e-2bc0-4a71-9c6e-201890f8bbf8?alt=media&token=caa232a5-9cb6-46c7-8968-c979364d255d","spoilers":false,"width":3840,"height":2160}}},{"insert":""}]','text','{}',false,'strangers')
@@ -144,8 +145,14 @@ INSERT INTO posts (string_id,parent_thread,parent_post,author,created,"content",
 ,('d169fd3a-e819-4401-bbf4-950e82598901',(SELECT id FROM new_thread_id),(SELECT id FROM root_post_id),1,'2020-08-22 03:35:44.507','[{"insert":{"block-image":{"src":"https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fmemes%2F2765f36a-b4f9-4efe-96f2-cb34f055d032%2F0c9c7e0e-2bc0-4a71-9c6e-201890f8bbf8?alt=media&token=caa232a5-9cb6-46c7-8968-c979364d255d","spoilers":false,"width":3840,"height":2160}}},{"insert":""}]','text','{}',false,'strangers')
 ,('cf781193-4cff-466c-8b34-a38b94ec8014',(SELECT id FROM new_thread_id),(SELECT id FROM root_post_id),1,'2020-08-22 03:36:18.729','[{"insert":{"block-image":{"src":"https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fmemes%2F2765f36a-b4f9-4efe-96f2-cb34f055d032%2F7707f104-044c-4111-b422-74e11ccef4a2?alt=media&token=7cdf3edb-0d63-467e-ade6-05447cc602c3","spoilers":false,"width":1920,"height":1080}}},{"insert":""}]','text','{}',false,'strangers')
 ,('b8321446-3ebe-4177-80ce-7a5adcb38e36',(SELECT id FROM new_thread_id),(SELECT id FROM root_post_id),1,'2020-08-22 03:36:55.850','[{"insert":{"block-image":{"src":"https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fmemes%2F2765f36a-b4f9-4efe-96f2-cb34f055d032%2F894374bd-fed2-42af-a21e-18ed9c5040fc?alt=media&token=f5afda1f-2a14-43a3-9717-7cdc0aeddc2d","spoilers":false,"width":3840,"height":2160}}},{"insert":""}]','text','{}',false,'strangers')
-;
+)
 
+INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
+  VALUES
+    ((SELECT id FROM new_thread_id),
+    (SELECT id FROM Users WHERE username = 'bobatan'),
+    (SELECT id FROM secret_identities WHERE display_name = 'Old Time-y Anon'));
+    
 INSERT INTO categories(category) VALUES 
   ('aiba'), 
   ('release');

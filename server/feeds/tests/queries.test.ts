@@ -2,6 +2,7 @@ import { BOBATAN_USER_ID, ONCEST_USER_ID } from "test/data/auth";
 import {
   FAVORITE_CHARACTER_THREAD_ID,
   FAVORITE_MURDER_THREAD_ID,
+  FUNNY_MEMES_THREAD_ID,
 } from "test/data/threads";
 
 import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
@@ -77,6 +78,19 @@ describe("feed activity queries", () => {
       },
       {
         comments_amount: 0,
+        created_at: "2020-08-22T03:34:39.00Z",
+        is_new: false,
+        new_comments_amount: 0,
+        new_posts_amount: 0,
+        post_id: "b2c57275-512e-4821-8cf8-b3ac76e1e044",
+        posts_amount: 136,
+        thread_id: FUNNY_MEMES_THREAD_ID,
+        thread_last_activity_at: "2020-08-22T03:36:55.00Z",
+        thread_last_activity_at_micro: "2020-08-22T03:36:55.850000",
+        threads_amount: 135,
+      },
+      {
+        comments_amount: 0,
         created_at: "2020-04-24T05:42:00.00Z",
         is_new: false,
         new_comments_amount: 0,
@@ -141,6 +155,19 @@ describe("feed activity queries", () => {
         threads_amount: 0,
       },
       {
+        comments_amount: 0,
+        created_at: "2020-08-22T03:34:39.00Z",
+        is_new: false,
+        new_comments_amount: 0,
+        new_posts_amount: 0,
+        post_id: "b2c57275-512e-4821-8cf8-b3ac76e1e044",
+        posts_amount: 136,
+        thread_id: FUNNY_MEMES_THREAD_ID,
+        thread_last_activity_at: "2020-08-22T03:36:55.00Z",
+        thread_last_activity_at_micro: "2020-08-22T03:36:55.850000",
+        threads_amount: 135,
+      },
+      {
         comments_amount: 2,
         created_at: "2020-04-30T03:23:00.00Z",
         is_new: false,
@@ -180,7 +207,7 @@ describe("feed activity queries", () => {
     })) as ZodDbFeedType;
 
     expect(feed.cursor).toBe(
-      "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDUtMjNUMDU6NTI6MDAuMDAwMDAwIiwicGFnZV9zaXplIjoxfQ=="
+      "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDgtMjJUMDM6MzY6NTUuODUwMDAwIiwicGFnZV9zaXplIjoxfQ=="
     );
     expect(feed.activity.map(extractActivity)).toEqual([
       {

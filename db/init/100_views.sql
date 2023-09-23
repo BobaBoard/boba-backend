@@ -87,7 +87,7 @@ SELECT
     boards.slug as board_slug,
     realms.id as realm_id,
     realms.slug as realm_slug,
-    realms.string_id as realm_string_id,
+    realms.string_id as realm_external_id,
     first_post.id as first_post_id,
     first_post.string_id AS first_post_string_id,
     first_post.content AS content,

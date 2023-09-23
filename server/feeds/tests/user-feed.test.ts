@@ -2,6 +2,7 @@ import { BOBATAN_USER_ID, ONCEST_USER_ID } from "test/data/auth";
 import {
   FAVORITE_CHARACTER_THREAD_ID,
   FAVORITE_MURDER_THREAD_ID,
+  FUNNY_MEMES_THREAD_ID,
 } from "test/data/threads";
 
 import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
@@ -65,6 +66,19 @@ describe("feed activity queries", () => {
         thread_last_activity_at: "2020-10-04T05:44:00.00Z",
         thread_last_activity_at_micro: "2020-10-04T05:44:00.000000",
         threads_amount: 0,
+      },
+      {
+        comments_amount: 0,
+        created_at: "2020-08-22T03:34:39.00Z",
+        is_new: false,
+        new_comments_amount: 0,
+        new_posts_amount: 0,
+        post_id: "b2c57275-512e-4821-8cf8-b3ac76e1e044",
+        posts_amount: 136,
+        thread_id: FUNNY_MEMES_THREAD_ID, 
+        thread_last_activity_at: "2020-08-22T03:36:55.00Z",
+        thread_last_activity_at_micro: "2020-08-22T03:36:55.850000",
+        threads_amount: 135,
       },
       {
         comments_amount: 0,
@@ -140,6 +154,19 @@ describe("feed activity queries", () => {
         threads_amount: 0,
       },
       {
+        comments_amount: 0,
+        created_at: "2020-08-22T03:34:39.00Z",
+        is_new: false,
+        new_comments_amount: 0,
+        new_posts_amount: 0,
+        post_id: "b2c57275-512e-4821-8cf8-b3ac76e1e044",
+        posts_amount: 136,
+        thread_id: FUNNY_MEMES_THREAD_ID, 
+        thread_last_activity_at: "2020-08-22T03:36:55.00Z",
+        thread_last_activity_at_micro: "2020-08-22T03:36:55.850000",
+        threads_amount: 135,
+      },
+      {
         comments_amount: 2,
         created_at: "2020-04-30T03:23:00.00Z",
         is_new: false,
@@ -183,7 +210,7 @@ describe("feed activity queries", () => {
     }
 
     expect(feed.cursor).toBe(
-      "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDUtMjNUMDU6NTI6MDAuMDAwMDAwIiwicGFnZV9zaXplIjoxfQ=="
+      "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDgtMjJUMDM6MzY6NTUuODUwMDAwIiwicGFnZV9zaXplIjoxfQ=="
     );
     expect(feed.activity.map(extractActivity)).toEqual([
       {
@@ -207,7 +234,7 @@ describe("feed activity queries", () => {
       firebaseId: BOBATAN_USER_ID,
       realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
       cursor:
-        "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDUtMjNUMDU6NTI6MDAuMDAwMDAwIiwicGFnZV9zaXplIjoxfQ==",
+      "eyJsYXN0X2FjdGl2aXR5X2N1cnNvciI6IjIwMjAtMDgtMjJUMDM6MzY6NTUuODUwMDAwIiwicGFnZV9zaXplIjoxfQ==",
       updatedOnly: false,
       ownOnly: false,
       pageSize: 1,
@@ -219,17 +246,17 @@ describe("feed activity queries", () => {
 
     expect(feed.activity.map(extractActivity)).toEqual([
       {
-        comments_amount: 2,
-        created_at: "2020-04-30T03:23:00.00Z",
+        comments_amount: 0,
+        created_at: "2020-08-22T03:34:39.00Z",
         is_new: false,
         new_comments_amount: 0,
         new_posts_amount: 0,
-        post_id: "11b85dac-e122-40e0-b09a-8829c5e0250e",
-        posts_amount: 3,
-        thread_id: FAVORITE_CHARACTER_THREAD_ID,
-        thread_last_activity_at: "2020-05-23T05:52:00.00Z",
-        thread_last_activity_at_micro: "2020-05-23T05:52:00.000000",
-        threads_amount: 2,
+        post_id: "b2c57275-512e-4821-8cf8-b3ac76e1e044",
+        posts_amount: 136,
+        thread_id: FUNNY_MEMES_THREAD_ID, 
+        thread_last_activity_at: "2020-08-22T03:36:55.00Z",
+        thread_last_activity_at_micro: "2020-08-22T03:36:55.850000",
+        threads_amount: 135,
       },
     ]);
   });
