@@ -16,6 +16,7 @@ if (process.env.NODE_ENV == "production") {
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
     port: process.env.POSTGRES_PORT,
+    ssl: !!process.env.POSTGRES_SSL,
     connectionTimeoutMillis: 3000,
     query_timeout: 3000,
   };
