@@ -5,7 +5,7 @@ const error = debug("bobaserver:pool-error");
 const log = debug("bobaserver:pool-log");
 const info = debug("bobaserver:pool-info");
 
-let databaseConfig = {};
+let databaseConfig: Record<string, unknown> = {};
 log(`Attempting db connection...`);
 if (process.env.NODE_ENV == "production") {
   log(`Connecting to remote database host: ${process.env.POSTGRES_HOST}`);
@@ -16,10 +16,14 @@ if (process.env.NODE_ENV == "production") {
     password: process.env.POSTGRES_PASSWORD,
     database: process.env.POSTGRES_DB,
     port: process.env.POSTGRES_PORT,
-    ssl: !!process.env.POSTGRES_SSL,
     connectionTimeoutMillis: 3000,
     query_timeout: 3000,
   };
+  if (process.env.POSTGRES_SSL_ROOT_CERT) {
+    databaseConfig.ssl = {
+      sslrootcert: process.env.POSTGRES_SSL_ROOT_CERT,
+    };
+  }
 } else {
   log(`Attempting connection to local db on port ${process.env.POSTGRES_PORT}`);
   const DATABASE_URL = `postgres://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@127.0.0.1:${process.env.POSTGRES_PORT}/${process.env.POSTGRES_DB}`;
