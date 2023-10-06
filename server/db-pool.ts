@@ -21,7 +21,9 @@ if (process.env.NODE_ENV == "production") {
   };
   if (process.env.POSTGRES_SSL_ROOT_CERT) {
     databaseConfig.ssl = {
-      sslrootcert: process.env.POSTGRES_SSL_ROOT_CERT,
+      // TODO: I have given up on getting the ssl config to work. I tried with "sslrootcert"
+      // and I suspect it needs the more granular config.
+      rejectUnauthorized: false,
     };
   }
 } else {
