@@ -39,6 +39,7 @@
           bobaserver = pkgs.writeShellScriptBin "bobaserver" ''
             export NODE_PATH=${bobaserver-assets}/libexec/bobaserver/node_modules
             export DEBUG=bobaserver:*,-*info
+            export NODE_ENV=production
 
             exec ${pkgs.nodejs}/bin/node -r dotenv/config ${bobaserver-assets}/libexec/bobaserver/node_modules/bobaserver/dist/server/index.js
           '';
