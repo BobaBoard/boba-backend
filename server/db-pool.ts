@@ -1,4 +1,5 @@
 import debug from "debug";
+import fs from "fs";
 import pgp from "pg-promise";
 
 const error = debug("bobaserver:pool-error");
@@ -23,7 +24,7 @@ if (process.env.NODE_ENV == "production") {
     databaseConfig.ssl = {
       // TODO: I have given up on getting the ssl config to work. I tried with "sslrootcert"
       // and I suspect it needs the more granular config.
-      ca: process.env.POSTGRES_SSL_ROOT_CERT,
+      ca: fs.readFileSync(process.env.POSTGRES_SSL_ROOT_CERT).toString(),
     };
   }
 } else {
