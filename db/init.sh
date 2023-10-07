@@ -11,7 +11,7 @@ echo "****************"
 
 for f in $DB_INIT_DIR/init/*.sql; do 
   echo "$0: running $f"
-  psql -U $POSTGRES_USER $POSTGRES_DB -f $f -v ON_ERROR_STOP=1
+  psql -U $POSTGRES_USER -h $POSTGRES_HOST -p $POSTGRES_PORT -d $POSTGRES_DB --set=sslmode=require -f $f -v ON_ERROR_STOP=1
   echo $?
 done
 
@@ -23,7 +23,7 @@ echo "****************"
 
 for f in $DB_INIT_DIR/test_db_init/*.sql; do 
   echo "$0: running $f"
-  psql -U $POSTGRES_USER $POSTGRES_DB -f $f -v ON_ERROR_STOP=1
+  psql -U $POSTGRES_USER -h $POSTGRES_HOST -p $POSTGRES_PORT -d $POSTGRES_DB --set=sslmode=require -f $f -v ON_ERROR_STOP=1
   echo $?
 done
 
