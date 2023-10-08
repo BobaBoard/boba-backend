@@ -40,7 +40,7 @@
                 runtimeInputs = [ pkgs.postgresql_12 ];
 
                 text = ''
-                  ${bobaserver-assets}/libexec/bobaserver/deps/bobaserver/db/10-init_tables.sh ${bobaserver-assets}/libexec/bobaserver/deps/bobaserver/db/
+                  ${bobaserver-assets}/libexec/bobaserver/deps/bobaserver/db/10-init_data.sh ${bobaserver-assets}/libexec/bobaserver/deps/bobaserver/db/
                 '';
               };
           };
