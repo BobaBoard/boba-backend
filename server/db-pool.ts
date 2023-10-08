@@ -20,11 +20,9 @@ if (process.env.NODE_ENV == "production") {
     connectionTimeoutMillis: 3000,
     query_timeout: 3000,
   };
-  if (process.env.POSTGRES_SSL_ROOT_CERT) {
+  if (process.env.POSTGRES_SSL_ROOT_CERT_PATH) {
     databaseConfig.ssl = {
-      // TODO: I have given up on getting the ssl config to work. I tried with "sslrootcert"
-      // and I suspect it needs the more granular config.
-      ca: fs.readFileSync(process.env.POSTGRES_SSL_ROOT_CERT).toString(),
+      ca: fs.readFileSync(process.env.POSTGRES_SSL_ROOT_CERT_PATH).toString(),
     };
   }
 } else {
