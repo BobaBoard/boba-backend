@@ -432,14 +432,8 @@ export const getBoardRoles = async ({
     }[]
   | null
 > => {
-  try {
-    const boardRoles = await pool.manyOrNone(sql.fetchRolesInBoard, {
-      board_external_id: boardExternalId,
-    });
-    return boardRoles;
-  } catch (e) {
-    error(`Error while fetching board roles.`);
-    error(e);
-    return null;
-  }
+  const boardRoles = await pool.manyOrNone(sql.fetchRolesInBoard, {
+    board_external_id: boardExternalId,
+  });
+  return boardRoles;
 };

@@ -424,14 +424,8 @@ export const getRealmRoles = async ({
     }[]
   | null
 > => {
-  try {
-    const realmRoles = await pool.manyOrNone(sql.fetchRolesInRealm, {
-      realm_external_id: realmExternalId,
-    });
-    return realmRoles;
-  } catch (e) {
-    error(`Error while fetching realm roles.`);
-    error(e);
-    return null;
-  }
+  const realmRoles = await pool.manyOrNone(sql.fetchRolesInRealm, {
+    realm_external_id: realmExternalId,
+  });
+  return realmRoles;
 };

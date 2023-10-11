@@ -910,24 +910,21 @@ router.get(
   ensureRealmExists, ensureLoggedIn,
   ensureRealmPermission(RealmPermissions.viewRolesOnRealm),
   async (req, res) => {
-    try {
-      const { realm_id } = req.params;
-      const realmRoles = await getRealmRoles({
-        realmExternalId: realm_id,
-      });
-      if (!realmRoles?.length){
-        res.status(200).json({roles:[]});
-        return;
-      }
-      res.status(200).json({
-        roles: realmRoles || [],
-      });
-    } catch (e) {
-      error(e);
-      res.status(500).json({
-        message: "There was an error fetching realm roles.",
-      });
+    const { realm_id } = req.params;
+    const realmRoles = await getRealmRoles({
+      realmExternalId: realm_id,
+    });
+    if (!realmRoles){
+      throw new Internal500Error("failed to get realm roles");
+    }
+    if (!realmRoles?.length){
+      res.status(200).json({roles:[]});
+      return;
+    }
+    res.status(200).json({
+      roles: realmRoles || [],
+    });
   }
-});
+);
 
 export default router;
