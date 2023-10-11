@@ -20,7 +20,7 @@ OVERRIDING SYSTEM VALUE VALUES
     (1, '9449bcab-fa55-4b0e-9ce0-438501e5fa79', 'main'),
     (2, 'dc3e5824-5395-4cad-ae90-9bf7efeb3896', 'fandom'),
     (3, '6443b26c-9247-4b23-b5df-8752356796ce', 'tests'),
-    (4, '02852b3d-47d6-42cc-a47e-6924b8a13d28', '');
+    (4, '02852b3d-47d6-42cc-a47e-6924b8a13d28', 'admin');
 
 INSERT INTO Boards(id, string_id, slug, board_category_id, tagline, avatar_reference_id, parent_realm_id, settings)
 OVERRIDING SYSTEM VALUE VALUES
