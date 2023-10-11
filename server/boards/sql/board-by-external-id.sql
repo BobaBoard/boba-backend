@@ -9,6 +9,7 @@ SELECT
     boards.tagline,
     boards.avatar_reference_id as avatar_url,
     boards.settings,
+    board_categories.string_id as board_categories_external_id,
     realms.string_id as realm_external_id,
     COALESCE(json_agg(DISTINCT jsonb_build_object(
         'id', bds.string_id,
@@ -80,5 +81,7 @@ FROM boards
         ON boards.id = br.board_id
     LEFT JOIN logged_in_user
         ON 1=1
+    JOIN board_categories
+        on boards.board_category_id = board_categories.id
 WHERE boards.string_id=${board_id}
-GROUP BY boards.id, realms.string_id, umb.user_id, opb.index, br.logged_out_restrictions, br.logged_in_base_restrictions, logged_in_user.id
+GROUP BY boards.id, realms.string_id, umb.user_id, opb.index, br.logged_out_restrictions, br.logged_in_base_restrictions, logged_in_user.id, board_categories.string_id
