@@ -36,7 +36,9 @@ const Accessory = z.object({
   name: z.string(),
   accessory: z.string(),
 });
-const BoardPermissions = z.array(z.enum(["edit_board_details"]));
+const BoardPermissions = z.array(
+  z.enum(["edit_board_details", "view_roles_on_board"])
+);
 const PostPermissions = z.array(
   z.enum([
     "edit_content",
@@ -154,6 +156,20 @@ const BoardDescription = z
     tagline: z.string(),
   })
   .partial();
+const RealmRoles = z
+  .object({
+    roles: z.array(
+      z.object({
+        user_id: z.string().uuid().optional(),
+        username: z.string(),
+        role_string_id: z.string().uuid(),
+        role_name: z.string(),
+        label: z.string(),
+      })
+    ),
+  })
+  .partial();
+const genericResponse = z.object({ message: z.string() }).partial();
 const Cursor = z.object({
   next: z.union([
     z.union([z.string(), z.null()]),
@@ -224,6 +240,7 @@ const RealmPermissions = z.array(
     "comment_on_realm",
     "create_thread_on_realm",
     "access_locked_boards_on_realm",
+    "view_roles_on_realm",
   ])
 );
 const Realm = z.object({
@@ -274,7 +291,6 @@ const InviteWithDetails = z.object({
   expires_at: z.string(),
   label: z.string().optional(),
 });
-const genericResponse = z.object({ message: z.string() }).partial();
 const createInviteByRealmId_Body = z
   .object({ email: z.string().email(), label: z.string() })
   .partial();
@@ -356,6 +372,8 @@ export const ThreadActivitySummarySchema = ThreadActivitySummary;
 export const ThreadSummarySchema = ThreadSummary;
 export const ThreadSchema = Thread;
 export const BoardDescriptionSchema = BoardDescription;
+export const RealmRolesSchema = RealmRoles;
+export const genericResponseSchema = genericResponse;
 export const CursorSchema = Cursor;
 export const FeedActivitySchema = FeedActivity;
 export const IdentityParamsSchema = IdentityParams;
@@ -377,7 +395,6 @@ export const RealmActivitySchema = RealmActivity;
 export const ActivityNotificationsSchema = ActivityNotifications;
 export const NotificationsResponseSchema = NotificationsResponse;
 export const InviteWithDetailsSchema = InviteWithDetails;
-export const genericResponseSchema = genericResponse;
 export const createInviteByRealmId_BodySchema = createInviteByRealmId_Body;
 export const InviteSchema = Invite;
 export const InviteStatusSchema = InviteStatus;
@@ -666,6 +683,40 @@ export const endpoints = {
       },
     ],
   },
+  getBoardRolesByExternalId: {
+    method: "get",
+    path: "/boards/:board_id/roles",
+    alias: "getBoardRolesByExternalId",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "board_id",
+        type: "Path",
+        schema: z.string().uuid(),
+      },
+    ],
+    response: RealmRoles,
+    errors: [
+      {
+        status: 401,
+        schema: z.void(),
+      },
+      {
+        status: 403,
+        schema: z.void(),
+      },
+      {
+        status: 404,
+        description: `The board was not found.`,
+        schema: z.object({ message: z.string() }).partial(),
+      },
+      {
+        status: 500,
+        description: `There was an error fetching board roles.`,
+        schema: z.void(),
+      },
+    ],
+  },
   visitBoardsByExternalId: {
     method: "get",
     path: "/boards/:board_id/visits",
@@ -718,6 +769,32 @@ export const endpoints = {
       {
         status: 404,
         description: `The board was not found.`,
+        schema: z.void(),
+      },
+    ],
+  },
+  getRealmActivity: {
+    method: "get",
+    path: "/feeds/realms/:realm_id",
+    alias: "getRealmActivity",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "realm_id",
+        type: "Path",
+        schema: z.string(),
+      },
+      {
+        name: "cursor",
+        type: "Query",
+        schema: z.string().optional(),
+      },
+    ],
+    response: FeedActivity,
+    errors: [
+      {
+        status: 404,
+        description: `The realm was not found.`,
         schema: z.void(),
       },
     ],
@@ -1069,6 +1146,40 @@ If &#x60;realm_id&#x60; is present, also fetch notification data for the current
       {
         status: 500,
         description: `Internal Server Error`,
+        schema: z.void(),
+      },
+    ],
+  },
+  getRealmsRolesByExternalId: {
+    method: "get",
+    path: "/realms/:realm_id/roles",
+    alias: "getRealmsRolesByExternalId",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "realm_id",
+        type: "Path",
+        schema: z.string().uuid(),
+      },
+    ],
+    response: RealmRoles,
+    errors: [
+      {
+        status: 401,
+        schema: z.void(),
+      },
+      {
+        status: 403,
+        schema: z.void(),
+      },
+      {
+        status: 404,
+        description: `The realm was not found.`,
+        schema: z.object({ message: z.string() }).partial(),
+      },
+      {
+        status: 500,
+        description: `There was an error fetching realm roles.`,
         schema: z.void(),
       },
     ],

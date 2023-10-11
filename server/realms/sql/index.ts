@@ -71,6 +71,19 @@ JOIN users ON realm_users.user_id = users.id
 WHERE users.firebase_id = $/firebase_id/ AND realms.string_id = $/realm_external_id/
 `;
 
+const fetchRolesInRealm = `
+  SELECT
+    users.firebase_id as user_firebase_id,
+    users.username as username,
+    roles.string_id as role_string_id,
+    roles.name as role_name,
+    realm_user_roles.label as label
+  FROM realm_user_roles
+  INNER JOIN realms ON realm_user_roles.realm_id = realms.id
+  INNER JOIN roles ON realm_user_roles.role_id=roles.id
+  INNER JOIN users ON users.id=realm_user_roles.user_id
+  WHERE realms.string_id = $/realm_external_id/`;
+
 export default {
   getRealmBySlug: new QueryFile(path.join(__dirname, "realm-by-slug.sql")),
   dismissNotifications,
@@ -81,4 +94,5 @@ export default {
   getInvites,
   addUserToRealm,
   findUserOnRealm,
+  fetchRolesInRealm,
 };

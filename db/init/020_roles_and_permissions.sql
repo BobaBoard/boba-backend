@@ -19,7 +19,9 @@ CREATE TYPE role_permissions_type AS ENUM (
     'post_on_realm',
     'comment_on_realm',
     'create_thread_on_realm',
-    'access_locked_boards_on_realm'
+    'access_locked_boards_on_realm',
+    'view_roles_on_realm',
+    'view_roles_on_board'
 );
 
 CREATE TABLE IF NOT EXISTS roles
@@ -37,14 +39,18 @@ CREATE UNIQUE INDEX roles_string_id on roles(string_id);
 CREATE TABLE IF NOT EXISTS board_user_roles(
     user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
     board_id BIGINT REFERENCES boards(id) ON DELETE RESTRICT NOT NULL,
-    role_id BIGINT REFERENCES roles(id) ON DELETE RESTRICT NOT NULL
+    role_id BIGINT REFERENCES roles(id) ON DELETE RESTRICT NOT NULL,
+    	/*This is a note admins may add to the role assignment for reference*/
+    label TEXT
 );
 CREATE UNIQUE INDEX board_user_roles_entry on board_user_roles(user_id, board_id, role_id);
 
 CREATE TABLE IF NOT EXISTS realm_user_roles(
     realm_id BIGINT REFERENCES realms(id) ON DELETE RESTRICT NOT NULL,
     user_id BIGINT REFERENCES users(id) ON DELETE RESTRICT NOT NULL,
-    role_id BIGINT REFERENCES roles(id) ON DELETE RESTRICT NOT NULL
+    role_id BIGINT REFERENCES roles(id) ON DELETE RESTRICT NOT NULL,
+    	/*This is a note admins may add to the role assignment for reference*/
+    label TEXT
 );
 CREATE UNIQUE INDEX realm_user_roles_entry on realm_user_roles(user_id, realm_id, role_id);
 

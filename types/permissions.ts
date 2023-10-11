@@ -22,6 +22,8 @@ export enum DbRolePermissions {
   comment_on_realm = "comment_on_realm",
   create_thread_on_realm = "create_thread_on_realm",
   access_locked_boards_on_realm = "access_locked_boards_on_realm",
+  view_roles_on_realm = "view_roles_on_realm",
+	view_roles_on_board = "view_roles_on_board",
 }
 
 export interface UserBoardPermissions {
@@ -37,6 +39,7 @@ export enum ThreadPermissions {
 
 export enum BoardPermissions {
   editMetadata = DbRolePermissions["edit_board_details"],
+  viewRolesOnBoard = DbRolePermissions["view_roles_on_board"],
 }
 
 export enum RealmPermissions {
@@ -47,6 +50,7 @@ export enum RealmPermissions {
   accessLockedBoardsOnRealm = DbRolePermissions[
     "access_locked_boards_on_realm"
   ],
+  viewRolesOnRealm = DbRolePermissions["view_roles_on_realm"],
 }
 
 export enum PostPermissions {
