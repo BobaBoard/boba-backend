@@ -7,6 +7,10 @@ import {
 import { BoardPermissions, RealmPermissions } from "types/permissions";
 import { CacheKeys, cache } from "server/cache";
 import {
+  Internal500Error,
+  NotFound404Error,
+} from "types/errors/api";
+import {
   createThread,
   dismissBoardNotifications,
   getBoardRoles,
@@ -28,7 +32,6 @@ import {
   makeServerThread,
 } from "utils/response-utils";
 
-import { NotFound404Error } from "types/errors/api";
 import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth";
 import express from "express";
@@ -759,11 +762,13 @@ router.get(
   ensureBoardAccess, ensureLoggedIn,
   ensureBoardPermission(BoardPermissions.viewRolesOnBoard),
   async (req, res) => {
-    try {
       const { board_id } = req.params;
       const boardRoles = await getBoardRoles({
         boardExternalId: board_id,
       });
+      if (!boardRoles){
+        throw new Internal500Error("failed to get board roles");
+      }
       if (!boardRoles?.length){
         res.status(200).json({roles:[]});
         return;
@@ -771,12 +776,7 @@ router.get(
       res.status(200).json({
         roles: boardRoles || [],
       });
-    } catch (e) {
-      error(e);
-      res.status(500).json({
-        message: "There was an error fetching board roles.",
-      });
   }
-});
+);
 
 export default router;
