@@ -762,20 +762,22 @@ router.get(
   ensureBoardAccess, ensureLoggedIn,
   ensureBoardPermission(BoardPermissions.viewRolesOnBoard),
   async (req, res) => {
+    try {
       const { board_id } = req.params;
       const boardRoles = await getBoardRoles({
         boardExternalId: board_id,
       });
-      if (!boardRoles){
-        throw new Internal500Error("failed to get board roles");
-      }
       if (!boardRoles?.length){
         res.status(200).json({roles:[]});
-        return;
+      return;
       }
       res.status(200).json({
         roles: boardRoles || [],
       });
+    } catch (e) {
+      error(e);
+      throw new Internal500Error("There was an error fetching board roles.");
+    }
   }
 );
 
