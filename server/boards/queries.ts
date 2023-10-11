@@ -417,3 +417,29 @@ export const createThread = async ({
     return newThreadExternalId;
   });
 };
+
+export const getBoardRoles = async ({
+  boardExternalId,
+}: {
+  boardExternalId: string;
+}): Promise<
+  | {
+      user_id: string;
+			username:string
+			role_id: string;
+			role_name: string;
+      label: string | null;
+    }[]
+  | null
+> => {
+  try {
+    const boardRoles = await pool.manyOrNone(sql.fetchRolesInBoard, {
+      board_external_id: boardExternalId,
+    });
+    return boardRoles;
+  } catch (e) {
+    error(`Error while fetching board roles.`);
+    error(e);
+    return null;
+  }
+};

@@ -84,3 +84,33 @@ components:
                     type: string
                     format: uuid
               - $ref: "#/components/schemas/BoardActivitySummary"
+    RealmRoles:
+      type: object
+      properties:
+        roles:
+          type: array
+          items:
+            type: object
+            properties:
+              user_id:
+                type: string
+                format: uuid
+              username:
+                description: Username.
+                type: string
+              role_string_id:
+                description: String id of role.
+                type: string
+                format: uuid
+              role_name:
+                description: Name of role.
+                type: string
+              label:
+                description: Label associated with role assignment
+                type: string
+            required:
+              - user_firebase_id
+              - username
+              - role_string_id
+              - role_name
+              - label

@@ -11,6 +11,7 @@ import {
   getInviteDetails,
   getRealmByExternalId,
   getRealmInvites,
+  getRealmRoles,
   getUserPermissionsForRealm,
 } from "server/realms/queries";
 import { createNewUser, getUserFromFirebaseId } from "server/users/queries";
@@ -854,5 +855,79 @@ router.post(
     });
   }
 );
+
+
+/**
+ * @openapi
+ * /realms/{realm_id}/roles:
+ *   get:
+ *     summary: Fetches latest roles summary for the realm.
+ *     operationId: getRealmsRolesByExternalId
+ *     tags:
+ *       - /realms/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: realm_id
+ *         in: path
+ *         description: The id of the realm.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: The realm roles summary.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/RealmRoles"
+ *             examples:
+ *               twisted_minds:
+ *                 value:
+ *                   invites:
+ *                     - user_firebase_id: "a90b0809-2c57-4ff1-be7c-4b7ab1b7edcc"
+ *                       username: "bobatan"
+ *                       role_string_id: "3df1d417-c36a-43dd-aaba-9590316ffc32"
+ *                       role_name: "The Owner"
+ *                       label: "Look ma, a label"
+ *       401:
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         $ref: "#/components/responses/ensurePermission403"
+ *       404:
+ *         description: The realm was not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/genericResponse"
+ *       500:
+ *         description: There was an error fetching realm roles.
+ */
+
+router.get(
+  "/:realm_id/roles",
+  ensureRealmExists, ensureLoggedIn,
+  ensureRealmPermission(RealmPermissions.viewRolesOnRealm),
+  async (req, res) => {
+    try {
+      const { realm_id } = req.params;
+      const realmRoles = await getRealmRoles({
+        realmExternalId: realm_id,
+      });
+      if (!realmRoles?.length){
+        res.status(200).json({roles:[]});
+        return;
+      }
+      res.status(200).json({
+        roles: realmRoles || [],
+      });
+    } catch (e) {
+      error(e);
+      res.status(500).json({
+        message: "There was an error fetching realm roles.",
+      });
+  }
+});
 
 export default router;

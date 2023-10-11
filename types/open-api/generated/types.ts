@@ -34,6 +34,8 @@ export type ThreadActivitySummary = z.infer<
 export type ThreadSummary = z.infer<typeof schemas.ThreadSummarySchema>;
 export type Thread = z.infer<typeof schemas.ThreadSchema>;
 export type BoardDescription = z.infer<typeof schemas.BoardDescriptionSchema>;
+export type RealmRoles = z.infer<typeof schemas.RealmRolesSchema>;
+export type genericResponse = z.infer<typeof schemas.genericResponseSchema>;
 export type Cursor = z.infer<typeof schemas.CursorSchema>;
 export type FeedActivity = z.infer<typeof schemas.FeedActivitySchema>;
 export type IdentityParams = z.infer<typeof schemas.IdentityParamsSchema>;
@@ -65,7 +67,6 @@ export type NotificationsResponse = z.infer<
   typeof schemas.NotificationsResponseSchema
 >;
 export type InviteWithDetails = z.infer<typeof schemas.InviteWithDetailsSchema>;
-export type genericResponse = z.infer<typeof schemas.genericResponseSchema>;
 export type createInviteByRealmId_Body = z.infer<
   typeof schemas.createInviteByRealmId_BodySchema
 >;
@@ -119,11 +120,17 @@ export type pinBoardsByExternalIdResponse = z.infer<
 export type unpinBoardsByExternalIdResponse = z.infer<
   typeof schemas.endpoints.unpinBoardsByExternalId.response
 >;
+export type getBoardRolesByExternalIdResponse = z.infer<
+  typeof schemas.endpoints.getBoardRolesByExternalId.response
+>;
 export type visitBoardsByExternalIdResponse = z.infer<
   typeof schemas.endpoints.visitBoardsByExternalId.response
 >;
 export type getBoardsFeedByExternalIdResponse = z.infer<
   typeof schemas.endpoints.getBoardsFeedByExternalId.response
+>;
+export type getRealmActivityResponse = z.infer<
+  typeof schemas.endpoints.getRealmActivity.response
 >;
 export type getPersonalFeedResponse = z.infer<
   typeof schemas.endpoints.getPersonalFeed.response
@@ -160,6 +167,9 @@ export type getCurrentUserNotificationsResponse = z.infer<
 >;
 export type dismissUserNotificationsResponse = z.infer<
   typeof schemas.endpoints.dismissUserNotifications.response
+>;
+export type getRealmsRolesByExternalIdResponse = z.infer<
+  typeof schemas.endpoints.getRealmsRolesByExternalId.response
 >;
 export type getRealmsBySlugResponse = z.infer<
   typeof schemas.endpoints.getRealmsBySlug.response

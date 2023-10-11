@@ -9,6 +9,7 @@ import { CacheKeys, cache } from "server/cache";
 import {
   createThread,
   dismissBoardNotifications,
+  getBoardRoles,
   markBoardVisit,
   muteBoard,
   pinBoard,
@@ -36,6 +37,7 @@ import { getThreadByExternalId } from "server/threads/queries";
 
 const info = debug("bobaserver:board:routes-info");
 const log = debug("bobaserver:board:routes");
+const error = debug("bobaserver:board:routes-error");
 
 const router = express.Router();
 
@@ -703,5 +705,78 @@ router.delete(
     res.sendStatus(204);
   }
 );
+
+/**
+ * @openapi
+ * /boards/{board_id}/roles:
+ *   get:
+ *     summary: Fetches latest roles summary for the board.
+ *     operationId: getBoardRolesByExternalId
+ *     tags:
+ *       - /boards/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: board_id
+ *         in: path
+ *         description: The id of the board.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     responses:
+ *       200:
+ *         description: The board roles summary.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/RealmRoles"
+ *             examples:
+ *               twisted_minds:
+ *                 value:
+ *                   roles:
+ *                     - user_firebase_id: "a90b0809-2c57-4ff1-be7c-4b7ab1b7edcc"
+ *                       username: "bobatan"
+ *                       role_string_id: "3df1d417-c36a-43dd-aaba-9590316ffc32"
+ *                       role_name: "The Owner"
+ *                       label: "Look ma, a label"
+ *       401:
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         $ref: "#/components/responses/ensurePermission403"
+ *       404:
+ *         description: The board was not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/genericResponse"
+ *       500:
+ *         description: There was an error fetching board roles.
+ */
+
+router.get(
+  "/:board_id/roles",
+  ensureBoardAccess, ensureLoggedIn,
+  ensureBoardPermission(BoardPermissions.viewRolesOnBoard),
+  async (req, res) => {
+    try {
+      const { board_id } = req.params;
+      const boardRoles = await getBoardRoles({
+        boardExternalId: board_id,
+      });
+      if (!boardRoles?.length){
+        res.status(200).json({roles:[]});
+        return;
+      }
+      res.status(200).json({
+        roles: boardRoles || [],
+      });
+    } catch (e) {
+      error(e);
+      res.status(500).json({
+        message: "There was an error fetching board roles.",
+      });
+  }
+});
 
 export default router;
