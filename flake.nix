@@ -26,23 +26,22 @@
             '';
           };
 
-          bobadatabase = {
-            init = pkgs.writeShellApplication {
-                name = "bobadatabase-init";
-                runtimeInputs = [ pkgs.postgresql_12 ];
+          bobadatabase-init = pkgs.writeShellApplication {
+              name = "bobadatabase-init";
+              runtimeInputs = [ pkgs.postgresql_12 ];
 
-                text = ''
-                  ${bobaserver-assets}/libexec/bobaserver/deps/bobaserver/db/00-init_tables.sh ${bobaserver-assets}/libexec/bobaserver/deps/bobaserver/db/
-                '';
-              };
-            seed = pkgs.writeShellApplication {
-                name = "bobadatabase-seed";
-                runtimeInputs = [ pkgs.postgresql_12 ];
+              text = ''
+                ${bobaserver-assets}/libexec/bobaserver/deps/bobaserver/db/00-init_tables.sh ${bobaserver-assets}/libexec/bobaserver/deps/bobaserver/db/
+              '';
+          };
 
-                text = ''
-                  ${bobaserver-assets}/libexec/bobaserver/deps/bobaserver/db/10-init_data.sh ${bobaserver-assets}/libexec/bobaserver/deps/bobaserver/db/
-                '';
-              };
+          bobadatabase-seed = pkgs.writeShellApplication {
+              name = "bobadatabase-seed";
+              runtimeInputs = [ pkgs.postgresql_12 ];
+
+              text = ''
+                ${bobaserver-assets}/libexec/bobaserver/deps/bobaserver/db/10-init_data.sh ${bobaserver-assets}/libexec/bobaserver/deps/bobaserver/db/
+              '';
           };
 
           # TODO: swap with wrapProgram 
