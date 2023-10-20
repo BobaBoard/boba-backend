@@ -10,7 +10,7 @@ import {
   DbCommentType,
   DbPostType,
   DbThreadSummaryType,
-} from "Types";
+} from "types/db";
 import {
   ThreadSchema,
   ThreadSummarySchema,

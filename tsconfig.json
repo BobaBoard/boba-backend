@@ -12,8 +12,7 @@
       "handlers/*": ["handlers/*"],
       "server/*": ["server/*"],
       "types/*": ["types/*"],
-      "test/*": ["test/*"],
-      "Types": ["Types"]
+      "test/*": ["test/*"]
     },
     "skipLibCheck": true,
     "types": ["node", "jest", "jest-extended"],

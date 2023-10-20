@@ -1,4 +1,4 @@
-import { QueryTagsType } from "Types";
+import { QueryTagsType } from "types/rest/params";
 
 export const getTagsDelta = ({
   oldTags,

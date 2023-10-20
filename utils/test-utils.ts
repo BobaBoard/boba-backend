@@ -1,7 +1,7 @@
 import { ensureLoggedIn, withLoggedIn, withUserSettings } from "handlers/auth";
 import express, { Express, Router } from "express";
 
-import { DbThreadSummaryType } from "Types";
+import { DbThreadSummaryType } from "types/db";
 import { ITask } from "pg-promise";
 import { Server } from "http";
 import bodyParser from "body-parser";

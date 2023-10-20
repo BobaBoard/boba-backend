@@ -11,7 +11,7 @@ import {
 } from "types/permissions";
 
 import { BoardRestrictionsEnum } from "server/boards/sql/types";
-import { QueryTagsType } from "Types";
+import { QueryTagsType } from "types/rest/params";
 import debug from "debug";
 import { getBoardByExternalId } from "server/boards/queries";
 
