@@ -15,7 +15,7 @@ import {
 
 import { Feed } from "types/rest/threads";
 import { FeedActivitySchema } from "types/open-api/generated/schemas";
-import { ZodFeed } from "types/rest/zodthreads";
+import { ZodFeed } from "types/rest/schemas/threads";
 import debug from "debug";
 import { ensureBoardAccess } from "handlers/permissions";
 import { ensureLoggedIn } from "handlers/auth";
