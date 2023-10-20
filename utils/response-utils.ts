@@ -15,7 +15,7 @@ import {
   ThreadSchema,
   ThreadSummarySchema,
 } from "types/open-api/generated/schemas";
-import { ZodDbThreadSummaryType, ZodDbThreadType } from "zodtypes";
+import { ZodDbThreadSummaryType, ZodDbThreadType } from "types/db/schemas";
 
 import { BoardByExternalId } from "server/boards/sql/types";
 import { BoardRestrictions } from "types/permissions";

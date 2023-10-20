@@ -2,7 +2,7 @@ import { z } from "zod";
 
 // Database type schemas
 
-export const CommentTypeSchema = z.object({
+const DbCommentTypeSchema = z.object({
   comment_id: z.string(),
   parent_post_id: z.string(),
   parent_comment_id: z.string().nullable(),
@@ -23,7 +23,7 @@ export const CommentTypeSchema = z.object({
   is_own: z.boolean(),
 });
 
-export const PostTypeSchema = z.object({
+const DbPostTypeSchema = z.object({
   post_id: z.string(),
   parent_thread_id: z.string(),
   parent_post_id: z.string().nullable(),
@@ -52,14 +52,14 @@ export const PostTypeSchema = z.object({
   is_new: z.boolean(),
 });
 
-export const DbThreadTypeSchema = z.object({
+const DbThreadTypeSchema = z.object({
   thread_id: z.string(),
   board_slug: z.string(),
   board_id: z.string(),
   realm_slug: z.string(),
   realm_id: z.string(),
-  posts: z.array(PostTypeSchema),
-  comments: z.array(CommentTypeSchema),
+  posts: z.array(DbPostTypeSchema),
+  comments: z.array(DbCommentTypeSchema),
   default_view: z.enum(["thread", "gallery", "timeline"]),
   thread_new_comments_amount: z.number(),
   thread_total_comments_amount: z.number(),
@@ -73,12 +73,12 @@ export const DbThreadTypeSchema = z.object({
 });
 export type ZodDbThreadType = z.infer<typeof DbThreadTypeSchema>;
 
-export const ThreadSummaryTypeSchema = DbThreadTypeSchema.extend({
+const ThreadSummaryTypeSchema = DbThreadTypeSchema.extend({
   thread_last_activity_at_micro: z.string().nullable(),
 })
   .and(DbThreadTypeSchema.omit({ posts: true }))
   .and(
-    PostTypeSchema.omit({
+    DbPostTypeSchema.omit({
       total_comments_amount: true,
       new_comments_amount: true,
       comments: true,
@@ -89,7 +89,7 @@ export type ZodDbThreadSummaryType = z.infer<typeof ThreadSummaryTypeSchema>;
 //TODO: come up with good names for this or
 //  replace all current DB types out right
 
-export const FeedTypeSchema = z.object({
+const FeedTypeSchema = z.object({
   cursor: z.string().nullable(),
   activity: z.array(ThreadSummaryTypeSchema),
 });

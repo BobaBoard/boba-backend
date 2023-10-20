@@ -24,7 +24,7 @@ import {
 
 import { BoardByExternalId } from "server/boards/sql/types";
 import { Internal500Error } from "handlers/api-errors/codes";
-import { ZodDbThreadType } from "zodtypes";
+import { ZodDbThreadType } from "types/db/schemas";
 import { getBoardByExternalId } from "server/boards/queries";
 import { getPostByExternalId } from "server/posts/queries";
 

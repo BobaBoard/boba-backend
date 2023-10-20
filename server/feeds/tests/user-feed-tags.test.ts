@@ -1,11 +1,16 @@
-import { FAVORITE_CHARACTER_THREAD_ID, FAVORITE_MURDER_THREAD_ID } from "test/data/threads";
-import { ZodDbFeedType, ZodDbThreadSummaryType } from "zodtypes";
+import {
+  FAVORITE_CHARACTER_THREAD_ID,
+  FAVORITE_MURDER_THREAD_ID,
+} from "test/data/threads";
+import { ZodDbFeedType, ZodDbThreadSummaryType } from "types/db/schemas";
 
 import { BOBATAN_USER_ID } from "test/data/auth";
 import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
 import { getUserActivity } from "../queries";
 
-export const extractTags = (thread: ZodDbThreadSummaryType | null | undefined) => {
+export const extractTags = (
+  thread: ZodDbThreadSummaryType | null | undefined
+) => {
   if (!thread) {
     throw new Error("Extracting tags from null thread");
   }
@@ -22,7 +27,9 @@ export const getThreadFromActivity = (
   threadExternalId: string,
   activity: ZodDbFeedType
 ) => {
-  return activity.activity.find((thread) => thread.thread_id == threadExternalId);
+  return activity.activity.find(
+    (thread) => thread.thread_id == threadExternalId
+  );
 };
 
 describe("feed activity tags", () => {
@@ -40,9 +47,8 @@ describe("feed activity tags", () => {
     }
 
     expect(
-      extractTags(
-        getThreadFromActivity(FAVORITE_CHARACTER_THREAD_ID, feed)
-      ).tags
+      extractTags(getThreadFromActivity(FAVORITE_CHARACTER_THREAD_ID, feed))
+        .tags
     ).toEqual(["evil", "bobapost"]);
   });
 
@@ -60,9 +66,8 @@ describe("feed activity tags", () => {
     }
 
     expect(
-      extractTags(
-        getThreadFromActivity(FAVORITE_MURDER_THREAD_ID, feed)
-      ).categories
+      extractTags(getThreadFromActivity(FAVORITE_MURDER_THREAD_ID, feed))
+        .categories
     ).toEqual(["blood", "bruises"]);
   });
 
