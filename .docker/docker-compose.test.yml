@@ -3,11 +3,11 @@ services:
   database:
     image: "postgres:12"
     env_file:
-      - .env
+      - ../.env
     ports:
       - "35432:5432"
     volumes:
-      - ./db:/docker-entrypoint-initdb.d
+      - ../db:/docker-entrypoint-initdb.d
     environment:
       TZ: "America/Los_Angeles"
   test:
@@ -17,13 +17,13 @@ services:
       context: .
     environment:
       TZ: "America/Los_Angeles"
-      JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
+      JEST_JUNIT_OUTPUT_DIR: ../reports/junit/
     command: >
       sh -c "/usr/src/git/wait-for-it/wait-for-it.sh 127.0.0.1:35432 -t 60 -- sleep 10 && \
              yarn run test --ci --testNamePattern='^((?!ci\-disable).)*$$' --reporters=default --reporters=jest-junit && \
              yarn run test --ci --testNamePattern='^ci\-disable.*$$' --reporters=default --reporters=jest-junit"
     volumes:
-      - .:/usr/src/app
+      - ..:/usr/src/app
       # Below line prevents Docker from mapping the host's node_modules/
       # folder into the container.  We don't want cross-contamination.
       - /usr/src/app/node_modules

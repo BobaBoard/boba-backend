@@ -15,11 +15,11 @@
   "main": "dist/server/index.js",
   "scripts": {
     "build": "yarn run server:build",
-    "db:start": "docker compose down && docker compose up",
+    "db:start": "docker compose -f .docker/docker-compose.yml down && docker compose -p boba-db -f .docker/docker-compose.yml up",
     "deploy": "gcloud config set project bobaboard && gcloud app deploy --version live",
     "dev": "yarn run db:start & yarn run server:dev",
     "dev:watch": "node -e \"console.error('This command has been deprecated. Use server:dev now.')\"",
-    "open-api:docker": "docker compose -f docker-compose.open-api.test.yml run --rm test",
+    "open-api:docker": "docker compose -f .docker/docker-compose.open-api.test.yml -p boba-open-api-validate run --rm test",
     "open-api:generate": "node -r dotenv/config -r ts-node/register -r tsconfig-paths/register utils/generate-spec-file.ts dotenv_config_path=./.env.prod",
     "open-api:typescript": "yarn run open-api:generate && openapi-zod-client ./open-api-spec.json -o ./types/open-api/generated/schemas.ts --export-schemas --template ./types/open-api/generated/schemas.hbs --with-alias &&  openapi-zod-client ./open-api-spec.json -o ./types/open-api/generated/types.ts --export-schemas --template ./types/open-api/generated/types.hbs --with-alias",
     "open-api:validate": "yarn run open-api:generate && validate-api open-api-spec.json && openapi-examples-validator open-api-spec.json --ignore-formats color quill-delta && openapi lint open-api-spec.json --skip-rule=no-ambiguous-paths",
@@ -31,7 +31,7 @@
     "test": "cross-env DEBUG=bobaserver:*,-*info jest --runInBand --no-cache",
     "test:changed": "yarn run test --watch",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --no-cache",
-    "test:docker": "docker compose down && docker compose -f docker-compose.test.yml run --rm test",
+    "test:docker": "docker compose -f .docker/docker-compose.test.yml down && docker compose -p boba-server-test -f .docker/docker-compose.test.yml run --rm test",
     "test:watch": "yarn run test --watchAll"
   },
   "dependencies": {
