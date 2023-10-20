@@ -3,19 +3,6 @@ import {
   BoardTextDescription,
 } from "types/rest/boards";
 
-export interface UserIdentityType {
-  name: string;
-  // TODO[realms]: make this avatar_url
-  avatar: string;
-}
-
-export interface SecretIdentityType {
-  name: string;
-  // TODO[realms]: make this avatar_url
-  avatar: string;
-  color?: string;
-  accessory?: string;
-}
 export interface DbIdentityType {
   id: string;
   username: string;
@@ -114,11 +101,4 @@ export interface DbBoardTextDescription extends BoardTextDescription {
 
 export interface DbBoardCategoryDescription extends BoardCategoryDescription {
   description: null;
-}
-
-export interface QueryTagsType {
-  whisperTags: string[];
-  indexTags: string[];
-  categoryTags: string[];
-  contentWarnings: string[];
 }

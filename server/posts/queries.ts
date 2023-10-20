@@ -2,9 +2,10 @@ import {
   BadRequest400Error,
   Forbidden403Error,
 } from "handlers/api-errors/codes";
-import { DbCommentType, DbPostType, QueryTagsType } from "Types";
+import { DbCommentType, DbPostType } from "types/db";
 
 import { ITask } from "pg-promise";
+import { QueryTagsType } from "types/rest/params";
 import { canPostAs } from "utils/permissions-utils";
 import debug from "debug";
 import invariant from "tiny-invariant";

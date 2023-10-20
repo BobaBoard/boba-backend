@@ -3,7 +3,7 @@ import {
   LoggedInBoardMetadata,
 } from "types/open-api/generated/types";
 import { CacheKeys, cache } from "server/cache";
-import { DbBoardCategoryDescription, DbBoardTextDescription } from "Types";
+import { DbBoardCategoryDescription, DbBoardTextDescription } from "types/db";
 import {
   processBoardMetadata,
   processBoardsSummary,
