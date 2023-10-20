@@ -1,4 +1,4 @@
-import { Identity, SecretIdentity } from "./zodidentity";
+import { Identity, SecretIdentity } from "./identity";
 
 import { z } from "zod";
 
@@ -67,7 +67,8 @@ export const Thread = ThreadSummary.extend({
   posts: z.array(Post),
   comments: z.record(
     // contribution_id: string
-    z.string(), z.array(Comment)
+    z.string(),
+    z.array(Comment)
   ),
 });
 

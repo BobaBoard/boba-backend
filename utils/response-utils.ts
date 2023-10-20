@@ -19,11 +19,8 @@ import { ZodDbThreadSummaryType, ZodDbThreadType } from "types/db/schemas";
 
 import { BoardByExternalId } from "server/boards/sql/types";
 import { BoardRestrictions } from "types/permissions";
-import { ThreadSummary } from "types/open-api/generated/types";
-import { ZodThreadSummary } from "types/rest/zodthreads";
 import debug from "debug";
 import { getUserPermissionsForBoard } from "./permissions-utils";
-import { z } from "zod";
 
 const info = debug("bobaserver:response-utils-info");
 const log = debug("bobaserver::response-utils-log");
