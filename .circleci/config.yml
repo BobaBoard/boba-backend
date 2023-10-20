@@ -23,10 +23,10 @@ jobs:
           command: ls -la
       - run:
           name: stop everything
-          command: docker-compose -f docker-compose.test.yml down
+          command: docker-compose -f .docker/docker-compose.test.yml down
       - run:
           name: run test
-          command: docker-compose -f docker-compose.test.yml run --rm test
+          command: docker-compose -f .docker/docker-compose.test.yml run --rm test
       - run:
           name: database logs
           command: docker-compose logs database
@@ -47,10 +47,10 @@ jobs:
           command: ls -la
       - run:
           name: stop everything
-          command: docker-compose -f docker-compose.open-api.test.yml down
+          command: docker-compose -f .docker/docker-compose.open-api.test.yml down
       - run:
           name: run test
-          command: docker-compose -f docker-compose.open-api.test.yml run --rm test
+          command: docker-compose -f .docker/docker-compose.open-api.test.yml run --rm test
 
 workflows:
   build-and-test:
