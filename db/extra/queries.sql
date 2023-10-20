@@ -1,3 +1,5 @@
+-- A set of queries usually run manually since we don't have API endpoints for them yet --
+
 --- DELETE BOARD ---
 drop index boards_string_id;
 DELETE FROM comments WHERE id IN (SELECT id FROM comments WHERE comments.parent_thread IN (SELECT id FROM threads WHERE parent_board = 3));
