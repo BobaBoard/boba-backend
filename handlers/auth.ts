@@ -2,7 +2,7 @@ import { CacheKeys, cache } from "server/cache";
 import { NextFunction, Request, Response } from "express";
 import firebaseAuth, { auth } from "firebase-admin";
 
-import { Internal500Error } from "types/errors/api";
+import { Internal500Error } from "handlers/api-errors/codes";
 import { SettingEntry } from "../types/settings";
 import debug from "debug";
 import { getUserSettings } from "server/users/queries";

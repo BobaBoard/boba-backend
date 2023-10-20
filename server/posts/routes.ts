@@ -1,6 +1,9 @@
 import * as threadEvents from "handlers/events/threads";
 
-import { BadRequest400Error, Forbidden403Error } from "types/errors/api";
+import {
+  BadRequest400Error,
+  Forbidden403Error,
+} from "handlers/api-errors/codes";
 import {
   ensureNoIdentityLeakage,
   makeServerComment,

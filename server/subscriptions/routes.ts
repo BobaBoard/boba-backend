@@ -1,6 +1,6 @@
 import { CacheKeys, cache } from "../cache";
 
-import { NotFound404Error } from "types/errors/api";
+import { NotFound404Error } from "handlers/api-errors/codes";
 import { SubscriptionFeed } from "types/rest/subscriptions";
 import debug from "debug";
 import express from "express";
