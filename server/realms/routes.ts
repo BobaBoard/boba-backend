@@ -3,7 +3,7 @@ import {
   Forbidden403Error,
   Internal500Error,
   NotFound404Error,
-} from "types/errors/api";
+} from "handlers/api-errors/codes";
 import {
   acceptInvite,
   checkUserOnRealm,
@@ -856,7 +856,6 @@ router.post(
   }
 );
 
-
 /**
  * @openapi
  * /realms/{realm_id}/roles:
@@ -907,7 +906,8 @@ router.post(
 
 router.get(
   "/:realm_id/roles",
-  ensureRealmExists, ensureLoggedIn,
+  ensureRealmExists,
+  ensureLoggedIn,
   ensureRealmPermission(RealmPermissions.viewRolesOnRealm),
   async (req, res) => {
     try {
@@ -915,8 +915,8 @@ router.get(
       const realmRoles = await getRealmRoles({
         realmExternalId: realm_id,
       });
-      if (!realmRoles?.length){
-        res.status(200).json({roles:[]});
+      if (!realmRoles?.length) {
+        res.status(200).json({ roles: [] });
         return;
       }
       res.status(200).json({

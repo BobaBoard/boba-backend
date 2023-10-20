@@ -6,10 +6,7 @@ import {
 } from "types/open-api/generated/schemas";
 import { BoardPermissions, RealmPermissions } from "types/permissions";
 import { CacheKeys, cache } from "server/cache";
-import {
-  Internal500Error,
-  NotFound404Error,
-} from "types/errors/api";
+import { Internal500Error, NotFound404Error } from "handlers/api-errors/codes";
 import {
   createThread,
   dismissBoardNotifications,
@@ -759,7 +756,8 @@ router.delete(
 
 router.get(
   "/:board_id/roles",
-  ensureBoardAccess, ensureLoggedIn,
+  ensureBoardAccess,
+  ensureLoggedIn,
   ensureBoardPermission(BoardPermissions.viewRolesOnBoard),
   async (req, res) => {
     try {
@@ -767,9 +765,9 @@ router.get(
       const boardRoles = await getBoardRoles({
         boardExternalId: board_id,
       });
-      if (!boardRoles?.length){
-        res.status(200).json({roles:[]});
-      return;
+      if (!boardRoles?.length) {
+        res.status(200).json({ roles: [] });
+        return;
       }
       res.status(200).json({
         roles: boardRoles || [],

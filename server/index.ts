@@ -21,7 +21,7 @@ import cors from "cors";
 import firebaseAuth from "firebase-admin";
 import { initCache } from "./cache";
 import { withLoggedIn } from "handlers/auth";
-import { handleApiErrors } from "handlers/errors";
+import { handleApiErrors } from "handlers/api-errors/handler";
 import { applyRoutes } from "./all-routes";
 import { registerEventHandlers } from "./event-handlers";
 

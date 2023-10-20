@@ -1,4 +1,7 @@
-import { BadRequest400Error, NotFound404Error } from "types/errors/api";
+import {
+  BadRequest400Error,
+  NotFound404Error,
+} from "handlers/api-errors/codes";
 import {
   ensureNoIdentityLeakage,
   makeServerThreadSummary,

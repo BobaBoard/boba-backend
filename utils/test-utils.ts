@@ -6,7 +6,7 @@ import { ITask } from "pg-promise";
 import { Server } from "http";
 import bodyParser from "body-parser";
 import debug from "debug";
-import { handleApiErrors } from "handlers/errors";
+import { handleApiErrors } from "handlers/api-errors/handler";
 import { mocked } from "jest-mock";
 import pool from "server/db-pool";
 

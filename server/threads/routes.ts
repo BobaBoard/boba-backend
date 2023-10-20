@@ -2,7 +2,7 @@ import {
   BadRequest400Error,
   Forbidden403Error,
   NotFound404Error,
-} from "types/errors/api";
+} from "handlers/api-errors/codes";
 import {
   ensureNoIdentityLeakage,
   makeServerThread,

@@ -23,7 +23,7 @@ import {
 } from "server/threads/queries";
 
 import { BoardByExternalId } from "server/boards/sql/types";
-import { Internal500Error } from "types/errors/api";
+import { Internal500Error } from "handlers/api-errors/codes";
 import { ZodDbThreadType } from "zodtypes";
 import { getBoardByExternalId } from "server/boards/queries";
 import { getPostByExternalId } from "server/posts/queries";

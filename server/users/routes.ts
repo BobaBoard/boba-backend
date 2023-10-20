@@ -1,4 +1,7 @@
-import { BadRequest400Error, Internal500Error } from "types/errors/api";
+import {
+  BadRequest400Error,
+  Internal500Error,
+} from "handlers/api-errors/codes";
 import { CacheKeys, cache } from "../cache";
 import { ensureLoggedIn, withUserSettings } from "handlers/auth";
 import {

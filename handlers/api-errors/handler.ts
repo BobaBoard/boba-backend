@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 
-import { ApiError } from "types/errors/api";
+import { ApiError } from "handlers/api-errors/codes";
 import { ZodError } from "zod";
 import debug from "debug";
 

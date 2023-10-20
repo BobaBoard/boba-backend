@@ -1,4 +1,4 @@
-import { Internal500Error } from "types/errors/api";
+import { Internal500Error } from "handlers/api-errors/codes";
 import debug from "debug";
 import pool from "server/db-pool";
 import sql from "./sql";
