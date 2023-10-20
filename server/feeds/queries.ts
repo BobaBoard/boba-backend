@@ -1,6 +1,6 @@
 import { decodeCursor, encodeCursor } from "utils/queries-utils";
 
-import { ZodDbFeedType } from "zodtypes";
+import { ZodDbFeedType } from "types/db/schemas";
 import debug from "debug";
 import pool from "server/db-pool";
 import sql from "./sql";
@@ -11,7 +11,7 @@ const error = debug("bobaserver:feeds:queries-error");
 
 const DEFAULT_PAGE_SIZE = 10;
 
-export const getRealmActivityByExternalId = async({
+export const getRealmActivityByExternalId = async ({
   realmExternalId,
   firebaseId,
   cursor,
@@ -36,13 +36,13 @@ export const getRealmActivityByExternalId = async({
   if (!rows) {
     log(`Realm not found: ${realmExternalId}`);
     return null;
-  };
+  }
 
   if (rows.length == 1 && rows[0].thread_id == null) {
     // Only one row with just the null thread)
     log(`Realm empty: ${realmExternalId}`);
     return { cursor: null, activity: [] };
-  };
+  }
 
   let result = rows;
   let nextCursor = null;
@@ -55,11 +55,9 @@ export const getRealmActivityByExternalId = async({
     });
     // remove last element from array
     result.pop();
-  };
+  }
 
-  log(
-    `Fetched realm ${realmExternalId} activity data for user ${firebaseId}`
-  );
+  log(`Fetched realm ${realmExternalId} activity data for user ${firebaseId}`);
   return { cursor: nextCursor, activity: rows };
 };
 

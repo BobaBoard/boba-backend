@@ -6,7 +6,7 @@ import {
 } from "test/data/threads";
 
 import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
-import { ZodDbFeedType } from "zodtypes";
+import { ZodDbFeedType } from "types/db/schemas";
 import { extractActivity } from "utils/test-utils";
 import { getUserActivity } from "../queries";
 import { getUserFromFirebaseId } from "../../users/queries";
