@@ -14,7 +14,8 @@ services:
     image: "bobaserver"
     network_mode: "host"
     build:
-      context: .
+      context: ..
+      dockerfile: ./.docker/Dockerfile
     environment:
       TZ: "America/Los_Angeles"
       JEST_JUNIT_OUTPUT_DIR: ../reports/junit/
