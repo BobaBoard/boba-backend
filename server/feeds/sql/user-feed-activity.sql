@@ -16,6 +16,7 @@ SELECT
     COALESCE(new_comments_board_amount, 0) as thread_new_comments_amount,
     COALESCE(muted, FALSE) as muted,
     COALESCE(hidden, FALSE) as hidden,
+    COALESCE(starred, FALSE) as starred,
     -- Post details (DbPostType)
     first_post_string_id as post_id,
     thread_external_id as parent_thread_id,
