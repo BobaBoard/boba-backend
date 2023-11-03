@@ -21,7 +21,7 @@ WITH
                 'created_at',  TO_CHAR(thread_comments.created, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"'),
                 'anonymity_type', thread_comments.anonymity_type,
                 'self', thread_comments.is_own,
-                'friend', thread_comments.is_friend,
+                'friend', COALESCE(thread_comments.is_friend, FALSE),
                 'is_new', (is_new AND NOT is_own),
                 'is_own', is_own
             ) ORDER BY thread_comments.created ASC) as comments
@@ -65,13 +65,13 @@ WITH
             thread_identities.secret_identity_color,
             thread_identities.accessory_avatar,
             ${firebase_id} IS NOT NULL AND posts.author = (SELECT id FROM users WHERE firebase_id = ${firebase_id}) as self,
-            ${firebase_id} IS NOT NULL AND posts.author = ANY(
+            COALESCE(${firebase_id} IS NOT NULL AND posts.author = ANY(
                SELECT friend_id
                FROM users
                LEFT JOIN friends
                      ON users.id = friends.user_id
                WHERE firebase_id = ${firebase_id}
-            ) as friend,
+            ), FALSE) as friend,
             TO_CHAR(posts.created, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as created_at,
             posts.content,
             posts.type,

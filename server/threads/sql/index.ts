@@ -19,7 +19,7 @@ const getRandomIdentityId = `
 const getUserBoardRoleByExternalId = `
     WITH logged_in_user AS
       (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
-    SELECT
+    SELECT DISTINCT ON (roles.id)
       realm_user_roles.*,
       roles.id,
       roles.name,
@@ -32,6 +32,7 @@ const getUserBoardRoleByExternalId = `
       ON roles.id = board_user_roles.role_id AND board_user_roles.user_id = logged_in_user.id
     LEFT JOIN realm_user_roles
       ON roles.id = realm_user_roles.role_id AND realm_user_roles.user_id = logged_in_user.id
+      AND realm_user_roles.realm_id = (SELECT parent_realm_id FROM boards WHERE boards.string_id = $/board_external_id/)
     INNER JOIN users
       ON logged_in_user.id = users.id
     WHERE
