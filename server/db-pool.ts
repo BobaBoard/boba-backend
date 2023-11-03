@@ -51,7 +51,7 @@ const pgLib = pgp({
 });
 const pool = pgLib({
   ...databaseConfig,
-  max: process.env.NODE_ENV === "test" ? 1 : 20,
+  max: process.env.NODE_ENV === "test" ? 1 : 30,
   allowExitOnIdle: true,
 });
 
