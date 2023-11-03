@@ -1,5 +1,6 @@
 import debug from "debug";
 import fs from "fs";
+import monitor from "pg-monitor";
 import pgp from "pg-promise";
 
 const error = debug("bobaserver:pool-error");
@@ -33,22 +34,42 @@ if (process.env.NODE_ENV == "production") {
     connectionString: DATABASE_URL,
   };
 }
-const pgLib = pgp({
-  connect: () => {
-    log(`connected to the db on port ${process.env.POSTGRES_PORT}`);
+
+function forward(event: monitor.LogEvent, args: IArguments) {
+  // safe event forwarding into pg-monitor:
+
+  (monitor as any)[event].apply(monitor, [...args]);
+}
+
+const pgpOptions: pgp.IInitOptions = {
+  connect(e) {
+    // @ts-ignore
+    forward("connect", [{ client: e }]);
   },
-  error: (e) => {
+  error(e) {
     error(`error occurred on the db `, e);
   },
-  query: (q) => {
-    info("executing query: ", q.query);
-  },
-  disconnect: () => {
+  disconnect(e) {
     log(`disconnected from the db`);
+
+    // @ts-ignore
+    forward("disconnect", [{ client: e }]);
+  },
+
+  query(q) {
+    forward("query", arguments);
   },
   // This prevents the DB from hanging during tests
   noLocking: process.env.NODE_ENV === "test",
+};
+
+monitor.setLog((msg, queryInfo) => {
+  queryInfo.display = false;
+  log(msg);
 });
+
+const pgLib = pgp(pgpOptions);
+
 const pool = pgLib({
   ...databaseConfig,
   max: process.env.NODE_ENV === "test" ? 1 : 30,
