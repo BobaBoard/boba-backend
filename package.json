@@ -15,7 +15,7 @@
   "main": "dist/server/index.js",
   "scripts": {
     "build": "yarn run server:build",
-    "db:start": "docker compose -f .docker/docker-compose.yml down && docker compose -p boba-db -f .docker/docker-compose.yml up",
+    "db:start": "docker compose -p boba-db -f .docker/docker-compose.yml down && docker compose -p boba-db -f .docker/docker-compose.yml up",
     "deploy": "yarn run build && gcloud config set project bobaboard && gcloud app deploy --version live",
     "dev": "yarn run db:start & yarn run server:dev",
     "dev:watch": "node -e \"console.error('This command has been deprecated. Use server:dev now.')\"",
