@@ -17,7 +17,7 @@ import { RealmPermissions } from "types/permissions";
 import { aggregateByType } from "utils/settings";
 import debug from "debug";
 import express from "express";
-import { getBoards } from "../boards/queries";
+import { getRealmBoards } from "../boards/queries";
 import stringify from "fast-json-stable-stringify";
 import { withRealmPermissions } from "handlers/permissions";
 
@@ -222,7 +222,7 @@ router.get(
       log(`Returning cached pinned boards data for user ${currentUserId}`);
       return res.status(200).json(JSON.parse(cachedData));
     }
-    const boards = await getBoards({
+    const boards = await getRealmBoards({
       firebaseId: req.currentUser!.uid,
       realmExternalId: req.currentRealmIds?.string_id,
     });
@@ -238,16 +238,25 @@ router.get(
         RealmPermissions.accessLockedBoardsOnRealm
       ),
     });
+    // Adds the pinned order to the board summaries
     const pins = summaries
-      .filter((board: any) => board.pinned)
-      .reduce((result: any, current: any) => {
-        result[current.slug] = {
-          ...current,
-          index: boards.find(({ slug }: any) => current.slug == slug)
-            .pinned_order,
-        };
-        return result;
-      }, {});
+      .filter((board) => board.pinned)
+      .reduce(
+        (result, current) => {
+          result[current.slug] = {
+            ...current,
+            index: boards.find(({ slug }) => current.slug == slug)!
+              .pinned_order!,
+          };
+          return result;
+        },
+        {} as Record<
+          string,
+          (typeof summaries)[0] & {
+            index: number;
+          }
+        >
+      );
 
     const pinsDataResponse = { pinned_boards: pins };
     res.status(200).json(pinsDataResponse);

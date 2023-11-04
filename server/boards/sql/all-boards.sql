@@ -21,7 +21,7 @@ SELECT
     GREATEST(MAX(COMMENTS.last_activity_from_others), MAX(posts.last_activity_from_others)) AS last_activity_from_others_at,
     MAX(GREATEST(user_board_last_visits.last_visit_time, posts.last_thread_visit)) as last_visit_at,
     user_muted_boards.board_id IS NOT NULL as muted,
-    COALESCE(ordered_pinned_boards.index, NULL) as pinned_order,
+    COALESCE(CAST(ordered_pinned_boards.index AS integer), NULL) as pinned_order,
     BOOL_OR(user_muted_boards.board_id IS NULL AND (posts.has_new OR comments.has_new)) as has_updates,
     to_jsonb(COALESCE(logged_out_restrictions, ARRAY[]::board_restrictions_type[])) as logged_out_restrictions,
     to_jsonb(COALESCE(CASE WHEN logged_in_user.id IS NOT NULL THEN logged_in_base_restrictions ELSE NULL END, ARRAY[]::board_restrictions_type[])) as logged_in_base_restrictions

@@ -1,4 +1,4 @@
-import { getBoardByExternalId, getBoards } from "../queries";
+import { getBoardByExternalId, getRealmBoards } from "../queries";
 
 import { RESTRICTED_BOARD_ID } from "test/data/boards";
 
@@ -24,7 +24,7 @@ describe("Tests restricted board queries", () => {
   });
 
   test("board fetch contains lock access restriction for logged out users", async () => {
-    const boards = await getBoards({
+    const boards = await getRealmBoards({
       firebaseId: "fb3",
     });
 

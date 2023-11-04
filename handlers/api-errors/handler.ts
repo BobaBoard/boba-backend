@@ -5,7 +5,7 @@ import { ZodError } from "zod";
 import debug from "debug";
 import opentelemetry from "@opentelemetry/api";
 
-const log = debug("bobaserver:handlers:errors");
+const log = debug("bobaserver:handlers:errors-log");
 
 // Sends the correct status code and message to the client if the error is an instance of APIError,
 // else it lets the error bubble up to the global error handler.

@@ -1,4 +1,9 @@
-import { BoardByExternalId, BoardByExternalIdSchema } from "./sql/types";
+import {
+  BoardByExternalId,
+  BoardByExternalIdSchema,
+  DbRealmBoardSchema,
+  DbRealmBoardType,
+} from "./sql/types";
 
 import { ITask } from "pg-promise";
 import debug from "debug";
@@ -14,23 +19,21 @@ const info = debug("bobaserver:board:queries-info");
 const log = debug("bobaserver:board:queries-log");
 const error = debug("bobaserver:board:queries-error");
 
-export const getBoards = async ({
+export const getRealmBoards = async ({
   firebaseId,
   realmExternalId,
 }: {
   firebaseId: string | null;
   realmExternalId?: string;
-}): Promise<any> => {
-  try {
-    return await pool.many(sql.getAllBoards, {
-      firebase_id: firebaseId,
-      realm_external_id: realmExternalId,
-    });
-  } catch (e) {
-    error(`Error while fetching boards.`);
-    error(e);
-    return false;
-  }
+}): Promise<DbRealmBoardType[]> => {
+  return pool.task("get-realm-boards", async (t) => {
+    return (
+      await t.many(sql.getAllBoards, {
+        firebase_id: firebaseId,
+        realm_external_id: realmExternalId,
+      })
+    ).map((board) => DbRealmBoardSchema.parse(board));
+  });
 };
 
 export const getBoardByExternalId = async ({
@@ -425,9 +428,9 @@ export const getBoardRoles = async ({
 }): Promise<
   | {
       user_id: string;
-			username:string
-			role_id: string;
-			role_name: string;
+      username: string;
+      role_id: string;
+      role_name: string;
       label: string | null;
     }[]
   | null
