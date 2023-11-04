@@ -17,7 +17,7 @@ export const BoardPermissionsEnumSchema = z.enum([
   "create_thread_on_realm",
   "access_locked_boards_on_realm",
   "view_roles_on_realm",
-	"view_roles_on_board",
+  "view_roles_on_board",
 ]);
 export const BoardRestrictionsEnumSchema = z.enum(["lock_access", "delist"]);
 export type BoardRestrictionsEnum = z.infer<typeof BoardRestrictionsEnumSchema>;
@@ -85,3 +85,26 @@ export const BoardByExternalIdSchema = z.object({
   settings: BoardSettingsSchema,
 });
 export type BoardByExternalId = z.infer<typeof BoardByExternalIdSchema>;
+
+export const DbRealmBoardSchema = z.object({
+  // TODO: rename this as external_id
+  string_id: z.string(),
+  realm_external_id: z.string(),
+  slug: z.string(),
+  tagline: z.string(),
+  avatar_reference_id: z.string(),
+  settings: BoardSettingsSchema,
+  board_categories_external_id: z.string(),
+  last_post_at: z.date().nullable(),
+  last_comment_at: z.date().nullable(),
+  last_activity_at: z.date().nullable(),
+  last_activity_from_others_at: z.date().nullable(),
+  last_visit_at: z.date().nullable(),
+  muted: z.boolean(),
+  pinned_order: z.number().nullable(),
+  has_updates: z.boolean(),
+  logged_out_restrictions: z.array(BoardRestrictionsEnumSchema),
+  logged_in_base_restrictions: z.array(BoardRestrictionsEnumSchema),
+});
+
+export type DbRealmBoardType = z.infer<typeof DbRealmBoardSchema>;

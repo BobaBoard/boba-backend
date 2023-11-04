@@ -1,7 +1,7 @@
 import { BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID } from "test/data/auth";
 
 import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
-import { getBoards } from "../queries";
+import { getRealmBoards } from "../queries";
 
 const extractBoardDetails = (boardData: any) => {
   return {
@@ -42,7 +42,7 @@ const extractBoardUserSettings = (boardData: any) => {
 describe("Tests boards queries", () => {
   describe("Boards details", () => {
     test("fetches boards details(with user)", async () => {
-      const boards = await getBoards({
+      const boards = await getRealmBoards({
         firebaseId: BOBATAN_USER_ID,
         realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
       });
@@ -157,7 +157,7 @@ describe("Tests boards queries", () => {
 
   describe("Boards updates", () => {
     test("fetches all boards updates (with user)", async () => {
-      const boards = await getBoards({
+      const boards = await getRealmBoards({
         firebaseId: BOBATAN_USER_ID,
         realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
       });
@@ -266,7 +266,7 @@ describe("Tests boards queries", () => {
       ]);
     });
     test("fetches all boards updates (no user)", async () => {
-      const boards = await getBoards({
+      const boards = await getRealmBoards({
         realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
         firebaseId: null,
       });
@@ -375,7 +375,7 @@ describe("Tests boards queries", () => {
     });
 
     test("fetches all boards updates (dismissed notifications)", async () => {
-      const boards = await getBoards({
+      const boards = await getRealmBoards({
         firebaseId: ZODIAC_KILLER_USER_ID,
         realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
       });
@@ -489,7 +489,7 @@ describe("Tests boards queries", () => {
 
   describe("User settings", () => {
     test("fetches all boards (with user)", async () => {
-      const boards = await getBoards({
+      const boards = await getRealmBoards({
         firebaseId: BOBATAN_USER_ID,
         realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
       });
@@ -507,14 +507,14 @@ describe("Tests boards queries", () => {
           external_id: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
           realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
           muted: false,
-          pinned_order: "1",
+          pinned_order: 1,
         },
         {
           slug: "anime",
           external_id: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
           realm_external_id: TWISTED_MINDS_REALM_EXTERNAL_ID,
           muted: false,
-          pinned_order: "2",
+          pinned_order: 2,
         },
         {
           slug: "long",
@@ -561,7 +561,7 @@ describe("Tests boards queries", () => {
       ]);
     });
     test("fetches all boards user settings (no user)", async () => {
-      const boards = await getBoards({
+      const boards = await getRealmBoards({
         firebaseId: null,
         realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
       });
@@ -639,7 +639,7 @@ describe("Tests boards queries", () => {
     // that aren't tested by the above methods. Add the new field to the
     // appropriate "extration" method so it can be captured by the other tests.
     test("fetches all boards (with user)", async () => {
-      const boards = await getBoards({
+      const boards = await getRealmBoards({
         firebaseId: BOBATAN_USER_ID,
         realmExternalId: TWISTED_MINDS_REALM_EXTERNAL_ID,
       });

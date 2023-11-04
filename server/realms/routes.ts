@@ -31,9 +31,7 @@ import { RealmPermissions } from "types/permissions";
 import { createInvite } from "server/realms/queries";
 import debug from "debug";
 import express from "express";
-import firebaseAuth from "firebase-admin";
-import { getBoards } from "../boards/queries";
-import pool from "server/db-pool";
+import { getRealmBoards } from "../boards/queries";
 import { processRealmActivity } from "./utils";
 import { randomBytes } from "crypto";
 
@@ -99,7 +97,7 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
       realmExternalId: realmData.id,
     });
 
-    const boards = await getBoards({
+    const boards = await getRealmBoards({
       firebaseId: req.currentUser?.uid || null,
       realmExternalId: realmData.id,
     });
@@ -170,8 +168,9 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
 router.get("/:realm_id/activity", ensureRealmExists, async (req, res) => {
   const { realm_id } = req.params;
   try {
-    // TODO[realms]: use a per-realm query here
-    const boards = await getBoards({
+    const { realm_id } = req.params;
+
+    const boards = await getRealmBoards({
       firebaseId: req.currentUser?.uid || null,
       realmExternalId: realm_id,
     });
@@ -232,7 +231,7 @@ router.get("/:realm_id/activity", ensureRealmExists, async (req, res) => {
 router.get("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
   const { realm_id } = req.params;
 
-  const boards = await getBoards({
+  const boards = await getRealmBoards({
     firebaseId: req.currentUser?.uid || null,
     realmExternalId: realm_id,
   });

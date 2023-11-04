@@ -14,7 +14,7 @@ export const BOBATAN_PINNED_BOARDS = {
       avatar_url: "/anime.png",
       delisted: false,
       id: "4b30fb7c-2aca-4333-aa56-ae8623a92b65",
-      index: "2",
+      index: 2,
       logged_in_only: false,
       muted: false,
       pinned: true,
@@ -27,7 +27,7 @@ export const BOBATAN_PINNED_BOARDS = {
       avatar_url: "/gore.png",
       delisted: false,
       id: "c6d3d10e-8e49-4d73-b28a-9d652b41beec",
-      index: "1",
+      index: 1,
       logged_in_only: false,
       muted: false,
       pinned: true,
@@ -100,10 +100,12 @@ export const JERSEY_DEVIL_BOBADEX = {
   ],
 };
 
-export const CROWN_ACCESSORY_EXTERNAL_ID = "9e593709-419f-4b2c-b7ee-88ed47884c3c"
+export const CROWN_ACCESSORY_EXTERNAL_ID =
+  "9e593709-419f-4b2c-b7ee-88ed47884c3c";
 
-export const MEMESTER_ROLE_EXTERNAL_ID = "70485a1e-4ce9-4064-bd87-440e16b2f219"
+export const MEMESTER_ROLE_EXTERNAL_ID = "70485a1e-4ce9-4064-bd87-440e16b2f219";
 
-export const GOREMASTER_ROLE_EXTERNAL_ID = "e5f86f53-6dcd-4f15-b6ea-6ca1f088e62d"
+export const GOREMASTER_ROLE_EXTERNAL_ID =
+  "e5f86f53-6dcd-4f15-b6ea-6ca1f088e62d";
 
-export const OWNER_ROLE_EXTERNAL_ID = "3df1d417-c36a-43dd-aaba-9590316ffc32"
+export const OWNER_ROLE_EXTERNAL_ID = "3df1d417-c36a-43dd-aaba-9590316ffc32";
