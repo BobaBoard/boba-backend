@@ -19,7 +19,7 @@ if (process.env.NODE_ENV == "production") {
     database: process.env.POSTGRES_DB,
     port: process.env.POSTGRES_PORT,
     connectionTimeoutMillis: process.env.DB_CONNECTION_TIMEOUT || 3000,
-    query_timeout: process.env.DB_CONNECTION_TIMEOUT || 3000,
+    query_timeout: process.env.QUERY_CONNECTION_TIMEOUT || 3000,
   };
   if (process.env.POSTGRES_SSL_ROOT_CERT_PATH) {
     databaseConfig.ssl = {
