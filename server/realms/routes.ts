@@ -25,8 +25,10 @@ import { getRealmDataBySlug, getSettingsBySlug } from "./queries";
 import {
   processBoardsNotifications,
   processBoardsSummary,
+  reduceById,
 } from "utils/response-utils";
 
+import { DbRealmBoardType } from "server/boards/sql/types";
 import { RealmPermissions } from "types/permissions";
 import { createInvite } from "server/realms/queries";
 import debug from "debug";
@@ -243,24 +245,20 @@ router.get("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
     boards,
   });
   const pinned = notifications
-    .filter((notification: any) =>
+    .filter((notification) =>
       boards.find(
-        (board: any) =>
+        (board) =>
           board.string_id == notification.id && board.pinned_order !== null
       )
     )
-    .reduce((result: any, current: any) => {
-      result[current.id] = {
-        ...current,
-      };
-      return result;
-    }, {});
-  const realmBoards = notifications.reduce((result: any, current: any) => {
-    result[current.id] = {
-      ...current,
-    };
-    return result;
-  }, {});
+    .reduce(
+      reduceById,
+      {} as Record<string, ReturnType<typeof processBoardsNotifications>[0]>
+    );
+  const realmBoards = notifications.reduce(
+    reduceById,
+    {} as Record<string, ReturnType<typeof processBoardsNotifications>[0]>
+  );
 
   const hasNotifications = notifications.some(
     (notification) => notification.has_updates

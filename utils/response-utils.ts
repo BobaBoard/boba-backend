@@ -1,3 +1,4 @@
+import { BoardByExternalId, DbRealmBoardType } from "server/boards/sql/types";
 import {
   BoardMetadata,
   Comment,
@@ -17,7 +18,6 @@ import {
   ZodDbThreadType,
 } from "types/db/schemas";
 
-import { BoardByExternalId } from "server/boards/sql/types";
 import { BoardRestrictions } from "types/permissions";
 import debug from "debug";
 import { getUserPermissionsForBoard } from "./permissions-utils";
@@ -384,7 +384,11 @@ export const processBoardsSummary = ({
   }));
 };
 
-export const processBoardsNotifications = ({ boards }: { boards: any[] }) => {
+export const processBoardsNotifications = ({
+  boards,
+}: {
+  boards: DbRealmBoardType[];
+}) => {
   return boards.map((board) => ({
     id: board.string_id,
     has_updates: board.has_updates,
@@ -398,4 +402,14 @@ export const processBoardsNotifications = ({ boards }: { boards: any[] }) => {
     last_activity_from_others_at: board.last_activity_from_others_at,
     last_visited_at: board.last_visit_at,
   }));
+};
+
+export const reduceById = <T extends { id: string }>(
+  result: Record<string, T>,
+  current: T
+): Record<string, T> => {
+  result[current.id] = {
+    ...current,
+  };
+  return result;
 };
