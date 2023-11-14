@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from "express";
 import { ApiError } from "handlers/api-errors/codes";
 import { ZodError } from "zod";
 import debug from "debug";
+import opentelemetry from "@opentelemetry/api";
 
 const log = debug("bobaserver:handlers:errors");
 
@@ -14,7 +15,13 @@ export const handleApiErrors = (
   res: Response,
   next: NextFunction
 ) => {
-  log(err);
+  const activeSpan = opentelemetry.trace.getActiveSpan();
+  if ("cause" in err) {
+    activeSpan?.recordException(err.cause as Error);
+    log(`Error cause:`, err.cause);
+  }
+  activeSpan?.recordException(err);
+  log(`Error:`, err);
   if (err instanceof ApiError) {
     res.status(err.statusCode).json({
       message: err.message,
