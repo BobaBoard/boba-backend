@@ -1,4 +1,4 @@
-import { Post, Thread } from "types/rest/threads";
+import { Contribution, Thread } from "types/open-api/generated/types";
 
 import { EventEmitter } from "events";
 
@@ -15,7 +15,7 @@ export interface ThreadCreatedPayload {
 export interface ThreadUpdatedPayload {
   eventType: EVENT_TYPES.THREAD_UPDATED;
   boardSlug: string;
-  post: Post;
+  post: Contribution;
 }
 
 export interface EventToPayload {

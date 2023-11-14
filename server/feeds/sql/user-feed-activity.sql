@@ -17,7 +17,7 @@ SELECT
     COALESCE(muted, FALSE) as muted,
     COALESCE(hidden, FALSE) as hidden,
     COALESCE(starred, FALSE) as starred,
-    -- Post details (DbPostType)
+    -- Post details (ZodDbPostType)
     first_post_string_id as post_id,
     thread_external_id as parent_thread_id,
     NULL as parent_post_id,

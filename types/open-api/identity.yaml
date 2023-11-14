@@ -4,11 +4,15 @@ components:
       type: object
       properties:
         name:
-          type: string
+          oneOf:
+            - type: string
+            - type: "null"
         # TODO[realms]: make this avatar_url
         avatar:
-          type: string
-          format: uri-reference
+          oneOf:
+            - type: string
+              format: uri-reference
+            - type: "null"
       required:
         - name
         - avatar

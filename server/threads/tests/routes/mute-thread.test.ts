@@ -17,7 +17,6 @@ import {
 
 import { BOBATAN_USER_ID } from "test/data/auth";
 import { GenericResponse } from "types/rest/responses";
-import { Thread } from "types/rest/threads";
 import request from "supertest";
 import router from "../../routes";
 

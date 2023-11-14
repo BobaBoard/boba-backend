@@ -12,9 +12,9 @@ import {
 } from "utils/test-utils";
 
 import { CHARACTER_TO_MAIM_POST_ID } from "test/data/posts";
+import { Contribution } from "types/open-api/generated/types";
 import { EventEmitter } from "events";
 import { FAVORITE_CHARACTER_THREAD_ID } from "test/data/threads";
-import { Post } from "types/rest/threads";
 import request from "supertest";
 import router from "../../routes";
 
@@ -86,7 +86,7 @@ describe("Test creating new post REST API", () => {
         });
 
       // TODO: figure out why we're adding comments here and if we actually need it
-      const expectedResponse: Post & { comments: [] } = {
+      const expectedResponse: Contribution & { comments: [] } = {
         content: "this is a new contribution",
         comments: [],
         created_at: expect.any(String),

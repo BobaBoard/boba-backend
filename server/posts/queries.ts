@@ -2,7 +2,7 @@ import {
   BadRequest400Error,
   Forbidden403Error,
 } from "handlers/api-errors/codes";
-import { DbCommentType, DbPostType } from "types/db";
+import { ZodDbCommentType, ZodDbPostType } from "types/db/schemas";
 
 import { ITask } from "pg-promise";
 import { QueryTagsType } from "types/rest/params";
@@ -187,7 +187,7 @@ export const postNewContribution = async (
     threadExternalId?: string;
   },
   transaction?: ITask<unknown>
-): Promise<{ contribution: DbPostType; boardSlug: string } | false> => {
+): Promise<{ contribution: ZodDbPostType; boardSlug: string } | false> => {
   // We define an inner "createContribution" function that always relies on a transaction.
   // At the end of this function, we'll call createContribution with either the transaction passed
   // by the caller (if defined) or one we define ourselves.
@@ -197,7 +197,7 @@ export const postNewContribution = async (
   // needs to be cancelled as a single unit.
   const createContribution = async (
     transaction: ITask<unknown>
-  ): Promise<{ contribution: DbPostType; boardSlug: string }> => {
+  ): Promise<{ contribution: ZodDbPostType; boardSlug: string }> => {
     const { parentPostId, threadExternalId, firebaseId } = contributionData;
     invariant(
       parentPostId || threadExternalId,
@@ -324,7 +324,7 @@ export const postNewCommentWithTransaction = async (
     identityId?: string;
     accessoryId?: string;
   }
-): Promise<{ id: number; comment: DbCommentType }> => {
+): Promise<{ id: number; comment: ZodDbCommentType }> => {
   const { parentPostId, firebaseId, identityId, accessoryId, parentCommentId } =
     commentData;
   let threadData = await transaction.one(sql.getPostDetails, {
@@ -415,14 +415,14 @@ export const postNewCommentChain = async ({
   anonymityType: string;
   identityId?: string;
   accessoryId?: string;
-}): Promise<DbCommentType[] | false> => {
+}): Promise<ZodDbCommentType[] | false> => {
   return pool
     .tx("create-comment-chain", async (transaction) => {
       let prevId: number | null = null;
       let prevExternalId: string | null = null;
       const comments = [];
       for (let content of contentArray) {
-        const newComment: { id: number; comment: DbCommentType } =
+        const newComment: { id: number; comment: ZodDbCommentType } =
           await postNewCommentWithTransaction(transaction, {
             firebaseId,
             parentPostId,
@@ -601,7 +601,7 @@ export const getPostByExternalId = async (
     firebaseId: string | undefined;
     postExternalId: string;
   }
-): Promise<DbPostType> => {
+): Promise<ZodDbPostType> => {
   return await (transaction ?? pool).one(sql.postByExternalId, {
     firebase_id: firebaseId,
     post_string_id: postExternalId,
@@ -622,7 +622,7 @@ export const updatePostTags = async (
       removed: QueryTagsType;
     };
   }
-): Promise<DbPostType | false> => {
+): Promise<ZodDbPostType | false> => {
   const updateTagsMethod = async (transaction: ITask<any>) => {
     const post = await getPostByExternalId(transaction, {
       firebaseId,
