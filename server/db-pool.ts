@@ -49,6 +49,10 @@ const pgLib = pgp({
   // This prevents the DB from hanging during tests
   noLocking: process.env.NODE_ENV === "test",
 });
-const pool = pgLib({ ...databaseConfig, max: 1, allowExitOnIdle: true });
+const pool = pgLib({
+  ...databaseConfig,
+  max: process.env.NODE_ENV === "test" ? 1 : 20,
+  allowExitOnIdle: true,
+});
 
 export default pool;
