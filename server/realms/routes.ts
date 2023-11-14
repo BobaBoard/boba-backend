@@ -80,9 +80,9 @@ const router = express.Router();
  *         description: The realm was not found.
  */
 router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
+  const { realm_slug } = req.params;
   try {
     const currentUserSettings = req.currentUser?.settings || [];
-    const { realm_slug } = req.params;
     const settings = await getSettingsBySlug({
       realmSlug: realm_slug,
       userSettings: currentUserSettings,
@@ -130,9 +130,10 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
     });
   } catch (e) {
     error(e);
-    res.status(500).json({
-      message: "There was an error fetching realm data.",
-    });
+    throw new Internal500Error(
+      `There was an error fetching realm data for realm ${realm_slug});`,
+      { cause: e as Error }
+    );
   }
 });
 
@@ -167,9 +168,8 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
  *         description: The realm was not found.
  */
 router.get("/:realm_id/activity", ensureRealmExists, async (req, res) => {
+  const { realm_id } = req.params;
   try {
-    const { realm_id } = req.params;
-
     // TODO[realms]: use a per-realm query here
     const boards = await getBoards({
       firebaseId: req.currentUser?.uid || null,
@@ -188,9 +188,10 @@ router.get("/:realm_id/activity", ensureRealmExists, async (req, res) => {
     });
   } catch (e) {
     error(e);
-    res.status(500).json({
-      message: "There was an error fetching realm data.",
-    });
+    throw new Internal500Error(
+      `There was an error fetching realm data for realm ${realm_id});`,
+      { cause: e as Error }
+    );
   }
 });
 
@@ -924,7 +925,9 @@ router.get(
       });
     } catch (e) {
       error(e);
-      throw new Internal500Error("There was an error fetching realm roles.");
+      throw new Internal500Error("There was an error fetching realm roles.", {
+        cause: e as Error,
+      });
     }
   }
 );

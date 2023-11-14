@@ -6,12 +6,12 @@ import { Internal500Error } from "handlers/api-errors/codes";
 import { SettingEntry } from "../types/settings";
 import debug from "debug";
 import { getUserSettings } from "server/users/queries";
+import opentelemetry from "@opentelemetry/api";
 import stringify from "fast-json-stable-stringify";
 
 const log = debug("bobaserver:auth-log");
 const error = debug("bobaserver:auth-error");
 
-const ADMIN_ID = "c6HimTlg2RhVH3fC1psXZORdLcx2";
 const EXPIRED_TOKEN_ERROR = "Authentication token expired.";
 const NO_USER_FOUND_ERROR = "No authenticated user found.";
 declare global {
@@ -34,6 +34,8 @@ export const withLoggedIn = (
   const idToken = req.headers?.authorization;
   req.currentUser = undefined;
 
+  const activeSpan = opentelemetry.trace.getActiveSpan();
+
   if (!idToken) {
     log("No id token found in request. User is not logged in.");
     req.authenticationError = new Error(NO_USER_FOUND_ERROR);
@@ -44,6 +46,7 @@ export const withLoggedIn = (
     .auth()
     .verifyIdToken(idToken)
     .then((decodedToken) => {
+      activeSpan?.setAttribute("user.id", decodedToken.uid);
       log(`Found id token in request: ${decodedToken.uid}`);
       // @ts-ignore
       req.currentUser = decodedToken;
@@ -64,6 +67,9 @@ export const withLoggedIn = (
         req.authenticationError = new Error(EXPIRED_TOKEN_ERROR);
         next();
         return;
+      }
+      if (e.errorInfo?.code == "auth/argument-error") {
+        log("Found invalid authentication token: ", idToken);
       }
       error("Error during verification. No user set.");
       error(e.errorInfo);

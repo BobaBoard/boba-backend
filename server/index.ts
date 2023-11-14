@@ -2,16 +2,7 @@
 import dotenv from "dotenv";
 import dotenvExpand from "dotenv-expand";
 dotenvExpand(dotenv.config());
-
-if (process.env.NODE_ENV == "production") {
-  require("honeycomb-beeline")({
-    // Get this via https://ui.honeycomb.io/account after signing up for Honeycomb
-    writeKey: process.env.HONEYCOMB_API_KEY,
-    // The name of your app is a good choice to start with
-    dataset: "bobaserver",
-    serviceName: "bobaboard-backend-service",
-  });
-}
+import "./telemetry";
 
 import express from "express";
 require("express-async-errors");
