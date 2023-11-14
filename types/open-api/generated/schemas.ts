@@ -85,7 +85,10 @@ const SecretIdentity = z.object({
   color: z.union([z.string(), z.null()]).optional(),
   accessory: z.union([z.string(), z.null()]).optional(),
 });
-const Identity = z.object({ name: z.string(), avatar: z.string() });
+const Identity = z.object({
+  name: z.union([z.string(), z.null()]),
+  avatar: z.union([z.string(), z.null()]),
+});
 const Tags = z.object({
   whisper_tags: z.array(z.string()),
   index_tags: z.array(z.string()),

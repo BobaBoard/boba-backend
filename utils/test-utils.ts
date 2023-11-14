@@ -1,9 +1,9 @@
 import { ensureLoggedIn, withLoggedIn, withUserSettings } from "handlers/auth";
 import express, { Express, Router } from "express";
 
-import { DbThreadSummaryType } from "types/db";
 import { ITask } from "pg-promise";
 import { Server } from "http";
+import { ZodDbThreadSummaryType } from "types/db/schemas";
 import bodyParser from "body-parser";
 import debug from "debug";
 import { handleApiErrors } from "handlers/api-errors/handler";
@@ -123,7 +123,7 @@ export const startTestServer = (router: Router) => {
   return server;
 };
 
-export const extractActivity = (thread: DbThreadSummaryType) => {
+export const extractActivity = (thread: ZodDbThreadSummaryType) => {
   return {
     thread_id: thread.thread_id,
     created_at: thread.created_at,

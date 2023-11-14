@@ -21,7 +21,7 @@ import {
 import { ENSURE_LOGGED_IN_NO_TOKEN } from "test/data/responses";
 import { EventEmitter } from "events";
 import { GenericResponse } from "types/rest/responses";
-import { Thread } from "types/rest/threads";
+import { Thread } from "types/open-api/generated/types";
 import { mocked } from "jest-mock";
 import request from "supertest";
 import router from "../../routes";

@@ -1,21 +1,21 @@
 import {
   BoardMetadata,
+  Comment,
+  Contribution,
   LoggedInBoardMetadata,
 } from "types/open-api/generated/types";
-import { Comment, Post, Thread } from "types/rest/threads";
 // TODO: deprecate these
-import {
-  DbBoardCategoryDescription,
-  DbBoardTextDescription,
-  DbCommentType,
-  DbPostType,
-  DbThreadSummaryType,
-} from "types/db";
+import { DbBoardCategoryDescription, DbBoardTextDescription } from "types/db";
 import {
   ThreadSchema,
   ThreadSummarySchema,
 } from "types/open-api/generated/schemas";
-import { ZodDbThreadSummaryType, ZodDbThreadType } from "types/db/schemas";
+import {
+  ZodDbCommentType,
+  ZodDbPostType,
+  ZodDbThreadSummaryType,
+  ZodDbThreadType,
+} from "types/db/schemas";
 
 import { BoardByExternalId } from "server/boards/sql/types";
 import { BoardRestrictions } from "types/permissions";
@@ -56,8 +56,8 @@ export const transformImageUrls = (obj: any) => {
 export const mergeObjectIdentity = <T>(
   object: T & {
     author: number;
-    username: string;
-    user_avatar: string;
+    username: string | null;
+    user_avatar: string | null;
     secret_identity_name: string;
     secret_identity_avatar: string;
     secret_identity_color: string | null;
@@ -73,8 +73,8 @@ export const mergeObjectIdentity = <T>(
     accessory?: string;
   };
   user_identity?: {
-    name: string;
-    avatar: string;
+    name: string | null;
+    avatar: string | null;
   };
 } => {
   info(`Merging activity of object:`);
@@ -146,6 +146,8 @@ export const makeServerThreadSummary = (
 // TODO: finish type safeing this
 export const makeServerThread = (thread: ZodDbThreadType) => {
   const posts = thread.posts?.map(makeServerPost) || [];
+  // Some queries end up having comments within posts when coming out of the DB, althogh
+  // that's theoretically wrong
   // TODO[realms]: remove this
   const postsWithoutComments = posts.map((post) => {
     // @ts-expect-error
@@ -157,7 +159,7 @@ export const makeServerThread = (thread: ZodDbThreadType) => {
     ...makeServerThreadSummary(thread),
     posts: postsWithoutComments,
     comments: posts.reduce(
-      (agg: { [contribution_id: string]: Comment[] }, post: Post) => {
+      (agg: { [contribution_id: string]: Comment[] }, post: Contribution) => {
         // @ts-expect-error
         log(post.comments);
         // @ts-expect-error
@@ -173,9 +175,11 @@ export const makeServerThread = (thread: ZodDbThreadType) => {
 };
 
 export const makeServerPost = (
-  post: DbPostType | DbThreadSummaryType
-): Post => {
-  const oldPost = mergeObjectIdentity<DbPostType | DbThreadSummaryType>(post);
+  post: ZodDbPostType | ZodDbThreadSummaryType
+): Contribution => {
+  const oldPost = mergeObjectIdentity<ZodDbPostType | ZodDbThreadSummaryType>(
+    post
+  );
 
   const serverPost = {
     id: post.post_id,
@@ -206,8 +210,8 @@ export const makeServerPost = (
   return serverPost;
 };
 
-export const makeServerComment = (comment: DbCommentType): Comment => {
-  const identityPost = mergeObjectIdentity<DbCommentType>(comment);
+export const makeServerComment = (comment: ZodDbCommentType): Comment => {
+  const identityPost = mergeObjectIdentity<ZodDbCommentType>(comment);
   return {
     id: comment.comment_id,
     parent_comment_id: comment.parent_comment_id,

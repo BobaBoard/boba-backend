@@ -18,7 +18,6 @@ import {
 
 import { BOBATAN_USER_ID } from "test/data/auth";
 import { GenericResponse } from "types/rest/responses";
-import { Thread } from "types/rest/threads";
 import request from "supertest";
 import router from "../../routes";
 
@@ -118,9 +117,7 @@ describe("Tests threads REST API - unstar", () => {
 
   test("should fail when thread does not exist", async () => {
     setLoggedInUser(BOBATAN_USER_ID);
-    const res = await request(server.app).delete(
-      `/${NULL_ID}/stars`
-      );
+    const res = await request(server.app).delete(`/${NULL_ID}/stars`);
 
     expect(res.status).toBe(404);
     expect(res.body).toEqual<GenericResponse>(NULL_THREAD_NOT_FOUND);

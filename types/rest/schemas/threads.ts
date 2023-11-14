@@ -1,4 +1,7 @@
-import { Identity, SecretIdentity } from "./identity";
+import {
+  IdentitySchema,
+  SecretIdentitySchema,
+} from "types/open-api/generated/schemas";
 
 import { z } from "zod";
 
@@ -15,8 +18,8 @@ export const Post = z.object({
   parent_post_id: z.string().nullable(),
   content: z.string(),
   created_at: z.string(),
-  secret_identity: SecretIdentity,
-  user_identity: z.optional(Identity.nullable()),
+  secret_identity: SecretIdentitySchema,
+  user_identity: z.optional(IdentitySchema.nullable()),
   own: z.boolean(),
   new: z.boolean(),
   friend: z.boolean(),
@@ -31,8 +34,8 @@ export const Comment = z.object({
   parent_comment_id: z.string().nullable(),
   chain_parent_id: z.string().nullable(),
   content: z.string(),
-  secret_identity: SecretIdentity,
-  user_identity: z.optional(Identity.nullable()),
+  secret_identity: SecretIdentitySchema,
+  user_identity: z.optional(IdentitySchema.nullable()),
   created_at: z.string(),
   own: z.boolean(),
   new: z.boolean(),

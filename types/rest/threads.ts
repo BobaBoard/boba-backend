@@ -1,5 +1,7 @@
 import { Identity, SecretIdentity } from "./identity";
 
+import { Contribution } from "types/open-api/generated/types";
+
 export interface Tags {
   whisper_tags: string[];
   index_tags: string[];
@@ -52,17 +54,12 @@ export interface ThreadSummary extends ThreadActivitySummary {
   parent_board_id: string;
   parent_realm_slug: string;
   parent_realm_id: string;
-  starter: Post;
+  starter: Contribution;
   default_view: "thread" | "gallery" | "timeline";
   new: boolean;
   muted: boolean;
   hidden: boolean;
   starred: boolean;
-}
-
-export interface Thread extends ThreadSummary {
-  posts: Post[];
-  comments: { [contribution_id: string]: Comment[] };
 }
 
 export interface Feed {
