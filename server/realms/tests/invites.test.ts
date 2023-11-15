@@ -1,8 +1,10 @@
 import {
+  ALL_USERS,
   BOBATAN_USER_ID,
   JERSEY_DEVIL_USER_ID,
   ONCEST_USER_ID,
   SEXY_DADDY_USER_ID,
+  UWU_USERS,
   ZODIAC_KILLER_USER_ID,
 } from "test/data/auth";
 import {
@@ -20,7 +22,6 @@ import {
 
 import { checkUserOnRealm } from "../queries";
 import debug from "debug";
-import firebaseAuth from "firebase-admin";
 import pool from "server/db-pool";
 import request from "supertest";
 import router from "../routes";
@@ -850,24 +851,12 @@ describe("Tests accept invites endpoint", () => {
         realm_slug: UWU_REALM_SLUG,
       });
 
-      const preExistingUsers = [
-        BOBATAN_USER_ID,
-        JERSEY_DEVIL_USER_ID,
-        ONCEST_USER_ID,
-        SEXY_DADDY_USER_ID,
-        ZODIAC_KILLER_USER_ID,
-      ];
       const users = await pool.many(`SELECT users.firebase_id FROM users;`);
-      expect(users).toHaveLength(preExistingUsers.length + 1);
-      expect(users[preExistingUsers.length]).toEqual({
+      expect(users).toHaveLength(ALL_USERS.length + 1);
+      expect(users[ALL_USERS.length]).toEqual({
         firebase_id: NEW_USER_FIREBASE_ID,
       });
 
-      const preExistingUsersInRealm = [
-        BOBATAN_USER_ID,
-        ZODIAC_KILLER_USER_ID,
-        SEXY_DADDY_USER_ID,
-      ];
       const usersInRealm = await pool.many(
         `SELECT users.firebase_id
       FROM realm_users
@@ -877,8 +866,8 @@ describe("Tests accept invites endpoint", () => {
           REALM_EXTERNAL_id: UWU_REALM_EXTERNAL_ID,
         }
       );
-      expect(usersInRealm).toHaveLength(preExistingUsersInRealm.length + 1);
-      expect(usersInRealm[preExistingUsersInRealm.length]).toEqual({
+      expect(usersInRealm).toHaveLength(UWU_USERS.length + 1);
+      expect(usersInRealm[UWU_USERS.length]).toEqual({
         firebase_id: NEW_USER_FIREBASE_ID,
       });
     });
@@ -906,24 +895,12 @@ describe("Tests accept invites endpoint", () => {
         realm_slug: UWU_REALM_SLUG,
       });
 
-      const preExistingUsers = [
-        BOBATAN_USER_ID,
-        JERSEY_DEVIL_USER_ID,
-        ONCEST_USER_ID,
-        SEXY_DADDY_USER_ID,
-        ZODIAC_KILLER_USER_ID,
-      ];
       const users = await pool.many(`SELECT users.firebase_id FROM users;`);
-      expect(users).toHaveLength(preExistingUsers.length + 1);
-      expect(users[preExistingUsers.length]).toEqual({
+      expect(users).toHaveLength(ALL_USERS.length + 1);
+      expect(users[ALL_USERS.length]).toEqual({
         firebase_id: NEW_USER_FIREBASE_ID,
       });
 
-      const preExistingUsersInRealm = [
-        BOBATAN_USER_ID,
-        ZODIAC_KILLER_USER_ID,
-        SEXY_DADDY_USER_ID,
-      ];
       const usersInRealm = await pool.many(
         `SELECT users.firebase_id
         FROM realm_users
@@ -933,8 +910,8 @@ describe("Tests accept invites endpoint", () => {
           REALM_EXTERNAL_id: UWU_REALM_EXTERNAL_ID,
         }
       );
-      expect(usersInRealm).toHaveLength(preExistingUsersInRealm.length + 1);
-      expect(usersInRealm[preExistingUsersInRealm.length]).toEqual({
+      expect(usersInRealm).toHaveLength(UWU_USERS.length + 1);
+      expect(usersInRealm[UWU_USERS.length]).toEqual({
         firebase_id: NEW_USER_FIREBASE_ID,
       });
     });

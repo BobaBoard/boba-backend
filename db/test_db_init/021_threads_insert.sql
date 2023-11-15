@@ -27,7 +27,7 @@ WITH
          ARRAY['fight me on this'], 
          'strangers',
          to_timestamp('2020-05-01 05:42:00', 'YYYY-MM-DD HH:MI:SS')),
-        ('b95bb260-eae0-456c-a5d0-8ae9e52608d8', 
+        ('550337cb-3590-4252-9307-b922d17b9084', 
          1,
          (SELECT id FROM new_thread_id),
          (SELECT id FROM Users WHERE username = 'oncest5evah'),
@@ -40,7 +40,7 @@ WITH
   comments_insert1 AS
     (INSERT INTO comments(string_id, parent_post, parent_thread, author, created, content, anonymity_type, chain_parent_comment)
       VALUES (
-        '46a16199-33d1-48c2-bb79-4d4095014688',
+        'caa8b54a-eb5e-4134-8ae2-a3946a428ec7',
         (SELECT id FROM posts_insert ORDER BY id DESC LIMIT 1),
         (SELECT id FROM new_thread_id),
         (SELECT id FROM Users WHERE username = 'bobatan'),
@@ -60,6 +60,18 @@ WITH
         '[{"insert":"friends!!!!!"}]', 
         'strangers',
         (SELECT id FROM comments_insert1 LIMIT 1)
+      )),
+  comments_insert3 AS
+    (INSERT INTO comments(string_id, parent_post, parent_thread, author, created, content, anonymity_type, chain_parent_comment)
+      VALUES (
+        'afc72387-20e9-459d-afca-33ae7c581510',
+        (SELECT id FROM posts_insert ORDER BY id DESC LIMIT 1),
+        (SELECT id FROM new_thread_id),
+        (SELECT id FROM Users WHERE firebase_id = 'a_anon_with_no_name_user_id'),
+        to_timestamp('2020-05-02 06:06:00', 'YYYY-MM-DD HH:MI:SS'),
+        '[{"insert":"You''re all weirdos (affectionate)"}]', 
+        'strangers',
+        NULL
       ))
 INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
     VALUES
@@ -68,7 +80,10 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
       (SELECT id FROM secret_identities WHERE display_name = 'Old Time-y Anon')),
      ((SELECT id FROM new_thread_id),
       (SELECT id FROM Users WHERE username = 'oncest5evah'),
-      (SELECT id FROM secret_identities WHERE display_name = 'DragonFucker'));
+      (SELECT id FROM secret_identities WHERE display_name = 'DragonFucker')),
+     ((SELECT id FROM new_thread_id),
+      (SELECT id FROM Users WHERE firebase_id = 'a_anon_with_no_name_user_id'),
+      (SELECT id FROM secret_identities WHERE display_name = 'The Prophet'));
 
 WITH
   new_thread_id AS
@@ -142,7 +157,7 @@ WITH
   comments_insert1 AS
     (INSERT INTO comments(string_id, parent_post, parent_thread, author, created, content, anonymity_type)
       VALUES (
-        '21b16199-33d1-48c2-bb79-4d4095014avd',
+        'caa8b54a-eb5e-4134-8ae2-a3946a428ec7',
         (SELECT id FROM posts_insert ORDER BY id DESC LIMIT 1),
         (SELECT id FROM new_thread_id),
         (SELECT id FROM Users WHERE username = 'jersey_devil_69'),
@@ -167,8 +182,6 @@ INSERT INTO user_thread_identities(thread_id, user_id, identity_id)
      ((SELECT id FROM new_thread_id),
       (SELECT id FROM Users WHERE username = 'jersey_devil_69'),
       (SELECT id FROM secret_identities WHERE display_name = 'DragonFucker'));
-
-INSERT INTO friends(user_id,friend_id) VALUES (1,3),(3,1);
 
 INSERT INTO tags(tag)  VALUES
   ('good'),

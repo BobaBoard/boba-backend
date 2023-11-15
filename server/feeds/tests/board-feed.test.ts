@@ -40,7 +40,7 @@ describe("Tests boards activity queries", () => {
           threads_amount: 0,
         },
         {
-          comments_amount: 2,
+          comments_amount: 3,
           created_at: "2020-04-30T03:23:00.00Z",
           is_new: false,
           thread_last_activity_at: "2020-05-23T05:52:00.00Z",
@@ -94,7 +94,7 @@ describe("Tests boards activity queries", () => {
           threads_amount: 0,
         },
         {
-          comments_amount: 2,
+          comments_amount: 3,
           created_at: "2020-04-30T03:23:00.00Z",
           thread_last_activity_at: "2020-05-23T05:52:00.00Z",
           thread_last_activity_at_micro: "2020-05-23T05:52:00.000000",

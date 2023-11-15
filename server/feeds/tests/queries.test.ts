@@ -168,7 +168,7 @@ describe("feed activity queries", () => {
         threads_amount: 135,
       },
       {
-        comments_amount: 2,
+        comments_amount: 3,
         created_at: "2020-04-30T03:23:00.00Z",
         is_new: false,
         new_comments_amount: 0,
@@ -239,7 +239,7 @@ describe("feed activity queries", () => {
 
     expect(feed.activity.map(extractActivity)).toEqual([
       {
-        comments_amount: 2,
+        comments_amount: 3,
         created_at: "2020-04-30T03:23:00.00Z",
         is_new: false,
         new_comments_amount: 0,
