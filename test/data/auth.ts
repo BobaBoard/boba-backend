@@ -30,4 +30,25 @@ export const SEXY_DADDY_USER_ID = "fb4";
 // uwu realm: member, The Owner (edit_board_details, post_as_role, move_thread, create_realm_invite, view_roles_on_realm)
 export const ZODIAC_KILLER_USER_ID = "fb5";
 
+// The Zodiac Killer:
+// twisted-minds realm: member
+// uwu realm: member
+export const ANON_WITH_NO_NAME_USER_ID = "a_anon_with_no_name_user_id";
+
 export const GORE_MASTER_IDENTITY_ID = "e5f86f53-6dcd-4f15-b6ea-6ca1f088e62d";
+
+export const ALL_USERS = [
+  BOBATAN_USER_ID,
+  JERSEY_DEVIL_USER_ID,
+  ONCEST_USER_ID,
+  SEXY_DADDY_USER_ID,
+  ZODIAC_KILLER_USER_ID,
+  ANON_WITH_NO_NAME_USER_ID,
+] as const;
+
+export const UWU_USERS = [
+  BOBATAN_USER_ID,
+  ZODIAC_KILLER_USER_ID,
+  SEXY_DADDY_USER_ID,
+  ANON_WITH_NO_NAME_USER_ID,
+] as const;

@@ -105,7 +105,7 @@ describe("ci-disable", () => {
         friend: true,
         user_identity: ONCEST_USER_IDENTITY,
         // TODO: the total comments amount should be returned also in the other queries
-        total_comments_amount: 2,
+        total_comments_amount: 3,
         tags: {
           ...CHARACTER_TO_MAIM_POST.tags,
           category_tags: ["new_category_tag"],
@@ -130,7 +130,7 @@ describe("ci-disable", () => {
       expect(res.body).toEqual({
         ...CHARACTER_TO_MAIM_POST,
         // TODO: the total comments amount should be returned also in the other queries
-        total_comments_amount: 2,
+        total_comments_amount: 3,
         new_comments_amount: 2,
         own: true,
         tags: {

@@ -42,7 +42,7 @@ describe("Tests notifications", () => {
       {
         thread_id: FAVORITE_CHARACTER_THREAD_ID,
         is_new: true,
-        new_comments_amount: 2,
+        new_comments_amount: 3,
         new_posts_amount: 3,
       },
     ]);
@@ -286,7 +286,7 @@ describe("Tests notifications", () => {
       {
         thread_id: FAVORITE_CHARACTER_THREAD_ID,
         is_new: false,
-        new_comments_amount: 2,
+        new_comments_amount: 3,
         new_posts_amount: 2,
       },
       {
