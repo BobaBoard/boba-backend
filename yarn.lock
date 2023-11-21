@@ -6127,10 +6127,10 @@ openapi-types@^12.0.2:
   resolved "https://registry.npmjs.org/openapi-types/-/openapi-types-12.1.0.tgz"
   integrity sha512-XpeCy01X6L5EpP+6Hc3jWN7rMZJ+/k1lwki/kTmWzbVhdPie3jd5O2ZtedEx8Yp58icJ0osVldLMrTB/zslQXA==
 
-openapi-zod-client@^1.5.3:
-  version "1.5.3"
-  resolved "https://registry.npmjs.org/openapi-zod-client/-/openapi-zod-client-1.5.3.tgz"
-  integrity sha512-srTjQlXeokLrkd2e/fJARwJBHFq9FItvz7Ohf/Qy80wqVumWS7XG7VALZ0Hen7OjnciXDLWubIeHuTym+iR6EQ==
+openapi-zod-client@1.5:
+  version "1.5.8"
+  resolved "https://registry.yarnpkg.com/openapi-zod-client/-/openapi-zod-client-1.5.8.tgz#63b44c83bd46b13ffd37030813e3198c6bc86134"
+  integrity sha512-wnYfzFuxHYnAggxLw4u6146GOqT2puRpvhVXqwQeSo7b6BfPm7Z/2DqCznJ88qfKKo38JLJpkQLpEUDdP8/IaQ==
   dependencies:
     "@apidevtools/swagger-parser" "^10.1.0"
     "@liuli-util/fs-extra" "^0.1.0"
@@ -6231,9 +6231,9 @@ parseurl@~1.3.3:
   integrity sha512-CiyeOxFT/JZyN5m0z9PfXw4SCBJ6Sygz1Dpl0wqjlhDEGGBP1GnsUVEL0p63hoG1fcj3fHynXi9NYO4nWOL+qQ==
 
 pastable@^2.0.13:
-  version "2.1.1"
-  resolved "https://registry.npmjs.org/pastable/-/pastable-2.1.1.tgz"
-  integrity sha512-o4a3UBiHOOdEwEoZMFw7LO0rod815FAy5kklT4pqs1ZRgBHOwqts36fYVZ1QW3SLj3GSZwl5p+sBuhgRnq7s2w==
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/pastable/-/pastable-2.2.1.tgz#094145b0ded94f836bfcd3f35d49f6785a9c7e88"
+  integrity sha512-K4ClMxRKpgN4sXj6VIPPrvor/TMp2yPNCGtfhvV106C73SwefQ3FuegURsH7AQHpqu0WwbvKXRl1HQxF6qax9w==
   dependencies:
     "@babel/core" "^7.20.12"
     ts-toolbelt "^9.6.0"
@@ -7376,9 +7376,9 @@ ts-node@^8.9.1:
     yn "3.1.1"
 
 ts-pattern@^4.0.5:
-  version "4.1.3"
-  resolved "https://registry.npmjs.org/ts-pattern/-/ts-pattern-4.1.3.tgz"
-  integrity sha512-8beXMWTGEv1JfDjSxfNhe4uT5jKYdhmEUKzt4gZW9dmHlquq3b+IbEyA7vX9LjBfzHmvKnM4HiomAUCyaW2Pew==
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/ts-pattern/-/ts-pattern-4.3.0.tgz#7a995b39342f1b00d1507c2d2f3b90ea16e178a6"
+  integrity sha512-pefrkcd4lmIVR0LA49Imjf9DYLK8vtWhqBPA3Ya1ir8xCW0O2yjL9dsCVvI7pCodLC5q7smNpEtDR2yVulQxOg==
 
 ts-toolbelt@^9.6.0:
   version "9.6.0"

@@ -2,11 +2,6 @@ import { z } from "zod";
 
 // Database type schemas
 
-const DbIdentitySchema = z.object({
-  username: z.string().nullable(),
-  user_avatar: z.string().nullable(),
-});
-
 /**
  * Expands object types recursively, thus making the resulting type
  * more readable. Doesn't actually change the type.
@@ -17,28 +12,10 @@ export type MakeRecursiveTypeReadable<T> = T extends object
     : never
   : T;
 
-export const CommentTypeSchema = z.object({
-  comment_id: z.string(),
-  parent_post_id: z.string(),
-  parent_comment_id: z.string().nullable(),
-  chain_parent_id: z.string().nullable(),
-  author: z.number(),
-  username: z.string(),
-  user_avatar: z.string(),
-  secret_identity_name: z.string(),
-  secret_identity_avatar: z.string(),
-  secret_identity_color: z.string().nullable(),
-  accessory_avatar: z.string().nullable(),
-  content: z.string(),
-  created_at: z.string(),
-  // TODO: deprecate this
-  anonymity_type: z.enum(["everyone", "strangers"]),
-  self: z.boolean(),
-  friend: z.boolean(),
-  is_new: z.boolean(),
-  is_own: z.boolean(),
+const DbIdentitySchema = z.object({
+  username: z.string().nullable(),
+  user_avatar: z.string().nullable(),
 });
-
 const DbSecretIdentitySchema = z.object({
   secret_identity_name: z.string(),
   secret_identity_avatar: z.string(),
@@ -65,7 +42,7 @@ const DbCommentTypeSchema = z
   .merge(DbSecretIdentitySchema);
 export type ZodDbCommentType = z.infer<typeof DbCommentTypeSchema>;
 
-const ZodDbPostTypeSchema = z
+const DbPostTypeSchema = z
   .object({
     post_id: z.string(),
     parent_thread_id: z.string(),
@@ -91,7 +68,7 @@ const ZodDbPostTypeSchema = z
   .merge(DbIdentitySchema)
   .merge(DbSecretIdentitySchema);
 
-export type ZodDbPostType = z.infer<typeof ZodDbPostTypeSchema>;
+export type ZodDbPostType = z.infer<typeof DbPostTypeSchema>;
 
 const DbThreadTypeSchema = z.object({
   thread_id: z.string(),
@@ -99,7 +76,7 @@ const DbThreadTypeSchema = z.object({
   board_id: z.string(),
   realm_slug: z.string(),
   realm_id: z.string(),
-  posts: z.array(ZodDbPostTypeSchema),
+  posts: z.array(DbPostTypeSchema),
   comments: z.array(DbCommentTypeSchema),
   default_view: z.enum(["thread", "gallery", "timeline"]),
   thread_new_comments_amount: z.number(),
@@ -117,22 +94,24 @@ export type ZodDbThreadType = z.infer<typeof DbThreadTypeSchema>;
 export const ThreadSummaryTypeSchema = DbThreadTypeSchema.omit({
   posts: true,
   comments: true,
-})
-  .merge(DbThreadTypeSchema.omit({ posts: true }))
-  .merge(
-    ZodDbPostTypeSchema.omit({
-      total_comments_amount: true,
-      new_comments_amount: true,
-      comments: true,
-    })
-  );
+}).merge(
+  DbPostTypeSchema.omit({
+    total_comments_amount: true,
+    new_comments_amount: true,
+    comments: true,
+  })
+);
 
 export type ZodDbThreadSummaryType = MakeRecursiveTypeReadable<
   z.infer<typeof ThreadSummaryTypeSchema>
 >;
 
-const FeedTypeSchema = z.object({
+export const FeedTypeSchema = z.object({
   cursor: z.string().nullable(),
-  activity: z.array(ThreadSummaryTypeSchema),
+  activity: z.array(
+    ThreadSummaryTypeSchema.extend({
+      thread_last_activity_at_micro: z.string(),
+    })
+  ),
 });
 export type ZodDbFeedType = z.infer<typeof FeedTypeSchema>;

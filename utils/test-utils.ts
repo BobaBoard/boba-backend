@@ -3,7 +3,7 @@ import express, { Express, Router } from "express";
 
 import { ITask } from "pg-promise";
 import { Server } from "http";
-import { ZodDbThreadSummaryType } from "types/db/schemas";
+import { ZodDbFeedType } from "types/db/schemas";
 import bodyParser from "body-parser";
 import debug from "debug";
 import { handleApiErrors } from "handlers/api-errors/handler";
@@ -123,7 +123,7 @@ export const startTestServer = (router: Router) => {
   return server;
 };
 
-export const extractActivity = (thread: ZodDbThreadSummaryType) => {
+export const extractActivity = (thread: ZodDbFeedType["activity"][0]) => {
   return {
     thread_id: thread.thread_id,
     created_at: thread.created_at,
