@@ -1,4 +1,4 @@
-import { FeedTypeSchema, ZodDbFeedType } from "zodtypes";
+import { FeedTypeSchema, ZodDbFeedType } from "types/db/schemas";
 import { decodeCursor, encodeCursor } from "utils/queries-utils";
 
 import debug from "debug";

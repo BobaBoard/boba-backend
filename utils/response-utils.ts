@@ -265,7 +265,7 @@ export const processBoardMetadata = ({
   isLoggedIn: boolean;
   hasBoardAccess: boolean;
 }) => {
-  let finalMetadata: Partial<BoardMetadata> | LoggedInBoardMetadata = {
+  let finalMetadata: Partial<BoardMetadata> | Partial<LoggedInBoardMetadata> = {
     id: metadata.external_id,
     slug: metadata.slug,
     avatar_url: metadata.avatar_url,
@@ -297,16 +297,13 @@ export const processBoardMetadata = ({
   };
 
   if (!isLoggedIn) {
-    // @ts-expect-error Fix this when fixing the type of metadata to truly match the db (done)
-    delete finalMetadata.permissions;
-    // @ts-expect-error Fix this when fixing the type of metadata to truly match the db (done)
-    delete finalMetadata.posting_identities;
-    // @ts-expect-error Fix this when fixing the type of metadata to truly match the db (done)
-    delete finalMetadata.accessories;
+    "permissions" in finalMetadata && delete finalMetadata.permissions;
+    "posting_identities" in finalMetadata &&
+      delete finalMetadata.posting_identities;
+    "accessories" in finalMetadata && delete finalMetadata.accessories;
   }
 
-  // @ts-expect-error Fix this when fixing the type of metadata to truly match the db (done)
-  if (!hasBoardAccess && metadata.loggedInOnly) {
+  if (!hasBoardAccess && "loggedInOnly" in metadata && metadata.loggedInOnly) {
     finalMetadata.descriptions = [];
   }
 

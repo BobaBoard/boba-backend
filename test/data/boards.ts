@@ -1,8 +1,9 @@
 import {
   BoardMetadata,
+  BoardSummary,
   LoggedInBoardMetadata,
+  LoggedInBoardSummary,
 } from "types/open-api/generated/types";
-import { BoardSummary, LoggedInBoardSummary } from "types/rest/boards";
 
 import { GenericResponse } from "../../types/rest/responses";
 

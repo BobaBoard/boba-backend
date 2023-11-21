@@ -82,7 +82,7 @@
     "json-to-pretty-yaml": "^1.2.2",
     "nodemon": "^2.0.3",
     "openapi-examples-validator": "^4.4.0",
-    "openapi-zod-client": "^1.5.3",
+    "openapi-zod-client": "1.5",
     "supertest": "^4.0.2",
     "ts-jest": "^27.0.5",
     "ts-node": "^8.9.1",
