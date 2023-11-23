@@ -168,7 +168,7 @@ WITH
   comments_insert2 AS
     (INSERT INTO comments(string_id, parent_post, parent_thread, author, created, content, anonymity_type, parent_comment)
       VALUES (
-        'ad3c3682-cb74-43f9-9a63-bd97d0f59z87',
+        '20354d7a-e4fe-47af-8ff6-187bca92f3f9',
         (SELECT id FROM posts_insert ORDER BY id DESC LIMIT 1),
         (SELECT id FROM new_thread_id),
         (SELECT id FROM Users WHERE username = 'jersey_devil_69'),

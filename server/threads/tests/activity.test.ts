@@ -395,7 +395,7 @@ describe("threads activity queries", () => {
               is_new: false,
             },
             {
-              comment_id: "ad3c3682-cb74-43f9-9a63-bd97d0f59z87",
+              comment_id: "20354d7a-e4fe-47af-8ff6-187bca92f3f9",
               is_new: false,
             },
           ],
