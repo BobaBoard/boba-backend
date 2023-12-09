@@ -273,17 +273,10 @@ export const muteBoard = async ({
   boardExternalId: string;
   firebaseId: string;
 }) => {
-  try {
-    await pool.none(sql.muteBoardByExternalId, {
-      firebase_id: firebaseId,
-      board_id: boardExternalId,
-    });
-    return true;
-  } catch (e) {
-    error(`Error while muting board.`);
-    error(e);
-    return false;
-  }
+  await pool.none(sql.muteBoardByExternalId, {
+    firebase_id: firebaseId,
+    board_id: boardExternalId,
+  });
 };
 
 export const unmuteBoard = async ({
@@ -293,17 +286,10 @@ export const unmuteBoard = async ({
   boardExternalId: string;
   firebaseId: string;
 }) => {
-  try {
-    await pool.none(sql.unmuteBoardByExternalId, {
-      firebase_id: firebaseId,
-      board_id: boardExternalId,
-    });
-    return true;
-  } catch (e) {
-    error(`Error while unmuting board.`);
-    error(e);
-    return false;
-  }
+  await pool.none(sql.unmuteBoardByExternalId, {
+    firebase_id: firebaseId,
+    board_id: boardExternalId,
+  });
 };
 
 export const pinBoard = async ({

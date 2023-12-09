@@ -443,21 +443,17 @@ router.post(
   ensureBoardAccess,
   async (req, res) => {
     const { board_id: boardExternalId } = req.params;
+    log(`Muting board: ${boardExternalId} for user ${req.currentUser!.uid}.`);
 
-    if (
-      !(await muteBoard({
-        firebaseId: req.currentUser!.uid,
-        boardExternalId,
-      }))
-    ) {
-      res.sendStatus(500);
-      return;
-    }
+    await muteBoard({
+      firebaseId: req.currentUser!.uid,
+      boardExternalId,
+    });
 
     await cache().hDel(CacheKeys.BOARD, boardExternalId);
     await cache().hDel(CacheKeys.USER_PINS, req.currentUser!.uid);
 
-    info(`Muted board: ${boardExternalId} for user ${req.currentUser!.uid}.`);
+    log(`Muted board: ${boardExternalId} for user ${req.currentUser!.uid}.`);
     res.sendStatus(204);
   }
 );
@@ -502,15 +498,10 @@ router.delete(
   async (req, res) => {
     const { board_id: boardExternalId } = req.params;
 
-    if (
-      !(await unmuteBoard({
-        firebaseId: req.currentUser!.uid,
-        boardExternalId,
-      }))
-    ) {
-      res.sendStatus(500);
-      return;
-    }
+    await unmuteBoard({
+      firebaseId: req.currentUser!.uid,
+      boardExternalId,
+    });
 
     await cache().hDel(CacheKeys.BOARD, boardExternalId);
     await cache().hDel(CacheKeys.USER_PINS, req.currentUser!.uid);

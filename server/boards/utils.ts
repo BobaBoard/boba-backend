@@ -160,6 +160,7 @@ export const getBoardMetadataByExternalId = async ({
       log(`Found cached metadata for board ${boardExternalId}`);
       return JSON.parse(cachedBoard);
     }
+    log(`Cached metadata for board ${boardExternalId} not found`);
   }
 
   const board = await getBoardByExternalId({
