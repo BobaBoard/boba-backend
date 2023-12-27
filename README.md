@@ -38,7 +38,7 @@ boba-backend houses our server and database code, including API endpoints, table
 
 ### Relationships To Other Repos
 
-Boba-backend is the base which other BobaBoard repos (such as boba-frontend) require to run.
+Boba-backend is utilized by other BobaBoard repos (like [boba-frontend](https://github.com/BobaBoard/boba-frontend) and [boba-components](https://github.com/BobaBoard/boba-components)) to query the database and provide dynamic updates.
 
 
 ## Local Development
@@ -51,6 +51,9 @@ For detailed instructions on how to develop for BobaBoard, please check out the 
 
 
 ## Contributing
+
+> [!Important]
+> Our issue tracker is not up-to-date and we are specifically looking for people to help us wrangle issues into order. If you're very eager to start working, please contact us through our [tech form](https://docs.google.com/forms/d/e/1FAIpQLSdCX2_fZgIYX0PXeCAA-pfQrcLw_lSp2clGHTt3uBTWgnwVSw/viewform)  (for coding) or our [non-tech form](https://forms.gle/Z44UreTxnbvFnoqc9) (for issue wrangling).
 
 BobaBoard welcomes one-time contributions. Our volunteer [Code of Conduct](https://docs.bobaboard.com/docs/volunteering/experience/code-of-conduct) applies in all of our social spaces, including Github Discussions or when commenting on issues or pull requests.
 
