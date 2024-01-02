@@ -329,6 +329,29 @@ router.delete("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
   res.sendStatus(204);
 });
 
+// The data we collect in the invite process is outlined in the boba.social Privacy Policy.
+// Should the data recorded change, the policy will need to be updated accordingly.
+// The relevant sections of the policy currently read:
+
+// // Information collected upon invitation to a boba.social Realm
+
+// // // When you join your first Realm on boba.social, and thus create your user account,
+// // // our system records which existing user created the invitation you used to join as part of your account information.
+
+// // // If you are invited to a Realm with an invite that is locked to your email address,
+// // // that email is saved as part of the record of the invitation, but not connected to your account in our database.
+// // // If you join using that invite, it will be recorded that that invite was used by someone with that email.
+// // // If you decline or do not use the invite, it will be recorded as expired after a limited period of time.
+
+// // // If you are invited to a Realm with an invite that is not locked to an email, and decline, it will not be connected to you in any way.
+
+// // // Your account will be recorded as a member of all boba.social Realms you choose to join.
+
+// // Account Activity
+// // // ... If you have the ability to create Realm invitations, your account will be recorded as the creator of any invites you create,
+// // // and if someone uses one of your invites when they first create a boba.social account,
+// // // your account will be recorded as the account they were invited by.
+
 /**
  * @openapi
  * /realms/{realm_id}/invites:
