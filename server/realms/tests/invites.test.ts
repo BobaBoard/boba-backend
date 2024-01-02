@@ -329,7 +329,7 @@ describe("Tests get invites endpoint", () => {
 describe("Tests get invite by nonce endpoint", () => {
   const server = startTestServer(router);
 
-  test("correctly sends 404 if no invites exist", async () => {
+  test("correctly sends 404 if no invite exists", async () => {
     setLoggedInUser(BOBATAN_USER_ID);
     const res = await request(server.app).get(
       `/${TWISTED_MINDS_REALM_EXTERNAL_ID}/invites/${TWISTED_MINDS_INVITES[0].nonce}`
@@ -356,7 +356,7 @@ describe("Tests get invite by nonce endpoint", () => {
     });
   });
 
-  test("Correctly gets invite realm and status for pending invite", async () => {
+  test("Correctly gets invite realm and status for pending invite locked to email", async () => {
     await wrapWithTransaction(async () => {
       insertInvites(
         TWISTED_MINDS_INVITES,
@@ -371,6 +371,22 @@ describe("Tests get invite by nonce endpoint", () => {
       expect(res.body.realm_id).toBe(TWISTED_MINDS_REALM_EXTERNAL_ID);
       expect(res.body.realm_slug).toBe(TWISTED_MINDS_REALM_SLUG);
       expect(res.body.invite_status).toBe("pending");
+      expect(res.body.requires_email).toBe(true);
+    });
+  });
+
+  test("Correctly gets invite realm and status for pending invite not locked to email", async () => {
+    await wrapWithTransaction(async () => {
+      insertInvites(UWU_INVITES, ZODIAC_KILLER_USER_ID, UWU_REALM_EXTERNAL_ID);
+      const res = await request(server.app).get(
+        `/${UWU_REALM_EXTERNAL_ID}/invites/${UWU_INVITES[2].nonce}`
+      );
+
+      expect(res.status).toBe(200);
+      expect(res.body.realm_id).toBe(UWU_REALM_EXTERNAL_ID);
+      expect(res.body.realm_slug).toBe(UWU_REALM_SLUG);
+      expect(res.body.invite_status).toBe("pending");
+      expect(res.body.requires_email).toBe(false);
     });
   });
 
