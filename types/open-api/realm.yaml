@@ -37,6 +37,14 @@ components:
         icon:
           type: string
           format: uri
+        favicon:
+          oneOf:
+            - type: string
+            - type: "null"
+        feedbackFormUrl:
+          oneOf:
+            - type: string
+            - type: "null"
         homepage:
           description: Settings for the Realm homepage.
           type: object

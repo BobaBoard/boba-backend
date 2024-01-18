@@ -30,6 +30,7 @@ import {
 
 import { DbRealmBoardType } from "server/boards/sql/types";
 import { RealmPermissions } from "types/permissions";
+import { RealmSchema } from "types/open-api/generated/schemas";
 import { createInvite } from "server/realms/queries";
 import debug from "debug";
 import express from "express";
@@ -115,7 +116,7 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
         RealmPermissions.accessLockedBoardsOnRealm
       ),
     });
-    res.status(200).json({
+    res.status(200).json(RealmSchema.parse({
       id: realmData.id,
       slug: realm_slug,
       icon: realmData.icon,
@@ -127,7 +128,7 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
       homepage: realmData.homepage,
       realm_permissions: realmPermissions || [],
       boards: realmBoards,
-    });
+    }));
   } catch (e) {
     error(e);
     throw new Internal500Error(

@@ -259,6 +259,8 @@ const Realm = z.object({
   id: z.string().uuid(),
   slug: z.string(),
   icon: z.string().url(),
+  favicon: z.union([z.string(), z.null()]).optional(),
+  feedbackFormUrl: z.union([z.string(), z.null()]).optional(),
   homepage: z.object({ blocks: z.array(UiBlock) }),
   settings: RealmSettings,
   realm_permissions: RealmPermissions,
