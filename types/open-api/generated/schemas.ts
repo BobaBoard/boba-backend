@@ -285,9 +285,9 @@ const ActivityNotifications = z.object({
   id: z.string().uuid(),
   has_updates: z.boolean(),
   is_outdated: z.boolean(),
-  last_activity_at: z.union([z.string(), z.null()]),
-  last_activity_from_others_at: z.union([z.string(), z.null()]),
-  last_visited_at: z.union([z.string(), z.null()]),
+  last_activity_at: z.union([z.date(), z.null()]),
+  last_activity_from_others_at: z.union([z.date(), z.null()]),
+  last_visited_at: z.union([z.date(), z.null()]),
 });
 const NotificationsResponse = z.object({
   has_notifications: z.boolean(),

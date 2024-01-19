@@ -5,6 +5,10 @@ import {
   NotFound404Error,
 } from "handlers/api-errors/codes";
 import {
+  NotificationsResponseSchema,
+  RealmSchema,
+} from "types/open-api/generated/schemas";
+import {
   acceptInvite,
   checkUserOnRealm,
   dismissAllNotifications,
@@ -30,7 +34,6 @@ import {
 
 import { DbRealmBoardType } from "server/boards/sql/types";
 import { RealmPermissions } from "types/permissions";
-import { RealmSchema } from "types/open-api/generated/schemas";
 import { createInvite } from "server/realms/queries";
 import debug from "debug";
 import express from "express";
@@ -277,7 +280,7 @@ router.get("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
     pinned_boards: pinned,
     realm_boards: realmBoards,
   };
-  res.status(200).json(notificationsDataResponse);
+  res.status(200).json(NotificationsResponseSchema.parse(notificationsDataResponse));
 });
 
 /**

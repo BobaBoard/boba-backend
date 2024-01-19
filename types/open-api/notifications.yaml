@@ -12,6 +12,7 @@ components:
         is_outdated:
           description: Whether the board's notifications are older than the user's last visit.
           type: boolean
+        # zod client generation does not generate for date and date-time types
         last_activity_at:
           description: When the board was last updated.
           oneOf:
