@@ -63,7 +63,9 @@ components:
         boards:
           type: array
           items:
-            $ref: "#/components/schemas/BoardSummary"
+            oneOf:
+              - $ref: "#/components/schemas/LoggedInBoardSummary"
+              - $ref: "#/components/schemas/BoardSummary"
       required:
         - id
         - slug

@@ -264,7 +264,7 @@ const Realm = z.object({
   homepage: z.object({ blocks: z.array(UiBlock) }),
   settings: RealmSettings,
   realm_permissions: RealmPermissions,
-  boards: z.array(BoardSummary),
+  boards: z.array(z.union([LoggedInBoardSummary, BoardSummary])),
 });
 const BoardActivitySummary = z.object({
   last_post_at: z.union([z.string(), z.null()]),
