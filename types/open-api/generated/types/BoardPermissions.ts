@@ -1,0 +1,1 @@
+export type BoardPermissions = "edit_board_details" | "view_roles_on_board";

@@ -1,0 +1,3 @@
+import { z } from "zod";
+
+export const BaseDescriptionSchema = z.object({"id": z.string().uuid(),"index": z.number(),"title": z.string()});

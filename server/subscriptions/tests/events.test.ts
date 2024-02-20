@@ -18,7 +18,7 @@ import {
 } from "handlers/events/threads";
 import { registerAll, unregisterAll } from "../events";
 
-import { Thread } from "types/open-api/generated/types";
+import { Thread } from "types/open-api/generated";
 import axios from "axios";
 import { mocked } from "jest-mock";
 

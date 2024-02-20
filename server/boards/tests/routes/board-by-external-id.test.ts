@@ -7,7 +7,7 @@ import {
 } from "test/data/boards";
 import { setLoggedInUser, startTestServer } from "utils/test-utils";
 
-import { BoardMetadata } from "types/open-api/generated/types";
+import { BoardMetadata } from "types/open-api/generated";
 import debug from "debug";
 import { mocked } from "jest-mock";
 import request from "supertest";

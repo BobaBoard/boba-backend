@@ -12,7 +12,7 @@ import {
 } from "utils/test-utils";
 
 import { CHARACTER_TO_MAIM_POST_ID } from "test/data/posts";
-import { Contribution } from "types/open-api/generated/types";
+import { Contribution } from "types/open-api/generated";
 import { EventEmitter } from "events";
 import { FAVORITE_CHARACTER_THREAD_ID } from "test/data/threads";
 import request from "supertest";

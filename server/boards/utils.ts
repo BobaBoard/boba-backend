@@ -1,7 +1,4 @@
-import {
-  BoardMetadata,
-  LoggedInBoardMetadata,
-} from "types/open-api/generated/types";
+import { BoardMetadata, LoggedInBoardMetadata } from "types/open-api/generated";
 import { CacheKeys, cache } from "server/cache";
 import { DbBoardCategoryDescription, DbBoardTextDescription } from "types/db";
 import {

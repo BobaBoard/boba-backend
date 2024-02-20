@@ -4,51 +4,41 @@ components:
       type: object
       properties:
         board_permissions:
-          $ref: "#/components/schemas/BoardPermissions"
+          type: array
+          items:
+            $ref: "#/components/schemas/BoardPermissions"
         post_permissions:
-          $ref: "#/components/schemas/PostPermissions"
+          type: array
+          items:
+            $ref: "#/components/schemas/PostPermissions"
         thread_permissions:
-          $ref: "#/components/schemas/ThreadPermission"
+          type: array
+          items:
+            $ref: "#/components/schemas/ThreadPermission"
       required:
         - board_permissions
         - post_permissions
         - thread_permissions
     BoardPermissions:
-      type: array
-      items:
-        type: string
-        enum: 
-          [
-            edit_board_details,
-            view_roles_on_board,
-          ]
+      enum: [edit_board_details, view_roles_on_board]
     PostPermissions:
-      type: array
-      items:
-        type: string
-        enum:
-          [
-            edit_content,
-            edit_whisper_tags,
-            edit_category_tags,
-            edit_index_tags,
-            edit_content_notices,
-          ]
+      enum:
+        [
+          edit_content,
+          edit_whisper_tags,
+          edit_category_tags,
+          edit_index_tags,
+          edit_content_notices,
+        ]
     ThreadPermission:
-      type: array
-      items:
-        type: string
-        enum: [move_thread]
+      enum: [move_thread]
     RealmPermissions:
-      type: array
-      items:
-        type: string
-        enum:
-          [
-            create_realm_invite,
-            post_on_realm,
-            comment_on_realm,
-            create_thread_on_realm,
-            access_locked_boards_on_realm,
-            view_roles_on_realm,
-          ]
+      enum:
+        [
+          create_realm_invite,
+          post_on_realm,
+          comment_on_realm,
+          create_thread_on_realm,
+          access_locked_boards_on_realm,
+          view_roles_on_realm,
+        ]

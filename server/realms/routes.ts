@@ -27,7 +27,7 @@ import {
   processBoardsSummary,
   reduceById,
 } from "utils/response-utils";
-import { NotificationsResponseSchema } from "types/open-api/generated/kubb";
+import { NotificationsResponseSchema } from "types/open-api/generated";
 
 import { DbRealmBoardType } from "server/boards/sql/types";
 import { RealmPermissions } from "types/permissions";

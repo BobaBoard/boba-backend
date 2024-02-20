@@ -9,17 +9,15 @@ export default defineConfig({
     path: "./open-api/open-api-spec.json",
   },
   output: {
-    path: "./types/open-api/generated/kubb",
+    path: "./types/open-api/generated/",
     clean: true,
   },
   plugins: [
     createSwagger({ output: false }),
     createSwaggerZod({
       output: {
-        path: "./zod",
+        path: "./schemas",
       },
-      dateType: "date",
-      typed: true,
       transformers: {
         name: (name) => {
           return `${name.charAt(0).toUpperCase()}${name.substring(1)}`;
@@ -27,7 +25,10 @@ export default defineConfig({
       },
     }),
     createSwaggerTs({
-      dateType: "date",
+      enumType: "literal",
+      output: {
+        path: "./types",
+      },
     }),
   ],
 });
