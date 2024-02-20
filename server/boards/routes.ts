@@ -342,7 +342,7 @@ router.patch(
 /**
  * @openapi
  * /boards/{board_id}/visits:
- *   get:
+ *   post:
  *     summary: Sets last visited time for board
  *     operationId: visitBoardsByExternalId
  *     tags:
