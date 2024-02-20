@@ -27,6 +27,7 @@ import {
   processBoardsSummary,
   reduceById,
 } from "utils/response-utils";
+import { NotificationsResponseSchema } from "types/open-api/generated/kubb";
 
 import { DbRealmBoardType } from "server/boards/sql/types";
 import { RealmPermissions } from "types/permissions";
@@ -276,7 +277,9 @@ router.get("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
     pinned_boards: pinned,
     realm_boards: realmBoards,
   };
-  res.status(200).json(notificationsDataResponse);
+  res
+    .status(200)
+    .json(NotificationsResponseSchema.parse(notificationsDataResponse));
 });
 
 /**
