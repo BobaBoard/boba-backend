@@ -3,7 +3,7 @@ import * as threadEvents from "handlers/events/threads";
 import {
   BoardMetadataSchema,
   LoggedInBoardMetadataSchema,
-} from "types/open-api/generated/schemas";
+} from "types/open-api/generated";
 import { BoardPermissions, RealmPermissions } from "types/permissions";
 import { CacheKeys, cache } from "server/cache";
 import { Internal500Error, NotFound404Error } from "handlers/api-errors/codes";

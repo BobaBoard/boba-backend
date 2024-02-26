@@ -1,4 +1,4 @@
-import { Contribution, Thread } from "types/open-api/generated/types";
+import { Contribution, Thread } from "types/open-api/generated";
 
 import { EventEmitter } from "events";
 

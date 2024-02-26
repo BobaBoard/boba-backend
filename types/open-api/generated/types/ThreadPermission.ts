@@ -1,0 +1,1 @@
+export type ThreadPermission = "move_thread";

@@ -51,7 +51,9 @@ components:
         settings:
           $ref: "#/components/schemas/RealmSettings"
         realm_permissions:
-          $ref: "#/components/schemas/RealmPermissions"
+          type: array
+          items:
+            $ref: "#/components/schemas/RealmPermissions"
         boards:
           type: array
           items:

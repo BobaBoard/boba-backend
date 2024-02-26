@@ -1,0 +1,4 @@
+import { ActivityNotificationsSchema } from "./ActivityNotificationsSchema";
+import { z } from "zod";
+
+export const NotificationsResponseSchema = z.object({"has_notifications": z.boolean(),"is_outdated_notifications": z.boolean(),"realm_id": z.string(),"realm_boards": z.object({}).catchall(z.lazy(() => ActivityNotificationsSchema)).describe(`A map from board id to its NotificationStatus for each realm board. If 'realm_id' is not present in the params, it will be empty. `),"pinned_boards": z.object({}).catchall(z.lazy(() => ActivityNotificationsSchema)).describe(`A map from board id to its NotiicationStatus for each pinned board. `)});

@@ -1,0 +1,3 @@
+import { z } from "zod";
+
+export const ActivityNotificationsSchema = z.object({"id": z.string().uuid(),"has_updates": z.boolean().describe(`Whether the board has a notification.`),"is_outdated": z.boolean().describe(`Whether the board's notifications are older than the user's last visit.`),"last_activity_at": z.union([z.string(),z.null()]),"last_activity_from_others_at": z.union([z.string(),z.null()]),"last_visited_at": z.union([z.string(),z.null()])});

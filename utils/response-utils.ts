@@ -4,13 +4,10 @@ import {
   Comment,
   Contribution,
   LoggedInBoardMetadata,
-} from "types/open-api/generated/types";
+} from "types/open-api/generated";
 // TODO: deprecate these
 import { DbBoardCategoryDescription, DbBoardTextDescription } from "types/db";
-import {
-  ThreadSchema,
-  ThreadSummarySchema,
-} from "types/open-api/generated/schemas";
+import { ThreadSchema, ThreadSummarySchema } from "types/open-api/generated";
 import {
   ZodDbCommentType,
   ZodDbPostType,
@@ -398,9 +395,10 @@ export const processBoardsNotifications = ({
         new Date(board.last_visit_at) >=
           new Date(board.last_activity_from_others_at)) ||
       false,
-    last_activity_at: board.last_activity_at,
-    last_activity_from_others_at: board.last_activity_from_others_at,
-    last_visited_at: board.last_visit_at,
+    last_activity_at: board.last_activity_at?.toISOString() || null,
+    last_activity_from_others_at:
+      board.last_activity_from_others_at?.toISOString() || null,
+    last_visited_at: board.last_visit_at?.toISOString() || null,
   }));
 };
 

@@ -6,7 +6,7 @@ import {
   REVOLVER_OCELOT_POST,
 } from "./posts";
 import { GORE_BOARD_ID, RESTRICTED_BOARD_ID } from "./boards";
-import { Thread, ThreadSummary } from "types/open-api/generated/types";
+import { Thread, ThreadSummary } from "types/open-api/generated";
 
 import { GenericResponse } from "../../types/rest/responses";
 import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "./realms";

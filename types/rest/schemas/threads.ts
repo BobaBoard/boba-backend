@@ -1,7 +1,4 @@
-import {
-  IdentitySchema,
-  SecretIdentitySchema,
-} from "types/open-api/generated/schemas";
+import { IdentitySchema, SecretIdentitySchema } from "types/open-api/generated";
 
 import { z } from "zod";
 

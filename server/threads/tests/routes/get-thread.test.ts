@@ -10,7 +10,7 @@ import { setLoggedInUser, startTestServer } from "utils/test-utils";
 
 import { BOBATAN_USER_ID } from "test/data/auth";
 import { GenericResponse } from "types/rest/responses";
-import { Thread } from "types/open-api/generated/types";
+import { Thread } from "types/open-api/generated";
 import request from "supertest";
 import router from "../../routes";
 

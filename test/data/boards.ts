@@ -1,9 +1,11 @@
 import {
   BoardMetadata,
+  BoardPermissions,
+  BoardPermissionsSchema,
   BoardSummary,
   LoggedInBoardMetadata,
   LoggedInBoardSummary,
-} from "types/open-api/generated/types";
+} from "types/open-api/generated";
 
 import { GenericResponse } from "../../types/rest/responses";
 
