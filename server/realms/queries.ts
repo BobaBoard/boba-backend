@@ -12,7 +12,7 @@ import {
 import { filterOutDisabledSettings, getRealmCursorSetting } from "./utils";
 
 import { CssVariableSetting } from "../../types/settings";
-import { GetRealmBySlugDbSchema } from "./sql/types";
+import { GetRealmBySlugDbSchema } from "types/db/schemas";
 import { ITask } from "pg-promise";
 import { SettingEntry } from "../../types/settings";
 import debug from "debug";
