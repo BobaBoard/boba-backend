@@ -771,7 +771,6 @@ router.get(
   }
 );
 
-/* MY ROUTE */
 /**
  * @openapi
  * /boards/{board_id}:
