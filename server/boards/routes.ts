@@ -17,6 +17,7 @@ import {
   unmuteBoard,
   unpinBoard,
   updateBoardMetadata,
+  deleteBoard,
 } from "./queries";
 import {
   ensureBoardAccess,
@@ -767,6 +768,69 @@ router.get(
       error(e);
       throw new Internal500Error("There was an error fetching board roles.");
     }
+  }
+);
+
+/* MY ROUTE */
+/**
+ * @openapi
+ * /boards/{board_id}:
+ *   delete:
+ *     summary: Delete board.
+ *     operationId: deleteBoard
+ *     description: Deletes the specified board.
+ *     tags:
+ *       - /boards/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: board_id
+ *         in: path
+ *         description: The external id of the board to delete.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         examples:
+ *           existing:
+ *             summary: An existing board
+ *             value: c6d3d10e-8e49-4d73-b28a-9d652b41beec
+ *     responses:
+ *       401:
+ *         description: User is not logged in.
+ *         $ref: "#/components/responses/default401"
+ *       403:
+ *         $ref: "#/components/responses/ensureBoardAccess403"
+ *       404:
+ *         $ref: "#/components/responses/default404"
+ *       500:
+ *         description: Internal Server Error
+ *         $ref: "#/components/responses/default500"
+ *       204:
+ *         description: Board deleted.
+ */
+router.delete(
+  "/:board_id",
+  ensureLoggedIn,
+  ensureBoardAccess,
+  async (req, res) => {
+    const { board_id: boardExternalId } = req.params;
+
+    let currentUserId: string = req.currentUser!.uid;
+    log(`Deleting board with id: ${boardExternalId}`);
+    const deleteSuccessful = await deleteBoard({
+      boardExternalId,
+      firebaseId: currentUserId,
+    });
+
+    if (!deleteSuccessful) {
+      log(`Deletion failed`);
+      return res.sendStatus(500);
+    }
+
+    info(`Deletion successful`);
+
+    res.sendStatus(204);
   }
 );
 
