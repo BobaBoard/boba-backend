@@ -799,7 +799,7 @@ router.get(
  *         description: User is not logged in.
  *         $ref: "#/components/responses/default401"
  *       403:
- *         $ref: "#/components/responses/ensureBoardAccess403"
+ *         $ref: "#/components/responses/ensureBoardPermission403"
  *       404:
  *         $ref: "#/components/responses/default404"
  *       500:
@@ -809,22 +809,25 @@ router.get(
  *         description: Board deleted.
  */
 router.delete(
-  "/:board_id",
+  "/:board_id/",
   ensureLoggedIn,
-  ensureBoardAccess,
+  ensureBoardPermission(BoardPermissions.editMetadata),
+  withRealmPermissions,
   async (req, res) => {
+    if (process.env.NODE_ENV === "production") {
+      return res.sendStatus(501);
+    }
+
     const { board_id: boardExternalId } = req.params;
 
     let currentUserId: string = req.currentUser!.uid;
-    log(`Deleting board with id: ${boardExternalId}`);
+    log(`User ${currentUserId} is deleting board with id: ${boardExternalId}`);
     const deleteSuccessful = await deleteBoard({
       boardExternalId,
-      firebaseId: currentUserId,
     });
 
     if (!deleteSuccessful) {
-      log(`Deletion failed`);
-      return res.sendStatus(500);
+      throw new Internal500Error("Failed to delete board");
     }
 
     info(`Deletion successful`);
