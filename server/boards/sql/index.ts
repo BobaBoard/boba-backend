@@ -129,7 +129,14 @@ const fetchRolesInBoard = `
     INNER JOIN users ON users.id=board_user_roles.user_id
     WHERE boards.string_id = $/board_external_id/`;
 
-const deleteBoard = ``;
+const deleteBoard = `
+    DELETE FROM comments WHERE id IN (SELECT id FROM comments WHERE comments.parent_thread IN (SELECT id FROM threads WHERE parent_board = $/board_id/));
+    DELETE FROM posts WHERE id IN (SELECT id FROM posts WHERE posts.parent_thread IN (SELECT id FROM threads WHERE parent_board = $/board_id/));
+    DELETE FROM user_thread_identities WHERE thread_id IN (SELECT id FROM threads WHERE parent_board = $/board_id/);
+    DELETE FROM user_thread_last_visits WHERE thread_id IN (SELECT id FROM threads WHERE parent_board = $/board_id/);
+    DELETE FROM threads WHERE parent_board = $/board_id/;
+    DELETE FROM user_board_last_visits WHERE board_id = $/board_id/;
+    DELETE FROM boards WHERE id = $/board_id/;`;
 
 export default {
   getAllBoards: new QueryFile(path.join(__dirname, "all-boards.sql")),
