@@ -426,3 +426,20 @@ export const getBoardRoles = async ({
   });
   return boardRoles;
 };
+
+export const deleteBoard = async ({
+  boardExternalId,
+}: {
+  boardExternalId: string;
+}) => {
+  try {
+    await pool.none(sql.deleteBoard, {
+      board_id: boardExternalId,
+    });
+    return true;
+  } catch (e) {
+    error(`Error while deleting board.`);
+    error(e);
+    return false;
+  }
+};

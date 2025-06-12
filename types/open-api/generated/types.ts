@@ -113,6 +113,9 @@ export type createThreadResponse = z.infer<
 export type patchBoardsByExternalIdResponse = z.infer<
   typeof schemas.endpoints.patchBoardsByExternalId.response
 >;
+export type deleteBoardResponse = z.infer<
+  typeof schemas.endpoints.deleteBoard.response
+>;
 export type muteBoardsByExternalIdResponse = z.infer<
   typeof schemas.endpoints.muteBoardsByExternalId.response
 >;
