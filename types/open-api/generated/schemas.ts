@@ -525,6 +525,41 @@ export const endpoints = {
       },
     ],
   },
+  deleteBoard: {
+    method: "delete",
+    path: "/boards/:board_id",
+    alias: "deleteBoard",
+    description: `Deletes the specified board.`,
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "board_id",
+        type: "Path",
+        schema: z.string().uuid(),
+      },
+    ],
+    response: z.void(),
+    errors: [
+      {
+        status: 401,
+        description: `User is not logged in.`,
+        schema: z.void(),
+      },
+      {
+        status: 403,
+        schema: z.void(),
+      },
+      {
+        status: 404,
+        schema: z.void(),
+      },
+      {
+        status: 500,
+        description: `Internal Server Error`,
+        schema: z.void(),
+      },
+    ],
+  },
   muteBoardsByExternalId: {
     method: "post",
     path: "/boards/:board_id/mute",
@@ -730,7 +765,7 @@ export const endpoints = {
     ],
   },
   visitBoardsByExternalId: {
-    method: "get",
+    method: "post",
     path: "/boards/:board_id/visits",
     alias: "visitBoardsByExternalId",
     requestFormat: "json",
