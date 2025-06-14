@@ -5,6 +5,10 @@ import {
   NotFound404Error,
 } from "handlers/api-errors/codes";
 import {
+  NotificationsResponseSchema,
+  RealmSchema,
+} from "types/open-api/generated/schemas";
+import {
   acceptInvite,
   checkUserOnRealm,
   dismissAllNotifications,
@@ -115,7 +119,7 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
         RealmPermissions.accessLockedBoardsOnRealm
       ),
     });
-    res.status(200).json({
+    res.status(200).json(RealmSchema.parse({
       id: realmData.id,
       slug: realm_slug,
       icon: realmData.icon,
@@ -127,7 +131,7 @@ router.get("/slug/:realm_slug", withUserSettings, async (req, res) => {
       homepage: realmData.homepage,
       realm_permissions: realmPermissions || [],
       boards: realmBoards,
-    });
+    }));
   } catch (e) {
     error(e);
     throw new Internal500Error(
@@ -276,7 +280,7 @@ router.get("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
     pinned_boards: pinned,
     realm_boards: realmBoards,
   };
-  res.status(200).json(notificationsDataResponse);
+  res.status(200).json(NotificationsResponseSchema.parse(notificationsDataResponse));
 });
 
 /**

@@ -115,3 +115,16 @@ export const FeedTypeSchema = z.object({
   ),
 });
 export type ZodDbFeedType = z.infer<typeof FeedTypeSchema>;
+
+export const GetRealmBySlugDbSchema = z.object({
+  realm_id: z.string(),
+  realm_slug: z.string(),
+  realm_icon_url: z.string(),
+  realm_favicon_url: z.string().nullable(),
+  realm_title: z.string().nullable(),
+  realm_description: z.string().nullable(),
+  realm_feedback_form_url: z.string().nullable(),
+  homepage_blocks: z.any(),
+});
+
+export type GetRealmBySlugDbType = z.infer<typeof GetRealmBySlugDbSchema>;

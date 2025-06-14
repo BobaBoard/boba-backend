@@ -259,10 +259,12 @@ const Realm = z.object({
   id: z.string().uuid(),
   slug: z.string(),
   icon: z.string().url(),
+  favicon: z.union([z.string(), z.null()]).optional(),
+  feedbackFormUrl: z.union([z.string(), z.null()]).optional(),
   homepage: z.object({ blocks: z.array(UiBlock) }),
   settings: RealmSettings,
   realm_permissions: RealmPermissions,
-  boards: z.array(BoardSummary),
+  boards: z.array(z.union([LoggedInBoardSummary, BoardSummary])),
 });
 const BoardActivitySummary = z.object({
   last_post_at: z.union([z.string(), z.null()]),
@@ -283,9 +285,9 @@ const ActivityNotifications = z.object({
   id: z.string().uuid(),
   has_updates: z.boolean(),
   is_outdated: z.boolean(),
-  last_activity_at: z.union([z.string(), z.null()]),
-  last_activity_from_others_at: z.union([z.string(), z.null()]),
-  last_visited_at: z.union([z.string(), z.null()]),
+  last_activity_at: z.union([z.date(), z.null()]),
+  last_activity_from_others_at: z.union([z.date(), z.null()]),
+  last_visited_at: z.union([z.date(), z.null()]),
 });
 const NotificationsResponse = z.object({
   has_notifications: z.boolean(),
