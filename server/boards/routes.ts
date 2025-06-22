@@ -8,7 +8,9 @@ import { BoardPermissions, RealmPermissions } from "types/permissions";
 import { CacheKeys, cache } from "server/cache";
 import { Internal500Error, NotFound404Error } from "handlers/api-errors/codes";
 import {
+  createBoard,
   createThread,
+  deleteBoard,
   dismissBoardNotifications,
   getBoardRoles,
   markBoardVisit,
@@ -17,7 +19,6 @@ import {
   unmuteBoard,
   unpinBoard,
   updateBoardMetadata,
-  deleteBoard,
 } from "./queries";
 import {
   ensureBoardAccess,
@@ -102,9 +103,9 @@ const router = express.Router();
  *                 - $ref: "#/components/schemas/LoggedInBoardMetadata"
  *             examples:
  *               existing:
- *                 $ref: '#/components/examples/BoardsGoreResponse'
+ *                 $ref: "#/components/examples/BoardsGoreResponse"
  *               locked:
- *                 $ref: '#/components/examples/BoardsRestrictedResponse'
+ *                 $ref: "#/components/examples/BoardsRestrictedResponse"
  */
 router.get("/:board_id", ensureBoardAccess, async (req, res) => {
   const { board_id: boardExternalId } = req.params;
@@ -129,6 +130,60 @@ router.get("/:board_id", ensureBoardAccess, async (req, res) => {
         : BoardMetadataSchema.parse(boardMetadata)
     );
 });
+
+/**
+ * @openapi
+ * /boards:
+ *   post:
+ *     summary: Create board.
+ *     operationId: createBoard
+ *     tags:
+ *       - /boards/
+ *     requestBody:
+ *       description: request body
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/CreateBoardMetadata"
+ *     responses:
+ *       401:
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         $ref: "#/components/responses/ensureBoardPermission403"
+ *       500:
+ *         description: Internal Server Error
+ *         $ref: "#/components/responses/default500"
+ *       200:
+ *         description: Metadata of the created board.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/LoggedInBoardMetadata"
+ *             examples:
+ *               existing:
+ *                 $ref: "#/components/examples/GoreMetadataUpdateResponse"
+ */
+router.post(
+  "/",
+  ensureLoggedIn,
+  // TODO ensureBoardPermission()
+  async (req, res) => {
+    const { descriptions, accentColor,  avatar_url, tagline} = req.body;
+
+    const success = await createBoard({
+        descriptions,
+        settings: { accentColor },
+        avatar_url,
+        tagline,
+    });
+
+    if (!success) {
+      throw new Internal500Error("Failed to create board");
+    }
+
+    res.status(200).json(success);
+  }
+);
 
 /**
  * @openapi
@@ -304,7 +359,7 @@ router.post(
  *               $ref: "#/components/schemas/LoggedInBoardMetadata"
  *             examples:
  *               existing:
- *                 $ref: '#/components/examples/GoreMetadataUpdateResponse'
+ *                 $ref: "#/components/examples/GoreMetadataUpdateResponse"
  */
 router.patch(
   "/:board_id/",

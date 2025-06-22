@@ -427,6 +427,17 @@ export const getBoardRoles = async ({
   return boardRoles;
 };
 
+export const createBoard = async (
+  metadata: Partial<BoardByExternalId>
+) => {
+  return await pool.one(sql.createBoard, {
+    slug: metadata.slug,
+    tagline: metadata.tagline,
+    avatar_reference_id: metadata.avatar_url,
+    settings: metadata.settings,
+  })
+};
+
 export const deleteBoard = async ({
   boardExternalId,
 }: {

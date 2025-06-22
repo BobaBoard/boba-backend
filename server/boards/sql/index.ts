@@ -6,23 +6,23 @@ const markBoardVisit = `
     INSERT INTO user_board_last_visits(user_id, board_id) VALUES (
         (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/),
         (SELECT id from boards WHERE boards.string_id = $/board_id/))
-    ON CONFLICT(user_id, board_id) DO UPDATE 
+    ON CONFLICT(user_id, board_id) DO UPDATE
         SET last_visit_time = DEFAULT
         WHERE user_board_last_visits.user_id = (SELECT id FROM users WHERE users.firebase_id = $/firebase_id/)
             AND user_board_last_visits.board_id = (SELECT id from boards WHERE boards.string_id = $/board_id/)`;
 
 const deleteSectionCategories = `
-    DELETE FROM board_description_section_categories bdsc 
+    DELETE FROM board_description_section_categories bdsc
     USING board_description_sections bds
-    WHERE  
-        bds.string_id = $/section_id/ AND 
-        bds.id = bdsc.section_id AND 
+    WHERE
+        bds.string_id = $/section_id/ AND
+        bds.id = bdsc.section_id AND
         bds.board_id = (SELECT id from boards WHERE boards.string_id = $/board_id/) AND
         ($/category_names/ IS NULL OR bdsc.category_id IN (SELECT id FROM categories WHERE category = ANY($/category_names/)));`;
 
 const deleteSection = `
     DELETE FROM board_description_sections bds
-    WHERE  
+    WHERE
         bds.string_id = $/section_id/ AND
         bds.board_id = (SELECT id from boards WHERE boards.string_id = $/board_id/);`;
 
@@ -34,7 +34,7 @@ const updateSection = `
         index = $/index/
     FROM boards
     WHERE
-        boards.id = bds.board_id 
+        boards.id = bds.board_id
         AND bds.board_id  = (SELECT id from boards WHERE boards.string_id = $/board_id/)
         AND bds.string_id = $/section_id/
     RETURNING *;
@@ -59,7 +59,7 @@ const createAddCategoriesToFilterSectionQuery = (
   categories: string[]
 ) => {
   const insertCategoryQuery = `
-      INSERT INTO board_description_section_categories(section_id, category_id) 
+      INSERT INTO board_description_section_categories(section_id, category_id)
       VALUES(
         (SELECT id FROM board_description_sections WHERE string_id = $/section_id/),
         (SELECT id FROM categories WHERE category = $/category/))
@@ -129,6 +129,15 @@ const fetchRolesInBoard = `
     INNER JOIN users ON users.id=board_user_roles.user_id
     WHERE boards.string_id = $/board_external_id/`;
 
+const createBoard = `
+    INSERT INTO boards(slug, tagline, avatar_reference_id, settings)
+    VALUES (
+        $/slug/,
+        $/tagline/,
+        $/avatar_reference_id/,
+        $/settings/
+    )
+    RETURNING *;`;
 const deleteBoard = ``;
 
 export default {
@@ -149,5 +158,6 @@ export default {
   unpinBoardByExternalId,
   dismissNotificationsByExternalId,
   fetchRolesInBoard,
+  createBoard,
   deleteBoard,
 };

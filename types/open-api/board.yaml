@@ -44,6 +44,27 @@ components:
           required:
             - muted
             - pinned
+    CreateBoardMetadata:
+      allOf:
+        - type: object
+          properties:
+            slug:
+              type: string
+            avatar_url:
+              type: string
+              format: uri-reference
+            tagline:
+              type: string
+            settings:
+              type: object
+              properties:
+                accent_color:
+                  type: string
+          required:
+            - slug
+            - avatar_url
+            - tagline
+            - settings
     BoardMetadata:
       allOf:
         - $ref: "#/components/schemas/BoardSummary"
