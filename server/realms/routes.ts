@@ -929,15 +929,16 @@ router.get(
  *         description: User is not logged in
  *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
- *         $ref: "#/components/responses/ensurePermission403"
+ *         $ref: "#/components/responses/ensureRealmPermission403"
  *       404:
  *         description: The realm was not found.
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/genericResponse"
+ *               $ref: "#/components/schemas/realmNotFound404"
  *       500:
  *         description: There was an error fetching realm roles.
+ *         $ref: "#/components/schemas/default500"
  */
 router.post(
   "/:realm_id/roles",
