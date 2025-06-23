@@ -116,7 +116,6 @@ const updateBoardSettings = `
         settings = $/settings/
     WHERE boards.string_id = $/board_id/`;
 
-
 const fetchRolesInBoard = `
     SELECT
         users.firebase_id as user_firebase_id,
@@ -130,7 +129,7 @@ const fetchRolesInBoard = `
     INNER JOIN users ON users.id=board_user_roles.user_id
     WHERE boards.string_id = $/board_external_id/`;
 
-
+const deleteBoard = ``;
 
 export default {
   getAllBoards: new QueryFile(path.join(__dirname, "all-boards.sql")),
@@ -150,4 +149,5 @@ export default {
   unpinBoardByExternalId,
   dismissNotificationsByExternalId,
   fetchRolesInBoard,
+  deleteBoard,
 };

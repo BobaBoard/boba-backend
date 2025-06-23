@@ -17,6 +17,7 @@ import {
   unmuteBoard,
   unpinBoard,
   updateBoardMetadata,
+  deleteBoard,
 } from "./queries";
 import {
   ensureBoardAccess,
@@ -767,6 +768,71 @@ router.get(
       error(e);
       throw new Internal500Error("There was an error fetching board roles.");
     }
+  }
+);
+
+/**
+ * @openapi
+ * /boards/{board_id}:
+ *   delete:
+ *     summary: Delete board.
+ *     operationId: deleteBoard
+ *     description: Deletes the specified board.
+ *     tags:
+ *       - /boards/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: board_id
+ *         in: path
+ *         description: The external id of the board to delete.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         examples:
+ *           existing:
+ *             summary: An existing board
+ *             value: c6d3d10e-8e49-4d73-b28a-9d652b41beec
+ *     responses:
+ *       401:
+ *         description: User is not logged in.
+ *         $ref: "#/components/responses/default401"
+ *       403:
+ *         $ref: "#/components/responses/ensureBoardPermission403"
+ *       404:
+ *         $ref: "#/components/responses/default404"
+ *       500:
+ *         description: Internal Server Error
+ *         $ref: "#/components/responses/default500"
+ *       204:
+ *         description: Board deleted.
+ */
+router.delete(
+  "/:board_id/",
+  ensureLoggedIn,
+  ensureBoardPermission(BoardPermissions.editMetadata),
+  withRealmPermissions,
+  async (req, res) => {
+    if (process.env.NODE_ENV === "production") {
+      return res.sendStatus(501);
+    }
+
+    const { board_id: boardExternalId } = req.params;
+
+    let currentUserId: string = req.currentUser!.uid;
+    log(`User ${currentUserId} is deleting board with id: ${boardExternalId}`);
+    const deleteSuccessful = await deleteBoard({
+      boardExternalId,
+    });
+
+    if (!deleteSuccessful) {
+      throw new Internal500Error("Failed to delete board");
+    }
+
+    info(`Deletion successful`);
+
+    res.sendStatus(204);
   }
 );
 
