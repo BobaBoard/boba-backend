@@ -99,3 +99,11 @@ components:
             accent_color: "#234a69"
             delisted: false
             logged_in_only: true
+    CreateTestRole:
+      summary: The request body for making a new role on a realm
+      value:
+        role_name: "Test role"
+        role_avatar: "<test_avatar_url>"
+        color: "maroon"
+        description: "a very boring test role"
+        permissions: []

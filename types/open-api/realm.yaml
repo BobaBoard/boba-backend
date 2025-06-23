@@ -114,3 +114,22 @@ components:
               - role_string_id
               - role_name
               - label
+    CreateRole:
+      type: object
+      properties:
+        role_name:
+          type: string
+        role_avatar:
+          type: string
+        color:
+          type: string
+        description:
+          type: string
+        permissions:
+          $ref: "#/components/schemas/RealmPermissions"
+        required:
+          - role_name
+          - role_avatar
+          - color
+          - description
+          - permissions
