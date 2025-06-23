@@ -884,11 +884,11 @@ router.get(
  *     tags:
  *       - /realms/
  *     security:
- *       -firebase: []
+ *       - firebase: []
  *     parameters:
  *       - name: realm_id
  *         in: path
- *         description: The id for the realm in which the role will be created
+ *         description: The id for the realm in which the role will be created.
  *         required: true
  *         schema:
  *           type: string
@@ -914,15 +914,6 @@ router.get(
  *           application/json:
  *             schema:
  *               $ref: "#/components/schemas/RealmRoles"
- *             examples:
- *               twisted_minds:
- *                 value:
- *                   invites:
- *                     - user_firebase_id: "a90b0809-2c57-4ff1-be7c-4b7ab1b7edcc"
- *                       username: "bobatan"
- *                       role_string_id: "3df1d417-c36a-43dd-aaba-9590316ffc32"
- *                       role_name: "The Owner"
- *                       label: "Look ma, a label"
  *       400:
  *         description: The request was malformed.
  *       401:
@@ -935,10 +926,10 @@ router.get(
  *         content:
  *           application/json:
  *             schema:
- *               $ref: "#/components/schemas/realmNotFound404"
+ *               $ref: "#/components/responses/realmNotFound404"
  *       500:
  *         description: There was an error fetching realm roles.
- *         $ref: "#/components/schemas/default500"
+ *         $ref: "#/components/responses/default500"
  */
 router.post(
   "/:realm_id/roles",
