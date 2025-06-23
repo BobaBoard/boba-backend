@@ -898,7 +898,7 @@ router.get(
  *             summary: The id for the twisted-minds realm.
  *             value: 76ef4cc3-1603-4278-95d7-99c59f481d2e0
  *     requestBody:
- *       description: request body
+ *       description: The details of the role to be created.
  *       content:
  *         application/json:
  *           schema:
