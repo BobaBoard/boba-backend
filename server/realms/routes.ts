@@ -917,16 +917,14 @@ router.get(
  *       400:
  *         description: The request was malformed.
  *       401:
- *         description: User is not logged in
+ *         description: User is not logged in.
  *         $ref: "#/components/responses/ensureLoggedIn401"
  *       403:
+ *         description: User does not have the necessary permissions.
  *         $ref: "#/components/responses/ensureRealmPermission403"
  *       404:
  *         description: The realm was not found.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/responses/realmNotFound404"
+ *         $ref: "#/components/responses/realmNotFound404"
  *       500:
  *         description: There was an error fetching realm roles.
  *         $ref: "#/components/responses/default500"
