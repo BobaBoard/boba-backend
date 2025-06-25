@@ -896,7 +896,7 @@ router.get(
  *         examples:
  *           twisted_minds:
  *             summary: The id for the twisted-minds realm.
- *             value: 76ef4cc3-1603-4278-95d7-99c59f481d2e0
+ *             value: 76ef4cc3-1603-4278-95d7-99c59f481d2e
  *     requestBody:
  *       description: The details of the role to be created.
  *       content:
