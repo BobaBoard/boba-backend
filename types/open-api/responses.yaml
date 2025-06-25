@@ -150,4 +150,4 @@ components:
             notFound:
               summary: Realm not found.
               value:
-                message: The realm with id 76ef4cc3-1603-4278-95d7-99c59f481d2e8 was not found.
+                message: The realm with id 76ef4cc3-1603-4278-95d7-99c59f481d2f was not found.
