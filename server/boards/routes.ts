@@ -1,5 +1,6 @@
 import * as threadEvents from "handlers/events/threads";
 
+import { BoardByExternalId, BoardByExternalIdSchema } from "./sql/types";
 import {
   BoardMetadataSchema,
   LoggedInBoardMetadataSchema,
@@ -23,12 +24,14 @@ import {
 import {
   ensureBoardAccess,
   ensureBoardPermission,
+  ensureRealmExists,
   ensureRealmPermission,
   withRealmPermissions,
 } from "handlers/permissions";
 import {
   ensureNoIdentityLeakage,
   makeServerThread,
+  processBoardMetadata,
 } from "utils/response-utils";
 
 import debug from "debug";
@@ -139,8 +142,10 @@ router.get("/:board_id", ensureBoardAccess, async (req, res) => {
  *     operationId: createBoard
  *     tags:
  *       - /boards/
+ *     security:
+ *       - firebase: []
  *     requestBody:
- *       description: request body
+ *       description: Metadata of board to be created.
  *       content:
  *         application/json:
  *           schema:
@@ -153,7 +158,7 @@ router.get("/:board_id", ensureBoardAccess, async (req, res) => {
  *       500:
  *         description: Internal Server Error
  *         $ref: "#/components/responses/default500"
- *       200:
+ *       201:
  *         description: Metadata of the created board.
  *         content:
  *           application/json:
@@ -166,22 +171,40 @@ router.get("/:board_id", ensureBoardAccess, async (req, res) => {
 router.post(
   "/",
   ensureLoggedIn,
-  // TODO ensureBoardPermission()
+  // ensureRealmExists,
+  // withRealmPermissions,
+  // TODO ensureBoardPermission(BoardPermissions.createBoard),
   async (req, res) => {
-    const { descriptions, accentColor,  avatar_url, tagline} = req.body;
+    const { slug, tagline, avatar_url, settings } = req.body;
 
-    const success = await createBoard({
-        descriptions,
-        settings: { accentColor },
-        avatar_url,
-        tagline,
+    const board = await createBoard({
+      slug,
+      tagline,
+      avatar_url,
+      settings,
     });
 
-    if (!success) {
+    if (!board) {
       throw new Internal500Error("Failed to create board");
     }
 
-    res.status(200).json(success);
+    res.status(201).json({
+      // TODO this should not be done by hand
+      external_id: board.external_id,
+      realm_external_id: board.realm_external_id,
+      slug: board.slug,
+      tagline: board.tagline,
+      avatar_url: board.avatar_url,
+      descriptions: board.descriptions,
+      accessories: board.accessories,
+      posting_identities: board.posting_identities,
+      muted: board.muted,
+      pinned_order: board.pinned_order,
+      permissions: board.permissions,
+      logged_out_restrictions: board.logged_out_restrictions,
+      logged_in_base_restrictions: board.logged_in_base_restrictions,
+      settings: board.settings,
+    });
   }
 );
 

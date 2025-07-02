@@ -130,8 +130,11 @@ const fetchRolesInBoard = `
     WHERE boards.string_id = $/board_external_id/`;
 
 const createBoard = `
-    INSERT INTO boards(slug, tagline, avatar_reference_id, settings)
+    INSERT INTO boards(string_id, parent_realm_id, board_category_id, slug, tagline, avatar_reference_id, settings)
     VALUES (
+        $/string_id/,
+        $/parent_realm_id/,
+        $/board_category_id/,
         $/slug/,
         $/tagline/,
         $/avatar_reference_id/,

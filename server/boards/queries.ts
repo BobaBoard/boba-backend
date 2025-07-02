@@ -427,15 +427,17 @@ export const getBoardRoles = async ({
   return boardRoles;
 };
 
-export const createBoard = async (
-  metadata: Partial<BoardByExternalId>
-) => {
+export const createBoard = async (metadata: Partial<BoardByExternalId>) => {
+  const boardExternalId = uuidv4();
   return await pool.one(sql.createBoard, {
     slug: metadata.slug,
     tagline: metadata.tagline,
     avatar_reference_id: metadata.avatar_url,
     settings: metadata.settings,
-  })
+    parent_realm_id: 2, // todo
+    board_category_id: 1, // todo
+    string_id: boardExternalId,
+  });
 };
 
 export const deleteBoard = async ({
