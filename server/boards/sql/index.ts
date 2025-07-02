@@ -129,6 +129,8 @@ const fetchRolesInBoard = `
     INNER JOIN users ON users.id=board_user_roles.user_id
     WHERE boards.string_id = $/board_external_id/`;
 
+const getBoardInternalId = `SELECT id from boards WHERE boards.string_id = $/board_external_id/;`;
+
 const deleteBoard = `
     DELETE FROM comments WHERE id IN (SELECT id FROM comments WHERE comments.parent_thread IN (SELECT id FROM threads WHERE parent_board = $/board_id/));
     DELETE FROM posts WHERE id IN (SELECT id FROM posts WHERE posts.parent_thread IN (SELECT id FROM threads WHERE parent_board = $/board_id/));
@@ -157,4 +159,5 @@ export default {
   dismissNotificationsByExternalId,
   fetchRolesInBoard,
   deleteBoard,
+  getBoardInternalId,
 };

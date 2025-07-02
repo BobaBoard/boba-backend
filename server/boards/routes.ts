@@ -780,6 +780,7 @@ router.get(
  *     description: Deletes the specified board.
  *     tags:
  *       - /boards/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
