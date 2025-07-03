@@ -440,9 +440,6 @@ export const deleteBoard = async ({
         board_external_id: boardExternalId,
       });
 
-      log({ internalBoardId }, typeof internalBoardId);
-      console.log({ internalBoardId }, typeof internalBoardId);
-
       await transaction.none(sql.deleteBoard, {
         board_id: internalBoardId.id,
       });
