@@ -437,7 +437,7 @@ export const deleteBoard = async ({
 
     const success = await pool
       .tx("delete-board", async (transaction) => {
-        const internalBoardId = await transaction.none(sql.getBoardInternalId, {
+        const internalBoardId = await transaction.one(sql.getBoardInternalId, {
           board_external_id: boardExternalId,
         });
 
@@ -448,7 +448,7 @@ export const deleteBoard = async ({
         return true;
       })
       .catch((e) => {
-        error(`Error while deleting board.`);
+        error(`Error during delete board transaction.`);
         error(e);
         return false;
       });
