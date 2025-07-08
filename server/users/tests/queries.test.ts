@@ -46,7 +46,7 @@ describe("Tests user queries", () => {
         description: "A role for the owner.",
         name: "The Owner",
         permissions:
-          "{edit_board_details,delete_board,post_as_role,move_thread,create_realm_invite,view_roles_on_realm,view_roles_on_board}",
+          "{edit_board_details,post_as_role,move_thread,create_realm_invite,view_roles_on_realm,view_roles_on_board}",
         id: OWNER_ROLE_EXTERNAL_ID,
         board_ids: [],
         accessory_external_id: "9e593709-419f-4b2c-b7ee-88ed47884c3c",
@@ -101,7 +101,7 @@ describe("Tests user queries", () => {
         color: "pink",
         description: "A role for the owner.",
         permissions:
-          "{edit_board_details,delete_board,post_as_role,move_thread,create_realm_invite,view_roles_on_realm,view_roles_on_board}",
+          "{edit_board_details,post_as_role,move_thread,create_realm_invite,view_roles_on_realm,view_roles_on_board}",
         board_ids: [],
         accessory_external_id: CROWN_ACCESSORY_EXTERNAL_ID,
       },
