@@ -45,7 +45,7 @@ const Accessory = z.object({
   accessory: z.string(),
 });
 const BoardPermissions = z.array(
-  z.enum(["edit_board_details", "view_roles_on_board"])
+  z.enum(["edit_board_details", "delete_board", "view_roles_on_board"])
 );
 const PostPermissions = z.array(
   z.enum([
