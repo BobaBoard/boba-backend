@@ -937,7 +937,23 @@ router.post(
   ensureRealmPermission(RealmPermissions.viewRolesOnRealm),
   async (req, res) => {
     try {
-      const { realm_id } = req.params;
+      const { realmId } = req.params;
+      const { 
+        roleName, 
+        roleAvatar, 
+        color, 
+        description, 
+        permissions 
+      } = req.body;
+
+      await createRealmRole({
+        roleName,
+        roleAvatar,
+        color,
+        description,
+        permissions
+      });
+      info(`Created new role`, newRoleExternalId);
 
       res.status(200).json({});
 

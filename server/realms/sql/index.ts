@@ -71,6 +71,19 @@ JOIN users ON realm_users.user_id = users.id
 WHERE users.firebase_id = $/firebase_id/ AND realms.string_id = $/realm_external_id/
 `;
 
+const createRoleInRealm = `
+INSERT INTO roles(string_id, name, avatar_reference_id, color, description, permissions)
+VALUES
+(
+  $/role_external_id/,
+  $/role_name/,
+  $/role_avatar/,
+  $/color/,
+  $/description/,
+  $/permissions/
+);
+`
+
 const fetchRolesInRealm = `
   SELECT
     users.firebase_id as user_firebase_id,

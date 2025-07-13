@@ -19,6 +19,7 @@ import debug from "debug";
 import { extractRealmPermissions } from "utils/permissions-utils";
 import pool from "server/db-pool";
 import sql from "./sql";
+import { v4 as uuidv4 } from "uuid";
 
 const info = debug("bobaserver:realms:queries-info");
 const log = debug("bobaserver:realms:queries-log");
@@ -428,4 +429,31 @@ export const getRealmRoles = async ({
     realm_external_id: realmExternalId,
   });
   return realmRoles;
+};
+
+export const createRealmRole = async({
+  roleName,
+  roleAvatar,
+  color,
+  description,
+  permissions
+}: {
+  roleName: string;
+  roleAvatar: string;
+  color: string;
+  description: string;
+  permissions: string[];
+}): => {
+  roleExternalId = uuidv4();
+
+    await t.one(sql.createRoleInRealm, {
+      role_external_id: roleExternalId,
+      role_name: roleName,
+      role_avatar: roleAvatar,
+      color: color,
+      description: description,
+      permissions: permissions
+    });
+    log(`Created thread entry for thread ${newThreadExternalId}`);
+
 };
