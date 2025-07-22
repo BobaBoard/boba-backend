@@ -140,7 +140,7 @@ const createBoard = `
         $/avatar_reference_id/,
         $/settings/
     )
-    RETURNING *;`;
+    RETURNING string_id;`;
 const deleteBoard = ``;
 
 export default {

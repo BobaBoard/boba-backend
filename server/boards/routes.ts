@@ -177,34 +177,24 @@ router.post(
   async (req, res) => {
     const { slug, tagline, avatar_url, settings } = req.body;
 
-    const board = await createBoard({
+    const boardExternalId = await createBoard({
       slug,
       tagline,
       avatar_url,
       settings,
     });
 
-    if (!board) {
+    const boardMetadata = await getBoardMetadataByExternalId({
+      firebaseId: req.currentUser?.uid,
+      boardExternalId,
+      hasBoardAccess: true,
+    });
+
+    if (!boardMetadata) {
       throw new Internal500Error("Failed to create board");
     }
 
-    res.status(201).json({
-      // TODO this should not be done by hand
-      external_id: board.external_id,
-      realm_external_id: board.realm_external_id,
-      slug: board.slug,
-      tagline: board.tagline,
-      avatar_url: board.avatar_url,
-      descriptions: board.descriptions,
-      accessories: board.accessories,
-      posting_identities: board.posting_identities,
-      muted: board.muted,
-      pinned_order: board.pinned_order,
-      permissions: board.permissions,
-      logged_out_restrictions: board.logged_out_restrictions,
-      logged_in_base_restrictions: board.logged_in_base_restrictions,
-      settings: board.settings,
-    });
+    res.status(201).json(LoggedInBoardMetadataSchema.parse(boardMetadata));
   }
 );
 
