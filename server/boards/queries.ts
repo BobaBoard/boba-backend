@@ -429,6 +429,7 @@ export const getBoardRoles = async ({
 
 export const createBoard = async (metadata: {
   slug: string;
+  category_id: number;
   tagline: string;
   avatar_url: string;
   settings: string;
@@ -441,7 +442,7 @@ export const createBoard = async (metadata: {
     avatar_reference_id: metadata.avatar_url,
     settings: metadata.settings,
     parent_realm_id: 2, // todo
-    board_category_id: 1, // todo
+    board_category_id: metadata.category_id,
     string_id: boardExternalId,
   });
 

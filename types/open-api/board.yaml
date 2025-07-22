@@ -50,6 +50,8 @@ components:
           properties:
             slug:
               type: string
+            category_id:
+              type: number
             avatar_url:
               type: string
               format: uri-reference
@@ -62,6 +64,7 @@ components:
                   type: string
           required:
             - slug
+            - category_id
             - avatar_url
             - tagline
             - settings

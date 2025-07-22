@@ -21,6 +21,7 @@ jest.mock("axios");
 
 const CREATE_BOARD_REQUEST = {
   slug: "new-board",
+  category_id: 1,
   tagline: "tagline",
   avatar_url: "https://example.com/avatar.png",
   settings: '{ "accentColor": "#7b00ff"}',

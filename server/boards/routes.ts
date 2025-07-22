@@ -175,10 +175,11 @@ router.post(
   // withRealmPermissions,
   // TODO ensureBoardPermission(BoardPermissions.createBoard),
   async (req, res) => {
-    const { slug, tagline, avatar_url, settings } = req.body;
+    const { slug, category_id, tagline, avatar_url, settings } = req.body;
 
     const boardExternalId = await createBoard({
       slug,
+      category_id,
       tagline,
       avatar_url,
       settings,
