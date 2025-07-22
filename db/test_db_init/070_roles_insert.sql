@@ -17,8 +17,8 @@ VALUES
               'post_as_role'::role_permissions_type,
               'move_thread'::role_permissions_type,
               'create_realm_invite'::role_permissions_type,
-							'view_roles_on_realm'::role_permissions_type,
-							'view_roles_on_board'::role_permissions_type,
+              'view_roles_on_realm'::role_permissions_type,
+              'view_roles_on_board'::role_permissions_type,
               'create_board'::role_permissions_type]);
 
 INSERT INTO board_user_roles(user_id, board_id, role_id, label)
