@@ -916,8 +916,7 @@ router.post(
   "/:realm_id/boards",
   ensureLoggedIn,
   ensureRealmExists,
-  // withRealmPermissions,
-  // TODO ensureRealmPermission(xx),
+  ensureRealmPermission(RealmPermissions.createBoard),
   async (req, res) => {
     const { realm_id } = req.params;
     const { slug, category_id, tagline, avatar_url, settings } = req.body;

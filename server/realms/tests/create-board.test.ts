@@ -1,7 +1,7 @@
 import { ANON_WITH_NO_NAME_USER_ID, BOBATAN_USER_ID } from "test/data/auth";
 import {
-  ENSURE_BOARD_PERMISSIONS_UNAUTHORIZED,
   ENSURE_LOGGED_IN_NO_TOKEN,
+  ENSURE_REALM_PERMISSIONS_UNAUTHORIZED,
 } from "test/data/responses";
 import {
   setLoggedInUser,
@@ -55,22 +55,19 @@ describe("#POST /board", () => {
     });
   });
 
-  test.todo(
-    "fails when user does not have permission to create board"
-    // async () => {
-    //   await wrapWithTransaction(async () => {
-    //     setLoggedInUser(ANON_WITH_NO_NAME_USER_ID);
-    //     const res = await request(server.app)
-    //       .post(CREATE_BOARD_ROUTE)
-    //       .send(CREATE_BOARD_REQUEST);
+  test("fails when user does not have the realm permission to create board", async () => {
+    await wrapWithTransaction(async () => {
+      setLoggedInUser(ANON_WITH_NO_NAME_USER_ID);
+      const res = await request(server.app)
+        .post(CREATE_BOARD_ROUTE)
+        .send(CREATE_BOARD_REQUEST);
 
-    //     expect(res.status).toBe(403);
-    //     expect(res.body).toEqual<GenericResponse>(
-    //       ENSURE_BOARD_PERMISSIONS_UNAUTHORIZED
-    //     );
-    //   });
-    // }
-  );
+      expect(res.status).toBe(403);
+      expect(res.body).toEqual<GenericResponse>(
+        ENSURE_REALM_PERMISSIONS_UNAUTHORIZED
+      );
+    });
+  });
 
   test("creates board", async () => {
     await wrapWithTransaction(async () => {

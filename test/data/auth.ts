@@ -1,6 +1,6 @@
 // bobatan:
 // twisted-minds realm: member,
-//   The Owner (edit_board_details, post_as_role, move_thread, create_realm_invite, view_roles_on_realm),
+//   The Owner (edit_board_details, post_as_role, move_thread, create_realm_invite, view_roles_on_realm, create_board),
 //   GoreMaster5000 (edit_board_details, post_as_role, edit_category_tags, edit_content_notices)
 // uwu realm: member,
 //   The Memester (all)

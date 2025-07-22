@@ -5,10 +5,10 @@
  * Keep them in sync.
  **/
 CREATE TYPE role_permissions_type AS ENUM (
-    'all', 
-    'edit_board_details', 
-    'post_as_role', 
-    'edit_category_tags', 
+    'all',
+    'edit_board_details',
+    'post_as_role',
+    'edit_category_tags',
     'edit_content_notices',
     'move_thread',
     'edit_content',
@@ -21,7 +21,8 @@ CREATE TYPE role_permissions_type AS ENUM (
     'create_thread_on_realm',
     'access_locked_boards_on_realm',
     'view_roles_on_realm',
-    'view_roles_on_board'
+    'view_roles_on_board',
+    'create_board'
 );
 
 CREATE TABLE IF NOT EXISTS roles
