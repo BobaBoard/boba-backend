@@ -78,7 +78,7 @@ const router = express.Router();
  *               $ref: "#/components/schemas/Realm"
  *             examples:
  *               v0:
- *                 $ref: '#/components/examples/V0RealmResponse'
+ *                 $ref: "#/components/examples/V0RealmResponse"
  *       404:
  *         description: The realm was not found.
  */
@@ -918,7 +918,6 @@ router.post(
   ensureRealmExists,
   // withRealmPermissions,
   // TODO ensureRealmPermission(xx),
-  // TODO ensureBoardPermission(BoardPermissions.createBoard),
   async (req, res) => {
     const { realm_id } = req.params;
     const { slug, category_id, tagline, avatar_url, settings } = req.body;
