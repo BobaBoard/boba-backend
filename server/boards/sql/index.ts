@@ -129,18 +129,6 @@ const fetchRolesInBoard = `
     INNER JOIN users ON users.id=board_user_roles.user_id
     WHERE boards.string_id = $/board_external_id/`;
 
-const createBoard = `
-    INSERT INTO boards(string_id, parent_realm_id, board_category_id, slug, tagline, avatar_reference_id, settings)
-    VALUES (
-        $/string_id/,
-        $/parent_realm_id/,
-        $/board_category_id/,
-        $/slug/,
-        $/tagline/,
-        $/avatar_reference_id/,
-        $/settings/
-    )
-    RETURNING string_id;`;
 const deleteBoard = ``;
 
 export default {
@@ -161,6 +149,5 @@ export default {
   unpinBoardByExternalId,
   dismissNotificationsByExternalId,
   fetchRolesInBoard,
-  createBoard,
   deleteBoard,
 };

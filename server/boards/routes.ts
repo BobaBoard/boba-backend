@@ -1,6 +1,5 @@
 import * as threadEvents from "handlers/events/threads";
 
-import { BoardByExternalId, BoardByExternalIdSchema } from "./sql/types";
 import {
   BoardMetadataSchema,
   LoggedInBoardMetadataSchema,
@@ -9,7 +8,6 @@ import { BoardPermissions, RealmPermissions } from "types/permissions";
 import { CacheKeys, cache } from "server/cache";
 import { Internal500Error, NotFound404Error } from "handlers/api-errors/codes";
 import {
-  createBoard,
   createThread,
   deleteBoard,
   dismissBoardNotifications,
@@ -24,14 +22,12 @@ import {
 import {
   ensureBoardAccess,
   ensureBoardPermission,
-  ensureRealmExists,
   ensureRealmPermission,
   withRealmPermissions,
 } from "handlers/permissions";
 import {
   ensureNoIdentityLeakage,
   makeServerThread,
-  processBoardMetadata,
 } from "utils/response-utils";
 
 import debug from "debug";
@@ -133,71 +129,6 @@ router.get("/:board_id", ensureBoardAccess, async (req, res) => {
         : BoardMetadataSchema.parse(boardMetadata)
     );
 });
-
-/**
- * @openapi
- * /boards:
- *   post:
- *     summary: Create board.
- *     operationId: createBoard
- *     tags:
- *       - /boards/
- *     security:
- *       - firebase: []
- *     requestBody:
- *       description: Metadata of board to be created.
- *       content:
- *         application/json:
- *           schema:
- *             $ref: "#/components/schemas/CreateBoardMetadata"
- *     responses:
- *       401:
- *         $ref: "#/components/responses/ensureLoggedIn401"
- *       403:
- *         $ref: "#/components/responses/ensureBoardPermission403"
- *       500:
- *         description: Internal Server Error
- *         $ref: "#/components/responses/default500"
- *       201:
- *         description: Metadata of the created board.
- *         content:
- *           application/json:
- *             schema:
- *               $ref: "#/components/schemas/LoggedInBoardMetadata"
- *             examples:
- *               existing:
- *                 $ref: "#/components/examples/GoreMetadataUpdateResponse"
- */
-router.post(
-  "/",
-  ensureLoggedIn,
-  // ensureRealmExists,
-  // withRealmPermissions,
-  // TODO ensureBoardPermission(BoardPermissions.createBoard),
-  async (req, res) => {
-    const { slug, category_id, tagline, avatar_url, settings } = req.body;
-
-    const boardExternalId = await createBoard({
-      slug,
-      category_id,
-      tagline,
-      avatar_url,
-      settings,
-    });
-
-    const boardMetadata = await getBoardMetadataByExternalId({
-      firebaseId: req.currentUser?.uid,
-      boardExternalId,
-      hasBoardAccess: true,
-    });
-
-    if (!boardMetadata) {
-      throw new Internal500Error("Failed to create board");
-    }
-
-    res.status(201).json(LoggedInBoardMetadataSchema.parse(boardMetadata));
-  }
-);
 
 /**
  * @openapi

@@ -51,7 +51,7 @@ components:
             slug:
               type: string
             category_id:
-              type: number
+              type: string
             avatar_url:
               type: string
               format: uri-reference
