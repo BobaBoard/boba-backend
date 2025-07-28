@@ -823,6 +823,11 @@ router.delete(
 
     let currentUserId: string = req.currentUser!.uid;
     log(`User ${currentUserId} is deleting board with id: ${boardExternalId}`);
+
+    await cache().hDel(CacheKeys.BOARD, boardExternalId);
+    await cache().hDel(CacheKeys.BOARD_METADATA, boardExternalId);
+    await cache().hDel(CacheKeys.USER_PINS, req.currentUser!.uid);
+
     const deleteSuccessful = await deleteBoard({
       boardExternalId,
     });

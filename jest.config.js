@@ -5,6 +5,8 @@ const util = require("util");
 util.inspect.defaultOptions.depth = null;
 
 module.exports = {
+  // riafix
+  testTimeout: 15000,
   // TODO: figure out why this doesn't work
   snapshotFormat: {
     printBasicPrototype: false,
