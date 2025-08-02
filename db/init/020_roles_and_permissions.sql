@@ -22,7 +22,7 @@ CREATE TYPE role_permissions_type AS ENUM (
     'access_locked_boards_on_realm',
     'view_roles_on_realm',
     'view_roles_on_board',
-    'create_board'
+    'create_board_on_realm'
 );
 
 CREATE TABLE IF NOT EXISTS roles
