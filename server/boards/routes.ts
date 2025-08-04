@@ -9,6 +9,7 @@ import { CacheKeys, cache } from "server/cache";
 import { Internal500Error, NotFound404Error } from "handlers/api-errors/codes";
 import {
   createThread,
+  deleteBoard,
   dismissBoardNotifications,
   getBoardRoles,
   markBoardVisit,
@@ -17,7 +18,6 @@ import {
   unmuteBoard,
   unpinBoard,
   updateBoardMetadata,
-  deleteBoard,
 } from "./queries";
 import {
   ensureBoardAccess,
@@ -102,9 +102,9 @@ const router = express.Router();
  *                 - $ref: "#/components/schemas/LoggedInBoardMetadata"
  *             examples:
  *               existing:
- *                 $ref: '#/components/examples/BoardsGoreResponse'
+ *                 $ref: "#/components/examples/BoardsGoreResponse"
  *               locked:
- *                 $ref: '#/components/examples/BoardsRestrictedResponse'
+ *                 $ref: "#/components/examples/BoardsRestrictedResponse"
  */
 router.get("/:board_id", ensureBoardAccess, async (req, res) => {
   const { board_id: boardExternalId } = req.params;
@@ -304,7 +304,7 @@ router.post(
  *               $ref: "#/components/schemas/LoggedInBoardMetadata"
  *             examples:
  *               existing:
- *                 $ref: '#/components/examples/GoreMetadataUpdateResponse'
+ *                 $ref: "#/components/examples/GoreMetadataUpdateResponse"
  */
 router.patch(
   "/:board_id/",

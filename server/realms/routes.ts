@@ -7,6 +7,7 @@ import {
 import {
   acceptInvite,
   checkUserOnRealm,
+  createBoard,
   dismissAllNotifications,
   getInviteDetails,
   getRealmByExternalId,
@@ -29,10 +30,12 @@ import {
 } from "utils/response-utils";
 
 import { DbRealmBoardType } from "server/boards/sql/types";
+import { LoggedInBoardMetadataSchema } from "types/open-api/generated/schemas";
 import { RealmPermissions } from "types/permissions";
 import { createInvite } from "server/realms/queries";
 import debug from "debug";
 import express from "express";
+import { getBoardMetadataByExternalId } from "server/boards/utils";
 import { getRealmBoards } from "../boards/queries";
 import { processRealmActivity } from "./utils";
 import { randomBytes } from "crypto";
@@ -75,7 +78,7 @@ const router = express.Router();
  *               $ref: "#/components/schemas/Realm"
  *             examples:
  *               v0:
- *                 $ref: '#/components/examples/V0RealmResponse'
+ *                 $ref: "#/components/examples/V0RealmResponse"
  *       404:
  *         description: The realm was not found.
  */
@@ -872,6 +875,72 @@ router.get(
         cause: e as Error,
       });
     }
+  }
+);
+
+/**
+ * @openapi
+ * /realms/:realm_id/boards:
+ *   post:
+ *     summary: Create board.
+ *     operationId: createBoard
+ *     tags:
+ *       - /realms/
+ *     security:
+ *       - firebase: []
+ *     requestBody:
+ *       description: Metadata of board to be created.
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/CreateBoardMetadata"
+ *     responses:
+ *       401:
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         $ref: "#/components/responses/ensureBoardPermission403"
+ *       500:
+ *         description: Internal Server Error
+ *         $ref: "#/components/responses/default500"
+ *       201:
+ *         description: Metadata of the created board.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/LoggedInBoardMetadata"
+ *             examples:
+ *               existing:
+ *                 $ref: "#/components/examples/CreateBoardResponse"
+ */
+router.post(
+  "/:realm_id/boards",
+  ensureLoggedIn,
+  ensureRealmExists,
+  ensureRealmPermission(RealmPermissions.createBoard),
+  async (req, res) => {
+    const { realm_id } = req.params;
+    const { slug, category_id, tagline, avatar_url, settings } = req.body;
+
+    const boardExternalId = await createBoard({
+      slug,
+      category_id,
+      tagline,
+      avatar_url,
+      settings,
+      realm_id,
+    });
+
+    const boardMetadata = await getBoardMetadataByExternalId({
+      firebaseId: req.currentUser?.uid,
+      boardExternalId,
+      hasBoardAccess: true,
+    });
+
+    if (!boardMetadata) {
+      throw new Internal500Error("Failed to create board");
+    }
+
+    res.status(201).json(LoggedInBoardMetadataSchema.parse(boardMetadata));
   }
 );
 

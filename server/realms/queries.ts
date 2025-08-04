@@ -19,6 +19,7 @@ import debug from "debug";
 import { extractRealmPermissions } from "utils/permissions-utils";
 import pool from "server/db-pool";
 import sql from "./sql";
+import { v4 as uuidv4 } from "uuid";
 
 const info = debug("bobaserver:realms:queries-info");
 const log = debug("bobaserver:realms:queries-log");
@@ -417,9 +418,9 @@ export const getRealmRoles = async ({
 }): Promise<
   | {
       user_id: string;
-			username:string
-			role_id: string;
-			role_name: string;
+      username: string;
+      role_id: string;
+      role_name: string;
       label: string | null;
     }[]
   | null
@@ -428,4 +429,27 @@ export const getRealmRoles = async ({
     realm_external_id: realmExternalId,
   });
   return realmRoles;
+};
+
+export const createBoard = async (metadata: {
+  slug: string;
+  category_id: string;
+  realm_id: string;
+  tagline: string;
+  avatar_url: string;
+  settings: string;
+}) => {
+  const boardExternalId = uuidv4();
+
+  await pool.one(sql.createBoard, {
+    slug: metadata.slug,
+    category_id: metadata.category_id,
+    tagline: metadata.tagline,
+    avatar_reference_id: metadata.avatar_url,
+    settings: metadata.settings,
+    string_id: boardExternalId,
+    realm_id: metadata.realm_id,
+  });
+
+  return boardExternalId;
 };

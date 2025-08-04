@@ -5,7 +5,6 @@ import {
 } from "test/data/auth";
 import { GORE_BOARD_METADATA, extractBoardSummary } from "test/data/boards";
 import { TWISTED_MINDS_REALM_SLUG, UWU_REALM_SLUG } from "test/data/realms";
-import express, { Express } from "express";
 import { setLoggedInUser, startTestServer } from "utils/test-utils";
 
 import { BOBATAN_TWISTED_MINDS_REALM_PERMISSIONS } from "test/data/user";
