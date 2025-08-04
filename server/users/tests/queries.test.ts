@@ -89,7 +89,7 @@ describe("Tests user queries", () => {
         color: "red",
         description: "A role for people who can edit the gore board.",
         permissions:
-          "{edit_board_details,post_as_role,edit_category_tags,edit_content_notices,create_board_on_realm}",
+          "{edit_board_details,post_as_role,edit_category_tags,edit_content_notices}",
         board_ids: [GORE_BOARD_ID],
         accessory_external_id: null,
       },
@@ -101,7 +101,7 @@ describe("Tests user queries", () => {
         color: "pink",
         description: "A role for the owner.",
         permissions:
-          "{edit_board_details,post_as_role,move_thread,create_realm_invite,view_roles_on_realm,view_roles_on_board}",
+          "{edit_board_details,post_as_role,move_thread,create_realm_invite,view_roles_on_realm,view_roles_on_board,create_board_on_realm}",
         board_ids: [],
         accessory_external_id: CROWN_ACCESSORY_EXTERNAL_ID,
       },
