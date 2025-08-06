@@ -875,4 +875,79 @@ router.get(
   }
 );
 
+/**
+ * @openapi
+ * /realms/{realm_id}/roles:
+ *   post:
+ *     summary: Add a new role to the specified realm.
+ *     operationId: createRealmRoleByExternalId
+ *     tags:
+ *       - /realms/
+ *     security:
+ *       - firebase: []
+ *     parameters:
+ *       - name: realm_id
+ *         in: path
+ *         description: The id for the realm in which the role will be created.
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *         examples:
+ *           twisted_minds:
+ *             summary: The id for the twisted-minds realm.
+ *             value: 76ef4cc3-1603-4278-95d7-99c59f481d2e
+ *     requestBody:
+ *       description: The details of the role to be created.
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: "#/components/schemas/CreateRole"
+ *           examples:
+ *             requestBody:
+ *               $ref: "#/components/examples/CreateTestRole"
+ *       required: true
+ *     responses:
+ *       200:
+ *         description: The realm roles summary.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: "#/components/schemas/RealmRoles"
+ *       400:
+ *         description: The request was malformed.
+ *       401:
+ *         description: User is not logged in.
+ *         $ref: "#/components/responses/ensureLoggedIn401"
+ *       403:
+ *         description: User does not have the necessary permissions.
+ *         $ref: "#/components/responses/ensureRealmPermission403"
+ *       404:
+ *         description: The realm was not found.
+ *         $ref: "#/components/responses/realmNotFound404"
+ *       500:
+ *         description: There was an error fetching realm roles.
+ *         $ref: "#/components/responses/default500"
+ */
+router.post(
+  "/:realm_id/roles",
+  ensureRealmExists,
+  ensureLoggedIn,
+  /* vvv PLACEHOLDER vvv */
+  ensureRealmPermission(RealmPermissions.viewRolesOnRealm),
+  async (req, res) => {
+    try {
+      const { realm_id } = req.params;
+
+      res.status(200).json({});
+
+    } catch (e) {
+      error(e);
+      throw new Internal500Error("There was an error creating realm roles.", {
+        cause: e as Error,
+      });
+    }
+  }
+);
+
 export default router;
