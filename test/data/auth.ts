@@ -1,10 +1,10 @@
 // bobatan:
 // twisted-minds realm: member,
 //   The Owner (edit_board_details, post_as_role, move_thread, create_realm_invite, view_roles_on_realm),
-//   GoreMaster5000 (edit_board_details, post_as_role, edit_category_tags, edit_content_notices)
+//   GoreMaster5000 (edit_board_details, delete_board, post_as_role, edit_category_tags, edit_content_notices)
 // uwu realm: member,
 //   The Memester (all)
-// gore board: GoreMaster5000 (edit_board_details, post_as_role, edit_category_tags, edit_content_notices)
+// gore board: GoreMaster5000 (edit_board_details, delete_board, post_as_role, edit_category_tags, edit_content_notices)
 // memes board: The Memester (all)
 export const BOBATAN_USER_ID = "c6HimTlg2RhVH3fC1psXZORdLcx2";
 
@@ -15,7 +15,7 @@ export const JERSEY_DEVIL_USER_ID = "fb2";
 
 // oncest5evah:
 // twisted-minds realm: member,
-//   GoreMaster5000 (edit_board_details, post_as_role, edit_category_tags, edit_content_notices)
+//   GoreMaster5000 (edit_board_details, delete_board, post_as_role, edit_category_tags, edit_content_notices)
 // uwu realm:
 export const ONCEST_USER_ID = "fb3";
 

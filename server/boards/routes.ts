@@ -780,6 +780,7 @@ router.get(
  *     description: Deletes the specified board.
  *     tags:
  *       - /boards/
+ *       - unzodded
  *     security:
  *       - firebase: []
  *     parameters:
@@ -811,7 +812,7 @@ router.get(
 router.delete(
   "/:board_id/",
   ensureLoggedIn,
-  ensureBoardPermission(BoardPermissions.editMetadata),
+  ensureBoardPermission(BoardPermissions.deleteBoard),
   withRealmPermissions,
   async (req, res) => {
     if (process.env.NODE_ENV === "production") {

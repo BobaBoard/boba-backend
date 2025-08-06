@@ -83,6 +83,7 @@ const GORE_BOARD_LOGGED_IN: BoardByExternalId = {
   muted: false,
   permissions: [
     "edit_board_details",
+    "delete_board",
     "edit_category_tags",
     "edit_content_notices",
     "move_thread",
