@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    /* Base Options: */
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "es2022",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "isolatedModules": true,
+    /* Strictness */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    /* If transpiling with TypeScript: */
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
+    "outDir": "dist",
+    "sourceMap": true,
+    "declaration": true,
+    "noEmit": true,
+    "types": ["node"],
+    "lib": ["ES2024"]
+  },
+  "include": ["./generated/**/*", "./boba-client/client.ts"],
+  "exclude": ["node_modules", "dist"]
+}

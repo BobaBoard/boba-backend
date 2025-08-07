@@ -1,0 +1,25 @@
+{
+  "name": "api-external",
+  "version": "0.0.1",
+  "description": "Generated API packages for BobaBoard",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "generate": "kubb generate",
+    "build": "tsdown"
+  },
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@kubb/cli": "^3.11.1",
+    "@kubb/core": "^3.11.1",
+    "@kubb/plugin-client": "^3.11.1",
+    "@kubb/plugin-oas": "^3.11.1",
+    "@kubb/plugin-ts": "^3.11.1",
+    "@kubb/plugin-zod": "^3.11.1",
+    "@types/node": "^24.1.0",
+    "glob": "^11.0.3",
+    "tsdown": "^0.13.0"
+  }
+}
