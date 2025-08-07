@@ -50,32 +50,44 @@ export default defineConfig([
 ]);
 
 /**
- * Change imports in files to use the external library path for the api types.
- * Also change the "virtual:client" import to use the local client file.
+ * Change imports in client files to use the @bobaboard/boba-api library
+ * for the api types, so the same files don't get installed twice by
+ * consumers.
+ *
+ * Also swaps the "virtual:client" import with the local client file,
+ * because I couldn't get it to work without this hack.
  */
+const IMPORT_REGEX =
+  /import\s+(.*?)\s+from\s+(['"])(\.\.\/(?:generated\/)?boba-api\/(types|zod-schemas)\/([^'"]+?))(\.c?js)?(['"])/g;
+const EXPORT_REGEX =
+  /from\s+(['"])(\.\.\/(?:generated\/)?boba-api\/(types|zod-schemas)\/([^'"]+?))(\.c?js)?(['"])/g;
 async function fixImports(file: string) {
   let content = await fs.readFile(file, "utf8");
   const originalContent = content;
 
+  // Change the imports in this file to use the right export path in the
+  // @bobaboard/boba-api library.
   content = content.replaceAll(
-    /import\s+(.*?)\s+from\s+(['"])(\.\.\/(?:generated\/)?boba-api\/(types|zod-schemas)\/([^'"]+?))(\.c?js)?(['"])/g,
+    IMPORT_REGEX,
     (match, imports, quote1, path, type, filename, extension, quote2) => {
       return `import ${imports} from ${quote1}@bobaboard/boba-api/${type === "types" ? "types" : "zod"}/${filename}${quote2}`;
     }
   );
 
-  // Handle export statements
+  // Change the exports in this file to use the right export path in the
+  // @bobaboard/boba-api library.
   content = content.replaceAll(
-    /from\s+(['"])(\.\.\/(?:generated\/)?boba-api\/(types|zod-schemas)\/([^'"]+?))(\.c?js)?(['"])/g,
+    EXPORT_REGEX,
     (match, quote1, path, type, filename, extension, quote2) => {
       return `from ${quote1}@bobaboard/boba-api/${type === "types" ? "types" : "zod"}/${filename}${quote2}`;
     }
   );
 
+  // Change the "virtual:client" import to use the local client file.
   content = content.replaceAll("virtual:client", "../client.js");
 
+  // If the content has changed, write the file back.
   if (content !== originalContent) {
-    // console.log(`✅ Fixed imports in: ${file}`);
     await fs.writeFile(file, content);
   }
 }
