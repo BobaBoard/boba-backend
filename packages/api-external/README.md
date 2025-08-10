@@ -6,6 +6,8 @@ These are based on our OpenAPI specification.
 
 **How to use:**
 
+From the `packages/api-external` directory run:
+
 - `yarn generate` - Generate API types and client from OpenAPI spec
 - `yarn build` - Build the packages
 
