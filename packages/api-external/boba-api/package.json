@@ -1,0 +1,72 @@
+{
+  "name": "@bobaboard/boba-api",
+  "version": "0.0.1",
+  "description": "Generated API packages for BobaBoard, including types and zod schemas",
+  "type": "module",
+  "files": [
+    "./dist/**/*",
+    "./package.json"
+  ],
+  "private": true,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    },
+    "./types": {
+      "import": {
+        "types": "./dist/types/index.d.ts",
+        "default": "./dist/types/index.js"
+      },
+      "require": {
+        "types": "./dist/types/index.d.cts",
+        "default": "./dist/types/index.cjs"
+      }
+    },
+    "./types/*": {
+      "import": {
+        "types": "./dist/types/*.d.ts",
+        "default": "./dist/types/*.js"
+      },
+      "require": {
+        "types": "./dist/types/*.d.cts",
+        "default": "./dist/types/*.cjs"
+      }
+    },
+    "./zod": {
+      "import": {
+        "types": "./dist/zod-schemas/index.d.ts",
+        "default": "./dist/zod-schemas/index.js"
+      },
+      "require": {
+        "types": "./dist/zod-schemas/index.d.cts",
+        "default": "./dist/zod-schemas/index.cjs"
+      }
+    },
+    "./zod/*": {
+      "import": {
+        "types": "./dist/zod-schemas/*.d.ts",
+        "default": "./dist/zod-schemas/*.js"
+      },
+      "require": {
+        "types": "./dist/zod-schemas/*.d.cts",
+        "default": "./dist/zod-schemas/*.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "validate": " npx publint --pack npm"
+  },
+  "author": "",
+  "license": "MIT"
+}
