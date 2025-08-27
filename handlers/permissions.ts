@@ -3,7 +3,6 @@ import {
   BoardRestrictions,
   POST_OWNER_PERMISSIONS,
   PostPermissions,
-  REALM_MEMBER_PERMISSIONS,
   RealmPermissions,
   ThreadPermissions,
 } from "types/permissions";

@@ -19,6 +19,7 @@ export const BoardPermissionsEnumSchema = z.enum([
   "access_locked_boards_on_realm",
   "view_roles_on_realm",
   "view_roles_on_board",
+  "create_board_on_realm",
 ]);
 export const BoardRestrictionsEnumSchema = z.enum(["lock_access", "delist"]);
 export type BoardRestrictionsEnum = z.infer<typeof BoardRestrictionsEnumSchema>;
