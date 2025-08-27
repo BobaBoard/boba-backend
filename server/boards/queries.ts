@@ -432,14 +432,28 @@ export const deleteBoard = async ({
 }: {
   boardExternalId: string;
 }) => {
-  try {
-    await pool.none(sql.deleteBoard, {
-      board_id: boardExternalId,
+  log(`Deleting board with id: ${boardExternalId}`);
+
+  const success = await pool
+    .tx("delete-board", async (transaction) => {
+      const internalBoardId = await transaction.one(sql.getBoardInternalId, {
+        board_external_id: boardExternalId,
+      });
+
+      await transaction.none(sql.deleteBoard, {
+        board_id: internalBoardId.id,
+      });
+
+      return true;
+    })
+    .catch((e) => {
+      error(`Error during delete board transaction.`);
+      error(e);
+      return false;
     });
-    return true;
-  } catch (e) {
-    error(`Error while deleting board.`);
-    error(e);
+
+  if (!success) {
     return false;
   }
+  return true;
 };

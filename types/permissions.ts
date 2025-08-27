@@ -9,6 +9,7 @@
 export enum DbRolePermissions {
   all = "all",
   edit_board_details = "edit_board_details",
+  delete_board = "delete_board",
   post_as_role = "post_as_role",
   edit_category_tags = "edit_category_tags",
   edit_content_notices = "edit_content_notices",
@@ -24,7 +25,7 @@ export enum DbRolePermissions {
   access_locked_boards_on_realm = "access_locked_boards_on_realm",
   view_roles_on_realm = "view_roles_on_realm",
   view_roles_on_board = "view_roles_on_board",
-  create_board_on_realm = "create_board_on_realm",
+  create_board_on_realm = "create_board_on_realm"
 }
 
 export interface UserBoardPermissions {
@@ -40,6 +41,7 @@ export enum ThreadPermissions {
 
 export enum BoardPermissions {
   editMetadata = DbRolePermissions["edit_board_details"],
+  deleteBoard = DbRolePermissions["delete_board"],
   viewRolesOnBoard = DbRolePermissions["view_roles_on_board"],
 }
 

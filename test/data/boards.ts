@@ -96,7 +96,11 @@ const GORE_WITH_ROLE_METADATA: LoggedInBoardMetadata = {
     },
   ],
   permissions: {
-    board_permissions: ["edit_board_details", "view_roles_on_board"],
+    board_permissions: [
+      "edit_board_details",
+      "delete_board",
+      "view_roles_on_board",
+    ],
     post_permissions: ["edit_category_tags", "edit_content_notices"],
     thread_permissions: ["move_thread"],
   },

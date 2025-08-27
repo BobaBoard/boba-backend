@@ -7,6 +7,7 @@
 CREATE TYPE role_permissions_type AS ENUM (
     'all',
     'edit_board_details',
+    'delete_board',
     'post_as_role',
     'edit_category_tags',
     'edit_content_notices',
