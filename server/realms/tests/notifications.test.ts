@@ -35,7 +35,7 @@ describe("Tests notifications REST API", () => {
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual(BOBATAN_NOTIFICATIONS);
-    log(res.body);
+  //  log(res.body);
   });
 
   // TODO: check if any test user has outdated notifications or none, and test there
