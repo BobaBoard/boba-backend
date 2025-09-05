@@ -9,25 +9,29 @@ export const ENSURE_LOGGED_IN_INVALID_TOKEN: GenericResponse = {
 };
 
 export const ENSURE_THREAD_ACCESS_UNAUTHENTICATED: GenericResponse = {
-  message: "User must be authenticated to access thread."
-}
+  message: "User must be authenticated to access thread.",
+};
 
 export const ENSURE_THREAD_ACCESS_UNAUTHORIZED: GenericResponse = {
-  message: "User does not have required permissions to access thread."
-}
+  message: "User does not have required permissions to access thread.",
+};
 
 export const ENSURE_THREAD_PERMISSIONS_UNAUTHORIZED: GenericResponse = {
-  message: "User does not have required permissions for thread operation."
-}
+  message: "User does not have required permissions for thread operation.",
+};
 
 export const ENSURE_BOARD_ACCESS_UNAUTHENTICATED: GenericResponse = {
-  message: "User must be authenticated to access board."
-}
+  message: "User must be authenticated to access board.",
+};
 
 export const ENSURE_BOARD_ACCESS_UNAUTHORIZED: GenericResponse = {
-  message: "User does not have required permissions to access board."
-}
+  message: "User does not have required permissions to access board.",
+};
 
 export const ENSURE_BOARD_PERMISSIONS_UNAUTHORIZED: GenericResponse = {
-  message: "User does not have required permissions for board operation."
-}
+  message: "User does not have required permissions for board operation.",
+};
+
+export const ENSURE_REALM_PERMISSIONS_UNAUTHORIZED: GenericResponse = {
+  message: "User does not have required permissions for realm operation.",
+};

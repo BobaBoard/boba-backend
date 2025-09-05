@@ -90,6 +90,7 @@ const GORE_BOARD_LOGGED_IN: BoardByExternalId = {
     "create_realm_invite",
     "view_roles_on_realm",
     "view_roles_on_board",
+    "create_board_on_realm",
   ],
   pinned_order: 1,
   posting_identities: [

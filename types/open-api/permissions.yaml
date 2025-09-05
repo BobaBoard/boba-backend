@@ -17,7 +17,7 @@ components:
       type: array
       items:
         type: string
-        enum: 
+        enum:
           [
             edit_board_details,
             view_roles_on_board,
@@ -51,4 +51,5 @@ components:
             create_thread_on_realm,
             access_locked_boards_on_realm,
             view_roles_on_realm,
+            create_board_on_realm,
           ]
