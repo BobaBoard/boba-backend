@@ -317,7 +317,7 @@ router.get("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
  *         description: The notifications were successfully dismissed.
  */
 router.delete("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
-  let currentUserId: string = req.currentUser!.uid;
+  const currentUserId: string = req.currentUser!.uid;
   log(`Dismissing notifications for firebase id: ${currentUserId}`);
   const { realm_id } = req.params;
 

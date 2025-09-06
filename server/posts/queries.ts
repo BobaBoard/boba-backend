@@ -421,7 +421,7 @@ export const postNewCommentChain = async ({
       let prevId: number | null = null;
       let prevExternalId: string | null = null;
       const comments = [];
-      for (let content of contentArray) {
+      for (const content of contentArray) {
         const newComment: { id: number; comment: ZodDbCommentType } =
           await postNewCommentWithTransaction(transaction, {
             firebaseId,

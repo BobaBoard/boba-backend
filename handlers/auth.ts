@@ -2,7 +2,6 @@ import { CacheKeys, cache } from "server/cache.js";
 import { type NextFunction, type Request, type Response } from "express";
 import firebaseAuth, { type auth } from "firebase-admin";
 
-import { Internal500Error } from "handlers/api-errors/codes.js";
 import { type SettingEntry } from "types/settings.js";
 import debug from "debug";
 import { getUserSettings } from "server/users/queries.js";
@@ -48,14 +47,12 @@ export const withLoggedIn = (
     .then((decodedToken) => {
       activeSpan?.setAttribute("user.id", decodedToken.uid);
       log(`Found id token in request: ${decodedToken.uid}`);
-      // @ts-ignore
       req.currentUser = decodedToken;
       if (process.env.NODE_ENV != "production" && process.env.FORCED_USER) {
         log(
           `Overriding user id with locally configured one (${process.env.FORCED_USER})`
         );
         log(`User email set as test@test.com`);
-        // @ts-ignore
         req.currentUser.uid = process.env.FORCED_USER;
         req.currentUser.email = "test@test.com";
       }
