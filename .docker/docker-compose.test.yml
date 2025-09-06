@@ -18,11 +18,10 @@ services:
       dockerfile: ./.docker/Dockerfile
     environment:
       TZ: "America/Los_Angeles"
-      JEST_JUNIT_OUTPUT_DIR: ../reports/junit/
     command: >
       sh -c "/usr/src/git/wait-for-it/wait-for-it.sh 127.0.0.1:35432 -t 60 -- sleep 10 && \
-             yarn run test --ci --testNamePattern='^((?!ci\-disable).)*$$' --reporters=default --reporters=junit && \
-             yarn run test --ci --testNamePattern='^ci\-disable.*$$' --reporters=default --reporters=junit"
+             yarn run test --testNamePattern='^((?!ci\-disable).)*$$' --reporter=junit --outputFile='../reports/junit/' && \
+             yarn run test --testNamePattern='^ci\-disable.*$$' --reporter=junit --outputFile='../reports/junit/'"
     volumes:
       - ..:/usr/src/app
       # Below line prevents Docker from mapping the host's node_modules/

@@ -58,5 +58,5 @@
     "handlers",
     "utils/generate-open-api-spec.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "packages/**/node_modules"]
 }
