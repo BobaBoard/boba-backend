@@ -1,5 +1,5 @@
 import { BOBATAN_USER_ID, JERSEY_DEVIL_USER_ID } from "test/data/auth.js";
-import { CacheKeys, cache } from "server/cache.js";
+import { CacheKeys, cache } from "../../../../server/cache.js";
 import {
   GORE_BOARD_ID,
   MAIN_STREET_BOARD_ID,
@@ -15,9 +15,9 @@ import {
 import request from "supertest";
 import router from "../../routes.js";
 
-vi.mock("server/cache.js");
-vi.mock("handlers/auth.js");
-vi.mock("server/db-pool.js");
+jest.mock("../../../../server/cache.js");
+jest.mock("handlers/auth.js");
+jest.mock("../../../../server/db-pool.js");
 
 describe("Tests mute boards REST API", () => {
   const server = startTestServer(router);

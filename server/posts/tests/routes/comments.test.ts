@@ -15,11 +15,13 @@ import {
 import request from "supertest";
 import router from "../../routes.js";
 
-vi.mock("handlers/auth.js");
-vi.mock("server/db-pool.js");
-vi.mock("server/cache.js");
-vi.mock("uuid", async () => ({
-  ...(await vi.importActual<typeof import("uuid")>("uuid")),
+jest.mock("handlers/auth.js");
+jest.mock("server/db-pool.js");
+jest.mock("server/cache.js");
+jest.mock("uuid", () => ({
+  __esModule: true,
+  // @ts-ignore
+  ...jest.requireActual("uuid"),
 }));
 
 describe("Test commenting on post REST API", () => {

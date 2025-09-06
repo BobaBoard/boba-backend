@@ -1,4 +1,5 @@
 {
+  // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
     // File Layout
     // "rootDir": "./src",
@@ -10,7 +11,7 @@
     "target": "ES2022",
     "moduleResolution": "nodenext",
     "lib": ["esnext"],
-    "types": ["node", "vitest/globals"],
+    "types": ["node", "jest", "jest-extended"],
 
     // Other Outputs
     "sourceMap": true,
@@ -41,7 +42,6 @@
     "noErrorTruncation": true,
     "skipLibCheck": true,
 
-    "resolveJsonModule": true,
     "paths": {
       "utils/*": ["utils/*"],
       "handlers/*": ["handlers/*"],

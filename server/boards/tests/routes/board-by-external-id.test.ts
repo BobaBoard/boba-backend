@@ -1,5 +1,5 @@
 import { BOBATAN_USER_ID, JERSEY_DEVIL_USER_ID } from "test/data/auth.js";
-import { CacheKeys, cache } from "server/cache.js";
+import { CacheKeys, cache } from "../../../../server/cache.js";
 import {
   GORE_BOARD_ID,
   GORE_BOARD_METADATA,

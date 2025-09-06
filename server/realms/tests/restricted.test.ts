@@ -8,7 +8,7 @@ import { Server } from "http";
 import request from "supertest";
 import router from "../routes.js";
 
-vi.mock("handlers/auth.js");
+jest.mock("handlers/auth.js");
 
 describe("Tests restricted board realm queries", () => {
   const server = startTestServer(router);

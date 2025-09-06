@@ -23,6 +23,9 @@ import type { GenericResponse } from "types/rest/responses.js";
 import request from "supertest";
 import router from "../../routes.js";
 
+jest.mock("handlers/auth.js");
+jest.mock("../../../server/db-pool.js");
+
 describe("Tests threads REST API - hide", () => {
   const server = startTestServer(router);
 

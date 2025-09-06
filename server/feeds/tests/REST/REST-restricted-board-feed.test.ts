@@ -7,7 +7,7 @@ import clone from "clone";
 import request from "supertest";
 import router from "../../routes.js";
 
-vi.mock("handlers/auth.js");
+jest.mock("handlers/auth.js");
 
 describe("Test feed of restricted boards REST API", () => {
   const server = startTestServer(router);
