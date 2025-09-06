@@ -1,5 +1,5 @@
 import { BOBATAN_USER_ID, JERSEY_DEVIL_USER_ID } from "test/data/auth.js";
-import { CacheKeys, cache } from "../../../../server/cache.js";
+import { CacheKeys, cache } from "server/cache.js";
 import {
   GORE_BOARD_ID,
   GORE_BOARD_METADATA,
@@ -14,8 +14,8 @@ import router from "../../routes.js";
 import stringify from "fast-json-stable-stringify";
 
 const log = debug("bobaserver:board:routes");
-vi.mock("server/cache.js");
-vi.mock("handlers/auth.js");
+jest.mock("server/cache.js");
+jest.mock("handlers/auth.js");
 
 describe("Tests boards REST API", () => {
   const server = startTestServer(router);

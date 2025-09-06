@@ -3,7 +3,7 @@ import firebaseAuth, { type auth } from "firebase-admin";
 
 import debug from "debug";
 import { parseSettings } from "utils/settings.js";
-import pool from "../db-pool.js";
+import pool from "server/db-pool.js";
 import sql from "./sql/index.js";
 
 const log = debug("bobaserver:users:queries-log");

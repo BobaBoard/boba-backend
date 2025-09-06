@@ -2,7 +2,7 @@ import { FeedTypeSchema, type ZodDbFeedType } from "types/db/schemas.js";
 import { decodeCursor, encodeCursor } from "utils/queries-utils.js";
 
 import debug from "debug";
-import pool from "../db-pool.js";
+import pool from "server/db-pool.js";
 import sql from "./sql/index.js";
 
 const info = debug("bobaserver:feeds:queries-info");

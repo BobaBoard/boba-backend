@@ -1,4 +1,4 @@
-import { CacheKeys, cache } from "../../../../server/cache.js";
+import { CacheKeys, cache } from "server/cache.js";
 import { setLoggedInUser, startTestServer } from "utils/test-utils.js";
 
 import { AIBA_SUBSCRIPTION_ID } from "test/data/subscriptions.js";
@@ -10,7 +10,7 @@ import request from "supertest";
 import router from "../../routes.js";
 import stringify from "fast-json-stable-stringify";
 
-jest.mock("../../../../server/cache.js");
+jest.mock("server/cache.js");
 jest.mock("handlers/auth.js");
 
 const AIBA_SUBSCRIPTION_RESULT: SubscriptionFeed = {

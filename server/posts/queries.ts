@@ -9,7 +9,7 @@ import { type QueryTagsType } from "types/rest/params.js";
 import { canPostAs } from "utils/permissions-utils.js";
 import debug from "debug";
 import invariant from "tiny-invariant";
-import pool from "../db-pool.js";
+import pool from "server/db-pool.js";
 import sql from "./sql/index.js";
 import threadsSql from "../threads/sql/index.js";
 import { v4 as uuidv4 } from "uuid";

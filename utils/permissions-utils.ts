@@ -10,10 +10,10 @@ import {
   extractPermissions,
 } from "types/permissions.js";
 
-import { type BoardRestrictionsEnum } from "../server/boards/sql/types.js";
+import { type BoardRestrictionsEnum } from "server/boards/sql/types.js";
 import { type QueryTagsType } from "types/rest/params.js";
 import debug from "debug";
-import { getBoardByExternalId } from "../server/boards/queries.js";
+import { getBoardByExternalId } from "server/boards/queries.js";
 
 const info = debug("bobaserver:board:utils-info");
 const log = debug("bobaserver::permissions-utils-log");

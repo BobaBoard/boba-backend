@@ -12,7 +12,9 @@ import bodyParser from "body-parser";
 import debug from "debug";
 import { handleApiErrors } from "handlers/api-errors/handler.js";
 import { mocked } from "jest-mock";
-import pool from "../server/db-pool.js";
+
+vi.mock("server/db-pool.js");
+const pool = await import("server/db-pool.js").then((m) => m.default);
 
 import "express-async-errors";
 
