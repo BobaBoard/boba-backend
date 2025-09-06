@@ -1,11 +1,14 @@
-// @ts-expect-error
-import * as matchers from "jest-extended";
+import matchers from "jest-extended";
 
 import debug from "debug";
 import dotenv from "dotenv";
 import dotenvExpand from "dotenv-expand";
 
 dotenvExpand(dotenv.config());
+
+// Make jest available globally for ES modules
+import { jest } from "@jest/globals";
+(global as any).jest = jest;
 
 expect.extend(matchers);
 
