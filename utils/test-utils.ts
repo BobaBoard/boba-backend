@@ -24,6 +24,7 @@ export const runWithinTransaction = async (
 ) => {
   await pool.tx("test-transaction", async (t) => {
     try {
+      await t.none("BEGIN TRANSACTION;");
       await test(t);
     } finally {
       await t.none("ROLLBACK;");

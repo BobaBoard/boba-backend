@@ -35,9 +35,11 @@ const authCreateUser = vi.fn();
 
 vi.mock("firebase-admin", () => {
   return {
-    auth: () => ({
-      createUser: async () => authCreateUser(),
-    }),
+    default: {
+      auth: () => ({
+        createUser: async () => authCreateUser(),
+      }),
+    },
   };
 });
 
