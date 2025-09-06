@@ -1,5 +1,4 @@
 {
-  // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
     // File Layout
     // "rootDir": "./src",
@@ -42,6 +41,7 @@
     "noErrorTruncation": true,
     "skipLibCheck": true,
 
+    "resolveJsonModule": true,
     "paths": {
       "utils/*": ["utils/*"],
       "handlers/*": ["handlers/*"],
