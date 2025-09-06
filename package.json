@@ -35,7 +35,8 @@
     "test:changed": "yarn run test --watch",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand --no-cache",
     "test:docker": "docker compose -f .docker/docker-compose.test.yml down && docker compose -p boba-server-test -f .docker/docker-compose.test.yml run --rm test",
-    "test:watch": "yarn run test --watchAll"
+    "test:watch": "yarn run test --watchAll",
+    "test:vitest": "cross-env DEBUG=bobaserver:*,-*info vitest --reporter verbose server/boards/tests/routes/mute-board.test.ts"
   },
   "dependencies": {
     "@honeycombio/opentelemetry-node": "^0.6.0",
@@ -91,6 +92,8 @@
     "tsc-alias": "^1.8.6",
     "tsconfig-paths": "^3.11.0",
     "tsx": "^4.20.5",
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.2",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vitest": "^3.2.4"
   }
 }

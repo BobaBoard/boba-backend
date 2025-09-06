@@ -1,11 +1,11 @@
-const { CacheKeys: OriginalCacheKeys } = jest.requireActual("../cache.ts");
+const { CacheKeys: OriginalCacheKeys } = await vi.importActual("../cache.ts");
 
 const cacheMock = {
-  hDel: jest.fn(),
-  hGet: jest.fn(),
-  hSet: jest.fn(),
+  hDel: vi.fn(),
+  hGet: vi.fn(),
+  hSet: vi.fn(),
 };
-export const cache = jest.fn().mockImplementation(() => {
+export const cache = vi.fn().mockImplementation(() => {
   return cacheMock;
 });
 

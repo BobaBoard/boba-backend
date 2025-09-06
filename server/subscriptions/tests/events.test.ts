@@ -11,7 +11,7 @@ import {
   CREATE_GORE_THREAD_RESPONSE,
   FAVORITE_CHARACTER_THREAD,
 } from "test/data/threads.js";
-import { CacheKeys, cache } from "../../../server/cache.js";
+import { CacheKeys, cache } from "server/cache.js";
 import {
   EVENT_TYPES as THREAD_EVENT_TYPES,
   emit as threadEventsEmit,

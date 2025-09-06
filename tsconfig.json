@@ -10,7 +10,7 @@
     "target": "ES2022",
     "moduleResolution": "nodenext",
     "lib": ["esnext"],
-    "types": ["node", "jest", "jest-extended"],
+    "types": ["node", "vitest/globals"],
 
     // Other Outputs
     "sourceMap": true,

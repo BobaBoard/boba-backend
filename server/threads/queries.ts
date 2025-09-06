@@ -7,7 +7,7 @@ import { type ZodDbThreadType } from "types/db/schemas.js";
 import debug from "debug";
 import { extractThreadPermissions } from "utils/permissions-utils.js";
 import { getBoardByExternalId } from "../boards/queries.js";
-import pool from "../db-pool.js";
+import pool from "server/db-pool.js";
 import sql from "./sql/index.js";
 
 const log = debug("bobaserver:threads:queries-log");

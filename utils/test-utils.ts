@@ -12,7 +12,9 @@ import bodyParser from "body-parser";
 import debug from "debug";
 import { handleApiErrors } from "handlers/api-errors/handler.js";
 import { mocked } from "jest-mock";
-import pool from "../server/db-pool.js";
+
+vi.mock("server/db-pool.js");
+const pool = await import("server/db-pool.js").then((m) => m.default);
 
 import "express-async-errors";
 
@@ -31,7 +33,7 @@ export const runWithinTransaction = async (
 };
 
 export const wrapWithTransaction = async (test: () => void) => {
-  if (!jest.isMockFunction(pool.tx)) {
+  if (!vi.isMockFunction(pool.tx)) {
     throw Error(
       "wrapWithTransaction requires 'server/db-pool' to be explicitly mocked."
     );
@@ -48,9 +50,9 @@ export const wrapWithTransaction = async (test: () => void) => {
 
 export const setLoggedInUser = (firebaseId: string) => {
   if (
-    !jest.isMockFunction(withLoggedIn) ||
-    !jest.isMockFunction(ensureLoggedIn) ||
-    !jest.isMockFunction(withUserSettings)
+    !vi.isMockFunction(withLoggedIn) ||
+    !vi.isMockFunction(ensureLoggedIn) ||
+    !vi.isMockFunction(withUserSettings)
   ) {
     throw Error(
       "setLoggedInUser requires 'handlers/auth' to be explicitly mocked."
@@ -78,9 +80,9 @@ export const setLoggedInUserWithEmail = (user: {
   email: string;
 }) => {
   if (
-    !jest.isMockFunction(withLoggedIn) ||
-    !jest.isMockFunction(ensureLoggedIn) ||
-    !jest.isMockFunction(withUserSettings)
+    !vi.isMockFunction(withLoggedIn) ||
+    !vi.isMockFunction(ensureLoggedIn) ||
+    !vi.isMockFunction(withUserSettings)
   ) {
     throw Error(
       "setLoggedInUserWithEmail requires 'handlers/auth' to be explicitly mocked."
@@ -106,7 +108,7 @@ export const setLoggedInUserWithEmail = (user: {
 export const startTestServer = (router: Router) => {
   const server: { app: Express | null } = { app: null };
   let listener: Server;
-  beforeEach((done) => {
+  beforeEach(async () => {
     server.app = express();
     server.app.use(bodyParser.json());
     // We add this middleware cause the server uses it in every request to check
@@ -116,12 +118,20 @@ export const startTestServer = (router: Router) => {
     server.app.use(withLoggedIn);
     server.app.use(router);
     server.app.use(handleApiErrors);
-    listener = server.app.listen(4000, () => {
-      done();
+    await new Promise((resolve) => {
+      listener = server.app!.listen(4000, () => {
+        resolve(true);
+      });
     });
   });
-  afterEach((done) => {
-    listener.close(done);
+  afterEach(async () => {
+    if (listener) {
+      await new Promise((resolve) => {
+        listener.close(() => {
+          resolve(true);
+        });
+      });
+    }
   });
 
   return server;

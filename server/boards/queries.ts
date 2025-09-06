@@ -8,7 +8,7 @@ import {
 import { type ITask } from "pg-promise";
 import debug from "debug";
 import { getMetadataDelta } from "./utils.js";
-import pool from "../db-pool.js";
+import pool from "server/db-pool.js";
 import { postNewContribution } from "../posts/queries.js";
 import postsSQL from "../posts/sql/index.js";
 import sql from "./sql/index.js";

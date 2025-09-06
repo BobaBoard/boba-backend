@@ -1,6 +1,6 @@
 import { Internal500Error } from "handlers/api-errors/codes.js";
 import debug from "debug";
-import pool from "../db-pool.js";
+import pool from "server/db-pool.js";
 import sql from "./sql/index.js";
 
 const error = debug("bobaserver:subscriptions:queries-error");

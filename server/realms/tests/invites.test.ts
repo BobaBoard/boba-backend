@@ -22,7 +22,7 @@ import {
 
 import { checkUserOnRealm } from "../queries.js";
 import debug from "debug";
-import pool from "../../../server/db-pool.js";
+import pool from "server/db-pool.js";
 import request from "supertest";
 import router from "../routes.js";
 

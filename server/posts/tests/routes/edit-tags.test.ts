@@ -1,3 +1,6 @@
+jest.mock("server/db-pool.js");
+jest.mock("handlers/auth.js");
+
 import {
   BOBATAN_USER_ID,
   ONCEST_USER_ID,
@@ -17,8 +20,8 @@ import { ONCEST_USER_IDENTITY } from "test/data/user.js";
 import request from "supertest";
 import router from "../../routes.js";
 
-jest.mock("../../../server/db-pool.js");
-jest.mock("handlers/auth.js");
+
+
 
 describe("Test editing tags of post REST API", () => {
   const server = startTestServer(router);
