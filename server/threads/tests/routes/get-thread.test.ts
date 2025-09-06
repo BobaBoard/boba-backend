@@ -5,14 +5,14 @@ import {
   NULL_THREAD_NOT_FOUND,
   RESTRICTED_THREAD,
   RESTRICTED_THREAD_ID,
-} from "test/data/threads";
-import { setLoggedInUser, startTestServer } from "utils/test-utils";
+} from "test/data/threads.js";
+import { setLoggedInUser, startTestServer } from "utils/test-utils.js";
 
-import { BOBATAN_USER_ID } from "test/data/auth";
-import { GenericResponse } from "types/rest/responses";
-import { Thread } from "types/open-api/generated/types";
+import { BOBATAN_USER_ID } from "test/data/auth.js";
+import type { GenericResponse } from "types/rest/responses.js";
+import type { Thread } from "types/open-api/generated/types.js";
 import request from "supertest";
-import router from "../../routes";
+import router from "../../routes.js";
 
 jest.mock("handlers/auth");
 

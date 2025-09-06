@@ -2,22 +2,23 @@
 import dotenv from "dotenv";
 import dotenvExpand from "dotenv-expand";
 dotenvExpand(dotenv.config());
-import "./telemetry";
+import "./telemetry.js";
 
 import express from "express";
-require("express-async-errors");
+import "express-async-errors";
 import bodyParser from "body-parser";
-import initOpenApiDocs from "handlers/open-api";
+import initOpenApiDocs from "handlers/open-api.js";
 import cors from "cors";
 import firebaseAuth from "firebase-admin";
-import { initCache } from "./cache";
-import { withLoggedIn } from "handlers/auth";
-import { handleApiErrors } from "handlers/api-errors/handler";
-import { applyRoutes } from "./all-routes";
-import { registerEventHandlers } from "./event-handlers";
+import { initCache } from "./cache.js";
+import { withLoggedIn } from "handlers/auth.js";
+import { handleApiErrors } from "handlers/api-errors/handler.js";
+import { applyRoutes } from "./all-routes.js";
+import { registerEventHandlers } from "./event-handlers.js";
 
-const serviceAccount = require(process.env
-  .GOOGLE_APPLICATION_CREDENTIALS_PATH!);
+const serviceAccount = await import(
+  process.env.GOOGLE_APPLICATION_CREDENTIALS_PATH!
+);
 
 if (!firebaseAuth.apps.length) {
   firebaseAuth.initializeApp({
@@ -47,7 +48,7 @@ app.set("json spaces", 2);
 
 app.use(handleApiErrors);
 
-if (require.main === module) {
+if (import.meta.url === `file://${process.argv[1]}`) {
   app.listen(port, () =>
     log(
       process.env.NODE_ENV == "production"

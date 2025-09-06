@@ -2,23 +2,23 @@ import {
   ENSURE_LOGGED_IN_INVALID_TOKEN,
   ENSURE_LOGGED_IN_NO_TOKEN,
   ENSURE_THREAD_ACCESS_UNAUTHORIZED,
-} from "test/data/responses";
+} from "test/data/responses.js";
 import {
   FAVORITE_CHARACTER_THREAD_ID,
   NULL_ID,
   NULL_THREAD_NOT_FOUND,
   RESTRICTED_THREAD_ID,
-} from "test/data/threads";
+} from "test/data/threads.js";
 import {
   setLoggedInUser,
   startTestServer,
   wrapWithTransaction,
-} from "utils/test-utils";
+} from "utils/test-utils.js";
 
-import { BOBATAN_USER_ID } from "test/data/auth";
-import { GenericResponse } from "types/rest/responses";
+import { BOBATAN_USER_ID } from "test/data/auth.js";
+import type { GenericResponse } from "types/rest/responses.js";
 import request from "supertest";
-import router from "../../routes";
+import router from "../../routes.js";
 
 jest.mock("handlers/auth");
 jest.mock("server/db-pool");

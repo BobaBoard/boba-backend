@@ -1,12 +1,12 @@
-import { setLoggedInUser, startTestServer } from "utils/test-utils";
+import { setLoggedInUser, startTestServer } from "utils/test-utils.js";
 
-import { JERSEY_DEVIL_BOBADEX } from "test/data/user";
-import { JERSEY_DEVIL_USER_ID } from "test/data/auth";
+import { JERSEY_DEVIL_BOBADEX } from "test/data/user.js";
+import { JERSEY_DEVIL_USER_ID } from "test/data/auth.js";
 import request from "supertest";
-import router from "../../routes";
+import router from "../../routes.js";
 
-jest.mock("server/cache");
-jest.mock("handlers/auth");
+jest.mock("server/cache.js");
+jest.mock("handlers/auth.js");
 
 describe("Tests users/@me/bobadex endpoint", () => {
   const server = startTestServer(router);

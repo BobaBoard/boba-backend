@@ -1,4 +1,4 @@
-import * as threadEvents from "handlers/events/threads";
+import * as threadEvents from "handlers/events/threads.js";
 
 const getDiscordWebhookMessage = ({
   subscriptionNames,

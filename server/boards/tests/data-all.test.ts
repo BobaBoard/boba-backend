@@ -1,7 +1,7 @@
-import { BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID } from "test/data/auth";
+import { BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID } from "test/data/auth.js";
 
-import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
-import { getRealmBoards } from "../queries";
+import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms.js";
+import { getRealmBoards } from "../queries.js";
 
 const extractBoardDetails = (boardData: any) => {
   return {

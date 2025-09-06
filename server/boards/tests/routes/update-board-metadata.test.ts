@@ -1,25 +1,25 @@
-import { BOBATAN_USER_ID, JERSEY_DEVIL_USER_ID } from "test/data/auth";
-import {
+import { BOBATAN_USER_ID, JERSEY_DEVIL_USER_ID } from "test/data/auth.js";
+import type {
   BoardCategoryDescription,
   BoardTextDescription,
-} from "types/rest/boards";
-import { CacheKeys, cache } from "server/cache";
-import { GORE_BOARD_ID, GORE_BOARD_METADATA } from "test/data/boards";
+} from "types/rest/boards.js";
+import { CacheKeys, cache } from "../../../../server/cache.js";
+import { GORE_BOARD_ID, GORE_BOARD_METADATA } from "test/data/boards.js";
 import {
   setLoggedInUser,
   startTestServer,
   wrapWithTransaction,
-} from "utils/test-utils";
+} from "utils/test-utils.js";
 
 import debug from "debug";
 import request from "supertest";
-import router from "../../routes";
+import router from "../../routes.js";
 
 const log = debug("bobaserver:test:boards:routes:update-board-metadata-log");
 
-jest.mock("server/cache");
-jest.mock("handlers/auth");
-jest.mock("server/db-pool");
+jest.mock("../../../../server/cache.js");
+jest.mock("handlers/auth.js");
+jest.mock("../../../../server/db-pool.js");
 
 const UPDATED_TEXT_DESCRIPTION: BoardTextDescription = {
   id: "d92b0008-36d6-47a2-b4b1-21dce0027588",

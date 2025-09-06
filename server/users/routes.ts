@@ -1,25 +1,28 @@
 import {
   BadRequest400Error,
   Internal500Error,
-} from "handlers/api-errors/codes";
-import { CacheKeys, cache } from "../cache";
-import { ensureLoggedIn, withUserSettings } from "handlers/auth";
+} from "handlers/api-errors/codes.js";
+import { CacheKeys, cache } from "server/cache.js";
+import { ensureLoggedIn, withUserSettings } from "handlers/auth.js";
 import {
   getBobadexIdentities,
   getUserFromFirebaseId,
   getUserSettings,
   updateUserData,
   updateUserSettings,
-} from "./queries";
-import { processBoardsSummary, transformImageUrls } from "utils/response-utils";
+} from "./queries.js";
+import {
+  processBoardsSummary,
+  transformImageUrls,
+} from "utils/response-utils.js";
 
-import { RealmPermissions } from "types/permissions";
-import { aggregateByType } from "utils/settings";
+import { RealmPermissions } from "types/permissions.js";
+import { aggregateByType } from "utils/settings.js";
 import debug from "debug";
 import express from "express";
-import { getRealmBoards } from "../boards/queries";
+import { getRealmBoards } from "../boards/queries.js";
 import stringify from "fast-json-stable-stringify";
-import { withRealmPermissions } from "handlers/permissions";
+import { withRealmPermissions } from "handlers/permissions.js";
 
 const info = debug("bobaserver:users:routes-info");
 const log = debug("bobaserver:users:routes-log");

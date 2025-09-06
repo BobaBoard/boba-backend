@@ -1,15 +1,15 @@
-import { BOBATAN_USER_ID, ONCEST_USER_ID } from "test/data/auth";
+import { BOBATAN_USER_ID, ONCEST_USER_ID } from "test/data/auth.js";
 import {
   FAVORITE_CHARACTER_THREAD_ID,
   FAVORITE_MURDER_THREAD_ID,
   FUNNY_MEMES_THREAD_ID,
-} from "test/data/threads";
+} from "test/data/threads.js";
 
-import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
-import { ZodDbFeedType } from "types/db/schemas";
-import { extractActivity } from "utils/test-utils";
-import { getUserActivity } from "../queries";
-import { getUserFromFirebaseId } from "../../users/queries";
+import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms.js";
+import type { ZodDbFeedType } from "types/db/schemas.js";
+import { extractActivity } from "utils/test-utils.js";
+import { getUserActivity } from "../queries.js";
+import { getUserFromFirebaseId } from "../../users/queries.js";
 
 describe("Test users query", () => {
   test("gets user from id", async () => {
@@ -269,7 +269,7 @@ describe("feed activity queries", () => {
       expect(feed.activity.length).toEqual(3);
       // Ensure that the post in !long with the dismissed board notifications
       // is counted when "updatedOnly" is false.
-      expect(extractActivity(feed.activity[2])).toEqual({
+      expect(extractActivity(feed.activity[2]!)).toEqual({
         comments_amount: 2,
         created_at: "2020-04-01T05:20:00.00Z",
         is_new: false,

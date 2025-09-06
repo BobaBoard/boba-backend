@@ -5,15 +5,15 @@ import {
   PostPermissions,
   RealmPermissions,
   ThreadPermissions,
-  UserBoardPermissions,
+  type UserBoardPermissions,
   extractBoardRestrictions,
   extractPermissions,
-} from "types/permissions";
+} from "types/permissions.js";
 
-import { BoardRestrictionsEnum } from "server/boards/sql/types";
-import { QueryTagsType } from "types/rest/params";
+import { type BoardRestrictionsEnum } from "../server/boards/sql/types.js";
+import { type QueryTagsType } from "types/rest/params.js";
 import debug from "debug";
-import { getBoardByExternalId } from "server/boards/queries";
+import { getBoardByExternalId } from "../server/boards/queries.js";
 
 const info = debug("bobaserver:board:utils-info");
 const log = debug("bobaserver::permissions-utils-log");

@@ -20,6 +20,6 @@ export interface Identity {
 export interface SecretIdentity {
   name: string;
   avatar: string;
-  color?: string | null;
-  accessory?: string | null;
+  color?: string | null | undefined;
+  accessory?: string | null | undefined;
 }

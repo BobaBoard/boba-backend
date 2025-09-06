@@ -12,6 +12,7 @@
   },
   "license": "MIT",
   "author": "BobaBoard Team",
+  "type": "module",
   "main": "dist/server/index.js",
   "scripts": {
     "build": "yarn run server:build",
@@ -23,7 +24,7 @@
     "open-api:typescript": "yarn run open-api:generate && yarn run open-api:typescript:types && yarn run open-api:typescript:schemas",
     "open-api:typescript:schemas": "openapi-zod-client ./open-api/open-api-spec.json -o ./types/open-api/generated/schemas.ts --export-schemas --template ./types/open-api/.config/schemas.hbs --with-alias",
     "open-api:typescript:types": "openapi-zod-client ./open-api/open-api-spec.json -o ./types/open-api/generated/types.ts --export-schemas --template ./types/open-api/.config/types.hbs --with-alias",
-    "open-api:generate": "node -r dotenv/config -r ts-node/register -r tsconfig-paths/register utils/generate-open-api-spec.ts dotenv_config_path=./.env.prod",
+    "open-api:generate": "tsx -r dotenv/config -r tsconfig-paths/register utils/generate-open-api-spec.ts dotenv_config_path=./.env.prod",
     "open-api:validate": "yarn run open-api:generate && validate-api open-api/open-api-spec.json && openapi-examples-validator open-api/open-api-spec.json --ignore-formats color quill-delta && openapi lint open-api/open-api-spec.json --skip-rule=no-ambiguous-paths",
     "server:build": "rm -rf ./dist && tsc && tsc-alias && copyfiles .env.prod firebase-sdk.json server/**/*.sql ./dist",
     "server:dev": "cross-env DEBUG=bobaserver:*,-*info DEBUG_DEPTH=10 nodemon --watch . --exec node -r tsconfig-paths/register -r ts-node/register server/index.ts -e yaml,ts,sql",
@@ -38,15 +39,16 @@
   },
   "dependencies": {
     "@honeycombio/opentelemetry-node": "^0.6.0",
-    "@opentelemetry/api": "^1.7.0",
-    "@opentelemetry/auto-instrumentations-node": "^0.40.0",
-    "axios": "^0.21.2",
+    "@opentelemetry/api": "^1.9.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.62.2",
+    "@opentelemetry/exporter-trace-otlp-http": "^0.204.0",
+    "axios": "^1.11.0",
     "body-parser": "^1.19.0",
     "clone": "^2.1.2",
     "cors": "^2.8.5",
     "cors-express": "^0.2.2",
     "debug": "^4.1.1",
-    "dotenv": "^8.2.0",
+    "dotenv": "^17.2.2",
     "dotenv-expand": "^5.1.0",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
@@ -84,10 +86,10 @@
     "openapi-examples-validator": "^4.4.0",
     "openapi-zod-client": "1.5",
     "supertest": "^4.0.2",
-    "ts-jest": "^27.0.5",
     "ts-node": "^8.9.1",
     "tsc-alias": "^1.8.6",
     "tsconfig-paths": "^3.11.0",
-    "typescript": "^4.9.4"
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2"
   }
 }

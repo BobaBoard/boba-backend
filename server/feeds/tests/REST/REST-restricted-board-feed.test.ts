@@ -1,13 +1,13 @@
-import { setLoggedInUser, startTestServer } from "utils/test-utils";
+import { setLoggedInUser, startTestServer } from "utils/test-utils.js";
 
-import { BOBATAN_USER_ID } from "test/data/auth";
-import { RESTRICTED_BOARD_ID } from "test/data/boards";
-import { RESTRICTED_THREAD_SUMMARY } from "test/data/threads";
+import { BOBATAN_USER_ID } from "test/data/auth.js";
+import { RESTRICTED_BOARD_ID } from "test/data/boards.js";
+import { RESTRICTED_THREAD_SUMMARY } from "test/data/threads.js";
 import clone from "clone";
 import request from "supertest";
-import router from "../../routes";
+import router from "../../routes.js";
 
-jest.mock("handlers/auth");
+jest.mock("handlers/auth.js");
 
 describe("Test feed of restricted boards REST API", () => {
   const server = startTestServer(router);

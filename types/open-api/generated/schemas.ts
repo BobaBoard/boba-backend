@@ -45,7 +45,7 @@ const Accessory = z.object({
   accessory: z.string(),
 });
 const BoardPermissions = z.array(
-  z.enum(["edit_board_details", "delete_board", "view_roles_on_board"])
+  z.enum(["edit_board_details", "view_roles_on_board", "delete_board"])
 );
 const PostPermissions = z.array(
   z.enum([
@@ -253,6 +253,7 @@ const RealmPermissions = z.array(
     "create_thread_on_realm",
     "access_locked_boards_on_realm",
     "view_roles_on_realm",
+    "create_board_on_realm",
   ])
 );
 const Realm = z.object({
@@ -323,6 +324,13 @@ const acceptInviteByNonce_Body = z.object({
 const AcceptedInviteResponse = z.object({
   realm_id: z.string().uuid(),
   realm_slug: z.string(),
+});
+const CreateBoardMetadata = z.object({
+  slug: z.string(),
+  category_id: z.string(),
+  avatar_url: z.string(),
+  tagline: z.string(),
+  settings: z.object({ accent_color: z.string() }).partial(),
 });
 const Subscription = z.object({
   id: z.string().uuid(),
@@ -412,6 +420,7 @@ export const InviteSchema = Invite;
 export const InviteStatusSchema = InviteStatus;
 export const acceptInviteByNonce_BodySchema = acceptInviteByNonce_Body;
 export const AcceptedInviteResponseSchema = AcceptedInviteResponse;
+export const CreateBoardMetadataSchema = CreateBoardMetadata;
 export const SubscriptionSchema = Subscription;
 export const SubscriptionActivitySchema = SubscriptionActivity;
 export const updateThreadExternalId_BodySchema = updateThreadExternalId_Body;
@@ -1017,6 +1026,36 @@ export const endpoints = {
       {
         status: 404,
         description: `The realm was not found.`,
+        schema: z.void(),
+      },
+    ],
+  },
+  createBoard: {
+    method: "post",
+    path: "/realms/:realm_id/boards",
+    alias: "createBoard",
+    requestFormat: "json",
+    parameters: [
+      {
+        name: "body",
+        description: `Metadata of board to be created.`,
+        type: "Body",
+        schema: CreateBoardMetadata,
+      },
+    ],
+    response: LoggedInBoardMetadata,
+    errors: [
+      {
+        status: 401,
+        schema: z.void(),
+      },
+      {
+        status: 403,
+        schema: z.void(),
+      },
+      {
+        status: 500,
+        description: `Internal Server Error`,
         schema: z.void(),
       },
     ],

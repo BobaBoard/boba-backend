@@ -2,17 +2,17 @@ import {
   ENSURE_LOGGED_IN_INVALID_TOKEN,
   ENSURE_LOGGED_IN_NO_TOKEN,
   ENSURE_THREAD_ACCESS_UNAUTHORIZED,
-} from "test/data/responses";
-import { NULL_ID, NULL_THREAD_NOT_FOUND } from "test/data/threads";
-import { setLoggedInUser, startTestServer } from "utils/test-utils";
+} from "test/data/responses.js";
+import { NULL_ID, NULL_THREAD_NOT_FOUND } from "test/data/threads.js";
+import { setLoggedInUser, startTestServer } from "utils/test-utils.js";
 
-import { GenericResponse } from "types/rest/responses";
+import type { GenericResponse } from "types/rest/responses.js";
 import request from "supertest";
-import router from "../../routes";
-import { wrapWithTransaction } from "utils/test-utils";
+import router from "../../routes.js";
+import { wrapWithTransaction } from "utils/test-utils.js";
 
-jest.mock("handlers/auth");
-jest.mock("server/db-pool");
+jest.mock("handlers/auth.js");
+jest.mock("server/db-pool.js");
 
 const CHARACTER_TO_MAIM_THREAD_ID = "29d1b2da-3289-454a-9089-2ed47db4967b";
 

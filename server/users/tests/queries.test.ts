@@ -3,19 +3,19 @@ import {
   JERSEY_DEVIL_USER_ID,
   ONCEST_USER_ID,
   ZODIAC_KILLER_USER_ID,
-} from "test/data/auth";
+} from "test/data/auth.js";
 import {
   CROWN_ACCESSORY_EXTERNAL_ID,
   GOREMASTER_ROLE_EXTERNAL_ID,
   OWNER_ROLE_EXTERNAL_ID,
-} from "test/data/user";
+} from "test/data/user.js";
 import {
   TWISTED_MINDS_REALM_EXTERNAL_ID,
   UWU_REALM_EXTERNAL_ID,
-} from "test/data/realms";
-import { getUserFromFirebaseId, getUserRolesByRealm } from "../queries";
+} from "test/data/realms.js";
+import { getUserFromFirebaseId, getUserRolesByRealm } from "../queries.js";
 
-import { GORE_BOARD_ID } from "test/data/boards";
+import { GORE_BOARD_ID } from "test/data/boards.js";
 
 describe("Tests user queries", () => {
   test("gets user from id", async () => {

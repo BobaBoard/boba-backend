@@ -1,12 +1,15 @@
-import * as threadEvents from "handlers/events/threads";
+import * as threadEvents from "handlers/events/threads.js";
 
 import {
   BoardMetadataSchema,
   LoggedInBoardMetadataSchema,
-} from "types/open-api/generated/schemas";
-import { BoardPermissions, RealmPermissions } from "types/permissions";
-import { CacheKeys, cache } from "server/cache";
-import { Internal500Error, NotFound404Error } from "handlers/api-errors/codes";
+} from "types/open-api/generated/schemas.js";
+import { BoardPermissions, RealmPermissions } from "types/permissions.js";
+import { CacheKeys, cache } from "server/cache.js";
+import {
+  Internal500Error,
+  NotFound404Error,
+} from "handlers/api-errors/codes.js";
 import {
   createThread,
   deleteBoard,
@@ -18,23 +21,23 @@ import {
   unmuteBoard,
   unpinBoard,
   updateBoardMetadata,
-} from "./queries";
+} from "./queries.js";
 import {
   ensureBoardAccess,
   ensureBoardPermission,
   ensureRealmPermission,
   withRealmPermissions,
-} from "handlers/permissions";
+} from "handlers/permissions.js";
 import {
   ensureNoIdentityLeakage,
   makeServerThread,
-} from "utils/response-utils";
+} from "utils/response-utils.js";
 
 import debug from "debug";
-import { ensureLoggedIn } from "handlers/auth";
+import { ensureLoggedIn } from "handlers/auth.js";
 import express from "express";
-import { getBoardMetadataByExternalId } from "./utils";
-import { getThreadByExternalId } from "server/threads/queries";
+import { getBoardMetadataByExternalId } from "./utils.js";
+import { getThreadByExternalId } from "server/threads/queries.js";
 
 const info = debug("bobaserver:board:routes-info");
 const log = debug("bobaserver:board:routes");
@@ -114,7 +117,7 @@ router.get("/:board_id", ensureBoardAccess, async (req, res) => {
 
   const boardMetadata = await getBoardMetadataByExternalId({
     firebaseId: firebaseId,
-    boardExternalId,
+    boardExternalId: boardExternalId!,
     hasBoardAccess: req.currentUser ? true : false,
   });
 
@@ -188,7 +191,7 @@ router.post(
   ensureRealmPermission(RealmPermissions.createThreadOnRealm),
   //TODO: ensureBoardPermission(BoardPermissions.createThread),
   async (req, res, next) => {
-    const { board_id: boardExternalId } = req.params;
+    const { board_id: boardExternalId } = req.params as { board_id: string };
 
     log(`Fetching metadata for board with id ${boardExternalId}`);
     const boardMetadata = await getBoardMetadataByExternalId({
@@ -312,7 +315,7 @@ router.patch(
   ensureBoardPermission(BoardPermissions.editMetadata),
   withRealmPermissions,
   async (req, res) => {
-    const { board_id: boardExternalId } = req.params;
+    const { board_id: boardExternalId } = req.params as { board_id: string };
     const { descriptions, accentColor, tagline } = req.body;
 
     // TODO: get currentBoardMetadata from the DB
@@ -383,7 +386,7 @@ router.post(
   ensureLoggedIn,
   ensureBoardAccess,
   async (req, res) => {
-    const { board_id: boardExternalId } = req.params;
+    const { board_id: boardExternalId } = req.params as { board_id: string };
     log(`Setting last visited time for board: ${boardExternalId}`);
 
     if (
@@ -443,7 +446,7 @@ router.post(
   ensureLoggedIn,
   ensureBoardAccess,
   async (req, res) => {
-    const { board_id: boardExternalId } = req.params;
+    const { board_id: boardExternalId } = req.params as { board_id: string };
     log(`Muting board: ${boardExternalId} for user ${req.currentUser!.uid}.`);
 
     await muteBoard({
@@ -497,7 +500,7 @@ router.delete(
   ensureLoggedIn,
   ensureBoardAccess,
   async (req, res) => {
-    const { board_id: boardExternalId } = req.params;
+    const { board_id: boardExternalId } = req.params as { board_id: string };
 
     await unmuteBoard({
       firebaseId: req.currentUser!.uid,
@@ -551,7 +554,7 @@ router.post(
   ensureLoggedIn,
   ensureBoardAccess,
   async (req, res) => {
-    const { board_id: boardExternalId } = req.params;
+    const { board_id: boardExternalId } = req.params as { board_id: string };
 
     if (
       !(await pinBoard({
@@ -610,7 +613,7 @@ router.delete(
   ensureLoggedIn,
   ensureBoardAccess,
   async (req, res) => {
-    const { board_id: boardExternalId } = req.params;
+    const { board_id: boardExternalId } = req.params as { board_id: string };
 
     log(`Setting board unpinned: ${boardExternalId}`);
 
@@ -676,7 +679,7 @@ router.delete(
   ensureLoggedIn,
   ensureBoardAccess,
   async (req, res) => {
-    const { board_id: boardExternalId } = req.params;
+    const { board_id: boardExternalId } = req.params as { board_id: string };
 
     let currentUserId: string = req.currentUser!.uid;
     log(
@@ -753,7 +756,7 @@ router.get(
   ensureBoardPermission(BoardPermissions.viewRolesOnBoard),
   async (req, res) => {
     try {
-      const { board_id } = req.params;
+      const { board_id } = req.params as { board_id: string };
       const boardRoles = await getBoardRoles({
         boardExternalId: board_id,
       });
@@ -819,7 +822,7 @@ router.delete(
       return res.sendStatus(501);
     }
 
-    const { board_id: boardExternalId } = req.params;
+    const { board_id: boardExternalId } = req.params as { board_id: string };
 
     let currentUserId: string = req.currentUser!.uid;
     log(`User ${currentUserId} is deleting board with id: ${boardExternalId}`);

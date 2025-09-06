@@ -6,19 +6,19 @@ import {
   BLOOD_AND_BRUISES_SUBSCRIPTION_WEBHOOK,
   BLOOD_SUBSCRIPTION_ID,
   BLOOD_SUBSCRIPTION_WEBHOOK,
-} from "test/data/subscriptions";
+} from "test/data/subscriptions.js";
 import {
   CREATE_GORE_THREAD_RESPONSE,
   FAVORITE_CHARACTER_THREAD,
-} from "test/data/threads";
-import { CacheKeys, cache } from "server/cache";
+} from "test/data/threads.js";
+import { CacheKeys, cache } from "../../../server/cache.js";
 import {
   EVENT_TYPES as THREAD_EVENT_TYPES,
   emit as threadEventsEmit,
-} from "handlers/events/threads";
-import { registerAll, unregisterAll } from "../events";
+} from "handlers/events/threads.js";
+import { registerAll, unregisterAll } from "../events.js";
 
-import { Thread } from "types/open-api/generated/types";
+import type { Thread } from "types/open-api/generated/types.js";
 import axios from "axios";
 import { mocked } from "jest-mock";
 

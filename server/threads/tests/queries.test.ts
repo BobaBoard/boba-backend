@@ -1,12 +1,12 @@
 import {
   FAVORITE_CHARACTER_THREAD_ID,
   FAVORITE_MURDER_THREAD_ID,
-} from "test/data/threads";
+} from "test/data/threads.js";
 
-import { BOBATAN_USER_ID } from "test/data/auth";
-import { GORE_BOARD_ID } from "test/data/boards";
-import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
-import { getThreadByExternalId } from "../queries";
+import { BOBATAN_USER_ID } from "test/data/auth.js";
+import { GORE_BOARD_ID } from "test/data/boards.js";
+import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms.js";
+import { getThreadByExternalId } from "../queries.js";
 
 describe("threads queries", () => {
   test("fetches threads by string id (with comments)", async () => {

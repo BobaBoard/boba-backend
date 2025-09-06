@@ -1,6 +1,6 @@
 import debug from "debug";
-import { maybeAddIndexTags } from "../queries";
-import { runWithinTransaction } from "utils/test-utils";
+import { maybeAddIndexTags } from "../queries.js";
+import { runWithinTransaction } from "utils/test-utils.js";
 
 const log = debug("bobaserver:posts:queries-test-log");
 

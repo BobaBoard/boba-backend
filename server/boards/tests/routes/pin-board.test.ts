@@ -1,24 +1,24 @@
-import { BOBATAN_USER_ID, JERSEY_DEVIL_USER_ID } from "test/data/auth";
-import { CacheKeys, cache } from "server/cache";
+import { BOBATAN_USER_ID, JERSEY_DEVIL_USER_ID } from "test/data/auth.js";
+import { CacheKeys, cache } from "../../../../server/cache.js";
 import {
   GORE_BOARD_ID,
   GORE_BOARD_METADATA,
   MAIN_STREET_BOARD_ID,
   RESTRICTED_BOARD_ID,
-} from "test/data/boards";
+} from "test/data/boards.js";
 import {
   setLoggedInUser,
   startTestServer,
   wrapWithTransaction,
-} from "utils/test-utils";
+} from "utils/test-utils.js";
 
-import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
+import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms.js";
 import request from "supertest";
-import router from "../../routes";
+import router from "../../routes.js";
 
-jest.mock("server/cache");
-jest.mock("handlers/auth");
-jest.mock("server/db-pool");
+jest.mock("../../../../server/cache.js");
+jest.mock("handlers/auth.js");
+jest.mock("../../../../server/db-pool.js");
 
 describe("Tests pin boards REST API", () => {
   const server = startTestServer(router);

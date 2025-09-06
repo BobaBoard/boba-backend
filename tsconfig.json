@@ -1,23 +1,54 @@
 {
+  // Visit https://aka.ms/tsconfig to read more about this file
   "compilerOptions": {
-    "module": "commonjs",
-    "esModuleInterop": true,
-    "target": "ESNext",
-    "moduleResolution": "node",
-    "sourceMap": true,
+    // File Layout
+    // "rootDir": "./src",
     "outDir": "./dist",
     "baseUrl": ".",
+
+    // Environment Settings
+    "module": "NodeNext",
+    "target": "ES2022",
+    "moduleResolution": "nodenext",
+    "lib": ["esnext"],
+    "types": ["node", "jest", "jest-extended"],
+
+    // Other Outputs
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+
+    // Stricter Typechecking Options
+    // TODO: this should be enabled, but it's causing too many issues right now
+    // "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+
+    // Style Options
+    // "noImplicitReturns": true,
+    // "noImplicitOverride": true,
+    // "noUnusedLocals": true,
+    // "noUnusedParameters": true,
+    // "noFallthroughCasesInSwitch": true,
+    // "noPropertyAccessFromIndexSignature": true,
+
+    // Recommended Options
+    "strict": true,
+    "jsx": "react-jsx",
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "esModuleInterop": true,
+    "noUncheckedSideEffectImports": true,
+    "moduleDetection": "force",
     "noErrorTruncation": true,
+    "skipLibCheck": true,
+
     "paths": {
       "utils/*": ["utils/*"],
       "handlers/*": ["handlers/*"],
       "server/*": ["server/*"],
       "types/*": ["types/*"],
       "test/*": ["test/*"]
-    },
-    "skipLibCheck": true,
-    "types": ["node", "jest", "jest-extended"],
-    "strict": true
+    }
   },
   "include": [
     "server/**/*",

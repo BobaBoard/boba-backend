@@ -1,22 +1,22 @@
 import * as uuid from "uuid";
 
-import { BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID } from "test/data/auth";
+import { BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID } from "test/data/auth.js";
 import {
   EVENT_TYPES as THREAD_EVENT_TYPES,
-  ThreadUpdatedPayload,
-} from "handlers/events/threads";
+  type ThreadUpdatedPayload,
+} from "handlers/events/threads.js";
 import {
   setLoggedInUser,
   startTestServer,
   wrapWithTransaction,
-} from "utils/test-utils";
+} from "utils/test-utils.js";
 
-import { CHARACTER_TO_MAIM_POST_ID } from "test/data/posts";
-import { Contribution } from "types/open-api/generated/types";
+import { CHARACTER_TO_MAIM_POST_ID } from "test/data/posts.js";
+import type { Contribution } from "types/open-api/generated/types.js";
 import { EventEmitter } from "events";
-import { FAVORITE_CHARACTER_THREAD_ID } from "test/data/threads";
+import { FAVORITE_CHARACTER_THREAD_ID } from "test/data/threads.js";
 import request from "supertest";
-import router from "../../routes";
+import router from "../../routes.js";
 
 jest.mock("handlers/auth");
 jest.mock("server/db-pool");

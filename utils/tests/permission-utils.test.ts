@@ -4,15 +4,15 @@ import {
   PostPermissions,
   RealmPermissions,
   ThreadPermissions,
-  UserBoardPermissions,
-} from "types/permissions";
+  type UserBoardPermissions,
+} from "types/permissions.js";
 import {
   extractBoardPermissions,
   extractPostPermissions,
   extractRealmPermissions,
   extractThreadPermissions,
   hasPermission,
-} from "utils/permissions-utils";
+} from "utils/permissions-utils.js";
 
 describe("hasPermission tests", () => {
   test("correctly identifies permission existing", () => {

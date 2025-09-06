@@ -1,21 +1,21 @@
-import * as userQueries from "../../queries";
+import * as userQueries from "../../queries.js";
 
-import { CacheKeys, cache } from "../../../cache";
+import { CacheKeys, cache } from "../../../cache.js";
 import {
   setLoggedInUser,
   startTestServer,
   wrapWithTransaction,
-} from "utils/test-utils";
+} from "utils/test-utils.js";
 
-import { JERSEY_DEVIL_USER_ID } from "test/data/auth";
+import { JERSEY_DEVIL_USER_ID } from "test/data/auth.js";
 import { mocked } from "jest-mock";
 import request from "supertest";
-import router from "../../routes";
+import router from "../../routes.js";
 import stringify from "fast-json-stable-stringify";
 
-jest.mock("server/db-pool");
-jest.mock("server/cache");
-jest.mock("handlers/auth");
+jest.mock("server/db-pool.js");
+jest.mock("server/cache.js");
+jest.mock("handlers/auth.js");
 
 describe("Tests users/@me endpoint", () => {
   const server = startTestServer(router);

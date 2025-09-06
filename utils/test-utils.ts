@@ -1,16 +1,20 @@
-import { ensureLoggedIn, withLoggedIn, withUserSettings } from "handlers/auth";
-import express, { Express, Router } from "express";
+import {
+  ensureLoggedIn,
+  withLoggedIn,
+  withUserSettings,
+} from "handlers/auth.js";
+import express, { type Express, type Router } from "express";
 
-import { ITask } from "pg-promise";
+import { type ITask } from "pg-promise";
 import { Server } from "http";
-import { ZodDbFeedType } from "types/db/schemas";
+import { type ZodDbFeedType } from "types/db/schemas.js";
 import bodyParser from "body-parser";
 import debug from "debug";
-import { handleApiErrors } from "handlers/api-errors/handler";
+import { handleApiErrors } from "handlers/api-errors/handler.js";
 import { mocked } from "jest-mock";
-import pool from "server/db-pool";
+import pool from "../server/db-pool.js";
 
-require("express-async-errors");
+import "express-async-errors";
 
 const log = debug("bobaserver:tests:test-utils");
 

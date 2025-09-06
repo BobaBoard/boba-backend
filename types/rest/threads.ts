@@ -1,6 +1,6 @@
-import { Identity, SecretIdentity } from "./identity";
+import { type Identity, type SecretIdentity } from "./identity.js";
 
-import { Contribution } from "types/open-api/generated/types";
+import { type Contribution } from "../open-api/generated/types.js";
 
 export interface Tags {
   whisper_tags: string[];

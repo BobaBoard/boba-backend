@@ -6,7 +6,7 @@
  * will be overwritten).
  **/
 
-import * as schemas from "./schemas";
+import * as schemas from "./schemas.js";
 
 import { z } from "zod";
 
@@ -86,6 +86,9 @@ export type acceptInviteByNonce_Body = z.infer<
 export type AcceptedInviteResponse = z.infer<
   typeof schemas.AcceptedInviteResponseSchema
 >;
+export type CreateBoardMetadata = z.infer<
+  typeof schemas.CreateBoardMetadataSchema
+>;
 export type Subscription = z.infer<typeof schemas.SubscriptionSchema>;
 export type SubscriptionActivity = z.infer<
   typeof schemas.SubscriptionActivitySchema
@@ -160,6 +163,9 @@ export type editContributionResponse = z.infer<
 >;
 export type getRealmsActivityByExternalIdResponse = z.infer<
   typeof schemas.endpoints.getRealmsActivityByExternalId.response
+>;
+export type createBoardResponse = z.infer<
+  typeof schemas.endpoints.createBoard.response
 >;
 export type getInvitesByRealmIdResponse = z.infer<
   typeof schemas.endpoints.getInvitesByRealmId.response

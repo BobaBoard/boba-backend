@@ -5,26 +5,26 @@ import {
   GORE_MASTER_IDENTITY_ID,
   JERSEY_DEVIL_USER_ID,
   SEXY_DADDY_USER_ID,
-} from "test/data/auth";
-import { CREATE_GORE_THREAD_RESPONSE, NULL_ID } from "test/data/threads";
-import { GORE_BOARD_ID, NULL_BOARD_NOT_FOUND } from "test/data/boards";
+} from "test/data/auth.js";
+import { CREATE_GORE_THREAD_RESPONSE, NULL_ID } from "test/data/threads.js";
+import { GORE_BOARD_ID, NULL_BOARD_NOT_FOUND } from "test/data/boards.js";
 import {
   EVENT_TYPES as THREAD_EVENT_TYPES,
-  ThreadCreatedPayload,
-} from "handlers/events/threads";
+  type ThreadCreatedPayload,
+} from "handlers/events/threads.js";
 import {
   setLoggedInUser,
   startTestServer,
   wrapWithTransaction,
-} from "utils/test-utils";
+} from "utils/test-utils.js";
 
-import { ENSURE_LOGGED_IN_NO_TOKEN } from "test/data/responses";
+import { ENSURE_LOGGED_IN_NO_TOKEN } from "test/data/responses.js";
 import { EventEmitter } from "events";
-import { GenericResponse } from "types/rest/responses";
-import { Thread } from "types/open-api/generated/types";
+import type { GenericResponse } from "types/rest/responses.js";
+import type { Thread } from "types/open-api/generated/types.js";
 import { mocked } from "jest-mock";
 import request from "supertest";
-import router from "../../routes";
+import router from "../../routes.js";
 
 jest.mock("uuid", () => ({
   __esModule: true,
@@ -168,8 +168,8 @@ describe("Tests threads REST API - create", () => {
       );
       expect(threadCreatedCalls.length).toBe(1);
       const threadCreatedCall = threadCreatedCalls[0];
-      expect(threadCreatedCall[0]).toBe(THREAD_EVENT_TYPES.THREAD_CREATED);
-      expect(threadCreatedCall[1]).toMatchObject<ThreadCreatedPayload>({
+      expect(threadCreatedCall?.[0]).toBe(THREAD_EVENT_TYPES.THREAD_CREATED);
+      expect(threadCreatedCall?.[1]).toMatchObject<ThreadCreatedPayload>({
         eventType: THREAD_EVENT_TYPES.THREAD_CREATED,
         thread: CREATE_GORE_THREAD_RESPONSE,
       });
@@ -196,8 +196,8 @@ describe("Tests threads REST API - create", () => {
       );
       expect(threadCreatedCalls.length).toBe(1);
       const threadCreatedCall = threadCreatedCalls[0];
-      expect(threadCreatedCall[0]).toBe(THREAD_EVENT_TYPES.THREAD_CREATED);
-      expect(threadCreatedCall[1]).toMatchObject<ThreadCreatedPayload>({
+      expect(threadCreatedCall?.[0]).toBe(THREAD_EVENT_TYPES.THREAD_CREATED);
+      expect(threadCreatedCall?.[1]).toMatchObject<ThreadCreatedPayload>({
         eventType: THREAD_EVENT_TYPES.THREAD_CREATED,
         thread: CREATE_GORE_THREAD_RESPONSE,
       });

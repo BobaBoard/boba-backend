@@ -2,23 +2,23 @@ import {
   DbRolePermissions,
   REALM_MEMBER_PERMISSIONS,
   RealmPermissions,
-} from "types/permissions";
+} from "types/permissions.js";
 import {
-  Realm,
-  RulesBlock,
-  SubscriptionBlock,
-  UiBlocks,
-} from "../../types/rest/realms";
-import { filterOutDisabledSettings, getRealmCursorSetting } from "./utils";
+  type Realm,
+  type RulesBlock,
+  type SubscriptionBlock,
+  type UiBlocks,
+} from "types/rest/realms.js";
+import { filterOutDisabledSettings, getRealmCursorSetting } from "./utils.js";
 
-import { CssVariableSetting } from "../../types/settings";
-import { GetRealmBySlugDbSchema } from "./sql/types";
-import { ITask } from "pg-promise";
-import { SettingEntry } from "../../types/settings";
+import { type CssVariableSetting } from "types/settings.js";
+import { GetRealmBySlugDbSchema } from "./sql/types.js";
+import { type ITask } from "pg-promise";
+import { type SettingEntry } from "types/settings.js";
 import debug from "debug";
-import { extractRealmPermissions } from "utils/permissions-utils";
-import pool from "server/db-pool";
-import sql from "./sql";
+import { extractRealmPermissions } from "utils/permissions-utils.js";
+import pool from "server/db-pool.js";
+import sql from "./sql/index.js";
 import { v4 as uuidv4 } from "uuid";
 
 const info = debug("bobaserver:realms:queries-info");

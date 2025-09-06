@@ -1,7 +1,7 @@
 import {
-  BoardCategoryDescription,
-  BoardTextDescription,
-} from "types/rest/boards";
+  type BoardCategoryDescription,
+  type BoardTextDescription,
+} from "types/rest/boards.js";
 
 export interface DbBoardTextDescription extends BoardTextDescription {
   categories: null;

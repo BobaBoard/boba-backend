@@ -2,19 +2,19 @@ import {
   ENSURE_LOGGED_IN_INVALID_TOKEN,
   ENSURE_LOGGED_IN_NO_TOKEN,
   ENSURE_THREAD_PERMISSIONS_UNAUTHORIZED,
-} from "test/data/responses";
-import { LONG_BOARD_ID, NULL_BOARD_NOT_FOUND } from "test/data/boards";
-import { NULL_ID, NULL_THREAD_NOT_FOUND } from "test/data/threads";
-import { setLoggedInUser, startTestServer } from "utils/test-utils";
+} from "test/data/responses.js";
+import { LONG_BOARD_ID, NULL_BOARD_NOT_FOUND } from "test/data/boards.js";
+import { NULL_ID, NULL_THREAD_NOT_FOUND } from "test/data/threads.js";
+import { setLoggedInUser, startTestServer } from "utils/test-utils.js";
 
-import { BOBATAN_USER_ID } from "test/data/auth";
-import { GenericResponse } from "types/rest/responses";
+import { BOBATAN_USER_ID } from "test/data/auth.js";
+import type { GenericResponse } from "types/rest/responses.js";
 import request from "supertest";
-import router from "../../routes";
-import { wrapWithTransaction } from "utils/test-utils";
+import router from "../../routes.js";
+import { wrapWithTransaction } from "utils/test-utils.js";
 
-jest.mock("handlers/auth");
-jest.mock("server/db-pool");
+jest.mock("handlers/auth.js");
+jest.mock("../../../server/db-pool.js");
 
 const CHARACTER_TO_MAIM_THREAD_ID = "29d1b2da-3289-454a-9089-2ed47db4967b";
 
