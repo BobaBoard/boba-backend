@@ -1,5 +1,5 @@
 import debug from "debug";
-import express, { type Express } from "express";
+import { type Express } from "express";
 import * as redocExpressMiddleware from "redoc-express";
 import swaggerJsdoc from "swagger-jsdoc";
 
@@ -118,7 +118,7 @@ This is just to test that sections work. It will be written better later.
 export const specs = swaggerJsdoc(options);
 // This is to fix https://github.com/Surnet/swagger-jsdoc/issues/314
 // TODO: remove it when the issue is closed.
-// @ts-ignore
+// @ts-expect-error
 delete specs["channels"];
 
 export default (app: Express) => {

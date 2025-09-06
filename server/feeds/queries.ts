@@ -43,7 +43,7 @@ export const getRealmActivityByExternalId = async ({
     return { cursor: null, activity: [] };
   }
 
-  let result = rows;
+  const result = rows;
   let nextCursor = null;
   info(`Got getRealmActivityByExternalId query result`, result);
   if (result.length > finalPageSize) {
@@ -97,7 +97,7 @@ export const getBoardActivityByExternalId = async ({
     return { cursor: null, activity: [] };
   }
 
-  let result = rows;
+  const result = rows;
   let nextCursor = null;
   info(`Got getBoardActivityByExternalId query result`, result);
   if (result.length > finalPageSize) {
@@ -149,7 +149,7 @@ export const getUserActivity = async ({
     return { cursor: null, activity: [] };
   }
 
-  let result = rows;
+  const result = rows;
   let nextCursor = null;
   info(`Got getUserActivity query result`, result);
   if (result.length > finalPageSize) {
@@ -189,7 +189,7 @@ export const getUserStarFeed = async ({
     return { cursor: null, activity: [] };
   }
 
-  let result = rows;
+  const result = rows;
   let nextCursor = null;
   log(`Got getBoardActivityByExternalId query result`, result);
   if (result.length > finalPageSize) {

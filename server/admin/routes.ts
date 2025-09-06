@@ -5,7 +5,7 @@ import {
   updateIdentities,
 } from "./queries.js";
 
-const axios = require("axios");
+import axios from "axios";
 import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth.js";
 import express from "express";
