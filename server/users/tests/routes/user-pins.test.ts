@@ -9,8 +9,8 @@ import { BOBATAN_USER_ID } from "test/data/auth.js";
 import request from "supertest";
 import router from "../../routes.js";
 
-jest.mock("server/cache.js");
-jest.mock("handlers/auth.js");
+vi.mock("server/cache.js");
+vi.mock("handlers/auth.js");
 
 describe("Tests users/@me/pins/realms/:realmId endpoint", () => {
   const server = startTestServer(router);

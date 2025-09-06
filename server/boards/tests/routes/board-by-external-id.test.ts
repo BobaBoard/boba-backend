@@ -14,8 +14,8 @@ import router from "../../routes.js";
 import stringify from "fast-json-stable-stringify";
 
 const log = debug("bobaserver:board:routes");
-jest.mock("server/cache.js");
-jest.mock("handlers/auth.js");
+vi.mock("server/cache.js");
+vi.mock("handlers/auth.js");
 
 describe("Tests boards REST API", () => {
   const server = startTestServer(router);

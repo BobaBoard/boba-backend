@@ -20,9 +20,6 @@ import { ENSURE_LOGGED_IN_NO_TOKEN } from "test/data/responses.js";
 import { EventEmitter } from "events";
 import type { GenericResponse } from "types/rest/responses.js";
 import type { Thread } from "types/open-api/generated/types.js";
-import { mocked } from "jest-mock";
-import request from "supertest";
-import router from "../../routes.js";
 
 import request from "supertest";
 import router from "../../routes.js";

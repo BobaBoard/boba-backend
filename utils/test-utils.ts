@@ -11,7 +11,6 @@ import { type ZodDbFeedType } from "types/db/schemas.js";
 import bodyParser from "body-parser";
 import debug from "debug";
 import { handleApiErrors } from "handlers/api-errors/handler.js";
-import { mocked } from "jest-mock";
 
 vi.mock("server/db-pool.js");
 const pool = await import("server/db-pool.js").then((m) => m.default);

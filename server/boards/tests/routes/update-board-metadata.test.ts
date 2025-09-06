@@ -17,9 +17,9 @@ import router from "../../routes.js";
 
 const log = debug("bobaserver:test:boards:routes:update-board-metadata-log");
 
-jest.mock("server/cache.js");
-jest.mock("handlers/auth.js");
-jest.mock("server/db-pool.js");
+vi.mock("server/cache.js");
+vi.mock("handlers/auth.js");
+vi.mock("server/db-pool.js");
 
 const UPDATED_TEXT_DESCRIPTION: BoardTextDescription = {
   id: "d92b0008-36d6-47a2-b4b1-21dce0027588",

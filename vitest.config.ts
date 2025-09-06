@@ -7,7 +7,8 @@ export default defineConfig(({ mode }) => ({
   test: {
     globals: true,
     env: loadEnv(mode, process.cwd(), ""),
-    exclude: [],
+    exclude: ["dist", "node_modules/**/*", "packages/**/*"],
     fileParallelism: false,
+    setupFiles: ["./test/vitestSetup.ts"],
   },
 }));
