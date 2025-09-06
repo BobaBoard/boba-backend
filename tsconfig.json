@@ -50,6 +50,7 @@
       "test/*": ["test/*"]
     }
   },
+  // TODO: this also compiles tests
   "include": [
     "server/**/*",
     "extra-types.d.ts",

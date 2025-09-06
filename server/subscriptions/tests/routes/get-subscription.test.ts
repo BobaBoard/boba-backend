@@ -5,13 +5,13 @@ import { AIBA_SUBSCRIPTION_ID } from "test/data/subscriptions.js";
 import { BOBATAN_USER_ID } from "test/data/auth.js";
 import type { GenericResponse } from "types/rest/responses.js";
 import type { SubscriptionFeed } from "types/rest/subscriptions.js";
-import { mocked } from "jest-mock";
+
 import request from "supertest";
 import router from "../../routes.js";
 import stringify from "fast-json-stable-stringify";
 
-jest.mock("server/cache.js");
-jest.mock("handlers/auth.js");
+vi.mock("server/cache.js");
+vi.mock("handlers/auth.js");
 
 const AIBA_SUBSCRIPTION_RESULT: SubscriptionFeed = {
   cursor: {
@@ -111,7 +111,9 @@ describe("Tests threads REST API", () => {
         },
       ],
     };
-    mocked(cache().hGet).mockResolvedValueOnce(stringify(cachedSubscription));
+    vi.mocked(cache().hGet).mockResolvedValueOnce(
+      stringify(cachedSubscription)
+    );
 
     const res = await request(server.app).get(`/${AIBA_SUBSCRIPTION_ID}`);
 

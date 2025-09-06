@@ -12,9 +12,9 @@ import request from "supertest";
 import router from "../routes.js";
 
 const log = debug("bobaserver:board:routes");
-jest.mock("server/cache");
-jest.mock("handlers/auth");
-jest.mock("server/db-pool");
+vi.mock("server/cache");
+vi.mock("handlers/auth");
+vi.mock("server/db-pool");
 
 describe("Tests notifications REST API", () => {
   const server = startTestServer(router);

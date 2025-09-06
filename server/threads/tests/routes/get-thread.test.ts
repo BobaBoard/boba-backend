@@ -14,7 +14,7 @@ import type { Thread } from "types/open-api/generated/types.js";
 import request from "supertest";
 import router from "../../routes.js";
 
-jest.mock("handlers/auth");
+vi.mock("handlers/auth");
 
 describe("Tests threads REST API", () => {
   const server = startTestServer(router);

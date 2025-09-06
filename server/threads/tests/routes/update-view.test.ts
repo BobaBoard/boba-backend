@@ -11,8 +11,8 @@ import request from "supertest";
 import router from "../../routes.js";
 import { wrapWithTransaction } from "utils/test-utils.js";
 
-jest.mock("handlers/auth.js");
-jest.mock("server/db-pool.js");
+vi.mock("handlers/auth.js");
+vi.mock("server/db-pool.js");
 
 const CHARACTER_TO_MAIM_THREAD_ID = "29d1b2da-3289-454a-9089-2ed47db4967b";
 

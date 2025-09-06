@@ -28,12 +28,12 @@ import router from "../routes.js";
 
 const log = debug("bobaserver:realms:invites-test-log");
 
-jest.mock("handlers/auth");
-jest.mock("server/db-pool");
+vi.mock("handlers/auth");
+vi.mock("server/db-pool");
 
-const authCreateUser = jest.fn();
+const authCreateUser = vi.fn();
 
-jest.mock("firebase-admin", () => {
+vi.mock("firebase-admin", () => {
   return {
     auth: () => ({
       createUser: async () => authCreateUser(),

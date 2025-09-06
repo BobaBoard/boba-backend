@@ -8,14 +8,14 @@ import {
 } from "utils/test-utils.js";
 
 import { JERSEY_DEVIL_USER_ID } from "test/data/auth.js";
-import { mocked } from "jest-mock";
+
 import request from "supertest";
 import router from "../../routes.js";
 import stringify from "fast-json-stable-stringify";
 
-jest.mock("server/db-pool.js");
-jest.mock("server/cache.js");
-jest.mock("handlers/auth.js");
+vi.mock("server/db-pool.js");
+vi.mock("server/cache.js");
+vi.mock("handlers/auth.js");
 
 describe("Tests users/@me endpoint", () => {
   const server = startTestServer(router);
@@ -30,7 +30,7 @@ describe("Tests users/@me endpoint", () => {
       avatar_url: "/this_was_cached.png",
       username: "super_cached",
     };
-    mocked(cache().hGet).mockResolvedValueOnce(stringify(cachedData));
+    vi.mocked(cache().hGet).mockResolvedValueOnce(stringify(cachedData));
     setLoggedInUser(JERSEY_DEVIL_USER_ID);
 
     const res = await request(server.app).get(`/@me`);
@@ -111,7 +111,7 @@ describe("Tests users/@me endpoint", () => {
   test("returns a 500 error if the database response is falsy", async () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(JERSEY_DEVIL_USER_ID);
-      jest.spyOn(userQueries, "updateUserData").mockResolvedValueOnce(null);
+      vi.spyOn(userQueries, "updateUserData").mockResolvedValueOnce(null);
       const res = await request(server.app).patch(`/@me`).send(testUserPatch);
 
       expect(res.status).toBe(500);

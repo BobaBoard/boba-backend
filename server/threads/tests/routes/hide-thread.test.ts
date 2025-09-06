@@ -1,5 +1,5 @@
-jest.mock("handlers/auth.js");
-jest.mock("server/db-pool.js");
+vi.mock("handlers/auth.js");
+vi.mock("server/db-pool.js");
 
 import {
   ENSURE_LOGGED_IN_INVALID_TOKEN,
@@ -22,9 +22,6 @@ import { BOBATAN_USER_ID } from "test/data/auth.js";
 import type { GenericResponse } from "types/rest/responses.js";
 import request from "supertest";
 import router from "../../routes.js";
-
-
-
 
 describe("Tests threads REST API - hide", () => {
   const server = startTestServer(router);

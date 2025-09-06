@@ -22,13 +22,13 @@ describe("hasPermission tests", () => {
         DbRolePermissions.edit_content_notices,
         DbRolePermissions.edit_content,
       ])
-    ).toBeTrue();
+    ).toBeTruthy();
   });
 
   test("correctly identifies permission existing with all", () => {
     expect(
       hasPermission(DbRolePermissions.edit_content, [DbRolePermissions.all])
-    ).toBeTrue();
+    ).toBeTruthy();
   });
 
   test("correctly identifies permission missing", () => {
@@ -37,7 +37,7 @@ describe("hasPermission tests", () => {
         DbRolePermissions.edit_board_details,
         DbRolePermissions.edit_content_notices,
       ])
-    ).toBeFalse();
+    ).toBeFalsy();
   });
 });
 

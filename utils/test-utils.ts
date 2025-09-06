@@ -11,7 +11,6 @@ import { type ZodDbFeedType } from "types/db/schemas.js";
 import bodyParser from "body-parser";
 import debug from "debug";
 import { handleApiErrors } from "handlers/api-errors/handler.js";
-import { mocked } from "jest-mock";
 
 vi.mock("server/db-pool.js");
 const pool = await import("server/db-pool.js").then((m) => m.default);
@@ -58,17 +57,17 @@ export const setLoggedInUser = (firebaseId: string) => {
       "setLoggedInUser requires 'handlers/auth' to be explicitly mocked."
     );
   }
-  mocked(withLoggedIn).mockImplementation((req, res, next) => {
+  vi.mocked(withLoggedIn).mockImplementation((req, res, next) => {
     // @ts-ignore
     req.currentUser = { uid: firebaseId };
     next();
   });
-  mocked(ensureLoggedIn).mockImplementation((req, res, next) => {
+  vi.mocked(ensureLoggedIn).mockImplementation((req, res, next) => {
     // @ts-ignore
     req.currentUser = { uid: firebaseId };
     next();
   });
-  mocked(withUserSettings).mockImplementation((req, res, next) => {
+  vi.mocked(withUserSettings).mockImplementation((req, res, next) => {
     // @ts-ignore
     req.currentUser = { uid: firebaseId };
     next();
@@ -88,17 +87,17 @@ export const setLoggedInUserWithEmail = (user: {
       "setLoggedInUserWithEmail requires 'handlers/auth' to be explicitly mocked."
     );
   }
-  mocked(withLoggedIn).mockImplementation((req, res, next) => {
+  vi.mocked(withLoggedIn).mockImplementation((req, res, next) => {
     // @ts-ignore
     req.currentUser = user;
     next();
   });
-  mocked(ensureLoggedIn).mockImplementation((req, res, next) => {
+  vi.mocked(ensureLoggedIn).mockImplementation((req, res, next) => {
     // @ts-ignore
     req.currentUser = user;
     next();
   });
-  mocked(withUserSettings).mockImplementation((req, res, next) => {
+  vi.mocked(withUserSettings).mockImplementation((req, res, next) => {
     // @ts-ignore
     req.currentUser = user;
     next();

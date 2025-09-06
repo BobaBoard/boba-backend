@@ -12,7 +12,7 @@ import { REALM_MEMBER_PERMISSIONS } from "types/permissions.js";
 import request from "supertest";
 import router from "../routes.js";
 
-jest.mock("handlers/auth");
+vi.mock("handlers/auth");
 
 describe("Tests restricted board realm queries", () => {
   const server = startTestServer(router);

@@ -10,9 +10,9 @@ import { JERSEY_DEVIL_USER_ID } from "test/data/auth.js";
 import request from "supertest";
 import router from "../../routes.js";
 
-jest.mock("server/db-pool.js");
-jest.mock("server/cache.js");
-jest.mock("handlers/auth.js");
+vi.mock("server/db-pool.js");
+vi.mock("server/cache.js");
+vi.mock("handlers/auth.js");
 
 describe("Tests users/@me/settings endpoint", () => {
   const server = startTestServer(router);
@@ -71,9 +71,9 @@ describe("Tests users/@me/settings endpoint", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(JERSEY_DEVIL_USER_ID);
       const testError = new Error("update failed");
-      jest
-        .spyOn(userQueries, "updateUserSettings")
-        .mockRejectedValueOnce(testError);
+      vi.spyOn(userQueries, "updateUserSettings").mockRejectedValueOnce(
+        testError
+      );
 
       const res = await request(server.app)
         .patch(`/@me/settings`)

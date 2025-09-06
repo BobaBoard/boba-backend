@@ -14,10 +14,10 @@ import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms.js";
 import request from "supertest";
 import router from "../routes.js";
 
-jest.mock("handlers/auth");
-jest.mock("server/cache");
-jest.mock("server/db-pool");
-jest.mock("axios");
+vi.mock("handlers/auth");
+vi.mock("server/cache");
+vi.mock("server/db-pool");
+vi.mock("axios");
 
 // Uses the format: /:realm_id/board
 const CREATE_BOARD_ROUTE = `/${TWISTED_MINDS_REALM_EXTERNAL_ID}/boards`;

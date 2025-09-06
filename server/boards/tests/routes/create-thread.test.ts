@@ -1,5 +1,3 @@
-import * as uuid from "uuid";
-
 import {
   BOBATAN_USER_ID,
   GORE_MASTER_IDENTITY_ID,
@@ -22,20 +20,14 @@ import { ENSURE_LOGGED_IN_NO_TOKEN } from "test/data/responses.js";
 import { EventEmitter } from "events";
 import type { GenericResponse } from "types/rest/responses.js";
 import type { Thread } from "types/open-api/generated/types.js";
-import { mocked } from "jest-mock";
+
 import request from "supertest";
 import router from "../../routes.js";
 
-jest.mock("uuid", () => ({
-  __esModule: true,
-  // @ts-ignore
-  ...jest.requireActual("uuid"),
-}));
-
-jest.mock("handlers/auth");
-jest.mock("server/cache");
-jest.mock("server/db-pool");
-jest.mock("axios");
+vi.mock("handlers/auth");
+vi.mock("server/cache");
+vi.mock("server/db-pool");
+vi.mock("axios");
 
 export const CREATE_GORE_THREAD_BASE_REQUEST = {
   content: '[{"insert":"Gore. Gore? Gore!"}]',
@@ -147,7 +139,7 @@ describe("Tests threads REST API - create", () => {
   test("should create thread", async () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(BOBATAN_USER_ID);
-      const mockedEmit = jest.spyOn(EventEmitter.prototype, "emit");
+      const mockedEmit = vi.spyOn(EventEmitter.prototype, "emit");
       const res = await request(server.app)
         .post(`/${GORE_BOARD_ID}`)
         .send({
@@ -180,7 +172,7 @@ describe("Tests threads REST API - create", () => {
   test("should create thread as role", async () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(BOBATAN_USER_ID);
-      const mockedEmit = jest.spyOn(EventEmitter.prototype, "emit");
+      const mockedEmit = vi.spyOn(EventEmitter.prototype, "emit");
       const res = await request(server.app)
         .post(`/${GORE_BOARD_ID}`)
         .send({

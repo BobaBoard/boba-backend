@@ -20,8 +20,8 @@ import type { GenericResponse } from "types/rest/responses.js";
 import request from "supertest";
 import router from "../../routes.js";
 
-jest.mock("handlers/auth");
-jest.mock("server/db-pool");
+vi.mock("handlers/auth");
+vi.mock("server/db-pool");
 
 describe("Tests threads REST API - visits", () => {
   const server = startTestServer(router);

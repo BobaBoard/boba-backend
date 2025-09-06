@@ -8,7 +8,7 @@ import { BOBATAN_USER_ID } from "test/data/auth.js";
 import request from "supertest";
 import router from "../routes.js";
 
-jest.mock("handlers/auth.js");
+vi.mock("handlers/auth.js");
 
 describe("Tests realm role queries", () => {
   const server = startTestServer(router);
