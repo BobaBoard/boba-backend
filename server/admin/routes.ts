@@ -1,13 +1,13 @@
-import { CacheKeys, cache } from "../cache";
+import { CacheKeys, cache } from "../cache.js";
 import {
   createBoardsIfNotExist,
   createIdentitiesIfNotExist,
   updateIdentities,
-} from "./queries";
+} from "./queries.js";
 
-import axios from "axios";
+const axios = require("axios");
 import debug from "debug";
-import { ensureLoggedIn } from "handlers/auth";
+import { ensureLoggedIn } from "handlers/auth.js";
 import express from "express";
 import firebaseAuth from "firebase-admin";
 
@@ -82,7 +82,7 @@ router.post("/generate/identities/event", ensureLoggedIn, async (req, res) => {
     })
   );
   const recordsChanged = updateIdentities(
-    data.map((data) => ({
+    data.map((data: any) => ({
       oldName: data.oldName,
       oldAvatar: data.oldAvatar,
       newName: data.eventName,
@@ -111,7 +111,7 @@ router.post(
       })
     );
     const recordsChanged = updateIdentities(
-      data.map((data) => ({
+      data.map((data: any) => ({
         oldName: data.eventName,
         oldAvatar: data.eventAvatar,
         newName: data.oldName,
@@ -154,7 +154,7 @@ const getSpreadsheetData = (
   url: string,
   transform: (rowData: any, index: number) => any
 ) => {
-  return axios.get(url).then((response) => {
+  return axios.get(url).then((response: any) => {
     const rowData = response.data.sheets[0].data[0].rowData;
     let hasData = true;
     let i = 1;

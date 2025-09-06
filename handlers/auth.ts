@@ -1,11 +1,11 @@
-import { CacheKeys, cache } from "server/cache";
-import { NextFunction, Request, Response } from "express";
-import firebaseAuth, { auth } from "firebase-admin";
+import { CacheKeys, cache } from "server/cache.js";
+import { type NextFunction, type Request, type Response } from "express";
+import firebaseAuth, { type auth } from "firebase-admin";
 
-import { Internal500Error } from "handlers/api-errors/codes";
-import { SettingEntry } from "../types/settings";
+import { Internal500Error } from "handlers/api-errors/codes.js";
+import { type SettingEntry } from "types/settings.js";
 import debug from "debug";
-import { getUserSettings } from "server/users/queries";
+import { getUserSettings } from "server/users/queries.js";
 import opentelemetry from "@opentelemetry/api";
 import stringify from "fast-json-stable-stringify";
 
@@ -32,7 +32,7 @@ export const withLoggedIn = (
   next: NextFunction
 ) => {
   const idToken = req.headers?.authorization;
-  req.currentUser = undefined;
+  delete req.currentUser;
 
   const activeSpan = opentelemetry.trace.getActiveSpan();
 

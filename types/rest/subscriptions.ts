@@ -1,4 +1,4 @@
-import { Post } from "./threads";
+import type { Post } from "./threads.js";
 
 export interface Subscription {
   id: string;

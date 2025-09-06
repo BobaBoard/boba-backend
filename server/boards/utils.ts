@@ -1,17 +1,20 @@
 import {
-  BoardMetadata,
-  LoggedInBoardMetadata,
-} from "types/open-api/generated/types";
-import { CacheKeys, cache } from "server/cache";
-import { DbBoardCategoryDescription, DbBoardTextDescription } from "types/db";
+  type BoardMetadata,
+  type LoggedInBoardMetadata,
+} from "types/open-api/generated/types.js";
+import { CacheKeys, cache } from "../cache.js";
+import {
+  type DbBoardCategoryDescription,
+  type DbBoardTextDescription,
+} from "types/db/index.js";
 import {
   processBoardMetadata,
   processBoardsSummary,
-} from "utils/response-utils";
+} from "utils/response-utils.js";
 
-import { BoardByExternalId } from "./sql/types";
+import { type BoardByExternalId } from "./sql/types.js";
 import debug from "debug";
-import { getBoardByExternalId } from "./queries";
+import { getBoardByExternalId } from "./queries.js";
 import stringify from "fast-json-stable-stringify";
 
 const info = debug("bobaserver:board:utils-info");
@@ -27,8 +30,8 @@ export const getMetadataDelta = ({
   oldMetadata: Partial<BoardByExternalId>;
   newMetadata: Partial<BoardByExternalId>;
 }): {
-  tagline?: string;
-  accentColor?: string;
+  tagline?: string | undefined;
+  accentColor?: string | undefined;
   texts: {
     deleted: { id: string }[];
     newAndUpdated: (DbBoardTextDescription & { updated: boolean })[];
@@ -148,7 +151,7 @@ export const getBoardMetadataByExternalId = async ({
   hasBoardAccess,
 }: {
   boardExternalId: string;
-  firebaseId?: string;
+  firebaseId?: string | undefined;
   hasBoardAccess: boolean;
 }): Promise<BoardMetadata | LoggedInBoardMetadata | null> => {
   if (!firebaseId) {

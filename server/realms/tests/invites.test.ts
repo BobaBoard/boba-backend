@@ -6,38 +6,40 @@ import {
   SEXY_DADDY_USER_ID,
   UWU_USERS,
   ZODIAC_KILLER_USER_ID,
-} from "test/data/auth";
+} from "test/data/auth.js";
 import {
   TWISTED_MINDS_REALM_EXTERNAL_ID,
   TWISTED_MINDS_REALM_SLUG,
   UWU_REALM_EXTERNAL_ID,
   UWU_REALM_SLUG,
-} from "test/data/realms";
+} from "test/data/realms.js";
 import {
   setLoggedInUser,
   setLoggedInUserWithEmail,
   startTestServer,
   wrapWithTransaction,
-} from "utils/test-utils";
+} from "utils/test-utils.js";
 
-import { checkUserOnRealm } from "../queries";
+import { checkUserOnRealm } from "../queries.js";
 import debug from "debug";
-import pool from "server/db-pool";
+import pool from "server/db-pool.js";
 import request from "supertest";
-import router from "../routes";
+import router from "../routes.js";
 
 const log = debug("bobaserver:realms:invites-test-log");
 
-jest.mock("handlers/auth");
-jest.mock("server/db-pool");
+vi.mock("handlers/auth");
+vi.mock("server/db-pool");
 
-const authCreateUser = jest.fn();
+const authCreateUser = vi.fn();
 
-jest.mock("firebase-admin", () => {
+vi.mock("firebase-admin", () => {
   return {
-    auth: () => ({
-      createUser: async () => authCreateUser(),
-    }),
+    default: {
+      auth: () => ({
+        createUser: async () => authCreateUser(),
+      }),
+    },
   };
 });
 

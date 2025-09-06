@@ -1,17 +1,17 @@
-import { CacheKeys, cache } from "server/cache";
-import { setLoggedInUser, startTestServer } from "utils/test-utils";
+import { CacheKeys, cache } from "server/cache.js";
+import { setLoggedInUser, startTestServer } from "utils/test-utils.js";
 
-import { AIBA_SUBSCRIPTION_ID } from "test/data/subscriptions";
-import { BOBATAN_USER_ID } from "test/data/auth";
-import { GenericResponse } from "types/rest/responses";
-import { SubscriptionFeed } from "types/rest/subscriptions";
-import { mocked } from "jest-mock";
+import { AIBA_SUBSCRIPTION_ID } from "test/data/subscriptions.js";
+import { BOBATAN_USER_ID } from "test/data/auth.js";
+import type { GenericResponse } from "types/rest/responses.js";
+import type { SubscriptionFeed } from "types/rest/subscriptions.js";
+
 import request from "supertest";
-import router from "../../routes";
+import router from "../../routes.js";
 import stringify from "fast-json-stable-stringify";
 
-jest.mock("server/cache");
-jest.mock("handlers/auth");
+vi.mock("server/cache.js");
+vi.mock("handlers/auth.js");
 
 const AIBA_SUBSCRIPTION_RESULT: SubscriptionFeed = {
   cursor: {
@@ -34,7 +34,8 @@ const AIBA_SUBSCRIPTION_RESULT: SubscriptionFeed = {
       own: false,
       parent_post_id: null,
       secret_identity: {
-        avatar: "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2F5c2c3867-2323-4209-8bd4-9dfcc88808f3%2Fd931f284-5c22-422d-9343-e509cfb44ffc.png?alt=media&token=94e52fff-4e6b-4110-94c3-90b8800f541c",
+        avatar:
+          "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2F5c2c3867-2323-4209-8bd4-9dfcc88808f3%2Fd931f284-5c22-422d-9343-e509cfb44ffc.png?alt=media&token=94e52fff-4e6b-4110-94c3-90b8800f541c",
         name: "Old Time-y Anon",
       },
       tags: {
@@ -95,7 +96,8 @@ describe("Tests threads REST API", () => {
           own: false,
           parent_post_id: null,
           secret_identity: {
-            avatar: "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2F5c2c3867-2323-4209-8bd4-9dfcc88808f3%2Fd931f284-5c22-422d-9343-e509cfb44ffc.png?alt=media&token=94e52fff-4e6b-4110-94c3-90b8800f541c",
+            avatar:
+              "https://firebasestorage.googleapis.com/v0/b/bobaboard-fb.appspot.com/o/images%2Fgore%2F5c2c3867-2323-4209-8bd4-9dfcc88808f3%2Fd931f284-5c22-422d-9343-e509cfb44ffc.png?alt=media&token=94e52fff-4e6b-4110-94c3-90b8800f541c",
             name: "Old Time-y Anon",
           },
           tags: {
@@ -109,7 +111,9 @@ describe("Tests threads REST API", () => {
         },
       ],
     };
-    mocked(cache().hGet).mockResolvedValueOnce(stringify(cachedSubscription));
+    vi.mocked(cache().hGet).mockResolvedValueOnce(
+      stringify(cachedSubscription)
+    );
 
     const res = await request(server.app).get(`/${AIBA_SUBSCRIPTION_ID}`);
 

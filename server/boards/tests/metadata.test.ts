@@ -1,4 +1,4 @@
-import { getMetadataDelta } from "../utils";
+import { getMetadataDelta } from "../utils.js";
 
 describe("Tests delta metadata", () => {
   test("gets correct amounts with no visit", async () => {

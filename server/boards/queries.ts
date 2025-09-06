@@ -1,18 +1,18 @@
 import {
-  BoardByExternalId,
+  type BoardByExternalId,
   BoardByExternalIdSchema,
   DbRealmBoardSchema,
-  DbRealmBoardType,
-} from "./sql/types";
+  type DbRealmBoardType,
+} from "./sql/types.js";
 
-import { ITask } from "pg-promise";
+import { type ITask } from "pg-promise";
 import debug from "debug";
-import { getMetadataDelta } from "./utils";
-import pool from "server/db-pool";
-import { postNewContribution } from "server/posts/queries";
-import postsSQL from "../posts/sql";
-import sql from "./sql";
-import threadsSql from "../threads/sql";
+import { getMetadataDelta } from "./utils.js";
+import pool from "server/db-pool.js";
+import { postNewContribution } from "../posts/queries.js";
+import postsSQL from "../posts/sql/index.js";
+import sql from "./sql/index.js";
+import threadsSql from "../threads/sql/index.js";
 import { v4 as uuidv4 } from "uuid";
 
 const info = debug("bobaserver:board:queries-info");
@@ -24,7 +24,7 @@ export const getRealmBoards = async ({
   realmExternalId,
 }: {
   firebaseId: string | null;
-  realmExternalId?: string;
+  realmExternalId?: string | undefined;
 }): Promise<DbRealmBoardType[]> => {
   return pool.task("get-realm-boards", async (t) => {
     return (

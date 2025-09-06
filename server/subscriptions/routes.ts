@@ -1,10 +1,10 @@
-import { CacheKeys, cache } from "../cache";
+import { CacheKeys, cache } from "../cache.js";
 
-import { NotFound404Error } from "handlers/api-errors/codes";
-import { SubscriptionFeed } from "types/rest/subscriptions";
+import { NotFound404Error } from "handlers/api-errors/codes.js";
+import { type SubscriptionFeed } from "types/rest/subscriptions.js";
 import debug from "debug";
 import express from "express";
-import { getLatestSubscriptionData } from "./queries";
+import { getLatestSubscriptionData } from "./queries.js";
 import stringify from "fast-json-stable-stringify";
 
 const info = debug("bobaserver:board:routes-info");

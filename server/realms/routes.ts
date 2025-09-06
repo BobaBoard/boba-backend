@@ -3,7 +3,7 @@ import {
   Forbidden403Error,
   Internal500Error,
   NotFound404Error,
-} from "handlers/api-errors/codes";
+} from "handlers/api-errors/codes.js";
 import {
   acceptInvite,
   checkUserOnRealm,
@@ -14,30 +14,34 @@ import {
   getRealmInvites,
   getRealmRoles,
   getUserPermissionsForRealm,
-} from "server/realms/queries";
-import { createNewUser, getUserFromFirebaseId } from "server/users/queries";
-import { ensureLoggedIn, withLoggedIn, withUserSettings } from "handlers/auth";
+} from "./queries.js";
+import { createNewUser, getUserFromFirebaseId } from "server/users/queries.js";
+import {
+  ensureLoggedIn,
+  withLoggedIn,
+  withUserSettings,
+} from "handlers/auth.js";
 import {
   ensureRealmExists,
   ensureRealmPermission,
   withRealmPermissions,
-} from "handlers/permissions";
-import { getRealmDataBySlug, getSettingsBySlug } from "./queries";
+} from "handlers/permissions.js";
+import { getRealmDataBySlug, getSettingsBySlug } from "./queries.js";
 import {
   processBoardsNotifications,
   processBoardsSummary,
   reduceById,
-} from "utils/response-utils";
+} from "utils/response-utils.js";
 
-import { DbRealmBoardType } from "server/boards/sql/types";
-import { LoggedInBoardMetadataSchema } from "types/open-api/generated/schemas";
-import { RealmPermissions } from "types/permissions";
-import { createInvite } from "server/realms/queries";
+import { type DbRealmBoardType } from "server/boards/sql/types.js";
+import { LoggedInBoardMetadataSchema } from "types/open-api/generated/schemas.js";
+import { RealmPermissions } from "types/permissions.js";
+import { createInvite } from "./queries.js";
 import debug from "debug";
 import express from "express";
-import { getBoardMetadataByExternalId } from "server/boards/utils";
-import { getRealmBoards } from "../boards/queries";
-import { processRealmActivity } from "./utils";
+import { getBoardMetadataByExternalId } from "server/boards/utils.js";
+import { getRealmBoards } from "../boards/queries.js";
+import { processRealmActivity } from "./utils.js";
 import { randomBytes } from "crypto";
 
 const info = debug("bobaserver:realms:routes-info");

@@ -1,15 +1,15 @@
-import * as threadEvents from "handlers/events/threads";
+import * as threadEvents from "handlers/events/threads.js";
 
-import { CacheKeys, cache } from "server/cache";
+import { CacheKeys, cache } from "../cache.js";
 import {
   getTriggeredBoardSubscriptions,
   getTriggeredThreadsSubscriptions,
   getWebhooksForSubscriptions,
-} from "./queries";
+} from "./queries.js";
 
 import axios from "axios";
 import debug from "debug";
-import { getWebhookPayload } from "./utils";
+import { getWebhookPayload } from "./utils.js";
 
 const log = debug("bobaserver:subscriptions:events-log");
 

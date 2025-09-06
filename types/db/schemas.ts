@@ -98,7 +98,6 @@ export const ThreadSummaryTypeSchema = DbThreadTypeSchema.omit({
   DbPostTypeSchema.omit({
     total_comments_amount: true,
     new_comments_amount: true,
-    comments: true,
   })
 );
 

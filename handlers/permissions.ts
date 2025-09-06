@@ -1,31 +1,31 @@
 import {
-  BoardPermissions,
+  type BoardPermissions,
   BoardRestrictions,
   POST_OWNER_PERMISSIONS,
-  PostPermissions,
+  type PostPermissions,
   RealmPermissions,
-  ThreadPermissions,
-} from "types/permissions";
-import { NextFunction, Request, Response } from "express";
+  type ThreadPermissions,
+} from "types/permissions.js";
+import { type NextFunction, type Request, type Response } from "express";
 import {
   extractBoardPermissions,
   extractPostPermissions,
   getBoardRestrictions,
-} from "utils/permissions-utils";
+} from "utils/permissions-utils.js";
 import {
   getRealmByExternalId,
   getUserPermissionsForRealm,
-} from "server/realms/queries";
+} from "server/realms/queries.js";
 import {
   getThreadByExternalId,
   getUserPermissionsForThread,
-} from "server/threads/queries";
+} from "server/threads/queries.js";
 
-import { BoardByExternalId } from "server/boards/sql/types";
-import { Internal500Error } from "handlers/api-errors/codes";
-import { ZodDbThreadType } from "types/db/schemas";
-import { getBoardByExternalId } from "server/boards/queries";
-import { getPostByExternalId } from "server/posts/queries";
+import { type BoardByExternalId } from "server/boards/sql/types.js";
+import { Internal500Error } from "handlers/api-errors/codes.js";
+import { type ZodDbThreadType } from "types/db/schemas.js";
+import { getBoardByExternalId } from "server/boards/queries.js";
+import { getPostByExternalId } from "server/posts/queries.js";
 
 declare global {
   namespace Express {
@@ -116,7 +116,7 @@ export const ensureThreadAccess = async (
     (
       await getPostByExternalId(null, {
         firebaseId: req.currentUser?.uid,
-        postExternalId: req.params.post_id,
+        postExternalId: req.params.post_id!,
       })
     ).parent_thread_id;
 

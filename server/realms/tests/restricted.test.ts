@@ -1,13 +1,14 @@
-import { BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID } from "test/data/auth";
-import express, { Express } from "express";
-import { setLoggedInUser, startTestServer } from "utils/test-utils";
+import { BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID } from "test/data/auth.js";
+import express from "express";
+import type { Express } from "express";
+import { setLoggedInUser, startTestServer } from "utils/test-utils.js";
 
-import { RESTRICTED_BOARD_SUMMARY } from "test/data/boards";
+import { RESTRICTED_BOARD_SUMMARY } from "test/data/boards.js";
 import { Server } from "http";
 import request from "supertest";
-import router from "../routes";
+import router from "../routes.js";
 
-jest.mock("handlers/auth");
+vi.mock("handlers/auth.js");
 
 describe("Tests restricted board realm queries", () => {
   const server = startTestServer(router);

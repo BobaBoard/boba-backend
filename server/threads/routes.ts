@@ -2,16 +2,16 @@ import {
   BadRequest400Error,
   Forbidden403Error,
   NotFound404Error,
-} from "handlers/api-errors/codes";
+} from "handlers/api-errors/codes.js";
 import {
   ensureNoIdentityLeakage,
   makeServerThread,
-} from "utils/response-utils";
+} from "utils/response-utils.js";
 import {
   ensureThreadAccess,
   ensureThreadPermission,
   withThreadPermissions,
-} from "handlers/permissions";
+} from "handlers/permissions.js";
 import {
   hideThread,
   markThreadVisit,
@@ -21,14 +21,14 @@ import {
   unmuteThread,
   unstarThread,
   updateThreadView,
-} from "./queries";
+} from "./queries.js";
 
-import { ThreadPermissions } from "types/permissions";
-import { canAccessBoardByExternalId } from "utils/permissions-utils";
+import { ThreadPermissions } from "types/permissions.js";
+import { canAccessBoardByExternalId } from "utils/permissions-utils.js";
 import debug from "debug";
-import { ensureLoggedIn } from "handlers/auth";
+import { ensureLoggedIn } from "handlers/auth.js";
 import express from "express";
-import { moveThread } from "./queries";
+import { moveThread } from "./queries.js";
 
 const info = debug("bobaserver:threads:routes-info");
 const log = debug("bobaserver:threads:routes-log");

@@ -1,11 +1,11 @@
-import {
+import type {
   BoardMetadata,
   BoardSummary,
   LoggedInBoardMetadata,
   LoggedInBoardSummary,
-} from "types/open-api/generated/types";
+} from "types/open-api/generated/types.js";
 
-import { GenericResponse } from "../../types/rest/responses";
+import type { GenericResponse } from "types/rest/responses.js";
 
 export const GORE_BOARD_ID = "c6d3d10e-8e49-4d73-b28a-9d652b41beec";
 export const ANIME_BOARD_ID = "4b30fb7c-2aca-4333-aa56-ae8623a92b65";

@@ -1,5 +1,5 @@
 import debug from "debug";
-import pool from "server/db-pool";
+import pool from "server/db-pool.js";
 
 const log = debug("bobaserver:admin:queries-log");
 const error = debug("bobaserver:admin:queries-error");

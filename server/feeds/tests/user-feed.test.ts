@@ -1,13 +1,13 @@
-import { BOBATAN_USER_ID, ONCEST_USER_ID } from "test/data/auth";
+import { BOBATAN_USER_ID, ONCEST_USER_ID } from "test/data/auth.js";
 import {
   FAVORITE_CHARACTER_THREAD_ID,
   FAVORITE_MURDER_THREAD_ID,
   FUNNY_MEMES_THREAD_ID,
-} from "test/data/threads";
+} from "test/data/threads.js";
 
-import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
-import { extractActivity } from "utils/test-utils";
-import { getUserActivity } from "../queries";
+import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms.js";
+import { extractActivity } from "utils/test-utils.js";
+import { getUserActivity } from "../queries.js";
 
 describe("feed activity queries", () => {
   test("updated: TRUE, own: TRUE", async () => {

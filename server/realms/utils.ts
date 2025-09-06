@@ -1,8 +1,8 @@
 import {
-  CssVariableSetting,
+  type CssVariableSetting,
   GlobalSettings,
-  SettingEntry,
-} from "../../types/settings";
+  type SettingEntry,
+} from "types/settings.js";
 
 const isSettingActiveOrUnset = (
   settingName: GlobalSettings,

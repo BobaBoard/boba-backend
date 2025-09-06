@@ -1,24 +1,24 @@
+vi.mock("server/db-pool.js");
+vi.mock("handlers/auth.js");
+
 import {
   BOBATAN_USER_ID,
   ONCEST_USER_ID,
   SEXY_DADDY_USER_ID,
-} from "test/data/auth";
+} from "test/data/auth.js";
 import {
   CHARACTER_TO_MAIM_POST,
   CHARACTER_TO_MAIM_POST_ID,
-} from "test/data/posts";
+} from "test/data/posts.js";
 import {
   setLoggedInUser,
   startTestServer,
   wrapWithTransaction,
-} from "utils/test-utils";
+} from "utils/test-utils.js";
 
-import { ONCEST_USER_IDENTITY } from "test/data/user";
+import { ONCEST_USER_IDENTITY } from "test/data/user.js";
 import request from "supertest";
-import router from "../../routes";
-
-jest.mock("server/db-pool");
-jest.mock("handlers/auth");
+import router from "../../routes.js";
 
 describe("Test editing tags of post REST API", () => {
   const server = startTestServer(router);

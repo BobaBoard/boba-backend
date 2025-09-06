@@ -4,12 +4,15 @@ import {
   KERMIT_COMMENTS,
   KERMIT_POST,
   REVOLVER_OCELOT_POST,
-} from "./posts";
-import { GORE_BOARD_ID, RESTRICTED_BOARD_ID } from "./boards";
-import { Thread, ThreadSummary } from "types/open-api/generated/types";
+} from "./posts.js";
+import { GORE_BOARD_ID, RESTRICTED_BOARD_ID } from "./boards.js";
+import {
+  type Thread,
+  type ThreadSummary,
+} from "types/open-api/generated/types.js";
 
-import { GenericResponse } from "../../types/rest/responses";
-import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "./realms";
+import { type GenericResponse } from "types/rest/responses.js";
+import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "./realms.js";
 
 // TODO: add thread b27710a8-0a9f-4c09-b3a5-54668bab7051 and info
 

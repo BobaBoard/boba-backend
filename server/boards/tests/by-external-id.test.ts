@@ -1,8 +1,8 @@
-import { BOBATAN_USER_ID } from "test/data/auth";
-import { BoardByExternalId } from "../sql/types";
-import { GORE_BOARD_ID } from "test/data/boards";
-import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
-import { getBoardByExternalId } from "../queries";
+import { BOBATAN_USER_ID } from "test/data/auth.js";
+import type { BoardByExternalId } from "../sql/types.js";
+import { GORE_BOARD_ID } from "test/data/boards.js";
+import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms.js";
+import { getBoardByExternalId } from "../queries.js";
 
 const GORE_BOARD_LOGGED_OUT: BoardByExternalId = {
   settings: {

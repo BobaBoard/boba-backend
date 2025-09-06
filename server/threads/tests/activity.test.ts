@@ -4,13 +4,13 @@ import {
   ONCEST_USER_ID,
   SEXY_DADDY_USER_ID,
   ZODIAC_KILLER_USER_ID,
-} from "test/data/auth";
+} from "test/data/auth.js";
 import {
   FAVORITE_CHARACTER_THREAD_ID,
   FAVORITE_MURDER_THREAD_ID,
-} from "test/data/threads";
+} from "test/data/threads.js";
 
-import { getThreadByExternalId } from "../queries";
+import { getThreadByExternalId } from "../queries.js";
 
 const extractActivityFromThread = (thread: any) => {
   return {

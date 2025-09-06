@@ -1,27 +1,25 @@
-import * as postQueries from "../../queries";
+import * as postQueries from "../../queries.js";
 import * as uuid from "uuid";
 
-import { BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID } from "test/data/auth";
+import { BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID } from "test/data/auth.js";
 import {
   CHARACTER_TO_MAIM_POST_ID,
   KERMIT_FRIEND_COMMENT_ID,
-} from "test/data/posts";
+} from "test/data/posts.js";
 import {
   setLoggedInUser,
   startTestServer,
   wrapWithTransaction,
-} from "utils/test-utils";
+} from "utils/test-utils.js";
 
 import request from "supertest";
-import router from "../../routes";
+import router from "../../routes.js";
 
-jest.mock("handlers/auth");
-jest.mock("server/db-pool");
-jest.mock("server/cache");
-jest.mock("uuid", () => ({
-  __esModule: true,
-  // @ts-ignore
-  ...jest.requireActual("uuid"),
+vi.mock("handlers/auth.js");
+vi.mock("server/db-pool.js");
+vi.mock("server/cache.js");
+vi.mock("uuid", async () => ({
+  ...(await vi.importActual<typeof import("uuid")>("uuid")),
 }));
 
 describe("Test commenting on post REST API", () => {
@@ -60,10 +58,6 @@ describe("Test commenting on post REST API", () => {
     contents: "hey what are you going to do with this string I wonder",
   };
 
-  beforeEach(() => {
-    jest.clearAllMocks();
-  });
-
   test("doesn't allow commenting on a post when logged out", async () => {
     await wrapWithTransaction(async () => {
       const res = await request(server.app)
@@ -95,7 +89,7 @@ describe("Test commenting on post REST API", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(BOBATAN_USER_ID);
       const commentId = "e1a0230c-da57-4703-8bab-54c12494e8b1";
-      jest.spyOn(uuid, "v4").mockReturnValueOnce(commentId);
+      vi.spyOn(uuid, "v4").mockReturnValueOnce(commentId);
 
       const res = await request(server.app)
         .post(`/${CHARACTER_TO_MAIM_POST_ID}/comments`)
@@ -135,7 +129,7 @@ describe("Test commenting on post REST API", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(BOBATAN_USER_ID);
       const commentId = "e1a0230c-da57-4703-8bab-54c12494e8b1";
-      jest.spyOn(uuid, "v4").mockReturnValueOnce(commentId);
+      vi.spyOn(uuid, "v4").mockReturnValueOnce(commentId);
 
       const res = await request(server.app)
         .post(`/${CHARACTER_TO_MAIM_POST_ID}/comments`)
@@ -178,9 +172,9 @@ describe("Test commenting on post REST API", () => {
       const comment1Id = "a408cb1f-0d3c-43a8-97aa-784fabc281b9";
       const comment2Id = "0af5d8ca-170d-4d29-b711-8fe7712289fc";
       const comment3Id = "312b17ac-f430-4335-a6b0-b74081973eff";
-      jest.spyOn(uuid, "v4").mockReturnValueOnce(comment1Id);
-      jest.spyOn(uuid, "v4").mockReturnValueOnce(comment2Id);
-      jest.spyOn(uuid, "v4").mockReturnValueOnce(comment3Id);
+      vi.spyOn(uuid, "v4").mockReturnValueOnce(comment1Id);
+      vi.spyOn(uuid, "v4").mockReturnValueOnce(comment2Id);
+      vi.spyOn(uuid, "v4").mockReturnValueOnce(comment3Id);
 
       const res = await request(server.app)
         .post(`/${CHARACTER_TO_MAIM_POST_ID}/comments`)
@@ -260,7 +254,7 @@ describe("Test commenting on post REST API", () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(BOBATAN_USER_ID);
       const commentId = "f2v1349d-da57-4703-8bab-54c12494e8b1";
-      jest.spyOn(uuid, "v4").mockReturnValueOnce(commentId);
+      vi.spyOn(uuid, "v4").mockReturnValueOnce(commentId);
       const res = await request(server.app)
         .post(`/${CHARACTER_TO_MAIM_POST_ID}/comments`)
         .send(testReplyCommentBody);
@@ -314,7 +308,7 @@ describe("Test commenting on post REST API", () => {
       setLoggedInUser(BOBATAN_USER_ID);
 
       // spy on whatever query is making the actual DB write; NOTE: tightly coupled to the queries.ts file; this check may no longer be useful if there are changes there
-      const commentTransactionSpy = jest.spyOn(
+      const commentTransactionSpy = vi.spyOn(
         postQueries,
         "postNewCommentWithTransaction"
       );
@@ -336,9 +330,7 @@ describe("Test commenting on post REST API", () => {
       setLoggedInUser(BOBATAN_USER_ID);
 
       // spy on the function that gives us the db response; NOTE: tightly coupled to the queries.ts file; this check may no longer be useful if there are changes there
-      jest
-        .spyOn(postQueries, "postNewCommentChain")
-        .mockResolvedValueOnce(false);
+      vi.spyOn(postQueries, "postNewCommentChain").mockResolvedValueOnce(false);
 
       const res = await request(server.app)
         .post(`/${CHARACTER_TO_MAIM_POST_ID}/comments`)

@@ -1,10 +1,10 @@
-import { SettingEntry, SettingValueTypes } from "../../types/settings";
-import firebaseAuth, { auth } from "firebase-admin";
+import { type SettingEntry, SettingValueTypes } from "types/settings.js";
+import firebaseAuth, { type auth } from "firebase-admin";
 
 import debug from "debug";
-import { parseSettings } from "utils/settings";
-import pool from "server/db-pool";
-import sql from "./sql";
+import { parseSettings } from "utils/settings.js";
+import pool from "server/db-pool.js";
+import sql from "./sql/index.js";
 
 const log = debug("bobaserver:users:queries-log");
 const error = debug("bobaserver:users:queries-error");

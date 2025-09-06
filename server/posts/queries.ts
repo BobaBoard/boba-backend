@@ -1,17 +1,17 @@
 import {
   BadRequest400Error,
   Forbidden403Error,
-} from "handlers/api-errors/codes";
-import { ZodDbCommentType, ZodDbPostType } from "types/db/schemas";
+} from "handlers/api-errors/codes.js";
+import { type ZodDbCommentType, type ZodDbPostType } from "types/db/schemas.js";
 
-import { ITask } from "pg-promise";
-import { QueryTagsType } from "types/rest/params";
-import { canPostAs } from "utils/permissions-utils";
+import { type ITask } from "pg-promise";
+import { type QueryTagsType } from "types/rest/params.js";
+import { canPostAs } from "utils/permissions-utils.js";
 import debug from "debug";
 import invariant from "tiny-invariant";
-import pool from "server/db-pool";
-import sql from "./sql";
-import threadsSql from "../threads/sql";
+import pool from "server/db-pool.js";
+import sql from "./sql/index.js";
+import threadsSql from "../threads/sql/index.js";
 import { v4 as uuidv4 } from "uuid";
 
 const log = debug("bobaserver:posts:queries-log");
@@ -175,16 +175,16 @@ export const updateWhisperTags = async (
 export const postNewContribution = async (
   contributionData: {
     firebaseId: string;
-    identityId?: string;
-    accessoryId?: string;
+    identityId?: string | undefined;
+    accessoryId?: string | undefined;
     content: string;
     anonymityType: string;
     whisperTags: string[];
     indexTags: string[];
     categoryTags: string[];
     contentWarnings: string[];
-    parentPostId?: string;
-    threadExternalId?: string;
+    parentPostId?: string | undefined;
+    threadExternalId?: string | undefined;
   },
   transaction?: ITask<unknown>
 ): Promise<{ contribution: ZodDbPostType; boardSlug: string } | false> => {
@@ -321,8 +321,8 @@ export const postNewCommentWithTransaction = async (
     chainParentId: number | null;
     content: string;
     anonymityType: string;
-    identityId?: string;
-    accessoryId?: string;
+    identityId?: string | undefined;
+    accessoryId?: string | undefined;
   }
 ): Promise<{ id: number; comment: ZodDbCommentType }> => {
   const { parentPostId, firebaseId, identityId, accessoryId, parentCommentId } =
