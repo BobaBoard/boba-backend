@@ -1,13 +1,9 @@
 vi.mock("handlers/auth.js");
 vi.mock("server/db-pool.js");
 
-import {
-  ENSURE_LOGGED_IN_INVALID_TOKEN,
-  ENSURE_LOGGED_IN_NO_TOKEN,
-  ENSURE_THREAD_PERMISSIONS_UNAUTHORIZED,
-} from "test/data/responses.js";
+import { ENSURE_LOGGED_IN_NO_TOKEN } from "test/data/responses.js";
 import { LONG_BOARD_ID, NULL_BOARD_NOT_FOUND } from "test/data/boards.js";
-import { NULL_ID, NULL_THREAD_NOT_FOUND } from "test/data/threads.js";
+import { NULL_ID } from "test/data/threads.js";
 import { setLoggedInUser, startTestServer } from "utils/test-utils.js";
 
 import { BOBATAN_USER_ID } from "test/data/auth.js";

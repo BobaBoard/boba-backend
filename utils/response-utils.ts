@@ -87,7 +87,6 @@ export const mergeObjectIdentity = <T>(
   info(object);
 
   const {
-    author,
     username,
     user_avatar,
     secret_identity_name,
@@ -156,8 +155,8 @@ export const makeServerThread = (thread: ZodDbThreadType) => {
   // that's theoretically wrong
   // TODO[realms]: remove this
   const postsWithoutComments = posts.map((post) => {
-    // @ts-expect-error
-    const { comments, ...rest } = post;
+    // @ts-expect-error - comments property exists but shouldn't be in posts
+    const { comments: _, ...rest } = post;
     return rest;
   });
 
@@ -271,36 +270,34 @@ export const processBoardMetadata = ({
   isLoggedIn: boolean;
   hasBoardAccess: boolean;
 }) => {
-  const finalMetadata: Partial<BoardMetadata> | Partial<LoggedInBoardMetadata> = {
-    id: metadata.external_id,
-    slug: metadata.slug,
-    avatar_url: metadata.avatar_url,
-    descriptions: metadata.descriptions.map(
-      // TODO: double-check this is still necessary
-      (description): DbBoardTextDescription | DbBoardCategoryDescription => {
+  const finalMetadata: Partial<BoardMetadata> | Partial<LoggedInBoardMetadata> =
+    {
+      id: metadata.external_id,
+      slug: metadata.slug,
+      avatar_url: metadata.avatar_url,
+      descriptions: metadata.descriptions.map((description) => {
         switch (description.type) {
           case "text":
             return {
               ...description,
-              // @ts-ignore A leftover from the strict check cleanup
+              // The DB returns null for categories, so we need to remove it
               categories: undefined,
             };
           case "category_filter":
             return {
               ...description,
-              // @ts-ignore A leftover from the strict check cleanup
+              // The DB returns null for description, so we need to remove it
               description: undefined,
             };
         }
-      }
-    ),
-    // @ts-ignore TODO: remove permission enums and use schema permissions
-    permissions: getUserPermissionsForBoard(metadata.permissions),
-    posting_identities: metadata.posting_identities.map((identity: any) =>
-      transformImageUrls(identity)
-    ),
-    accessories: metadata.accessories,
-  };
+      }),
+      // @ts-expect-error TODO: remove permission enums and use schema permissions
+      permissions: getUserPermissionsForBoard(metadata.permissions),
+      posting_identities: metadata.posting_identities.map((identity: any) =>
+        transformImageUrls(identity)
+      ),
+      accessories: metadata.accessories,
+    };
 
   if (!isLoggedIn) {
     "permissions" in finalMetadata && delete finalMetadata.permissions;

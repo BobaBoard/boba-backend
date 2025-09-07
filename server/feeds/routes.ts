@@ -289,7 +289,7 @@ router.get("/users/@me", ensureLoggedIn, async (req, res) => {
  */
 
 router.get("/users/@me/stars", ensureLoggedIn, async (req, res) => {
-  const { cursor, starred } = req.query;
+  const { cursor } = req.query;
   const currentUserId: string = req.currentUser!.uid;
 
   const userStarFeed = await getUserStarFeed({

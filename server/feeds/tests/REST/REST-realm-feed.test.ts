@@ -1,15 +1,12 @@
-import { BOBATAN_USER_ID, ONCEST_USER_ID } from "test/data/auth.js";
+import { BOBATAN_USER_ID } from "test/data/auth.js";
 import { setLoggedInUser, startTestServer } from "utils/test-utils.js";
 
 import { BOBATAN_REALM_FEED } from "test/data/realmfeed.js";
 import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms.js";
-import debug from "debug";
 import request from "supertest";
 import router from "../../routes.js";
 
 vi.mock("handlers/auth.js");
-
-const log = debug("bobaserver:board:routes");
 
 describe("Tests Realm Activity Feed Endpoint", () => {
   const server = startTestServer(router);

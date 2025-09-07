@@ -136,7 +136,6 @@ router.post("/migrate_fb_data", ensureLoggedIn, async (req, res) => {
     .then((listUsersResult) => {
       listUsersResult.users.forEach((userRecord) => {
         userRecord.metadata.creationTime;
-        const hasSignedIn = !!userRecord.metadata.lastSignInTime;
         // Add creation time
         //
       });

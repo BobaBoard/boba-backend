@@ -1,4 +1,4 @@
-const db = await vi.importActual<typeof import("server/db-pool")>(
+const db = await vi.importActual<typeof import("server/db-pool.js")>(
   "server/db-pool"
 );
 

@@ -7,7 +7,6 @@ import express from "express";
 import { getLatestSubscriptionData } from "./queries.js";
 import stringify from "fast-json-stable-stringify";
 
-const info = debug("bobaserver:board:routes-info");
 const log = debug("bobaserver:board:routes");
 
 const router = express.Router();

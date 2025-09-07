@@ -5,7 +5,6 @@ import debug from "debug";
 
 const error = debug("bobaserver:cache-error");
 const log = debug("bobaserver:cache-log");
-const info = debug("bobaserver:cache-info");
 
 let client: {
   set: (key: CacheKeys, value: string) => Promise<string | null>;
@@ -42,7 +41,7 @@ export const initCache = (createClientMethod?: any) => {
   innerClient.on("connect", () => {
     log("You are now connected to the cache");
   });
-  innerClient.on("error", (err) => {
+  innerClient.on("error", () => {
     error("Redis connection failed");
   });
 

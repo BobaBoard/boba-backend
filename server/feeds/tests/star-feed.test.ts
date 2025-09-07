@@ -1,4 +1,4 @@
-import { extractActivity, extractsMetadata } from "utils/test-utils.js";
+import { extractsMetadata } from "utils/test-utils.js";
 
 import { getUserStarFeed } from "../queries.js";
 
