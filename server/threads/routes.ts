@@ -9,7 +9,6 @@ import {
 } from "utils/response-utils.js";
 import {
   ensureThreadAccess,
-  ensureThreadPermission,
   withThreadPermissions,
 } from "handlers/permissions.js";
 import {

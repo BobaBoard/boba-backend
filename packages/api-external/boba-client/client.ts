@@ -50,7 +50,7 @@ export const setConfig = (config: Partial<RequestConfig>) => {
 
 export type ResponseErrorConfig<TError = unknown> = TError;
 
-export const client = async <TData, _TError = unknown, TVariables = unknown>(
+export const client = async <TData, TVariables = unknown>(
   paramsConfig: RequestConfig<TVariables>
 ): Promise<ResponseConfig<TData>> => {
   const normalizedParams = new URLSearchParams();

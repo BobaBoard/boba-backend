@@ -72,7 +72,7 @@ export const createIdentitiesIfNotExist = async (
         avatar_reference_id: avatar,
       });
     });
-    const result = await Promise.all(promises);
+    await Promise.all(promises);
     log(`Added identity records.`);
     return true;
   } catch (e) {
@@ -128,7 +128,7 @@ export const createBoardsIfNotExist = async (
         },
       });
     });
-    const result = await Promise.all(promises);
+    await Promise.all(promises);
     log(`Added new board records.`);
     return true;
   } catch (e) {

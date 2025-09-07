@@ -1,4 +1,4 @@
-import { defineConfig, type UserConfig } from "tsdown";
+import { defineConfig } from "tsdown";
 import fs from "node:fs/promises";
 import { glob } from "glob";
 import path from "node:path";

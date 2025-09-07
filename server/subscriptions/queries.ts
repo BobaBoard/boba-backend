@@ -1,9 +1,6 @@
 import { Internal500Error } from "handlers/api-errors/codes.js";
-import debug from "debug";
 import pool from "server/db-pool.js";
 import sql from "./sql/index.js";
-
-const error = debug("bobaserver:subscriptions:queries-error");
 
 export const getLatestSubscriptionData = async ({
   subscriptionExternalId,
@@ -32,7 +29,7 @@ export const getLatestSubscriptionData = async ({
       page_size: 0,
       last_activity_cursor: null,
     })) as any;
-  } catch (e) {
+  } catch {
     throw new Internal500Error(
       `Error while getting webhooks for subscription ${subscriptionExternalId}`
     );
@@ -61,7 +58,7 @@ export const getTriggeredThreadsSubscriptions = async ({
       name: s.name,
       id: s.string_id,
     }));
-  } catch (e) {
+  } catch {
     throw new Internal500Error(
       `Error while fetching triggered thread subscriptions.`
     );
@@ -90,7 +87,7 @@ export const getTriggeredBoardSubscriptions = async ({
       name: s.name,
       id: s.string_id,
     }));
-  } catch (e) {
+  } catch {
     throw new Internal500Error(
       `Error while fetching triggered thread subscriptions.`
     );
@@ -118,7 +115,7 @@ export const getWebhooksForSubscriptions = async ({
       webhookHandlerType: s.webhook_handler_type,
       subscriptionIds: s.subscription_ids,
     }));
-  } catch (e) {
+  } catch {
     throw new Internal500Error(
       `Error while getting webhooks for subscriptions ${subscriptionIds.join(
         ", "

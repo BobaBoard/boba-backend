@@ -24,7 +24,6 @@ import {
 import {
   ensureRealmExists,
   ensureRealmPermission,
-  withRealmPermissions,
 } from "handlers/permissions.js";
 import { getRealmDataBySlug, getSettingsBySlug } from "./queries.js";
 import {
@@ -33,7 +32,6 @@ import {
   reduceById,
 } from "utils/response-utils.js";
 
-import { type DbRealmBoardType } from "server/boards/sql/types.js";
 import { LoggedInBoardMetadataSchema } from "types/open-api/generated/schemas.js";
 import { RealmPermissions } from "types/permissions.js";
 import { createInvite } from "./queries.js";

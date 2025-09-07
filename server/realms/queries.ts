@@ -55,7 +55,6 @@ const THREAD_PAGE_SETTINGS: CssVariableSetting[] = [
 ];
 export const getSettingsBySlug = async ({
   userSettings,
-  realmSlug,
 }: {
   userSettings: SettingEntry[];
   realmSlug: string;

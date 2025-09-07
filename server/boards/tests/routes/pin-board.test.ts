@@ -2,7 +2,6 @@ import { BOBATAN_USER_ID, JERSEY_DEVIL_USER_ID } from "test/data/auth.js";
 import { CacheKeys, cache } from "server/cache.js";
 import {
   GORE_BOARD_ID,
-  GORE_BOARD_METADATA,
   MAIN_STREET_BOARD_ID,
   RESTRICTED_BOARD_ID,
 } from "test/data/boards.js";
@@ -11,8 +10,6 @@ import {
   startTestServer,
   wrapWithTransaction,
 } from "utils/test-utils.js";
-
-import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms.js";
 import request from "supertest";
 import router from "../../routes.js";
 

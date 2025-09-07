@@ -26,7 +26,6 @@ import { withRealmPermissions } from "handlers/permissions.js";
 
 const info = debug("bobaserver:users:routes-info");
 const log = debug("bobaserver:users:routes-log");
-const error = debug("bobaserver:users:routes-error");
 
 const router = express.Router();
 
