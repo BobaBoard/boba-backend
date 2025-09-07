@@ -15,7 +15,7 @@ let client: {
   hDel: (key: CacheKeys, objectKey: string) => Promise<number>;
 };
 
-export const initCache = (createClientMethod?: any) => {
+export const initCache = (createClientMethod?: () => typeof client) => {
   if (client) {
     return;
   }

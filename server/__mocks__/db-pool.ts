@@ -4,7 +4,7 @@ const db = await vi.importActual<typeof import("server/db-pool.js")>(
 
 export default {
   ...db.default,
-  tx: vi.fn((name: string, transaction: any) =>
+  tx: vi.fn((name: string, transaction: (tx: unknown) => Promise<unknown>) =>
     // Because nested transactions are committed the moment they're done, even
     // when a parent transaction exists, we need to make sure that transactions
     // are not actually executed as such during tests. We then turn them into

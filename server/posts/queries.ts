@@ -18,7 +18,7 @@ const log = debug("bobaserver:posts:queries-log");
 const error = debug("bobaserver:posts:queries-error");
 
 export const maybeAddIndexTags = async (
-  transaction: ITask<any>,
+  transaction: ITask<unknown>,
   {
     indexTags,
     postId,
@@ -41,7 +41,7 @@ export const maybeAddIndexTags = async (
 };
 
 export const removeIndexTags = async (
-  transaction: ITask<any>,
+  transaction: ITask<unknown>,
   {
     indexTags,
     postId,
@@ -64,7 +64,7 @@ export const removeIndexTags = async (
 };
 
 export const maybeAddCategoryTags = async (
-  transaction: ITask<any>,
+  transaction: ITask<unknown>,
   {
     categoryTags,
     postId,
@@ -88,7 +88,7 @@ export const maybeAddCategoryTags = async (
 };
 
 export const removeCategoryTags = async (
-  transaction: ITask<any>,
+  transaction: ITask<unknown>,
   {
     categoryTags,
     postId,
@@ -111,7 +111,7 @@ export const removeCategoryTags = async (
 };
 
 export const maybeAddContentWarningTags = async (
-  transaction: ITask<any>,
+  transaction: ITask<unknown>,
   {
     contentWarnings,
     postId,
@@ -134,7 +134,7 @@ export const maybeAddContentWarningTags = async (
 };
 
 export const removeContentWarningTags = async (
-  transaction: ITask<any>,
+  transaction: ITask<unknown>,
   {
     contentWarnings,
     postId,
@@ -157,7 +157,7 @@ export const removeContentWarningTags = async (
 };
 
 export const updateWhisperTags = async (
-  transaction: ITask<any>,
+  transaction: ITask<unknown>,
   {
     postId,
     whisperTags,
@@ -313,7 +313,7 @@ export const postNewContribution = async (
 };
 
 export const postNewCommentWithTransaction = async (
-  transaction: ITask<any>,
+  transaction: ITask<unknown>,
   commentData: {
     firebaseId: string;
     parentPostId: string;
@@ -448,7 +448,7 @@ export const postNewCommentChain = async ({
 };
 
 const addAccessoryToIdentity = async (
-  transaction: ITask<any>,
+  transaction: ITask<unknown>,
   {
     identity_id,
     role_identity_id,
@@ -495,7 +495,7 @@ const addAccessoryToIdentity = async (
 };
 
 export const addNewIdentityToThread = async (
-  transaction: ITask<any>,
+  transaction: ITask<unknown>,
   params: {
     firebaseId: string;
     boardExternalId: string;
@@ -593,7 +593,7 @@ export const addNewIdentityToThread = async (
 };
 
 export const getPostByExternalId = async (
-  transaction: ITask<any> | null,
+  transaction: ITask<unknown> | null,
   {
     firebaseId,
     postExternalId,
@@ -609,7 +609,7 @@ export const getPostByExternalId = async (
 };
 
 export const updatePostTags = async (
-  transaction: ITask<any> | null,
+  transaction: ITask<unknown> | null,
   {
     firebaseId,
     postExternalId,
@@ -623,7 +623,7 @@ export const updatePostTags = async (
     };
   }
 ): Promise<ZodDbPostType | false> => {
-  const updateTagsMethod = async (transaction: ITask<any>) => {
+  const updateTagsMethod = async (transaction: ITask<unknown>) => {
     const post = await getPostByExternalId(transaction, {
       firebaseId,
       postExternalId,

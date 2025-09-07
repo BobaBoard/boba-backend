@@ -2,8 +2,9 @@ import { BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID } from "test/data/auth.js";
 
 import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms.js";
 import { getRealmBoards } from "../queries.js";
+import type { DbRealmBoardType } from "../sql/types.js";
 
-const extractBoardDetails = (boardData: any) => {
+const extractBoardDetails = (boardData: DbRealmBoardType) => {
   return {
     avatar_reference_id: boardData.avatar_reference_id,
     settings: boardData.settings,
@@ -15,7 +16,7 @@ const extractBoardDetails = (boardData: any) => {
   };
 };
 
-const extractBoardUpdates = (boardData: any) => {
+const extractBoardUpdates = (boardData: DbRealmBoardType) => {
   return {
     slug: boardData.slug,
     external_id: boardData.string_id,
@@ -29,7 +30,7 @@ const extractBoardUpdates = (boardData: any) => {
   };
 };
 
-const extractBoardUserSettings = (boardData: any) => {
+const extractBoardUserSettings = (boardData: DbRealmBoardType) => {
   return {
     slug: boardData.slug,
     external_id: boardData.string_id,

@@ -4,7 +4,6 @@ import {
 } from "server/boards/sql/types.js";
 import {
   type BoardMetadata,
-  type BoardSummary,
   type Comment,
   type Contribution,
   type LoggedInBoardMetadata,
@@ -25,7 +24,6 @@ import debug from "debug";
 import { getUserPermissionsForBoard } from "./permissions-utils.js";
 
 const info = debug("bobaserver:response-utils-info");
-const log = debug("bobaserver::response-utils-log");
 
 const TRANSFORM_DICT: { [key: string]: string } = {
   avatar_reference_id: "avatar_url",
@@ -38,12 +36,19 @@ const TRANSFORM_DICT: { [key: string]: string } = {
  *
  * Removes the original key from the dict (if different).
  */
-export const transformImageUrls = (obj: any) => {
+export const transformImageUrls = <T extends Record<string, unknown>>(
+  obj: T | null
+): T & Record<"avatar_url", string> => {
+  if (!obj) {
+    throw new Error("Attempted to transform image urls of a null object");
+  }
   Object.keys(TRANSFORM_DICT).forEach((key) => {
-    if (obj[key] && TRANSFORM_DICT[key]) {
+    if (obj[key] && TRANSFORM_DICT[key] && typeof obj[key] === "string") {
       if (obj[key].startsWith("http")) {
+        // @ts-expect-error cannot write this when it's a generic
         obj[TRANSFORM_DICT[key]] = obj[key];
       } else if (!obj[key].startsWith("/")) {
+        // @ts-expect-error cannot write this when it's a generic
         obj[TRANSFORM_DICT[key]] = `/${obj[key]}`;
       }
     }
@@ -51,7 +56,7 @@ export const transformImageUrls = (obj: any) => {
       delete obj[key];
     }
   });
-  return obj;
+  return obj as T & Record<"avatar_url", string>;
 };
 
 // Merges the identity contain within a single object (rather than a map).
@@ -109,7 +114,16 @@ export const mergeObjectIdentity = <T>(
     ...rest,
     user_identity,
     secret_identity,
-  } as any;
+  } as T & {
+    user_identity: {
+      name: string;
+      avatar: string;
+    };
+    secret_identity: {
+      name: string;
+      avatar: string;
+    };
+  };
 };
 
 export const makeServerThreadSummary = (
@@ -225,18 +239,19 @@ export const makeServerComment = (comment: ZodDbCommentType): Comment => {
   };
 };
 
-export const ensureNoIdentityLeakage = (post: any) => {
+export const ensureNoIdentityLeakage = <T extends Record<string, unknown>>(
+  post: T
+) => {
   if (!post.friend && !post.own && post.user_identity) {
-    log(post);
     throw Error("Identity leakage detected.");
   }
   if (post.author || post.user_id || post.username || post.user_avatar) {
     throw Error("Identity leakage detected.");
   }
   if (Array.isArray(post.comments)) {
-    post.comments?.forEach((comment: any) => ensureNoIdentityLeakage(comment));
+    post.comments?.forEach((comment: T) => ensureNoIdentityLeakage(comment));
   } else if (post.comments) {
-    Object.values(post.comments).forEach((comment: any) =>
+    Object.values(post.comments).forEach((comment) =>
       ensureNoIdentityLeakage(comment)
     );
   }
@@ -254,7 +269,7 @@ const extractLockedBoardMetadata = (
   > & { loggedInOnly: boolean }
 ) => {
   return {
-    string_id: metadata.string_id,
+    external_id: metadata.string_id,
     realm_external_id: metadata.realm_external_id,
     slug: metadata.slug,
     avatar_reference_id: metadata.avatar_reference_id,
@@ -318,7 +333,7 @@ export const processBoardMetadata = ({
   return transformImageUrls(finalMetadata);
 };
 
-export const processBoardsMetadata = ({
+const processBoardsMetadata = ({
   boards,
   isLoggedIn,
   hasRealmMemberAccess,
@@ -340,8 +355,12 @@ export const processBoardsMetadata = ({
 
     const { logged_out_restrictions, logged_in_base_restrictions, ...rest } =
       board;
-    let boardResult: Partial<BoardSummary> & { loggedInOnly: boolean } = {
+    let boardResult: Partial<BoardByExternalId> & {
+      loggedInOnly: boolean;
+      delisted: boolean;
+    } = {
       ...rest,
+      external_id: "string_id" in board ? board.string_id : board.external_id,
       delisted,
       loggedInOnly: logged_out_restrictions.includes(
         BoardRestrictions.LOCK_ACCESS
@@ -355,7 +374,10 @@ export const processBoardsMetadata = ({
       boardResult = extractLockedBoardMetadata(boardResult);
     }
 
-    return transformImageUrls(boardResult);
+    return transformImageUrls(boardResult) as BoardByExternalId & {
+      loggedInOnly: boolean;
+      delisted: boolean;
+    };
   });
 
   return result.filter((board) => board != null);
@@ -378,7 +400,7 @@ export const processBoardsSummary = ({
 
   // TODO[cleanup]: get correct format from db
   return result.map((result) => ({
-    id: result.string_id,
+    id: result.external_id,
     realm_id:
       result.realm_external_id || "76ef4cc3-1603-4278-95d7-99c59f481d2e",
     slug: result.slug,

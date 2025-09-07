@@ -3,6 +3,8 @@ import {
   GlobalSettings,
   type SettingEntry,
 } from "types/settings.js";
+import type { DbRealmBoardType } from "../boards/sql/types.js";
+import type { BoardActivitySummary } from "types/open-api/generated/types.js";
 
 const isSettingActiveOrUnset = (
   settingName: GlobalSettings,
@@ -79,16 +81,21 @@ export const filterOutDisabledSettings = (
   return finalSettings;
 };
 
-export const processRealmActivity = ({ boards }: { boards: any[] }) => {
+export const processRealmActivity = ({
+  boards,
+}: {
+  boards: DbRealmBoardType[];
+}): Record<string, BoardActivitySummary> => {
   return boards.reduce((result, current) => {
     result[current.slug] = {
       id: current.string_id,
-      last_post_at: current.last_post_at,
-      last_comment_at: current.last_comment_at,
-      last_activity_at: current.last_activity_at,
-      last_activity_from_others_at: current.last_activity_from_others_at,
-      last_visit_at: current.last_visit_at,
+      last_post_at: current.last_post_at?.toISOString() || null,
+      last_comment_at: current.last_comment_at?.toISOString() || null,
+      last_activity_at: current.last_activity_at?.toISOString() || null,
+      last_activity_from_others_at:
+        current.last_activity_from_others_at?.toISOString() || null,
+      last_visit_at: current.last_visit_at?.toISOString() || null,
     };
     return result;
-  }, {});
+  }, {} as Record<string, { id: string } & BoardActivitySummary>);
 };
