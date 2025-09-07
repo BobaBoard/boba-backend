@@ -14,7 +14,14 @@ export const getUserFromFirebaseId = async ({
   firebaseId,
 }: {
   firebaseId: string;
-}): Promise<any> => {
+}): Promise<{
+  id: number;
+  firebase_id: string;
+  username: string | null;
+  avatar_reference_id: string | null;
+  created_on: string;
+  invited_by: number | null;
+} | null> => {
   try {
     const user = await pool.one(sql.getUserDetails, {
       firebase_id: firebaseId,

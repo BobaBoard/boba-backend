@@ -16,7 +16,9 @@ describe("Tests restricted board realm queries", () => {
 
       expect(res.status).toBe(200);
       expect(
-        res.body.boards.find((board: any) => board.slug == "restricted")
+        res.body.boards.find(
+          (board: { slug: string }) => board.slug == "restricted"
+        )
       ).toEqual(RESTRICTED_BOARD_SUMMARY.BOBATAN);
     });
 
@@ -25,7 +27,9 @@ describe("Tests restricted board realm queries", () => {
 
       expect(res.status).toBe(200);
       expect(
-        res.body.boards.find((board: any) => board.slug == "restricted")
+        res.body.boards.find(
+          (board: { slug: string }) => board.slug == "restricted"
+        )
       ).toEqual(RESTRICTED_BOARD_SUMMARY.LOGGED_OUT);
     });
 
@@ -35,7 +39,9 @@ describe("Tests restricted board realm queries", () => {
 
       expect(res.status).toBe(200);
       expect(
-        res.body.boards.find((board: any) => board.slug == "restricted")
+        res.body.boards.find(
+          (board: { slug: string }) => board.slug == "restricted"
+        )
       ).toEqual(RESTRICTED_BOARD_SUMMARY.LOGGED_OUT);
     });
   });

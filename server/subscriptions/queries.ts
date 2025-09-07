@@ -2,33 +2,31 @@ import { Internal500Error } from "handlers/api-errors/codes.js";
 import pool from "server/db-pool.js";
 import sql from "./sql/index.js";
 
+type SubscriptionData = {
+  subscription_id: number;
+  subscription_name: string;
+  subscription_external_id: string;
+  last_updated_at: string;
+  secret_identity_name: string | null;
+  secret_identity_avatar: string | null;
+  secret_identity_color: string | null;
+  secret_identity_accessory: string | null;
+  post_content: string;
+  thread_external_id: string;
+  latest_post_string_id: string | null;
+};
 export const getLatestSubscriptionData = async ({
   subscriptionExternalId,
 }: {
   subscriptionExternalId: string;
-}): Promise<
-  | {
-      subscription_id: number;
-      subscription_name: string;
-      subscription_external_id: string;
-      last_updated_at: string;
-      secret_identity_name: string | null;
-      secret_identity_avatar: string | null;
-      secret_identity_color: string | null;
-      secret_identity_accessory: string | null;
-      post_content: string;
-      thread_external_id: string;
-      latest_post_string_id: string | null;
-    }[]
-  | false
-> => {
+}): Promise<SubscriptionData[] | false> => {
   try {
     return (await pool.manyOrNone(sql.getSubscriptionActivityByExternalId, {
       subscription_external_id: subscriptionExternalId,
       // we use page_size = 0 because the query returns always one more for the cursor
       page_size: 0,
       last_activity_cursor: null,
-    })) as any;
+    })) as SubscriptionData[];
   } catch {
     throw new Internal500Error(
       `Error while getting webhooks for subscription ${subscriptionExternalId}`

@@ -11,17 +11,26 @@ import {
 } from "test/data/threads.js";
 
 import { getThreadByExternalId } from "../queries.js";
+import type {
+  ZodDbThreadType,
+  ZodDbPostType,
+  ZodDbCommentType,
+} from "types/db/schemas.js";
 
-const extractActivityFromThread = (thread: any) => {
+const extractActivityFromThread = (thread: ZodDbThreadType | null) => {
+  if (!thread) {
+    throw new Error("No activity found for thread");
+  }
   return {
     thread_id: thread.thread_id,
     new_comments_amount: thread.thread_new_comments_amount,
     new_posts_amount: thread.thread_new_posts_amount,
-    posts: thread.posts?.map((post: any) => ({
+    posts: thread.posts?.map((post: ZodDbPostType) => ({
       post_id: post.post_id,
       is_new: post.is_new,
       new_comments_amount: post.new_comments_amount,
-      comments: post.comments?.map((comment: any) => ({
+      // @ts-expect-error - Usual problem with the changed shape of comments
+      comments: post.comments?.map((comment: ZodDbCommentType) => ({
         comment_id: comment.comment_id,
         is_new: comment.is_new,
       })),

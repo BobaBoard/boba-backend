@@ -20,7 +20,7 @@ import "express-async-errors";
 const log = debug("bobaserver:tests:test-utils");
 
 export const runWithinTransaction = async (
-  test: (transaction: ITask<any>) => void
+  test: (transaction: ITask<unknown>) => void
 ) => {
   await pool.tx("test-transaction", async (t) => {
     try {
@@ -147,7 +147,7 @@ export const extractActivity = (thread: ZodDbFeedType["activity"][0]) => {
   };
 };
 
-export const extractAuthorData = (thread: any) => {
+export const extractAuthorData = (thread: ZodDbFeedType["activity"][0]) => {
   return {
     author: thread.author,
     friend: thread.friend,
@@ -159,7 +159,7 @@ export const extractAuthorData = (thread: any) => {
   };
 };
 
-export const extractsMetadata = (thread: any) => {
+export const extractsMetadata = (thread: ZodDbFeedType["activity"][0]) => {
   return {
     content: thread.content,
     hidden: thread.hidden,

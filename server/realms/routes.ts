@@ -598,7 +598,9 @@ router.post(
     // Generate 64 characters random id string
     const inviteCode = randomBytes(32).toString("hex");
     const adminId = await getUserFromFirebaseId({ firebaseId: user });
-    log(adminId);
+    if (!adminId) {
+      throw new Internal500Error("Failed to get admin id");
+    }
 
     const inviteAdded = await createInvite({
       realmExternalId,
