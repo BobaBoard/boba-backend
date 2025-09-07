@@ -139,7 +139,7 @@ export const ensureThreadAccess = async (
   ensureBoardAccess(req, res, next);
 };
 
-export const withBoardMetadata = async (
+const withBoardMetadata = async (
   req: Request,
   res: Response,
   next: NextFunction

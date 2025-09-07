@@ -6,7 +6,7 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-export const getTriggeredThreadSubscriptions = `
+const getTriggeredThreadSubscriptions = `
     SELECT DISTINCT 
         subscriptions.name,
         subscriptions.string_id 
@@ -18,7 +18,7 @@ export const getTriggeredThreadSubscriptions = `
         INNER JOIN categories ON post_categories.category_id = categories.id
     WHERE threads.string_id = $/thread_external_id/ AND categories.category = ANY($/category_names/)`;
 
-export const getTriggeredBoardSubscriptions = `
+const getTriggeredBoardSubscriptions = `
     SELECT DISTINCT 
         subscriptions.name,
         subscriptions.string_id 
@@ -28,7 +28,7 @@ export const getTriggeredBoardSubscriptions = `
         INNER JOIN categories ON bcs.category_id = categories.id
     WHERE boards.string_id = $/board_external_id/ AND categories.category = ANY($/category_names/);`;
 
-export const getWebhooksForSubscription = `
+const getWebhooksForSubscription = `
     SELECT 
         webhook,
         handler_type AS webhook_handler_type,

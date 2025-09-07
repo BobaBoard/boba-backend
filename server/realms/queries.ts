@@ -281,7 +281,7 @@ export const getInviteDetails = async ({
   }
 };
 
-export const addUserToRealm = async (
+const addUserToRealm = async (
   transaction: ITask<unknown>,
   {
     firebaseId,
@@ -305,7 +305,7 @@ export const addUserToRealm = async (
   }
 };
 
-export const markInviteUsed = async (
+const markInviteUsed = async (
   transaction: ITask<unknown>,
   {
     nonce,
