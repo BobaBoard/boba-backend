@@ -64,7 +64,7 @@ describe("Tests threads REST API", () => {
   });
 
   test("Should cache subscription", async () => {
-    const res = await request(server.app).get(`/${AIBA_SUBSCRIPTION_ID}`);
+    await request(server.app).get(`/${AIBA_SUBSCRIPTION_ID}`);
 
     expect(cache().hSet).toBeCalledWith(
       CacheKeys.SUBSCRIPTION,

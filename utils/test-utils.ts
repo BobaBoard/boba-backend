@@ -58,18 +58,15 @@ export const setLoggedInUser = (firebaseId: string) => {
       "setLoggedInUser requires 'handlers/auth' to be explicitly mocked."
     );
   }
-  vi.mocked(withLoggedIn).mockImplementation((req, res, next) => {
-    // @ts-ignore
+  vi.mocked(withLoggedIn).mockImplementation((req, _res, next) => {
     req.currentUser = { uid: firebaseId };
     next();
   });
-  vi.mocked(ensureLoggedIn).mockImplementation((req, res, next) => {
-    // @ts-ignore
+  vi.mocked(ensureLoggedIn).mockImplementation((req, _res, next) => {
     req.currentUser = { uid: firebaseId };
     next();
   });
-  vi.mocked(withUserSettings).mockImplementation((req, res, next) => {
-    // @ts-ignore
+  vi.mocked(withUserSettings).mockImplementation((req, _res, next) => {
     req.currentUser = { uid: firebaseId };
     next();
   });
@@ -88,18 +85,15 @@ export const setLoggedInUserWithEmail = (user: {
       "setLoggedInUserWithEmail requires 'handlers/auth' to be explicitly mocked."
     );
   }
-  vi.mocked(withLoggedIn).mockImplementation((req, res, next) => {
-    // @ts-ignore
+  vi.mocked(withLoggedIn).mockImplementation((req, _res, next) => {
     req.currentUser = user;
     next();
   });
-  vi.mocked(ensureLoggedIn).mockImplementation((req, res, next) => {
-    // @ts-ignore
+  vi.mocked(ensureLoggedIn).mockImplementation((req, _res, next) => {
     req.currentUser = user;
     next();
   });
-  vi.mocked(withUserSettings).mockImplementation((req, res, next) => {
-    // @ts-ignore
+  vi.mocked(withUserSettings).mockImplementation((req, _res, next) => {
     req.currentUser = user;
     next();
   });

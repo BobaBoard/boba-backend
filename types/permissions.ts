@@ -65,7 +65,7 @@ export enum PostPermissions {
   editContentNotices = DbRolePermissions["edit_content_notices"],
 }
 
-export const extractPermissions = <T extends {}>(
+export const extractPermissions = <T extends { [key: string]: string }>(
   targetEnum: T,
   permissions: string[]
 ): T[keyof T][] => {

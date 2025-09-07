@@ -27,31 +27,29 @@ import { type ZodDbThreadType } from "types/db/schemas.js";
 import { getBoardByExternalId } from "server/boards/queries.js";
 import { getPostByExternalId } from "server/posts/queries.js";
 
-declare global {
-  namespace Express {
-    export interface Request {
-      currentThreadPermissions?: ThreadPermissions[];
-      currentThreadData?: ZodDbThreadType;
-      currentBoardPermissions?: BoardPermissions[];
-      currentBoardMetadata?: BoardByExternalId;
-      currentBoardRestrictions?: {
-        loggedOutRestrictions: BoardRestrictions[];
-        loggedInBaseRestrictions: BoardRestrictions[];
-      };
-      currentPostPermissions?: PostPermissions[];
-      currentRealmPermissions?: RealmPermissions[];
-      currentRealmIds?: {
-        id: string;
-        string_id: string;
-        slug: string;
-      };
-    }
+declare module "express-serve-static-core" {
+  interface Request {
+    currentThreadPermissions?: ThreadPermissions[];
+    currentThreadData?: ZodDbThreadType;
+    currentBoardPermissions?: BoardPermissions[];
+    currentBoardMetadata?: BoardByExternalId;
+    currentBoardRestrictions?: {
+      loggedOutRestrictions: BoardRestrictions[];
+      loggedInBaseRestrictions: BoardRestrictions[];
+    };
+    currentPostPermissions?: PostPermissions[];
+    currentRealmPermissions?: RealmPermissions[];
+    currentRealmIds?: {
+      id: string;
+      string_id: string;
+      slug: string;
+    };
   }
 }
 
 export const withThreadPermissions = async (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ) => {
   if (!req.params.thread_id) {

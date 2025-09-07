@@ -335,8 +335,7 @@ router.patch(
       return;
     }
     const responsePost = makeServerPost(updatedDetails);
-    // TODO: [realms] remove comments from makeServerPost
-    // @ts-expect-error
+    // @ts-expect-error TODO: remove comments from makeServerPost
     delete responsePost.comments;
 
     ensureNoIdentityLeakage(responsePost);

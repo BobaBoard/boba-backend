@@ -485,7 +485,7 @@ router.patch(
         }))
       ) {
         throw new NotFound404Error(
-          `The board with id \"${parentBoardId}\" was not found.`
+          `The board with id "${parentBoardId}" was not found.`
         );
 
         // TODO: add case where user can't access board
