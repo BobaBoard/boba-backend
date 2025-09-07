@@ -13,21 +13,21 @@ const error = debug("bobaserver:auth-error");
 
 const EXPIRED_TOKEN_ERROR = "Authentication token expired.";
 const NO_USER_FOUND_ERROR = "No authenticated user found.";
-declare global {
-  namespace Express {
-    export interface Request {
-      // Note: these should probably use req.locals, but that is harder to
-      // type so the possible values will be suggested by the editor.
-      currentUser?: auth.DecodedIdToken & { settings?: SettingEntry[] };
-      authenticationError?: Error;
-      currentFirebaseUserData?: auth.UserRecord;
-    }
+declare module "express-serve-static-core" {
+  interface Request {
+    // Note: these should probably use req.locals, but that is harder to
+    // type so the possible values will be suggested by the editor.
+    currentUser?: Pick<auth.DecodedIdToken, "uid" | "email"> & {
+      settings?: SettingEntry[];
+    };
+    authenticationError?: Error;
+    currentFirebaseUserData?: auth.UserRecord;
   }
 }
 
 export const withLoggedIn = (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ) => {
   const idToken = req.headers?.authorization;

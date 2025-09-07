@@ -38,7 +38,7 @@ export const updateUserData = async ({
   avatarUrl: string;
 }): Promise<{
   username: string;
-  avatarUrl: string;
+  avatar_url: string;
 } | null> => {
   try {
     await pool.none(sql.updateUserData, {
@@ -49,7 +49,7 @@ export const updateUserData = async ({
     info(`Updated user data for user with firebaseId: `, firebaseId);
     return {
       username,
-      avatarUrl,
+      avatar_url: avatarUrl,
     };
   } catch (e) {
     error(`Error while updating user data.`);

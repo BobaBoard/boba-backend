@@ -11,7 +11,7 @@ const log = debug("bobaserver:handlers:errors-log");
 // else it lets the error bubble up to the global error handler.
 export const handleApiErrors = (
   err: Error,
-  req: Request,
+  _req: Request,
   res: Response,
   next: NextFunction
 ) => {

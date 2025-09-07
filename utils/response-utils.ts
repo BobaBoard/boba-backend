@@ -4,15 +4,11 @@ import {
 } from "server/boards/sql/types.js";
 import {
   type BoardMetadata,
+  type BoardSummary,
   type Comment,
   type Contribution,
   type LoggedInBoardMetadata,
 } from "types/open-api/generated/types.js";
-// TODO: deprecate these
-import {
-  type DbBoardCategoryDescription,
-  type DbBoardTextDescription,
-} from "types/db/index.js";
 import {
   ThreadSchema,
   ThreadSummarySchema,
@@ -32,7 +28,7 @@ const info = debug("bobaserver:response-utils-info");
 const log = debug("bobaserver::response-utils-log");
 
 const TRANSFORM_DICT: { [key: string]: string } = {
-  avatar_reference_id: "avatarUrl",
+  avatar_reference_id: "avatar_url",
   avatar: "avatar",
   avatar_url: "avatar_url",
 };
@@ -47,7 +43,7 @@ export const transformImageUrls = (obj: any) => {
     if (obj[key] && TRANSFORM_DICT[key]) {
       if (obj[key].startsWith("http")) {
         obj[TRANSFORM_DICT[key]] = obj[key];
-      } else {
+      } else if (!obj[key].startsWith("/")) {
         obj[TRANSFORM_DICT[key]] = `/${obj[key]}`;
       }
     }
@@ -123,8 +119,7 @@ export const makeServerThreadSummary = (
     "posts" in thread
       ? makeServerPost(thread.posts[0])
       : makeServerPost(thread);
-  // TODO[realms]: remove comments from post in db
-  // @ts-expect-error
+  // @ts-expect-error TODO: remove comments from post in db
   delete starter.comments;
 
   return ThreadSummarySchema.parse({
@@ -156,7 +151,7 @@ export const makeServerThread = (thread: ZodDbThreadType) => {
   // TODO[realms]: remove this
   const postsWithoutComments = posts.map((post) => {
     // @ts-expect-error - comments property exists but shouldn't be in posts
-    const { comments: _, ...rest } = post;
+    const { comments: _comments, ...rest } = post;
     return rest;
   });
 
@@ -165,16 +160,14 @@ export const makeServerThread = (thread: ZodDbThreadType) => {
     posts: postsWithoutComments,
     comments: posts.reduce(
       (agg: { [contribution_id: string]: Comment[] }, post: Contribution) => {
-        // @ts-expect-error
-        log(post.comments);
-        // @ts-expect-error
+        // @ts-expect-error We moved comments to its own object so remove it from the post object...
         if (post.comments) {
-          // @ts-expect-error
+          // @ts-expect-error ...and instead move it there
           agg[post.id] = post.comments;
         }
         return agg;
       },
-      {}
+      {} as { [contribution_id: string]: Comment[] }
     ),
   });
 };
@@ -198,7 +191,7 @@ export const makeServerPost = (
     own: post.is_own,
     new: post.is_new,
     comments:
-      // @ts-ignore [zodding]
+      // @ts-expect-error [zodding]
       ("comments" in post && post.comments?.map(makeServerComment)) || [],
     tags: {
       whisper_tags: post.whisper_tags || [],
@@ -249,7 +242,17 @@ export const ensureNoIdentityLeakage = (post: any) => {
   }
 };
 
-const extractLockedBoardMetadata = (metadata: any) => {
+const extractLockedBoardMetadata = (
+  metadata: Pick<
+    DbRealmBoardType,
+    | "string_id"
+    | "realm_external_id"
+    | "slug"
+    | "avatar_reference_id"
+    | "tagline"
+    | "settings"
+  > & { loggedInOnly: boolean }
+) => {
   return {
     string_id: metadata.string_id,
     realm_external_id: metadata.realm_external_id,
@@ -293,24 +296,26 @@ export const processBoardMetadata = ({
       }),
       // @ts-expect-error TODO: remove permission enums and use schema permissions
       permissions: getUserPermissionsForBoard(metadata.permissions),
-      posting_identities: metadata.posting_identities.map((identity: any) =>
+      posting_identities: metadata.posting_identities.map((identity) =>
         transformImageUrls(identity)
       ),
       accessories: metadata.accessories,
     };
 
   if (!isLoggedIn) {
-    "permissions" in finalMetadata && delete finalMetadata.permissions;
-    "posting_identities" in finalMetadata &&
-      delete finalMetadata.posting_identities;
-    "accessories" in finalMetadata && delete finalMetadata.accessories;
+    // @ts-expect-error TODO: do this without deleting the properties
+    delete finalMetadata.permissions;
+    // @ts-expect-error TODO: do this without deleting the properties
+    delete finalMetadata.posting_identities;
+    // @ts-expect-error TODO: do this without deleting the properties
+    delete finalMetadata.accessories;
   }
 
   if (!hasBoardAccess && "loggedInOnly" in metadata && metadata.loggedInOnly) {
     finalMetadata.descriptions = [];
   }
 
-  return finalMetadata;
+  return transformImageUrls(finalMetadata);
 };
 
 export const processBoardsMetadata = ({
@@ -318,38 +323,38 @@ export const processBoardsMetadata = ({
   isLoggedIn,
   hasRealmMemberAccess,
 }: {
-  boards: any[];
+  boards: (DbRealmBoardType | BoardByExternalId)[];
   isLoggedIn: boolean;
   hasRealmMemberAccess: boolean;
 }) => {
-  const result = boards.map((board: any) => {
-    let boardResult = board;
-    // I wasn't sure if we wanted delisting to be based on hasRealmMemberAccess as well, or keep it as is?
-    // Remove from list if the board shouldn't be visible in the sidebar
-    boardResult.delisted =
-      (!isLoggedIn &&
-        board.logged_out_restrictions.includes(BoardRestrictions.DELIST)) ||
-      (isLoggedIn &&
-        board.logged_in_base_restrictions.includes(BoardRestrictions.DELIST));
-    // Pinned boards should still return their value here, even if delisted.
-    // Note that the existence of a pinned order implies that the user is
-    // logged in.
-    if (boardResult.delisted && !board.pinned_order) {
+  const result = boards.map((board) => {
+    const delisted = isLoggedIn
+      ? board.logged_in_base_restrictions.includes(BoardRestrictions.DELIST)
+      : board.logged_out_restrictions.includes(BoardRestrictions.DELIST);
+
+    // When a board is delisted, it should not be returned if it is not pinned
+    // by a user (which implies they are logged in and know the board exists).
+    if (delisted && !board.pinned_order) {
       return null;
     }
 
-    boardResult.loggedInOnly = board.logged_out_restrictions.includes(
-      BoardRestrictions.LOCK_ACCESS
-    );
+    const { logged_out_restrictions, logged_in_base_restrictions, ...rest } =
+      board;
+    let boardResult: Partial<BoardSummary> & { loggedInOnly: boolean } = {
+      ...rest,
+      delisted,
+      loggedInOnly: logged_out_restrictions.includes(
+        BoardRestrictions.LOCK_ACCESS
+      ),
+    };
 
     // Remove details from list if the board is locked and the user doesn't have access
     // (right now we keep only avatar, color & description)
     if (!hasRealmMemberAccess && boardResult.loggedInOnly) {
-      boardResult = extractLockedBoardMetadata(board);
+      // @ts-expect-error TODO: this is a mess and needs to be cleaned up
+      boardResult = extractLockedBoardMetadata(boardResult);
     }
 
-    delete board.logged_out_restrictions;
-    delete board.logged_in_base_restrictions;
     return transformImageUrls(boardResult);
   });
 
@@ -361,7 +366,7 @@ export const processBoardsSummary = ({
   isLoggedIn,
   hasRealmMemberAccess,
 }: {
-  boards: any[];
+  boards: (DbRealmBoardType | BoardByExternalId)[];
   isLoggedIn: boolean;
   hasRealmMemberAccess: boolean;
 }) => {
@@ -378,7 +383,7 @@ export const processBoardsSummary = ({
       result.realm_external_id || "76ef4cc3-1603-4278-95d7-99c59f481d2e",
     slug: result.slug,
     tagline: result.tagline,
-    avatar_url: result.avatarUrl,
+    avatar_url: result.avatar_url,
     accent_color: result.settings.accentColor,
     delisted: !!result.delisted,
     logged_in_only: !!result.loggedInOnly,

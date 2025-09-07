@@ -77,7 +77,7 @@ router.get("/@me", ensureLoggedIn, async (req, res) => {
 
   const userDataResponse = {
     username: userData.username,
-    avatar_url: userData.avatarUrl,
+    avatar_url: userData.avatar_url,
   };
   res.status(200).json(userDataResponse);
   cache().hSet(CacheKeys.USER, currentUserId, stringify(userDataResponse));
@@ -157,7 +157,7 @@ router.patch("/@me", ensureLoggedIn, async (req, res) => {
   await cache().hDel(CacheKeys.USER, currentUserId);
   res.status(200).json({
     username: userData.username,
-    avatar_url: userData.avatarUrl,
+    avatar_url: userData.avatar_url,
   });
 });
 

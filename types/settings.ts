@@ -22,7 +22,7 @@ export interface DbSettingType {
 
 interface BaseSettingEntry {
   name: GlobalSettings;
-  value?: any;
+  value?: unknown;
   type: SettingValueTypes;
 }
 
