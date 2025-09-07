@@ -1,18 +1,10 @@
-import {
-  EXCELLENT_THREAD_SUMMARY,
-  FAVORITE_CHARACTER_THREAD_SUMMARY,
-  FAVORITE_MURDER_THREAD_SUMMARY,
-} from "test/data/threads.js";
-import { GORE_BOARD_ID, LONG_BOARD_ID } from "test/data/boards.js";
+import { LONG_BOARD_ID } from "test/data/boards.js";
 import { decodeCursor, encodeCursor } from "utils/queries-utils.js";
 
 import type { ThreadSummary } from "types/rest/threads.js";
-import debug from "debug";
 import request from "supertest";
 import router from "../../routes.js";
 import { startTestServer } from "utils/test-utils.js";
-
-const log = debug("bobaserver:board:routes");
 
 describe("Tests boards REST API", () => {
   const server = startTestServer(router);

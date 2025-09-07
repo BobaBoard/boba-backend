@@ -30,7 +30,6 @@ import { getTagsDelta } from "./utils.js";
 
 const info = debug("bobaserver:posts:routes-info");
 const log = debug("bobaserver:posts:routes-log");
-const error = debug("bobaserver:posts:routes-error");
 
 const router = express.Router();
 
@@ -336,8 +335,7 @@ router.patch(
       return;
     }
     const responsePost = makeServerPost(updatedDetails);
-    // TODO: [realms] remove comments from makeServerPost
-    // @ts-expect-error
+    // @ts-expect-error TODO: remove comments from makeServerPost
     delete responsePost.comments;
 
     ensureNoIdentityLeakage(responsePost);

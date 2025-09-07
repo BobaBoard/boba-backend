@@ -2,13 +2,9 @@ import { BOBATAN_USER_ID, JERSEY_DEVIL_USER_ID } from "test/data/auth.js";
 import { setLoggedInUser, startTestServer } from "utils/test-utils.js";
 
 import { GORE_BOARD_ID } from "test/data/boards.js";
-import debug from "debug";
 
 import request from "supertest";
 import router from "../../routes.js";
-import stringify from "fast-json-stable-stringify";
-
-const log = debug("bobaserver:board:routes");
 vi.mock("handlers/auth.js");
 
 describe("Tests board role queries", () => {

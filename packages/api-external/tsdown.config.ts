@@ -1,4 +1,4 @@
-import { defineConfig, type UserConfig } from "tsdown";
+import { defineConfig } from "tsdown";
 import fs from "node:fs/promises";
 import { glob } from "glob";
 import path from "node:path";
@@ -69,7 +69,7 @@ async function fixImports(file: string) {
   // @bobaboard/boba-api library.
   content = content.replaceAll(
     IMPORT_REGEX,
-    (match, imports, quote1, path, type, filename, extension, quote2) => {
+    (_match, imports, quote1, _path, type, filename, _extension, quote2) => {
       return `import ${imports} from ${quote1}@bobaboard/boba-api/${type === "types" ? "types" : "zod"}/${filename}${quote2}`;
     }
   );
@@ -78,7 +78,7 @@ async function fixImports(file: string) {
   // @bobaboard/boba-api library.
   content = content.replaceAll(
     EXPORT_REGEX,
-    (match, quote1, path, type, filename, extension, quote2) => {
+    (_match, quote1, _path, type, filename, _extension, quote2) => {
       return `from ${quote1}@bobaboard/boba-api/${type === "types" ? "types" : "zod"}/${filename}${quote2}`;
     }
   );

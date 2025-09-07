@@ -1,13 +1,8 @@
-import {
-  ENSURE_LOGGED_IN_INVALID_TOKEN,
-  ENSURE_LOGGED_IN_NO_TOKEN,
-  ENSURE_THREAD_ACCESS_UNAUTHORIZED,
-} from "test/data/responses.js";
+import { ENSURE_LOGGED_IN_NO_TOKEN } from "test/data/responses.js";
 import {
   FAVORITE_CHARACTER_THREAD_ID,
   NULL_ID,
   NULL_THREAD_NOT_FOUND,
-  RESTRICTED_THREAD_ID,
 } from "test/data/threads.js";
 import {
   setLoggedInUser,

@@ -190,60 +190,43 @@ export const updateBoardMetadata = async ({
   firebaseId: string;
   oldMetadata: BoardByExternalId;
   newMetadata: Partial<BoardByExternalId>;
-}): Promise<any> => {
-  try {
-    const delta = getMetadataDelta({
-      oldMetadata,
-      newMetadata,
-    });
+}): Promise<BoardByExternalId | null> => {
+  const delta = getMetadataDelta({
+    oldMetadata,
+    newMetadata,
+  });
 
-    log(`Received metadata delta for update to board ${boardExternalId}`);
-    info(delta);
+  log(`Received metadata delta for update to board ${boardExternalId}`);
+  info(delta);
 
-    const success = await pool
-      .tx("update-descriptions", async (transaction) => {
-        if (delta.tagline || delta.accentColor) {
-          await transaction.none(sql.updateBoardSettings, {
-            board_id: boardExternalId,
-            tagline: delta.tagline || oldMetadata.tagline,
-            settings: {
-              accentColor:
-                delta.accentColor || oldMetadata.settings?.accentColor,
-            },
-          });
-        }
-
-        await updateCategoriesDescriptions(transaction, {
-          boardExternalId,
-          categoryFilters: delta.categoryFilters,
-        });
-        await updateTextDescriptions(transaction, {
-          boardExternalId,
-          texts: delta.texts,
-        });
-
-        return true;
-      })
-      .catch((e) => {
-        error(`Error while updating board metadata.`);
-        error(e);
-        return false;
+  await pool.tx("update-descriptions", async (transaction) => {
+    if (delta.tagline || delta.accentColor) {
+      await transaction.none(sql.updateBoardSettings, {
+        board_id: boardExternalId,
+        tagline: delta.tagline || oldMetadata.tagline,
+        settings: {
+          accentColor: delta.accentColor || oldMetadata.settings?.accentColor,
+        },
       });
-
-    if (!success) {
-      return false;
     }
 
-    // Now return the new result
-    return await pool.oneOrNone(sql.getBoardByExternalId, {
-      board_id: boardExternalId,
-      firebase_id: firebaseId,
+    await updateCategoriesDescriptions(transaction, {
+      boardExternalId,
+      categoryFilters: delta.categoryFilters,
     });
-  } catch (e) {
-    error(`Error while updating board (${boardExternalId}) metadata.`);
-    error(e);
-    return false;
-  }
+    await updateTextDescriptions(transaction, {
+      boardExternalId,
+      texts: delta.texts,
+    });
+
+    return true;
+  });
+
+  // Now return the new result
+  return await pool.oneOrNone(sql.getBoardByExternalId, {
+    board_id: boardExternalId,
+    firebase_id: firebaseId,
+  });
 };
 
 export const markBoardVisit = async ({

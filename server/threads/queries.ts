@@ -1,6 +1,5 @@
 import {
   THREAD_OWNER_PERMISSIONS,
-  type ThreadPermissions,
 } from "types/permissions.js";
 
 import { type ZodDbThreadType } from "types/db/schemas.js";
@@ -233,7 +232,7 @@ export const moveThread = async ({
   destinationId: string;
 }) => {
   try {
-    const result = await pool.none(sql.moveThread, {
+    await pool.none(sql.moveThread, {
       board_external_id: destinationId,
       thread_external_id: threadExternalId,
     });

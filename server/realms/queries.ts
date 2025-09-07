@@ -55,19 +55,16 @@ const THREAD_PAGE_SETTINGS: CssVariableSetting[] = [
 ];
 export const getSettingsBySlug = async ({
   userSettings,
-  realmSlug,
 }: {
   userSettings: SettingEntry[];
   realmSlug: string;
 }) => {
   const baseSettings = {
-    root: {},
+    root: {} as Record<string, unknown>,
     index_page: [] as CssVariableSetting[],
     board_page: [] as CssVariableSetting[],
     thread_page: [] as CssVariableSetting[],
   };
-  // TODO: make a type of base settings so cursor is a known property.
-  // @ts-expect-error
   baseSettings.root.cursor = getRealmCursorSetting(
     CURSOR_SETTINGS,
     userSettings
@@ -87,29 +84,31 @@ export const getSettingsBySlug = async ({
   return baseSettings;
 };
 
-const getBlocksData = (dbBlocks: any[]): UiBlocks[] => {
-  return dbBlocks.map((dbBlock: { type: UiBlocks["type"] }) => {
+const getBlocksData = (
+  dbBlocks: (Record<string, unknown> & { type: UiBlocks["type"] })[]
+): UiBlocks[] => {
+  return dbBlocks.map((dbBlock) => {
     switch (dbBlock.type) {
       case "rules":
         return {
-          id: (dbBlock as any).string_id as string,
+          id: dbBlock.string_id,
           type: dbBlock.type,
-          title: (dbBlock as any).title as string,
-          index: (dbBlock as any).index as number,
-          rules: (dbBlock as any).rules.map((rule: any) => ({
-            title: rule.title as string,
-            description: rule.description as string,
-            pinned: rule.pinned as boolean,
-            index: rule.index as number,
+          title: dbBlock.title,
+          index: dbBlock.index,
+          rules: (dbBlock.rules as Record<string, unknown>[]).map((rule) => ({
+            title: rule.title,
+            description: rule.description,
+            pinned: rule.pinned,
+            index: rule.index,
           })),
         } as RulesBlock;
       case "subscription":
         return {
-          id: (dbBlock as any).string_id,
-          type: (dbBlock as any).type,
-          title: (dbBlock as any).title,
-          index: (dbBlock as any).index,
-          subscription_id: (dbBlock as any).subscription_id,
+          id: dbBlock.string_id,
+          type: dbBlock.type,
+          title: dbBlock.title,
+          index: dbBlock.index,
+          subscription_id: dbBlock.subscription_id,
         } as SubscriptionBlock;
     }
   });
@@ -146,7 +145,7 @@ export const dismissAllNotifications = async ({
 }: {
   firebaseId: string;
   realmExternalId?: string;
-}): Promise<any> => {
+}): Promise<boolean> => {
   try {
     await pool.none(sql.dismissNotifications, {
       firebase_id: firebaseId,
@@ -282,7 +281,7 @@ export const getInviteDetails = async ({
   }
 };
 
-export const addUserToRealm = async (
+const addUserToRealm = async (
   transaction: ITask<unknown>,
   {
     firebaseId,
@@ -306,7 +305,7 @@ export const addUserToRealm = async (
   }
 };
 
-export const markInviteUsed = async (
+const markInviteUsed = async (
   transaction: ITask<unknown>,
   {
     nonce,

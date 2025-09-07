@@ -26,7 +26,6 @@ import { withRealmPermissions } from "handlers/permissions.js";
 
 const info = debug("bobaserver:users:routes-info");
 const log = debug("bobaserver:users:routes-log");
-const error = debug("bobaserver:users:routes-error");
 
 const router = express.Router();
 
@@ -60,7 +59,7 @@ const router = express.Router();
  *                   format: uri
  */
 router.get("/@me", ensureLoggedIn, async (req, res) => {
-  let currentUserId: string = req.currentUser!.uid;
+  const currentUserId: string = req.currentUser!.uid;
   const cachedData = await cache().hGet(CacheKeys.USER, currentUserId);
 
   if (cachedData) {
@@ -78,7 +77,7 @@ router.get("/@me", ensureLoggedIn, async (req, res) => {
 
   const userDataResponse = {
     username: userData.username,
-    avatar_url: userData.avatarUrl,
+    avatar_url: userData.avatar_url,
   };
   res.status(200).json(userDataResponse);
   cache().hSet(CacheKeys.USER, currentUserId, stringify(userDataResponse));
@@ -135,7 +134,7 @@ router.get("/@me", ensureLoggedIn, async (req, res) => {
  *                 - avatar_url
  */
 router.patch("/@me", ensureLoggedIn, async (req, res) => {
-  let currentUserId: string = req.currentUser!.uid;
+  const currentUserId: string = req.currentUser!.uid;
   const { username, avatarUrl } = req.body;
 
   if (!username || !avatarUrl) {
@@ -158,7 +157,7 @@ router.patch("/@me", ensureLoggedIn, async (req, res) => {
   await cache().hDel(CacheKeys.USER, currentUserId);
   res.status(200).json({
     username: userData.username,
-    avatar_url: userData.avatarUrl,
+    avatar_url: userData.avatar_url,
   });
 });
 
@@ -218,7 +217,7 @@ router.get(
   ensureLoggedIn,
   withRealmPermissions,
   async (req, res) => {
-    let currentUserId: string = req.currentUser!.uid;
+    const currentUserId: string = req.currentUser!.uid;
     const cachedData = await cache().hGet(CacheKeys.USER_PINS, currentUserId);
 
     if (cachedData) {
@@ -296,7 +295,7 @@ router.get(
  *                 $ref: '#/components/examples/BobaDexResponse'
  */
 router.get("/@me/bobadex", ensureLoggedIn, async (req, res) => {
-  let currentUserId: string = req.currentUser!.uid;
+  const currentUserId: string = req.currentUser!.uid;
   const identities = await getBobadexIdentities({ firebaseId: currentUserId });
   res.status(200).json(identities);
 });

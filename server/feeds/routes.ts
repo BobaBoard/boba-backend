@@ -256,7 +256,9 @@ router.get("/users/@me", ensureLoggedIn, async (req, res) => {
     activity: threadsWithIdentity,
   };
 
-  response.activity.map((post) => ensureNoIdentityLeakage(post));
+  response.activity.map((post) =>
+    ensureNoIdentityLeakage(post as unknown as Record<string, unknown>)
+  );
   res.status(200).json(response);
 });
 
@@ -289,7 +291,7 @@ router.get("/users/@me", ensureLoggedIn, async (req, res) => {
  */
 
 router.get("/users/@me/stars", ensureLoggedIn, async (req, res) => {
-  const { cursor, starred } = req.query;
+  const { cursor } = req.query;
   const currentUserId: string = req.currentUser!.uid;
 
   const userStarFeed = await getUserStarFeed({
@@ -305,7 +307,9 @@ router.get("/users/@me/stars", ensureLoggedIn, async (req, res) => {
     activity: threadsStarred,
   };
 
-  response.activity.map((post) => ensureNoIdentityLeakage(post));
+  response.activity.map((post) =>
+    ensureNoIdentityLeakage(post as unknown as Record<string, unknown>)
+  );
   res.status(200).json(response);
 });
 

@@ -25,7 +25,7 @@ export enum DbRolePermissions {
   access_locked_boards_on_realm = "access_locked_boards_on_realm",
   view_roles_on_realm = "view_roles_on_realm",
   view_roles_on_board = "view_roles_on_board",
-  create_board_on_realm = "create_board_on_realm"
+  create_board_on_realm = "create_board_on_realm",
 }
 
 export interface UserBoardPermissions {
@@ -65,7 +65,7 @@ export enum PostPermissions {
   editContentNotices = DbRolePermissions["edit_content_notices"],
 }
 
-export const extractPermissions = <T extends {}>(
+export const extractPermissions = <T extends { [key: string]: string }>(
   targetEnum: T,
   permissions: string[]
 ): T[keyof T][] => {
@@ -74,7 +74,7 @@ export const extractPermissions = <T extends {}>(
     // Check in the target enum for the key that has the permission
     // string as the value.
     const foundPermission = Object.entries(targetEnum).find(
-      ([_, value]) => value === permission
+      ([, value]) => value === permission
     );
     if (foundPermission) {
       extractedPermissions.push(foundPermission[1] as T[keyof T]);
@@ -119,7 +119,7 @@ export const extractBoardRestrictions = (restrictions: string[]) => {
     // Check in the target enum for the key that has the permission
     // string as the value.
     const foundRestriction = Object.entries(BoardRestrictions).find(
-      ([_, value]) => value === restriction
+      ([, value]) => value === restriction
     );
     if (foundRestriction) {
       extractedRestrictions.push(foundRestriction[1]);

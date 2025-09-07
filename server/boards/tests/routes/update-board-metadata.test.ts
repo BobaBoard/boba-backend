@@ -11,11 +11,8 @@ import {
   wrapWithTransaction,
 } from "utils/test-utils.js";
 
-import debug from "debug";
 import request from "supertest";
 import router from "../../routes.js";
-
-const log = debug("bobaserver:test:boards:routes:update-board-metadata-log");
 
 vi.mock("server/cache.js");
 vi.mock("handlers/auth.js");
@@ -88,7 +85,7 @@ describe("Tests boards REST API", () => {
   test("Should correctly handle cache", async () => {
     await wrapWithTransaction(async () => {
       setLoggedInUser(BOBATAN_USER_ID);
-      const res = await request(server.app).patch(`/${GORE_BOARD_ID}`).send({
+      await request(server.app).patch(`/${GORE_BOARD_ID}`).send({
         descriptions: [],
         accentColor: "red",
         tagline: "a new tagline",

@@ -176,19 +176,24 @@ export const getBoardMetadataByExternalId = async ({
     return null;
   }
 
+  const isLoggedIn = !!firebaseId;
+
   const boardSummary = processBoardsSummary({
     boards: [board],
-    isLoggedIn: !!firebaseId,
+    isLoggedIn,
     hasRealmMemberAccess: hasBoardAccess,
   });
   const boardMetadata = processBoardMetadata({
     metadata: board,
-    isLoggedIn: !!firebaseId,
+    isLoggedIn,
     hasBoardAccess,
   });
   const finalMetadata = {
     ...boardSummary[0],
     ...boardMetadata,
+    muted: isLoggedIn ? boardSummary[0].muted ?? false : undefined,
+    pinned: isLoggedIn ? boardSummary[0].pinned ?? false : undefined,
+    descriptions: boardMetadata.descriptions ?? [],
   };
   if (!firebaseId) {
     cache().hSet(
@@ -198,6 +203,5 @@ export const getBoardMetadataByExternalId = async ({
     );
   }
   log(`Processed board metadata (${boardExternalId}) for user ${firebaseId}`);
-  // @ts-ignore TODO: figure out typings for this whole section
   return finalMetadata;
 };

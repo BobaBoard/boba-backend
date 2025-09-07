@@ -33,7 +33,7 @@ const log = debug("bobaserver:main");
 const app = express();
 app.use(cors());
 app.use(bodyParser.json());
-app.use((req, res, next) => {
+app.use((req, _res, next) => {
   log(`Received a request for path ${req.url}`);
   next();
 });

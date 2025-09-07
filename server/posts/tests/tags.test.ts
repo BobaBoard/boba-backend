@@ -10,10 +10,7 @@ import {
 } from "../queries.js";
 
 import { REVOLVER_OCELOT_POST } from "test/data/posts.js";
-import debug from "debug";
 import { runWithinTransaction } from "utils/test-utils.js";
-
-const log = debug("bobaserver:posts:queries-test-log");
 
 const HIMBO_POST_ID = 6;
 const REVOLVER_OCELOT_POST_ID = 2;

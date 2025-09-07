@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const BoardPermissionsEnumSchema = z.enum([
+const BoardPermissionsEnumSchema = z.enum([
   "all",
   "edit_board_details",
   "delete_board",
@@ -21,10 +21,9 @@ export const BoardPermissionsEnumSchema = z.enum([
   "view_roles_on_board",
   "create_board_on_realm",
 ]);
-export const BoardRestrictionsEnumSchema = z.enum(["lock_access", "delist"]);
-export type BoardRestrictionsEnum = z.infer<typeof BoardRestrictionsEnumSchema>;
+const BoardRestrictionsEnumSchema = z.enum(["lock_access", "delist"]);
 
-export const BoardIdentitySchema = z.object({
+const BoardIdentitySchema = z.object({
   id: z.string(),
   name: z.string(),
   avatar_url: z.string(),
@@ -33,14 +32,14 @@ export const BoardIdentitySchema = z.object({
   color: z.string().nullable(),
 });
 
-export const BoardAccessorySchema = z.object({
+const BoardAccessorySchema = z.object({
   id: z.string(),
   name: z.string(),
   // NOTE: this is the url of the accessory
   accessory: z.string(),
 });
 
-export const BoardTextDescriptionSchema = z.object({
+const BoardTextDescriptionSchema = z.object({
   id: z.string(),
   index: z.number(),
   title: z.string(),
@@ -49,7 +48,7 @@ export const BoardTextDescriptionSchema = z.object({
   categories: z.null(),
 });
 
-export const BoardCategoryDescriptionSchema = z.object({
+const BoardCategoryDescriptionSchema = z.object({
   id: z.string(),
   index: z.number(),
   title: z.string(),
@@ -61,7 +60,7 @@ export const BoardCategoryDescriptionSchema = z.object({
   description: z.string().nullable(),
 });
 
-export const BoardSettingsSchema = z.object({
+const BoardSettingsSchema = z.object({
   accentColor: z.string(),
 });
 

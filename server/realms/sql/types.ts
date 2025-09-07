@@ -10,5 +10,3 @@ export const GetRealmBySlugDbSchema = z.object({
   realm_feedback_form_url: z.string().nullable(),
   homepage_blocks: z.any(),
 });
-
-export type GetRealmBySlugDbType = z.infer<typeof GetRealmBySlugDbSchema>;

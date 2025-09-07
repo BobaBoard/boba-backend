@@ -5,11 +5,10 @@ import {
   updateIdentities,
 } from "./queries.js";
 
-const axios = require("axios");
+import axios from "axios";
 import debug from "debug";
 import { ensureLoggedIn } from "handlers/auth.js";
 import express from "express";
-import firebaseAuth from "firebase-admin";
 
 // import { transformImageUrls, mergeActivityIdentities } from "../response-utils";
 
@@ -29,7 +28,6 @@ const getSheetUrl = (url: string) =>
  * @deprecated
  */
 router.post("/generate/boards", ensureLoggedIn, async (req, res) => {
-  // @ts-ignore
   if (req.currentUser?.uid !== ADMIN_ID) {
     return res.sendStatus(403);
   }
@@ -82,7 +80,7 @@ router.post("/generate/identities/event", ensureLoggedIn, async (req, res) => {
     })
   );
   const recordsChanged = updateIdentities(
-    data.map((data: any) => ({
+    data.map((data) => ({
       oldName: data.oldName,
       oldAvatar: data.oldAvatar,
       newName: data.eventName,
@@ -104,14 +102,14 @@ router.post(
     const data = await getSpreadsheetData(
       getSheetUrl(EVENT_SHEET_ID),
       (rowData, i) => ({
-        oldName: rowData[i].values?.[0]?.formattedValue,
-        oldAvatar: rowData[i].values?.[1]?.formattedValue,
-        eventName: rowData[i].values?.[2]?.formattedValue,
-        eventAvatar: rowData[i].values?.[3]?.formattedValue,
+        oldName: rowData[i].values[0].formattedValue,
+        oldAvatar: rowData[i].values[1].formattedValue,
+        eventName: rowData[i].values[2].formattedValue,
+        eventAvatar: rowData[i].values[3].formattedValue,
       })
     );
     const recordsChanged = updateIdentities(
-      data.map((data: any) => ({
+      data.map((data) => ({
         oldName: data.eventName,
         oldAvatar: data.eventAvatar,
         newName: data.oldName,
@@ -123,38 +121,18 @@ router.post(
   }
 );
 
-router.post("/migrate_fb_data", ensureLoggedIn, async (req, res) => {
-  // @ts-ignore
-  const user = req.currentUser?.uid;
-  if (user !== ADMIN_ID) {
-    return res.sendStatus(403);
-  }
-  // Get all users query
-  firebaseAuth
-    .auth()
-    .listUsers(1000)
-    .then((listUsersResult) => {
-      listUsersResult.users.forEach((userRecord) => {
-        userRecord.metadata.creationTime;
-        const hasSignedIn = !!userRecord.metadata.lastSignInTime;
-        // Add creation time
-        //
-      });
-    })
-    .catch(function (error) {
-      log("Error listing users:", error);
-    });
-
-  log(await firebaseAuth.auth().getUser(user));
-
-  res.status(200).json({ added: true });
-});
-
-const getSpreadsheetData = (
+const getSpreadsheetData = <T extends string>(
   url: string,
-  transform: (rowData: any, index: number) => any
+  transform: (
+    rowData: {
+      values: {
+        formattedValue: string;
+      }[];
+    }[],
+    index: number
+  ) => Record<T, string>
 ) => {
-  return axios.get(url).then((response: any) => {
+  return axios.get(url).then((response) => {
     const rowData = response.data.sheets[0].data[0].rowData;
     let hasData = true;
     let i = 1;

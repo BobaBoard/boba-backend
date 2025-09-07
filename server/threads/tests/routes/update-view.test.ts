@@ -1,9 +1,4 @@
-import {
-  ENSURE_LOGGED_IN_INVALID_TOKEN,
-  ENSURE_LOGGED_IN_NO_TOKEN,
-  ENSURE_THREAD_ACCESS_UNAUTHORIZED,
-} from "test/data/responses.js";
-import { NULL_ID, NULL_THREAD_NOT_FOUND } from "test/data/threads.js";
+import { ENSURE_LOGGED_IN_NO_TOKEN } from "test/data/responses.js";
 import { setLoggedInUser, startTestServer } from "utils/test-utils.js";
 
 import type { GenericResponse } from "types/rest/responses.js";
