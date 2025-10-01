@@ -6,26 +6,28 @@ import {
   BLOOD_AND_BRUISES_SUBSCRIPTION_WEBHOOK,
   BLOOD_SUBSCRIPTION_ID,
   BLOOD_SUBSCRIPTION_WEBHOOK,
-} from "test/data/subscriptions";
+} from "test/data/subscriptions.js";
 import {
   CREATE_GORE_THREAD_RESPONSE,
   FAVORITE_CHARACTER_THREAD,
-} from "test/data/threads";
-import { CacheKeys, cache } from "server/cache";
+} from "test/data/threads.js";
+import { CacheKeys, cache } from "server/cache.js";
 import {
   EVENT_TYPES as THREAD_EVENT_TYPES,
   emit as threadEventsEmit,
-} from "handlers/events/threads";
-import { registerAll, unregisterAll } from "../events";
+} from "handlers/events/threads.js";
+import { registerAll, unregisterAll } from "../events.js";
 
-import { Thread } from "types/open-api/generated/types";
+import type { Thread } from "types/open-api/generated/types.js";
 import axios from "axios";
-import { mocked } from "jest-mock";
 
-jest.mock("axios", () => ({
-  post: jest.fn(() => Promise.resolve({ data: {} })),
+vi.mock("axios", async () => ({
+  default: {
+    get: vi.fn(() => Promise.resolve({ data: {} })),
+    post: vi.fn(() => Promise.resolve({ data: {} })),
+  },
 }));
-jest.mock("server/cache");
+vi.mock("server/cache");
 
 // TODO: remove this hack once we have time to figure out how to test async webhook
 // calling
@@ -42,7 +44,7 @@ describe("Test subscription updates", () => {
   });
   afterEach(() => {
     // TODO: investigate why this is needed here. Maybe it's only needed when running the tests in filtered mode?
-    mocked(axios.post).mockClear();
+    vi.mocked(axios.post).mockClear();
   });
 
   test("should trigger multiple webhooks when creating a +blood thread in !gore", async () => {
@@ -70,7 +72,7 @@ describe("Test subscription updates", () => {
 
     await sleep(100);
     expect(axios.post).toHaveBeenCalledTimes(2);
-    expect(mocked(axios.post).mock.calls).toContainEqual([
+    expect(vi.mocked(axios.post).mock.calls).toContainEqual([
       BLOOD_AND_BRUISES_SUBSCRIPTION_WEBHOOK,
       {
         avatar_url: "avatar_url",
@@ -78,7 +80,7 @@ describe("Test subscription updates", () => {
         username: "GoreMaster5000",
       },
     ]);
-    expect(mocked(axios.post).mock.calls).toContainEqual([
+    expect(vi.mocked(axios.post).mock.calls).toContainEqual([
       BLOOD_SUBSCRIPTION_WEBHOOK,
       createdThread,
     ]);
@@ -116,7 +118,7 @@ describe("Test subscription updates", () => {
 
     await sleep(100);
     expect(axios.post).toHaveBeenCalledTimes(1);
-    expect(mocked(axios.post)).toBeCalledWith(AIBA_SUBSCRIPTION_WEBHOOK, {
+    expect(vi.mocked(axios.post)).toBeCalledWith(AIBA_SUBSCRIPTION_WEBHOOK, {
       avatar_url: expect.any(String),
       content: `Your "aiba!" subscription has updated!\nhttps://v0.boba.social/!memes/thread/${AIBA_THREAD_ID}/${newContributionId}`,
       username: expect.any(String),

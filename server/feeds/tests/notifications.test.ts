@@ -1,17 +1,21 @@
-import { ANIME_BOARD_ID, GORE_BOARD_ID, LONG_BOARD_ID } from "test/data/boards";
+import {
+  ANIME_BOARD_ID,
+  GORE_BOARD_ID,
+  LONG_BOARD_ID,
+} from "test/data/boards.js";
 import {
   BOBATAN_USER_ID,
   JERSEY_DEVIL_USER_ID,
   ONCEST_USER_ID,
   SEXY_DADDY_USER_ID,
   ZODIAC_KILLER_USER_ID,
-} from "test/data/auth";
+} from "test/data/auth.js";
 import {
   FAVORITE_CHARACTER_THREAD_ID,
   FAVORITE_MURDER_THREAD_ID,
-} from "test/data/threads";
+} from "test/data/threads.js";
 
-import { getBoardActivityByExternalId } from "../queries";
+import { getBoardActivityByExternalId } from "../queries.js";
 
 describe("Tests notifications", () => {
   test("gets correct amounts with no visit", async () => {

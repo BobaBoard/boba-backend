@@ -1,6 +1,9 @@
-import { REALM_MEMBER_PERMISSIONS, RealmPermissions } from "types/permissions";
+import {
+  REALM_MEMBER_PERMISSIONS,
+  RealmPermissions,
+} from "types/permissions.js";
 
-import { UserData } from "../../types/rest/user";
+import { type UserData } from "types/rest/user.js";
 
 export const BOBATAN_USER_DATA: UserData = {
   avatar_url: "/bobatan.png",

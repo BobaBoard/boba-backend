@@ -1,4 +1,4 @@
-import { BoardSummary } from "./boards";
+import type { BoardSummary } from "./boards.js";
 
 interface BaseBlock {
   id: string;

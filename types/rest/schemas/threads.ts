@@ -1,7 +1,7 @@
 import {
   IdentitySchema,
   SecretIdentitySchema,
-} from "types/open-api/generated/schemas";
+} from "types/open-api/generated/schemas.js";
 
 import { z } from "zod";
 

@@ -1,24 +1,24 @@
 import {
   BadRequest400Error,
   NotFound404Error,
-} from "handlers/api-errors/codes";
+} from "handlers/api-errors/codes.js";
 import {
   ensureNoIdentityLeakage,
   makeServerThreadSummary,
-} from "utils/response-utils";
+} from "utils/response-utils.js";
 import {
   getBoardActivityByExternalId,
   getRealmActivityByExternalId,
   getUserActivity,
   getUserStarFeed,
-} from "./queries";
+} from "./queries.js";
 
-import { Feed } from "types/rest/threads";
-import { FeedActivitySchema } from "types/open-api/generated/schemas";
-import { ZodFeed } from "types/rest/schemas/threads";
+import { type Feed } from "types/rest/threads.js";
+import { FeedActivitySchema } from "types/open-api/generated/schemas.js";
+import { type ZodFeed } from "types/rest/schemas/threads.js";
 import debug from "debug";
-import { ensureBoardAccess } from "handlers/permissions";
-import { ensureLoggedIn } from "handlers/auth";
+import { ensureBoardAccess } from "handlers/permissions.js";
+import { ensureLoggedIn } from "handlers/auth.js";
 import express from "express";
 
 const info = debug("bobaserver:feeds:routes-info");
@@ -58,7 +58,7 @@ const router = express.Router();
  *               $ref: "#/components/schemas/FeedActivity"
  */
 router.get("/realms/:realm_id", ensureLoggedIn, async (req, res) => {
-  const { realm_id: realmExternalId } = req.params;
+  const { realm_id: realmExternalId } = req.params as { realm_id: string };
   const { cursor } = req.query;
   log(
     `Fetching activity data for realm with slug ${realmExternalId} with cursor ${cursor}`
@@ -154,7 +154,7 @@ router.get("/realms/:realm_id", ensureLoggedIn, async (req, res) => {
  *                 $ref: '#/components/examples/FeedBoardCursor'
  */
 router.get("/boards/:board_id", ensureBoardAccess, async (req, res) => {
-  const { board_id: boardExternalId } = req.params;
+  const { board_id: boardExternalId } = req.params as { board_id: string };
   const { cursor, categoryFilter } = req.query;
   log(
     `Fetching activity data for board with slug ${boardExternalId} with cursor ${cursor} and filtered category "${categoryFilter}"`

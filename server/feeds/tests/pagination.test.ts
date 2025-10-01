@@ -1,6 +1,6 @@
-import { BOBATAN_USER_ID } from "test/data/auth";
-import { LONG_BOARD_ID } from "test/data/boards";
-import { getBoardActivityByExternalId } from "../queries";
+import { BOBATAN_USER_ID } from "test/data/auth.js";
+import { LONG_BOARD_ID } from "test/data/boards.js";
+import { getBoardActivityByExternalId } from "../queries.js";
 
 describe("Tests boards queries", () => {
   test("fetches first page, gets cursor back", async () => {

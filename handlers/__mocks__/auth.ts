@@ -1,8 +1,14 @@
-const original = jest.requireActual("../auth.ts");
+const original = await vi.importActual<typeof import("../auth.ts")>(
+  "../auth.ts"
+);
 
-export const ensureLoggedIn = jest.fn(original.ensureLoggedIn);
-export const withLoggedIn = jest.fn(original.withLoggedIn);
-export const withUserSettings = jest.fn(original.withUserSettings);
+export const ensureLoggedIn = vi
+  .fn()
+  .mockImplementation(original.ensureLoggedIn);
+export const withLoggedIn = vi.fn().mockImplementation(original.withLoggedIn);
+export const withUserSettings = vi
+  .fn()
+  .mockImplementation(original.withUserSettings);
 
 beforeEach(() => {
   ensureLoggedIn.mockImplementation(original.ensureLoggedIn);

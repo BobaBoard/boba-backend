@@ -1,4 +1,7 @@
-import { Comment, Contribution } from "types/open-api/generated/types";
+import {
+  type Comment,
+  type Contribution,
+} from "types/open-api/generated/types.js";
 
 export const CHARACTER_TO_MAIM_POST_ID = "11b85dac-e122-40e0-b09a-8829c5e0250e";
 export const KERMIT_FRIEND_COMMENT_ID = "89fc3682-cb74-43f9-9a63-bd97d0f59bb9";

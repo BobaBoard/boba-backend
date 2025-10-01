@@ -1,5 +1,10 @@
-import { QueryFile } from "pg-promise";
+import pgp from "pg-promise";
+const { QueryFile } = pgp;
 import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const createThread = `
     INSERT INTO threads(string_id, parent_board, options)

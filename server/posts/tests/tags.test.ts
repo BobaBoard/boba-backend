@@ -7,11 +7,11 @@ import {
   removeContentWarningTags,
   removeIndexTags,
   updateWhisperTags,
-} from "../queries";
+} from "../queries.js";
 
-import { REVOLVER_OCELOT_POST } from "test/data/posts";
+import { REVOLVER_OCELOT_POST } from "test/data/posts.js";
 import debug from "debug";
-import { runWithinTransaction } from "utils/test-utils";
+import { runWithinTransaction } from "utils/test-utils.js";
 
 const log = debug("bobaserver:posts:queries-test-log");
 
@@ -65,7 +65,7 @@ describe("Tests tag-related queries", () => {
       expect(result.content_warnings).toIncludeSameMembers(["zombies", "vore"]);
     });
   });
-  
+
   test("adds category tags to post (and database)", async () => {
     await runWithinTransaction(async (transaction) => {
       const postId = HIMBO_POST_ID;

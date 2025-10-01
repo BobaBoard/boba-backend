@@ -1,22 +1,21 @@
-import { BOBATAN_USER_ID, JERSEY_DEVIL_USER_ID } from "test/data/auth";
-import { CacheKeys, cache } from "server/cache";
+import { BOBATAN_USER_ID, JERSEY_DEVIL_USER_ID } from "test/data/auth.js";
+import { CacheKeys, cache } from "server/cache.js";
 import {
   GORE_BOARD_ID,
   GORE_BOARD_METADATA,
   RESTRICTED_BOARD_ID,
-} from "test/data/boards";
-import { setLoggedInUser, startTestServer } from "utils/test-utils";
+} from "test/data/boards.js";
+import { setLoggedInUser, startTestServer } from "utils/test-utils.js";
 
-import { BoardMetadata } from "types/open-api/generated/types";
+import type { BoardMetadata } from "types/open-api/generated/types.js";
 import debug from "debug";
-import { mocked } from "jest-mock";
 import request from "supertest";
-import router from "../../routes";
+import router from "../../routes.js";
 import stringify from "fast-json-stable-stringify";
 
 const log = debug("bobaserver:board:routes");
-jest.mock("server/cache");
-jest.mock("handlers/auth");
+vi.mock("server/cache.js");
+vi.mock("handlers/auth.js");
 
 describe("Tests boards REST API", () => {
   const server = startTestServer(router);
@@ -52,7 +51,7 @@ describe("Tests boards REST API", () => {
       tagline:
         "this is a modified board data to ensure we're returning the cached one",
     };
-    mocked(cache().hGet).mockResolvedValueOnce(stringify(modifiedData));
+    vi.mocked(cache().hGet).mockResolvedValueOnce(stringify(modifiedData));
     const res = await request(server.app).get(`/${GORE_BOARD_ID}`);
 
     expect(cache().hGet).toBeCalledTimes(1);

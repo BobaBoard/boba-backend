@@ -1,6 +1,6 @@
 import debug from "debug";
-import express from "express";
-import redoc from "redoc-express";
+import express, { type Express } from "express";
+import * as redocExpressMiddleware from "redoc-express";
 import swaggerJsdoc from "swagger-jsdoc";
 
 const info = debug("bobaserver:handlers:open-api-log");
@@ -121,7 +121,7 @@ export const specs = swaggerJsdoc(options);
 // @ts-ignore
 delete specs["channels"];
 
-export default (app: express.Express) => {
+export default (app: Express) => {
   app.get("/open-api.json", (req, res) => {
     info("Fetching open api specification");
     res.setHeader("Content-Type", "application/json");
@@ -129,7 +129,8 @@ export default (app: express.Express) => {
   });
   app.get(
     "/api-docs",
-    redoc({
+    // @ts-expect-error TODO: fix this no idea why this is not typed
+    redocExpressMiddleware({
       title: "API Docs",
       specUrl: "/open-api.json",
       redocOptions: {

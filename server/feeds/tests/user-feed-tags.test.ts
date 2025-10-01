@@ -1,12 +1,15 @@
 import {
   FAVORITE_CHARACTER_THREAD_ID,
   FAVORITE_MURDER_THREAD_ID,
-} from "test/data/threads";
-import { ZodDbFeedType, ZodDbThreadSummaryType } from "types/db/schemas";
+} from "test/data/threads.js";
+import type {
+  ZodDbFeedType,
+  ZodDbThreadSummaryType,
+} from "types/db/schemas.js";
 
-import { BOBATAN_USER_ID } from "test/data/auth";
-import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
-import { getUserActivity } from "../queries";
+import { BOBATAN_USER_ID } from "test/data/auth.js";
+import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms.js";
+import { getUserActivity } from "../queries.js";
 
 export const extractTags = (
   thread: ZodDbThreadSummaryType | null | undefined

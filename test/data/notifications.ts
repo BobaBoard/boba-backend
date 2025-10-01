@@ -8,10 +8,10 @@ import {
   MUTED_BOARD_ID,
   RESTRICTED_BOARD_ID,
   SSSHH_BOARD_ID,
-} from "./boards";
+} from "./boards.js";
 
-import { NotificationsResponse } from "../../types/rest/notifications";
-import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "./realms";
+import type { NotificationsResponse } from "types/rest/notifications.js";
+import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "./realms.js";
 
 export const BOBATAN_NOTIFICATIONS: NotificationsResponse = {
   has_notifications: true,

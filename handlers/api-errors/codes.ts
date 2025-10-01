@@ -10,7 +10,7 @@ class BaseError extends Error {
   public readonly name: string;
   public readonly statusCode: HttpStatusCode;
   public readonly isOperational: boolean;
-  public readonly cause?: Error;
+  public readonly cause: Error | undefined;
 
   constructor({
     name,
@@ -23,7 +23,7 @@ class BaseError extends Error {
     statusCode: HttpStatusCode;
     description: string;
     isOperational: boolean;
-    cause?: Error;
+    cause: Error | undefined;
   }) {
     super(description);
     Object.setPrototypeOf(this, new.target.prototype);
@@ -50,7 +50,7 @@ export class ApiError extends BaseError {
     description: string;
     statusCode: HttpStatusCode;
     isOperational?: boolean;
-    cause?: Error;
+    cause: Error | undefined;
   }) {
     super({ name, statusCode, isOperational, description, cause });
   }

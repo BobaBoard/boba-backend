@@ -1,6 +1,11 @@
-import pg, { QueryFile } from "pg-promise";
+import pgp from "pg-promise";
+const { QueryFile } = pgp;
 
 import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const markBoardVisit = `
     INSERT INTO user_board_last_visits(user_id, board_id) VALUES (
@@ -53,7 +58,7 @@ const createSection = `
     RETURNING *;
 `;
 
-const pgInstance = pg();
+const pgInstance = pgp();
 const createAddCategoriesToFilterSectionQuery = (
   sectionId: string,
   categories: string[]

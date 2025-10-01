@@ -10,7 +10,7 @@ import { z } from "zod";
 
 {{#if imports}}
 {{#each imports}}
-import { {{{@key}}} } from "./{{{this}}}"
+import { {{{@key}}} } from "./{{{this}}}.js"
 {{/each}}
 {{/if}}
 

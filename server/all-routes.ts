@@ -1,12 +1,12 @@
-import AdminRoutes from "./admin/routes";
-import BoardsRoutes from "./boards/routes";
-import FeedsRoutes from "./feeds/routes";
-import PostsRoutes from "./posts/routes";
-import RealsmRoutes from "./realms/routes";
-import { Router } from "express";
-import SubscriptionRoutes from "./subscriptions/routes";
-import ThreadsRoutes from "./threads/routes";
-import UsersRoutes from "./users/routes";
+import AdminRoutes from "./admin/routes.js";
+import BoardsRoutes from "./boards/routes.js";
+import FeedsRoutes from "./feeds/routes.js";
+import PostsRoutes from "./posts/routes.js";
+import RealsmRoutes from "./realms/routes.js";
+import { type Router } from "express";
+import SubscriptionRoutes from "./subscriptions/routes.js";
+import ThreadsRoutes from "./threads/routes.js";
+import UsersRoutes from "./users/routes.js";
 import debug from "debug";
 
 const log = debug("bobaserver:all-routes");
@@ -25,6 +25,6 @@ const ROUTES: { [key: string]: Router } = {
 export const applyRoutes = (router: Router) => {
   Object.keys(ROUTES).forEach((key) => {
     log(`Adding new router for path /${key}`);
-    router.use(`/${key}`, ROUTES[key]);
+    router.use(`/${key}`, ROUTES[key]!);
   });
 };

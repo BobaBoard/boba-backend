@@ -17,11 +17,7 @@ components:
       type: array
       items:
         type: string
-        enum:
-          [
-            edit_board_details,
-            view_roles_on_board,
-          ]
+        enum: [edit_board_details, view_roles_on_board, delete_board]
     PostPermissions:
       type: array
       items:

@@ -1,6 +1,6 @@
-import { extractActivity, extractsMetadata } from "utils/test-utils";
+import { extractActivity, extractsMetadata } from "utils/test-utils.js";
 
-import { getUserStarFeed } from "../queries";
+import { getUserStarFeed } from "../queries.js";
 
 describe("user star feed queries", () => {
   test("bobatan star feed", async () => {
@@ -35,7 +35,7 @@ describe("user star feed queries", () => {
         whisper_tags: ["mwehehehehe"],
         category_tags: ["blood", "bruises"],
         content_warnings: [],
-      }
+      },
     ]);
   });
 });

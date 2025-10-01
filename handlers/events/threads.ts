@@ -1,4 +1,7 @@
-import { Contribution, Thread } from "types/open-api/generated/types";
+import {
+  type Contribution,
+  type Thread,
+} from "types/open-api/generated/types.js";
 
 import { EventEmitter } from "events";
 

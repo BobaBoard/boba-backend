@@ -1,6 +1,6 @@
-import { getBoardByExternalId, getRealmBoards } from "../queries";
+import { getBoardByExternalId, getRealmBoards } from "../queries.js";
 
-import { RESTRICTED_BOARD_ID } from "test/data/boards";
+import { RESTRICTED_BOARD_ID } from "test/data/boards.js";
 
 const extractRestrictions = (board: any) => {
   return {

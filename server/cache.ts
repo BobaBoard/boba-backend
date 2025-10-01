@@ -1,4 +1,5 @@
-import { RedisClientType, createClient } from "redis";
+import { createClient } from "redis";
+import type { RedisClientType } from "redis";
 
 import debug from "debug";
 
@@ -28,7 +29,7 @@ export const initCache = (createClientMethod?: any) => {
 
   let innerClient: RedisClientType = createClient({
     socket: {
-      host: process.env.REDIS_HOST,
+      host: process.env.REDIS_HOST!,
       port: parseInt(process.env.REDIS_PORT!),
     },
   });

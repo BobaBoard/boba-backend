@@ -1,15 +1,15 @@
 import {
   FAVORITE_CHARACTER_THREAD_ID,
   FAVORITE_MURDER_THREAD_ID,
-} from "test/data/threads";
-import { GORE_BOARD_ID, MAIN_STREET_BOARD_ID } from "test/data/boards";
+} from "test/data/threads.js";
+import { GORE_BOARD_ID, MAIN_STREET_BOARD_ID } from "test/data/boards.js";
 import {
   extractActivity,
   extractAuthorData,
   extractsMetadata,
-} from "utils/test-utils";
+} from "utils/test-utils.js";
 
-import { getBoardActivityByExternalId } from "../queries";
+import { getBoardActivityByExternalId } from "../queries.js";
 
 describe("Tests boards activity queries", () => {
   describe("tests activity metadata", () => {

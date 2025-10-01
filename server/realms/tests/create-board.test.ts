@@ -1,23 +1,23 @@
-import { ANON_WITH_NO_NAME_USER_ID, BOBATAN_USER_ID } from "test/data/auth";
+import { ANON_WITH_NO_NAME_USER_ID, BOBATAN_USER_ID } from "test/data/auth.js";
 import {
   ENSURE_LOGGED_IN_NO_TOKEN,
   ENSURE_REALM_PERMISSIONS_UNAUTHORIZED,
-} from "test/data/responses";
+} from "test/data/responses.js";
 import {
   setLoggedInUser,
   startTestServer,
   wrapWithTransaction,
-} from "utils/test-utils";
+} from "utils/test-utils.js";
 
-import { GenericResponse } from "types/rest/responses";
-import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
+import { type GenericResponse } from "types/rest/responses.js";
+import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms.js";
 import request from "supertest";
-import router from "../routes";
+import router from "../routes.js";
 
-jest.mock("handlers/auth");
-jest.mock("server/cache");
-jest.mock("server/db-pool");
-jest.mock("axios");
+vi.mock("handlers/auth");
+vi.mock("server/cache");
+vi.mock("server/db-pool");
+vi.mock("axios");
 
 // Uses the format: /:realm_id/board
 const CREATE_BOARD_ROUTE = `/${TWISTED_MINDS_REALM_EXTERNAL_ID}/boards`;

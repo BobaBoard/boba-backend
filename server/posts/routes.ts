@@ -1,32 +1,32 @@
-import * as threadEvents from "handlers/events/threads";
+import * as threadEvents from "handlers/events/threads.js";
 
 import {
   BadRequest400Error,
   Forbidden403Error,
-} from "handlers/api-errors/codes";
+} from "handlers/api-errors/codes.js";
 import {
   ensureNoIdentityLeakage,
   makeServerComment,
   makeServerPost,
-} from "utils/response-utils";
+} from "utils/response-utils.js";
 import {
   ensureRealmPermission,
   ensureThreadAccess,
   withPostPermissions,
-} from "handlers/permissions";
+} from "handlers/permissions.js";
 import {
   getPostByExternalId,
   postNewCommentChain,
   postNewContribution,
   updatePostTags,
-} from "./queries";
+} from "./queries.js";
 
-import { RealmPermissions } from "types/permissions";
-import { canDoTagsEdit } from "utils/permissions-utils";
+import { RealmPermissions } from "types/permissions.js";
+import { canDoTagsEdit } from "utils/permissions-utils.js";
 import debug from "debug";
-import { ensureLoggedIn } from "handlers/auth";
+import { ensureLoggedIn } from "handlers/auth.js";
 import express from "express";
-import { getTagsDelta } from "./utils";
+import { getTagsDelta } from "./utils.js";
 
 const info = debug("bobaserver:posts:routes-info");
 const log = debug("bobaserver:posts:routes-log");

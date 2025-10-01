@@ -2,15 +2,15 @@ import {
   EXCELLENT_THREAD_SUMMARY,
   FAVORITE_CHARACTER_THREAD_SUMMARY,
   FAVORITE_MURDER_THREAD_SUMMARY,
-} from "test/data/threads";
-import { GORE_BOARD_ID, LONG_BOARD_ID } from "test/data/boards";
-import { decodeCursor, encodeCursor } from "utils/queries-utils";
+} from "test/data/threads.js";
+import { GORE_BOARD_ID, LONG_BOARD_ID } from "test/data/boards.js";
+import { decodeCursor, encodeCursor } from "utils/queries-utils.js";
 
-import { ThreadSummary } from "types/rest/threads";
+import type { ThreadSummary } from "types/rest/threads.js";
 import debug from "debug";
 import request from "supertest";
-import router from "../../routes";
-import { startTestServer } from "utils/test-utils";
+import router from "../../routes.js";
+import { startTestServer } from "utils/test-utils.js";
 
 const log = debug("bobaserver:board:routes");
 

@@ -1,6 +1,11 @@
-import pg, { QueryFile } from "pg-promise";
+import pgp from "pg-promise";
+const { QueryFile } = pgp;
 
 import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const getRandomIdentity = `
     SELECT 
@@ -86,7 +91,7 @@ const makeComment = `
         $/parent_comment_id/
     ) RETURNING *, TO_CHAR(comments.created, 'YYYY-MM-DD"T"HH24:MI:SS.00"Z"') as created_at`;
 
-const pgInstance = pg();
+const pgInstance = pgp();
 const createAddTagsQuery = (tags: string[]) => {
   const tagsColumn = new pgInstance.helpers.ColumnSet(["tag"], {
     table: "tags",

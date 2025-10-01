@@ -1,16 +1,21 @@
-import { ensureLoggedIn, withLoggedIn, withUserSettings } from "handlers/auth";
-import express, { Express, Router } from "express";
+import {
+  ensureLoggedIn,
+  withLoggedIn,
+  withUserSettings,
+} from "handlers/auth.js";
+import express, { type Express, type Router } from "express";
 
-import { ITask } from "pg-promise";
+import { type ITask } from "pg-promise";
 import { Server } from "http";
-import { ZodDbFeedType } from "types/db/schemas";
+import { type ZodDbFeedType } from "types/db/schemas.js";
 import bodyParser from "body-parser";
 import debug from "debug";
-import { handleApiErrors } from "handlers/api-errors/handler";
-import { mocked } from "jest-mock";
-import pool from "server/db-pool";
+import { handleApiErrors } from "handlers/api-errors/handler.js";
 
-require("express-async-errors");
+vi.mock("server/db-pool.js");
+const pool = await import("server/db-pool.js").then((m) => m.default);
+
+import "express-async-errors";
 
 const log = debug("bobaserver:tests:test-utils");
 
@@ -19,6 +24,7 @@ export const runWithinTransaction = async (
 ) => {
   await pool.tx("test-transaction", async (t) => {
     try {
+      await t.none("BEGIN TRANSACTION;");
       await test(t);
     } finally {
       await t.none("ROLLBACK;");
@@ -27,7 +33,7 @@ export const runWithinTransaction = async (
 };
 
 export const wrapWithTransaction = async (test: () => void) => {
-  if (!jest.isMockFunction(pool.tx)) {
+  if (!vi.isMockFunction(pool.tx)) {
     throw Error(
       "wrapWithTransaction requires 'server/db-pool' to be explicitly mocked."
     );
@@ -44,25 +50,25 @@ export const wrapWithTransaction = async (test: () => void) => {
 
 export const setLoggedInUser = (firebaseId: string) => {
   if (
-    !jest.isMockFunction(withLoggedIn) ||
-    !jest.isMockFunction(ensureLoggedIn) ||
-    !jest.isMockFunction(withUserSettings)
+    !vi.isMockFunction(withLoggedIn) ||
+    !vi.isMockFunction(ensureLoggedIn) ||
+    !vi.isMockFunction(withUserSettings)
   ) {
     throw Error(
       "setLoggedInUser requires 'handlers/auth' to be explicitly mocked."
     );
   }
-  mocked(withLoggedIn).mockImplementation((req, res, next) => {
+  vi.mocked(withLoggedIn).mockImplementation((req, res, next) => {
     // @ts-ignore
     req.currentUser = { uid: firebaseId };
     next();
   });
-  mocked(ensureLoggedIn).mockImplementation((req, res, next) => {
+  vi.mocked(ensureLoggedIn).mockImplementation((req, res, next) => {
     // @ts-ignore
     req.currentUser = { uid: firebaseId };
     next();
   });
-  mocked(withUserSettings).mockImplementation((req, res, next) => {
+  vi.mocked(withUserSettings).mockImplementation((req, res, next) => {
     // @ts-ignore
     req.currentUser = { uid: firebaseId };
     next();
@@ -74,25 +80,25 @@ export const setLoggedInUserWithEmail = (user: {
   email: string;
 }) => {
   if (
-    !jest.isMockFunction(withLoggedIn) ||
-    !jest.isMockFunction(ensureLoggedIn) ||
-    !jest.isMockFunction(withUserSettings)
+    !vi.isMockFunction(withLoggedIn) ||
+    !vi.isMockFunction(ensureLoggedIn) ||
+    !vi.isMockFunction(withUserSettings)
   ) {
     throw Error(
       "setLoggedInUserWithEmail requires 'handlers/auth' to be explicitly mocked."
     );
   }
-  mocked(withLoggedIn).mockImplementation((req, res, next) => {
+  vi.mocked(withLoggedIn).mockImplementation((req, res, next) => {
     // @ts-ignore
     req.currentUser = user;
     next();
   });
-  mocked(ensureLoggedIn).mockImplementation((req, res, next) => {
+  vi.mocked(ensureLoggedIn).mockImplementation((req, res, next) => {
     // @ts-ignore
     req.currentUser = user;
     next();
   });
-  mocked(withUserSettings).mockImplementation((req, res, next) => {
+  vi.mocked(withUserSettings).mockImplementation((req, res, next) => {
     // @ts-ignore
     req.currentUser = user;
     next();
@@ -102,7 +108,7 @@ export const setLoggedInUserWithEmail = (user: {
 export const startTestServer = (router: Router) => {
   const server: { app: Express | null } = { app: null };
   let listener: Server;
-  beforeEach((done) => {
+  beforeEach(async () => {
     server.app = express();
     server.app.use(bodyParser.json());
     // We add this middleware cause the server uses it in every request to check
@@ -112,12 +118,20 @@ export const startTestServer = (router: Router) => {
     server.app.use(withLoggedIn);
     server.app.use(router);
     server.app.use(handleApiErrors);
-    listener = server.app.listen(4000, () => {
-      done();
+    await new Promise((resolve) => {
+      listener = server.app!.listen(4000, () => {
+        resolve(true);
+      });
     });
   });
-  afterEach((done) => {
-    listener.close(done);
+  afterEach(async () => {
+    if (listener) {
+      await new Promise((resolve) => {
+        listener.close(() => {
+          resolve(true);
+        });
+      });
+    }
   });
 
   return server;

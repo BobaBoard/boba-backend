@@ -1,5 +1,10 @@
-import { QueryFile } from "pg-promise";
+import pgp from "pg-promise";
+const { QueryFile } = pgp;
 import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const dismissNotifications = `
     INSERT INTO dismiss_notifications_requests(user_id, realm_id, dismiss_request_time) VALUES (

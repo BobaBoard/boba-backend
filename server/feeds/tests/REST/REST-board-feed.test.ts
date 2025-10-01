@@ -2,13 +2,13 @@ import {
   EXCELLENT_THREAD_SUMMARY,
   FAVORITE_CHARACTER_THREAD_SUMMARY,
   FAVORITE_MURDER_THREAD_SUMMARY,
-} from "test/data/threads";
+} from "test/data/threads.js";
 
-import { GORE_BOARD_ID } from "test/data/boards";
+import { GORE_BOARD_ID } from "test/data/boards.js";
 import debug from "debug";
 import request from "supertest";
-import router from "../../routes";
-import { startTestServer } from "utils/test-utils";
+import router from "../../routes.js";
+import { startTestServer } from "utils/test-utils.js";
 
 const log = debug("bobaserver:board:routes");
 

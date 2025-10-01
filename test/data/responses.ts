@@ -1,4 +1,4 @@
-import { GenericResponse } from "../../types/rest/responses";
+import type { GenericResponse } from "types/rest/responses.js";
 
 export const ENSURE_LOGGED_IN_NO_TOKEN: GenericResponse = {
   message: "No authenticated user found.",

@@ -1,26 +1,32 @@
-import { BoardByExternalId, DbRealmBoardType } from "server/boards/sql/types";
 import {
-  BoardMetadata,
-  Comment,
-  Contribution,
-  LoggedInBoardMetadata,
-} from "types/open-api/generated/types";
+  type BoardByExternalId,
+  type DbRealmBoardType,
+} from "server/boards/sql/types.js";
+import {
+  type BoardMetadata,
+  type Comment,
+  type Contribution,
+  type LoggedInBoardMetadata,
+} from "types/open-api/generated/types.js";
 // TODO: deprecate these
-import { DbBoardCategoryDescription, DbBoardTextDescription } from "types/db";
+import {
+  type DbBoardCategoryDescription,
+  type DbBoardTextDescription,
+} from "types/db/index.js";
 import {
   ThreadSchema,
   ThreadSummarySchema,
-} from "types/open-api/generated/schemas";
+} from "types/open-api/generated/schemas.js";
 import {
-  ZodDbCommentType,
-  ZodDbPostType,
-  ZodDbThreadSummaryType,
-  ZodDbThreadType,
-} from "types/db/schemas";
+  type ZodDbCommentType,
+  type ZodDbPostType,
+  type ZodDbThreadSummaryType,
+  type ZodDbThreadType,
+} from "types/db/schemas.js";
 
-import { BoardRestrictions } from "types/permissions";
+import { BoardRestrictions } from "types/permissions.js";
 import debug from "debug";
-import { getUserPermissionsForBoard } from "./permissions-utils";
+import { getUserPermissionsForBoard } from "./permissions-utils.js";
 
 const info = debug("bobaserver:response-utils-info");
 const log = debug("bobaserver::response-utils-log");
@@ -38,7 +44,7 @@ const TRANSFORM_DICT: { [key: string]: string } = {
  */
 export const transformImageUrls = (obj: any) => {
   Object.keys(TRANSFORM_DICT).forEach((key) => {
-    if (obj[key]) {
+    if (obj[key] && TRANSFORM_DICT[key]) {
       if (obj[key].startsWith("http")) {
         obj[TRANSFORM_DICT[key]] = obj[key];
       } else {

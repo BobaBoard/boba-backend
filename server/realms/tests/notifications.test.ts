@@ -1,20 +1,20 @@
-import { BOBATAN_USER_ID, SEXY_DADDY_USER_ID } from "test/data/auth";
+import { BOBATAN_USER_ID, SEXY_DADDY_USER_ID } from "test/data/auth.js";
 import {
   setLoggedInUser,
   startTestServer,
   wrapWithTransaction,
-} from "utils/test-utils";
+} from "utils/test-utils.js";
 
-import { BOBATAN_NOTIFICATIONS } from "test/data/notifications";
-import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms";
+import { BOBATAN_NOTIFICATIONS } from "test/data/notifications.js";
+import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms.js";
 import debug from "debug";
 import request from "supertest";
-import router from "../routes";
+import router from "../routes.js";
 
 const log = debug("bobaserver:board:routes");
-jest.mock("server/cache");
-jest.mock("handlers/auth");
-jest.mock("server/db-pool");
+vi.mock("server/cache");
+vi.mock("handlers/auth");
+vi.mock("server/db-pool");
 
 describe("Tests notifications REST API", () => {
   const server = startTestServer(router);

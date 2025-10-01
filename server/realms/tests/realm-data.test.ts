@@ -2,17 +2,17 @@ import {
   BOBATAN_USER_ID,
   JERSEY_DEVIL_USER_ID,
   SEXY_DADDY_USER_ID,
-} from "test/data/auth";
-import { GORE_BOARD_METADATA, extractBoardSummary } from "test/data/boards";
-import { TWISTED_MINDS_REALM_SLUG, UWU_REALM_SLUG } from "test/data/realms";
-import { setLoggedInUser, startTestServer } from "utils/test-utils";
+} from "test/data/auth.js";
+import { GORE_BOARD_METADATA, extractBoardSummary } from "test/data/boards.js";
+import { TWISTED_MINDS_REALM_SLUG, UWU_REALM_SLUG } from "test/data/realms.js";
+import { setLoggedInUser, startTestServer } from "utils/test-utils.js";
 
-import { BOBATAN_TWISTED_MINDS_REALM_PERMISSIONS } from "test/data/user";
-import { REALM_MEMBER_PERMISSIONS } from "types/permissions";
+import { BOBATAN_TWISTED_MINDS_REALM_PERMISSIONS } from "test/data/user.js";
+import { REALM_MEMBER_PERMISSIONS } from "types/permissions.js";
 import request from "supertest";
-import router from "../routes";
+import router from "../routes.js";
 
-jest.mock("handlers/auth");
+vi.mock("handlers/auth");
 
 describe("Tests restricted board realm queries", () => {
   const server = startTestServer(router);

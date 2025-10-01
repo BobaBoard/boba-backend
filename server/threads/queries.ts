@@ -1,11 +1,14 @@
-import { THREAD_OWNER_PERMISSIONS, ThreadPermissions } from "types/permissions";
+import {
+  THREAD_OWNER_PERMISSIONS,
+  type ThreadPermissions,
+} from "types/permissions.js";
 
-import { ZodDbThreadType } from "types/db/schemas";
+import { type ZodDbThreadType } from "types/db/schemas.js";
 import debug from "debug";
-import { extractThreadPermissions } from "utils/permissions-utils";
-import { getBoardByExternalId } from "../boards/queries";
-import pool from "server/db-pool";
-import sql from "./sql";
+import { extractThreadPermissions } from "utils/permissions-utils.js";
+import { getBoardByExternalId } from "../boards/queries.js";
+import pool from "server/db-pool.js";
+import sql from "./sql/index.js";
 
 const log = debug("bobaserver:threads:queries-log");
 const error = debug("bobaserver:threads:queries-error");
@@ -15,7 +18,7 @@ export const getThreadByExternalId = async ({
   firebaseId,
 }: {
   threadExternalId: string;
-  firebaseId?: string | null;
+  firebaseId?: string | null | undefined;
 }): Promise<ZodDbThreadType | null> => {
   const thread = await pool.oneOrNone<ZodDbThreadType>(sql.threadByExternalId, {
     thread_external_id: threadExternalId,
