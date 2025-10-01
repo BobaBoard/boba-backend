@@ -20,7 +20,7 @@ import "express-async-errors";
 const log = debug("bobaserver:tests:test-utils");
 
 export const runWithinTransaction = async (
-  test: (transaction: ITask<any>) => void
+  test: (transaction: ITask<unknown>) => void
 ) => {
   await pool.tx("test-transaction", async (t) => {
     try {
@@ -58,18 +58,15 @@ export const setLoggedInUser = (firebaseId: string) => {
       "setLoggedInUser requires 'handlers/auth' to be explicitly mocked."
     );
   }
-  vi.mocked(withLoggedIn).mockImplementation((req, res, next) => {
-    // @ts-ignore
+  vi.mocked(withLoggedIn).mockImplementation((req, _res, next) => {
     req.currentUser = { uid: firebaseId };
     next();
   });
-  vi.mocked(ensureLoggedIn).mockImplementation((req, res, next) => {
-    // @ts-ignore
+  vi.mocked(ensureLoggedIn).mockImplementation((req, _res, next) => {
     req.currentUser = { uid: firebaseId };
     next();
   });
-  vi.mocked(withUserSettings).mockImplementation((req, res, next) => {
-    // @ts-ignore
+  vi.mocked(withUserSettings).mockImplementation((req, _res, next) => {
     req.currentUser = { uid: firebaseId };
     next();
   });
@@ -88,18 +85,15 @@ export const setLoggedInUserWithEmail = (user: {
       "setLoggedInUserWithEmail requires 'handlers/auth' to be explicitly mocked."
     );
   }
-  vi.mocked(withLoggedIn).mockImplementation((req, res, next) => {
-    // @ts-ignore
+  vi.mocked(withLoggedIn).mockImplementation((req, _res, next) => {
     req.currentUser = user;
     next();
   });
-  vi.mocked(ensureLoggedIn).mockImplementation((req, res, next) => {
-    // @ts-ignore
+  vi.mocked(ensureLoggedIn).mockImplementation((req, _res, next) => {
     req.currentUser = user;
     next();
   });
-  vi.mocked(withUserSettings).mockImplementation((req, res, next) => {
-    // @ts-ignore
+  vi.mocked(withUserSettings).mockImplementation((req, _res, next) => {
     req.currentUser = user;
     next();
   });
@@ -153,7 +147,7 @@ export const extractActivity = (thread: ZodDbFeedType["activity"][0]) => {
   };
 };
 
-export const extractAuthorData = (thread: any) => {
+export const extractAuthorData = (thread: ZodDbFeedType["activity"][0]) => {
   return {
     author: thread.author,
     friend: thread.friend,
@@ -165,7 +159,7 @@ export const extractAuthorData = (thread: any) => {
   };
 };
 
-export const extractsMetadata = (thread: any) => {
+export const extractsMetadata = (thread: ZodDbFeedType["activity"][0]) => {
   return {
     content: thread.content,
     hidden: thread.hidden,

@@ -4,7 +4,6 @@ import {
   PostPermissions,
   RealmPermissions,
   ThreadPermissions,
-  type UserBoardPermissions,
 } from "types/permissions.js";
 import {
   extractBoardPermissions,

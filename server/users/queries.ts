@@ -14,7 +14,14 @@ export const getUserFromFirebaseId = async ({
   firebaseId,
 }: {
   firebaseId: string;
-}): Promise<any> => {
+}): Promise<{
+  id: number;
+  firebase_id: string;
+  username: string | null;
+  avatar_reference_id: string | null;
+  created_on: string;
+  invited_by: number | null;
+} | null> => {
   try {
     const user = await pool.one(sql.getUserDetails, {
       firebase_id: firebaseId,
@@ -38,7 +45,7 @@ export const updateUserData = async ({
   avatarUrl: string;
 }): Promise<{
   username: string;
-  avatarUrl: string;
+  avatar_url: string;
 } | null> => {
   try {
     await pool.none(sql.updateUserData, {
@@ -49,7 +56,7 @@ export const updateUserData = async ({
     info(`Updated user data for user with firebaseId: `, firebaseId);
     return {
       username,
-      avatarUrl,
+      avatar_url: avatarUrl,
     };
   } catch (e) {
     error(`Error while updating user data.`);

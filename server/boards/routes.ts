@@ -190,7 +190,7 @@ router.post(
   ensureBoardAccess,
   ensureRealmPermission(RealmPermissions.createThreadOnRealm),
   //TODO: ensureBoardPermission(BoardPermissions.createThread),
-  async (req, res, next) => {
+  async (req, res) => {
     const { board_id: boardExternalId } = req.params as { board_id: string };
 
     log(`Fetching metadata for board with id ${boardExternalId}`);
@@ -203,7 +203,6 @@ router.post(
     log(`Creating thread in board with id ${boardExternalId}`);
     const {
       content,
-      forceAnonymous,
       defaultView,
       whisperTags,
       indexTags,
@@ -681,7 +680,7 @@ router.delete(
   async (req, res) => {
     const { board_id: boardExternalId } = req.params as { board_id: string };
 
-    let currentUserId: string = req.currentUser!.uid;
+    const currentUserId: string = req.currentUser!.uid;
     log(
       `Dismissing ${boardExternalId} notifications for firebase id: ${currentUserId}`
     );
@@ -824,7 +823,7 @@ router.delete(
 
     const { board_id: boardExternalId } = req.params as { board_id: string };
 
-    let currentUserId: string = req.currentUser!.uid;
+    const currentUserId: string = req.currentUser!.uid;
     log(`User ${currentUserId} is deleting board with id: ${boardExternalId}`);
     const deleteSuccessful = await deleteBoard({
       boardExternalId,

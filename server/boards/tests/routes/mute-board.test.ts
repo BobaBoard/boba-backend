@@ -4,7 +4,6 @@ import {
   GORE_BOARD_ID,
   MAIN_STREET_BOARD_ID,
   MUTED_BOARD_ID,
-  RESTRICTED_BOARD_ID,
 } from "test/data/boards.js";
 import {
   setLoggedInUser,

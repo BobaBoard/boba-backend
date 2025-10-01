@@ -24,7 +24,6 @@ import {
 import {
   ensureRealmExists,
   ensureRealmPermission,
-  withRealmPermissions,
 } from "handlers/permissions.js";
 import { getRealmDataBySlug, getSettingsBySlug } from "./queries.js";
 import {
@@ -33,7 +32,6 @@ import {
   reduceById,
 } from "utils/response-utils.js";
 
-import { type DbRealmBoardType } from "server/boards/sql/types.js";
 import { LoggedInBoardMetadataSchema } from "types/open-api/generated/schemas.js";
 import { RealmPermissions } from "types/permissions.js";
 import { createInvite } from "./queries.js";
@@ -317,7 +315,7 @@ router.get("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
  *         description: The notifications were successfully dismissed.
  */
 router.delete("/:realm_id/notifications", ensureLoggedIn, async (req, res) => {
-  let currentUserId: string = req.currentUser!.uid;
+  const currentUserId: string = req.currentUser!.uid;
   log(`Dismissing notifications for firebase id: ${currentUserId}`);
   const { realm_id } = req.params;
 
@@ -600,7 +598,9 @@ router.post(
     // Generate 64 characters random id string
     const inviteCode = randomBytes(32).toString("hex");
     const adminId = await getUserFromFirebaseId({ firebaseId: user });
-    log(adminId);
+    if (!adminId) {
+      throw new Internal500Error("Failed to get admin id");
+    }
 
     const inviteAdded = await createInvite({
       realmExternalId,

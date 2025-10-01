@@ -113,14 +113,14 @@ const EVENTS_WITH_HANDLERS: EventsWithHandlers = {
 
 export const registerAll = () => {
   Object.entries(EVENTS_WITH_HANDLERS).forEach(([eventType, handler]) => {
-    // @ts-ignore Type safety is given by the EVENTS_WITH_HANDLERS definition
+    // @ts-expect-error Type safety is given by the EVENTS_WITH_HANDLERS definition
     threadEvents.register(eventType, handler);
   });
 };
 
 export const unregisterAll = () => {
   Object.entries(EVENTS_WITH_HANDLERS).forEach(([eventType, handler]) => {
-    // @ts-ignore Type safety is given by the EVENTS_WITH_HANDLERS definition
+    // @ts-expect-error Type safety is given by the EVENTS_WITH_HANDLERS definition
     threadEvents.register(eventType, handler);
   });
 };

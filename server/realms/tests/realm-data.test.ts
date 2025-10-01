@@ -22,9 +22,9 @@ describe("Tests restricted board realm queries", () => {
 
     expect(res.status).toBe(200);
     expect(res.body.boards.length).toBe(8);
-    expect(res.body.boards.find((board: any) => board.slug == "gore")).toEqual(
-      extractBoardSummary(GORE_BOARD_METADATA.BOBATAN)
-    );
+    expect(
+      res.body.boards.find((board: { slug: string }) => board.slug == "gore")
+    ).toEqual(extractBoardSummary(GORE_BOARD_METADATA.BOBATAN));
   });
 
   test("doesn't fetch restricted board details in realm query when logged out", async () => {
@@ -32,9 +32,9 @@ describe("Tests restricted board realm queries", () => {
 
     expect(res.status).toBe(200);
     expect(res.body.boards.length).toBe(8);
-    expect(res.body.boards.find((board: any) => board.slug == "gore")).toEqual(
-      extractBoardSummary(GORE_BOARD_METADATA.LOGGED_OUT)
-    );
+    expect(
+      res.body.boards.find((board: { slug: string }) => board.slug == "gore")
+    ).toEqual(extractBoardSummary(GORE_BOARD_METADATA.LOGGED_OUT));
   });
 
   test("returns empty block array in homepage", async () => {

@@ -2,7 +2,6 @@ import { CacheKeys, cache } from "server/cache.js";
 import { type NextFunction, type Request, type Response } from "express";
 import firebaseAuth, { type auth } from "firebase-admin";
 
-import { Internal500Error } from "handlers/api-errors/codes.js";
 import { type SettingEntry } from "types/settings.js";
 import debug from "debug";
 import { getUserSettings } from "server/users/queries.js";
@@ -14,21 +13,21 @@ const error = debug("bobaserver:auth-error");
 
 const EXPIRED_TOKEN_ERROR = "Authentication token expired.";
 const NO_USER_FOUND_ERROR = "No authenticated user found.";
-declare global {
-  namespace Express {
-    export interface Request {
-      // Note: these should probably use req.locals, but that is harder to
-      // type so the possible values will be suggested by the editor.
-      currentUser?: auth.DecodedIdToken & { settings?: SettingEntry[] };
-      authenticationError?: Error;
-      currentFirebaseUserData?: auth.UserRecord;
-    }
+declare module "express-serve-static-core" {
+  interface Request {
+    // Note: these should probably use req.locals, but that is harder to
+    // type so the possible values will be suggested by the editor.
+    currentUser?: Pick<auth.DecodedIdToken, "uid" | "email"> & {
+      settings?: SettingEntry[];
+    };
+    authenticationError?: Error;
+    currentFirebaseUserData?: auth.UserRecord;
   }
 }
 
 export const withLoggedIn = (
   req: Request,
-  res: Response,
+  _res: Response,
   next: NextFunction
 ) => {
   const idToken = req.headers?.authorization;
@@ -48,14 +47,12 @@ export const withLoggedIn = (
     .then((decodedToken) => {
       activeSpan?.setAttribute("user.id", decodedToken.uid);
       log(`Found id token in request: ${decodedToken.uid}`);
-      // @ts-ignore
       req.currentUser = decodedToken;
       if (process.env.NODE_ENV != "production" && process.env.FORCED_USER) {
         log(
           `Overriding user id with locally configured one (${process.env.FORCED_USER})`
         );
         log(`User email set as test@test.com`);
-        // @ts-ignore
         req.currentUser.uid = process.env.FORCED_USER;
         req.currentUser.email = "test@test.com";
       }

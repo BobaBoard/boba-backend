@@ -16,7 +16,6 @@ import debug from "debug";
 import { getBoardByExternalId } from "server/boards/queries.js";
 
 const info = debug("bobaserver:board:utils-info");
-const log = debug("bobaserver::permissions-utils-log");
 
 export const hasPermission = (
   permission: DbRolePermissions,

@@ -1,4 +1,4 @@
-import { BOBATAN_USER_ID, SEXY_DADDY_USER_ID } from "test/data/auth.js";
+import { BOBATAN_USER_ID } from "test/data/auth.js";
 import {
   setLoggedInUser,
   startTestServer,
@@ -7,11 +7,8 @@ import {
 
 import { BOBATAN_NOTIFICATIONS } from "test/data/notifications.js";
 import { TWISTED_MINDS_REALM_EXTERNAL_ID } from "test/data/realms.js";
-import debug from "debug";
 import request from "supertest";
 import router from "../routes.js";
-
-const log = debug("bobaserver:board:routes");
 vi.mock("server/cache");
 vi.mock("handlers/auth");
 vi.mock("server/db-pool");
@@ -35,7 +32,6 @@ describe("Tests notifications REST API", () => {
 
     expect(res.status).toBe(200);
     expect(res.body).toEqual(BOBATAN_NOTIFICATIONS);
-    log(res.body);
   });
 
   // TODO: check if any test user has outdated notifications or none, and test there

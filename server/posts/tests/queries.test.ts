@@ -1,8 +1,5 @@
-import debug from "debug";
 import { maybeAddIndexTags } from "../queries.js";
 import { runWithinTransaction } from "utils/test-utils.js";
-
-const log = debug("bobaserver:posts:queries-test-log");
 
 describe("Tests posts queries", () => {
   test("adds index tags to post (and database)", async () => {

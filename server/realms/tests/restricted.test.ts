@@ -1,10 +1,7 @@
 import { BOBATAN_USER_ID, ZODIAC_KILLER_USER_ID } from "test/data/auth.js";
-import express from "express";
-import type { Express } from "express";
 import { setLoggedInUser, startTestServer } from "utils/test-utils.js";
 
 import { RESTRICTED_BOARD_SUMMARY } from "test/data/boards.js";
-import { Server } from "http";
 import request from "supertest";
 import router from "../routes.js";
 
@@ -19,7 +16,9 @@ describe("Tests restricted board realm queries", () => {
 
       expect(res.status).toBe(200);
       expect(
-        res.body.boards.find((board: any) => board.slug == "restricted")
+        res.body.boards.find(
+          (board: { slug: string }) => board.slug == "restricted"
+        )
       ).toEqual(RESTRICTED_BOARD_SUMMARY.BOBATAN);
     });
 
@@ -28,7 +27,9 @@ describe("Tests restricted board realm queries", () => {
 
       expect(res.status).toBe(200);
       expect(
-        res.body.boards.find((board: any) => board.slug == "restricted")
+        res.body.boards.find(
+          (board: { slug: string }) => board.slug == "restricted"
+        )
       ).toEqual(RESTRICTED_BOARD_SUMMARY.LOGGED_OUT);
     });
 
@@ -38,7 +39,9 @@ describe("Tests restricted board realm queries", () => {
 
       expect(res.status).toBe(200);
       expect(
-        res.body.boards.find((board: any) => board.slug == "restricted")
+        res.body.boards.find(
+          (board: { slug: string }) => board.slug == "restricted"
+        )
       ).toEqual(RESTRICTED_BOARD_SUMMARY.LOGGED_OUT);
     });
   });

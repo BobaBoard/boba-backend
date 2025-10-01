@@ -1,9 +1,7 @@
 import { CacheKeys, cache } from "server/cache.js";
-import { setLoggedInUser, startTestServer } from "utils/test-utils.js";
+import { startTestServer } from "utils/test-utils.js";
 
 import { AIBA_SUBSCRIPTION_ID } from "test/data/subscriptions.js";
-import { BOBATAN_USER_ID } from "test/data/auth.js";
-import type { GenericResponse } from "types/rest/responses.js";
 import type { SubscriptionFeed } from "types/rest/subscriptions.js";
 
 import request from "supertest";
@@ -66,7 +64,7 @@ describe("Tests threads REST API", () => {
   });
 
   test("Should cache subscription", async () => {
-    const res = await request(server.app).get(`/${AIBA_SUBSCRIPTION_ID}`);
+    await request(server.app).get(`/${AIBA_SUBSCRIPTION_ID}`);
 
     expect(cache().hSet).toBeCalledWith(
       CacheKeys.SUBSCRIPTION,

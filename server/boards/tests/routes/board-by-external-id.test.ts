@@ -8,12 +8,9 @@ import {
 import { setLoggedInUser, startTestServer } from "utils/test-utils.js";
 
 import type { BoardMetadata } from "types/open-api/generated/types.js";
-import debug from "debug";
 import request from "supertest";
 import router from "../../routes.js";
 import stringify from "fast-json-stable-stringify";
-
-const log = debug("bobaserver:board:routes");
 vi.mock("server/cache.js");
 vi.mock("handlers/auth.js");
 
