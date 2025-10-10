@@ -10,7 +10,7 @@ import {
   extractPermissions,
 } from "types/permissions.js";
 
-import { type BoardRestrictionsEnum } from "server/boards/sql/types.js";
+import { type BoardRestrictionsEnumType } from "server/boards/sql/types.js";
 import { type QueryTagsType } from "types/rest/params.js";
 import debug from "debug";
 import { getBoardByExternalId } from "server/boards/queries.js";
@@ -134,7 +134,7 @@ export const hasBoardAccessPermission = ({
   firebaseId,
 }: {
   boardMetadata: {
-    logged_out_restrictions: BoardRestrictionsEnum[];
+    logged_out_restrictions: BoardRestrictionsEnumType[];
   };
   firebaseId: string | undefined;
 }) => {

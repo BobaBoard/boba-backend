@@ -1,28 +1,27 @@
-import { BOBATAN_USER_ID, JERSEY_DEVIL_USER_ID } from "test/data/auth";
+import { BOBATAN_USER_ID, JERSEY_DEVIL_USER_ID } from "test/data/auth.js";
 
-import { GORE_BOARD_ID } from "test/data/boards";
+import { GORE_BOARD_ID } from "test/data/boards.js";
 import {
   setLoggedInUser,
   startTestServer,
   wrapWithTransaction,
-} from "utils/test-utils";
+} from "utils/test-utils.js";
 
 import debug from "debug";
 import request from "supertest";
-import router from "../../routes";
+import router from "../../routes.js";
 
 const log = debug("bobaserver:test:boards:routes:delete-board-log");
 
-jest.mock("server/cache");
-jest.mock("handlers/auth");
-jest.mock("server/db-pool");
-jest.setTimeout(20000);
+vi.mock("server/cache.js");
+vi.mock("handlers/auth.js");
+vi.mock("server/db-pool.js");
 
 describe("DELETE /board/:board_id", () => {
   const server = startTestServer(router);
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   test("Should return 401 if user is not logged in", async () => {

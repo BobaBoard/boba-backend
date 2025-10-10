@@ -828,7 +828,7 @@ router.delete(
 
     await cache().hDel(CacheKeys.BOARD, boardExternalId);
     await cache().hDel(CacheKeys.BOARD_METADATA, boardExternalId);
-    await cache().hDel(CacheKeys.USER_PINS, req.currentUser!.uid);
+    await cache().del(CacheKeys.USER_PINS);
 
     const deleteSuccessful = await deleteBoard({
       boardExternalId,
