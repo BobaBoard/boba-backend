@@ -21,7 +21,10 @@ const BoardPermissionsEnumSchema = z.enum([
   "view_roles_on_board",
   "create_board_on_realm",
 ]);
-const BoardRestrictionsEnumSchema = z.enum(["lock_access", "delist"]);
+export const BoardRestrictionsEnumSchema = z.enum(["lock_access", "delist"]);
+export type BoardRestrictionsEnumType = z.infer<
+  typeof BoardRestrictionsEnumSchema
+>;
 
 const BoardIdentitySchema = z.object({
   id: z.string(),

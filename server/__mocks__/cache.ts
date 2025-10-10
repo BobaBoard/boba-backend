@@ -4,6 +4,9 @@ const cacheMock = {
   hDel: vi.fn(),
   hGet: vi.fn(),
   hSet: vi.fn(),
+  del: vi.fn(),
+  get: vi.fn(),
+  set: vi.fn(),
 };
 export const cache = vi.fn().mockImplementation(() => {
   return cacheMock;

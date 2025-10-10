@@ -113,7 +113,7 @@ describe("Tests boards queries", () => {
     );
   });
 
-  it("fetches correctly when no result after current page (outdated cursor)", async () => {
+  test("fetches correctly when no result after current page (outdated cursor)", async () => {
     const boardActivity = await getBoardActivityByExternalId({
       boardExternalId: LONG_BOARD_ID,
       // Bobatan
