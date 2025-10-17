@@ -889,6 +889,7 @@ router.get(
  *     summary: Add a new role to the specified realm.
  *     operationId: createRealmRoleByExternalId
  *     tags:
+ *       - unzodded
  *       - /realms/
  *     security:
  *       - firebase: []
