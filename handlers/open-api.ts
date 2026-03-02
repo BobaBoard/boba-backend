@@ -1,6 +1,6 @@
 import debug from "debug";
 import { type Express } from "express";
-import * as redocExpressMiddleware from "redoc-express";
+import redocExpressMiddleware from "redoc-express";
 import swaggerJsdoc from "swagger-jsdoc";
 
 const info = debug("bobaserver:handlers:open-api-log");

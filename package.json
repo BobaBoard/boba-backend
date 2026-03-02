@@ -30,7 +30,7 @@
     "open-api:generate": "tsx -r dotenv/config -r tsconfig-paths/register utils/generate-open-api-spec.ts dotenv_config_path=./.env.prod",
     "open-api:validate": "yarn run open-api:generate && validate-api open-api/open-api-spec.json && openapi-examples-validator open-api/open-api-spec.json --ignore-formats color quill-delta && openapi lint open-api/open-api-spec.json --skip-rule=no-ambiguous-paths",
     "server:build": "rm -rf ./dist && tsc && tsc-alias && copyfiles .env.prod firebase-sdk.json server/**/*.sql ./dist",
-    "server:dev": "cross-env DEBUG=bobaserver:*,-*info DEBUG_DEPTH=10 nodemon --watch . --exec node -r tsconfig-paths/register -r ts-node/register server/index.ts -e yaml,ts,sql",
+    "server:dev": "cross-env DEBUG=bobaserver:*,-*info DEBUG_DEPTH=10 nodemon --watch . --exec \"tsx -r dotenv/config server/index.ts\" -e yaml,ts,sql",
     "server:start": "cross-env DEBUG=bobaserver:*,-*info node -r dotenv/config dist/server/index.js dotenv_config_path=./.env.prod",
     "start": "yarn run server:start",
     "start-db": "node -e \"console.error('This command has been deprecated. Use db:start now.')\"",
